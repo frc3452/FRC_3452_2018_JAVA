@@ -5,7 +5,7 @@ import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveToStop extends Command {
-	double m_speed;
+	private double m_speed;
 
 	public DriveToStop(double speed) {
 		requires(Drivetrain.getInstance());

@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevatorTime extends Command {
 
-	double m_speed, m_time;
+	private double m_speed, m_time;
 
 	public ElevatorTime(double speed, double time) {
 		requires(Elevator.getInstance());

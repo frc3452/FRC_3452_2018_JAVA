@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevatorManual extends Command {
 
-	int m_controller_axis;
-	Joystick m_joy;
+	private int m_controller_axis;
+	private Joystick m_joy;
 
 	public ElevatorManual(Joystick joy) {
 		requires(Elevator.getInstance());
@@ -22,7 +22,7 @@ public class ElevatorManual extends Command {
 	}
 
 	protected void initialize() {
-		m_controller_axis = ((m_joy == OI.operatorJoy) ? 1 : 5);
+		m_controller_axis = ((m_joy == OI.opJoy) ? 1 : 5);
 	}
 
 	protected void execute() {

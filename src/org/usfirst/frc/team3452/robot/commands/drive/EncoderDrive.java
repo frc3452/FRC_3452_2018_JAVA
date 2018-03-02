@@ -5,7 +5,7 @@ import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class EncoderDrive extends Command {
-	double m_left, m_right, m_lspeed, m_rspeed, m_topspeed;
+	private double m_left, m_right, m_lspeed, m_rspeed, m_topspeed;
 
 	public EncoderDrive(double left, double right, double leftspeed, double rightspeed, double topspeed) {
 		requires(Drivetrain.getInstance());

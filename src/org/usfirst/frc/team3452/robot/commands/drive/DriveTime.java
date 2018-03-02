@@ -5,7 +5,7 @@ import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveTime extends Command {
-	double m_speed, m_rotate, m_time;
+	private double m_speed, m_rotate, m_time;
 
 	public DriveTime(double speed, double rotate, double time) {
 		requires(Drivetrain.getInstance());

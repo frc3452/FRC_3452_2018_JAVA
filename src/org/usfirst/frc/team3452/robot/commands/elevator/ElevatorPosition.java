@@ -6,14 +6,12 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevatorPosition extends Command {
 
-	double m_value;
-	int m_position;
+	private double m_value;
 
-	public ElevatorPosition(double value, int position) {
+	public ElevatorPosition(double value) {
 		requires(Elevator.getInstance());
 
 		m_value = value;
-		m_position = position;
 	}
 
 	protected void initialize() {
