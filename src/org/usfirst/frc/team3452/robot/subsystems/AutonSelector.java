@@ -7,15 +7,17 @@ public class AutonSelector extends Subsystem {
 
 	private static AutonSelector instance = new AutonSelector();
 
-	public static AnalogInput as_A = new AnalogInput(Constants.AUTO_SELECTOR_1);
-	public static AnalogInput as_B = new AnalogInput(Constants.AUTO_SELECTOR_2);
+	private static AnalogInput as_A = new AnalogInput(Constants.AUTO_SELECTOR_1);
+	private static AnalogInput as_B = new AnalogInput(Constants.AUTO_SELECTOR_2);
 
-	public int m_prev_as1, m_prev_as2;
+	private int m_prev_as1, m_prev_as2;
 	private int m_asA, m_asB;
+
 	public String autoCommandName[] = { "NO COMMAND" };
 	public boolean m_ControllerOverride = false;
 
-	public String autonString, overrideString, overrideStringPrevious;
+	private String overrideStringPrevious;
+	public String overrideString, autonString;
 
 	public void printSelected() {
 		m_asA = as_A.getValue();

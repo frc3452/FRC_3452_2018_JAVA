@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Intake extends Subsystem {
-	public static Elevator instance = new Elevator();
+	public static Intake instance = new Intake();
 
 	public static Spark intake_l = new Spark(Constants.INTAKE_L);
 	public static Spark intake_r = new Spark(Constants.INTAKE_R);
@@ -21,7 +21,7 @@ public class Intake extends Subsystem {
 		intake_r.setName("Intake R");;
 	}
 	
-	public void Manual(double speed)
+	public void manual(double speed)
 	{
 		intake_l.set(speed);
 		intake_r.set(speed);
@@ -42,7 +42,7 @@ public class Intake extends Subsystem {
 		// public static final boolean INTAKE_R_INVERT = false;
 	}
 
-	public static Elevator getInstance() {
+	public static Intake getInstance() {
 		return instance;
 	}
 }

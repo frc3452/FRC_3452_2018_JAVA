@@ -35,7 +35,7 @@ public class Drivetrain extends Subsystem {
 	private static WPI_TalonSRX R4 = new WPI_TalonSRX(Constants.DRIVE_R_4);
 
 	// ROBOT DRIVE OBJECT
-	public DifferentialDrive robotDrive = new DifferentialDrive(L1, R1);
+	private DifferentialDrive robotDrive = new DifferentialDrive(L1, R1);
 
 	// GYRO
 	public static AHRS Gyro = new AHRS(SPI.Port.kMXP);
