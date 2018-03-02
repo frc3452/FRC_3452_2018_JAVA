@@ -9,6 +9,7 @@ import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
+import org.usfirst.frc.team3452.robot.subsystems.Lights;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -20,12 +21,14 @@ public class Robot extends TimedRobot {
 	public static final Intake intake = new Intake();
 	public static final Climber climber = new Climber();
 	public static final AutonSelector autonSelector = new AutonSelector();
+	public static final Lights lights = new Lights();
 
 	public static Drivetrain _drivetrain;
 	public static Elevator _elevator;
 	public static Intake _intake;
 	public static Climber _climber;
 	public static AutonSelector _autonSelector;
+	public static Lights _lights;
 	public static OI _oi;
 
 	Command autonomousCommand = null;
@@ -46,6 +49,9 @@ public class Robot extends TimedRobot {
 		_climber = new Climber();
 		Climber.getInstance().initHardware();
 
+		_lights = new Lights();
+		Lights.getInstance().initHardware();
+		
 		_autonSelector = new AutonSelector();
 
 		_oi = new OI();
