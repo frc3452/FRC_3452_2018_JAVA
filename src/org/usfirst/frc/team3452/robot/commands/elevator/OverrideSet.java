@@ -6,15 +6,21 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class OverrideSet extends InstantCommand {
 
-	boolean m_override;
+	private int m_override;
 
-	public OverrideSet(boolean override) {
+	public OverrideSet(int override) {
 		super();
 		m_override = override;
 	}
 
 	protected void initialize() {
-		Elevator.getInstance().m_overriden = m_override;
+		if (m_override == -1) {
+			Elevator.getInstance().m_overriden = !Elevator.getInstance().m_overriden;
+		} else if (m_override == 0) {
+			Elevator.getInstance().m_overriden = false;
+		} else if (m_override == 1) {
+			Elevator.getInstance().m_overriden = true;
+		}
 	}
 
 }
