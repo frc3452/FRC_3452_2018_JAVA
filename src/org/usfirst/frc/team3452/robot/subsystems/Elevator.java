@@ -13,14 +13,14 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Elevator extends Subsystem {
-
-	public static Elevator instance = new Elevator();
 	public double m_pos = 0;
 	public boolean m_overriden = false;
 
 	public static WPI_TalonSRX Elev_1 = new WPI_TalonSRX(Constants.ELEVATOR_1);
 	private static WPI_TalonSRX Elev_2 = new WPI_TalonSRX(Constants.ELEVATOR_2);
 
+	public static Elevator instance = new Elevator();
+	
 	public void initHardware() {
 		// FOLLOWER
 		Elev_2.follow(Elev_1);

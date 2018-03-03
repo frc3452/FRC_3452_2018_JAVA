@@ -17,9 +17,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 public class Drivetrain extends Subsystem {
-
-	private static Drivetrain instance = new Drivetrain();
-
 	// PDP
 	public static PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 
@@ -42,6 +39,8 @@ public class Drivetrain extends Subsystem {
 
 	// variable init
 	public double m_modify = 1, m_elev_modify = 1, l_pos = 0, r_pos = 0;
+	
+	private static Drivetrain instance = new Drivetrain();
 
 	public void initHardware() {
 		robotDrive.setDeadband(0.08);
@@ -165,6 +164,7 @@ public class Drivetrain extends Subsystem {
 
 	public void Arcade(Joystick joy) {
 		Arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .6 * m_modify));
+		Elevator.getInstance().setDriveLimit();
 	}
 
 	public void Arcade(double move, double rotate) {

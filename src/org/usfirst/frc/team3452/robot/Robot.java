@@ -23,12 +23,6 @@ public class Robot extends TimedRobot {
 	public static final AutonSelector autonSelector = new AutonSelector();
 	public static final Lights lights = new Lights();
 
-	public static Drivetrain _drivetrain;
-	public static Elevator _elevator;
-	public static Intake _intake;
-	public static Climber _climber;
-	public static AutonSelector _autonSelector;
-	public static Lights _lights;
 	public static OI _oi;
 
 	Command autonomousCommand = null;
@@ -37,22 +31,12 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		_drivetrain = new Drivetrain();
 		Drivetrain.getInstance().initHardware();
-
-		_elevator = new Elevator();
 		Elevator.getInstance().initHardware();
-
-		_intake = new Intake();
 		Intake.getInstance().initHardware();
-
-		_climber = new Climber();
 		Climber.getInstance().initHardware();
-
-		_lights = new Lights();
 		Lights.getInstance().initHardware();
-		
-		_autonSelector = new AutonSelector();
+		AutonSelector.getInstance().initHardware();
 
 		_oi = new OI();
 		OI.init();
@@ -73,10 +57,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic() {
-		autonChooser();
-
-		AutonSelector.getInstance().printSelected();
-		Drivetrain.getInstance().LoggerUpdate();
+		/*autonChooser();
+		AutonSelector.getInstance().printSelected();*/
 
 		Scheduler.getInstance().run();
 	}
@@ -95,9 +77,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
-
-		Drivetrain.getInstance().LoggerUpdate();
-		Elevator.getInstance().setDriveLimit();
 	}
 
 	@Override
@@ -112,14 +91,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-
-		Elevator.getInstance().setDriveLimit();
-		Drivetrain.getInstance().LoggerUpdate();
 	}
 
 	@Override
 	public void testPeriodic() {
-		Drivetrain.getInstance().LoggerUpdate();
 	}
 
 	public void controllerChooser() {

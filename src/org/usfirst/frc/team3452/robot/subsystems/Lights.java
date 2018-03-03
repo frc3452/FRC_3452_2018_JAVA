@@ -6,12 +6,13 @@ import com.ctre.phoenix.CANifier.LEDChannel;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Lights extends Subsystem {
-	private static Lights instance = new Lights();
 
 	private static CANifier canifier = new CANifier(Constants.CANIFIER_ID);
 
 	public int m_hue;
 
+	private static Lights instance = new Lights();
+	
 	public void initHardware() {
 		m_hue = 0;
 	}

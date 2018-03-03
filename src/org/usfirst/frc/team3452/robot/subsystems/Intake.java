@@ -4,11 +4,12 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Intake extends Subsystem {
-	public static Intake instance = new Intake();
 
 	public static Spark intake_l = new Spark(Constants.INTAKE_L);
 	public static Spark intake_r = new Spark(Constants.INTAKE_R);
 
+	public static Intake instance = new Intake();
+	
 	public void initHardware()
 	{
 		intake_l.setInverted(Constants.INTAKE_L_INVERT);

@@ -5,10 +5,10 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Camera extends Subsystem {
-	public static Camera instance = new Camera();
-
 	private static UsbCamera mCamera0, mCamera1;
 	private static VideoSink server;
+
+	public static Camera instance = new Camera();
 
 	public void initHardware() {
 		mCamera0 = CameraServer.getInstance().startAutomaticCapture(0);

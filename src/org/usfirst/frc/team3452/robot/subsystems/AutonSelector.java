@@ -1,11 +1,11 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.commands.signal.LoggerUpdate;
+
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class AutonSelector extends Subsystem {
-
-	private static AutonSelector instance = new AutonSelector();
 
 	private static AnalogInput as_A = new AnalogInput(Constants.AUTO_SELECTOR_1);
 	private static AnalogInput as_B = new AnalogInput(Constants.AUTO_SELECTOR_2);
@@ -18,6 +18,8 @@ public class AutonSelector extends Subsystem {
 
 	private String overrideStringPrevious;
 	public String overrideString, autonString;
+	
+	private static AutonSelector instance = new AutonSelector();
 	
 	public void initHardware()
 	{
@@ -158,6 +160,7 @@ public class AutonSelector extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
+		setDefaultCommand(new LoggerUpdate());
 	}
 
 	public static class Constants {
