@@ -20,7 +20,7 @@ public class Elevator extends Subsystem {
 	private static WPI_TalonSRX Elev_2 = new WPI_TalonSRX(Constants.ELEVATOR_2);
 
 	public static Elevator instance = new Elevator();
-	
+
 	public void initHardware() {
 		// FOLLOWER
 		Elev_2.follow(Elev_1);
@@ -55,7 +55,9 @@ public class Elevator extends Subsystem {
 		Elev_1.setNeutralMode(NeutralMode.Brake);
 		Elev_2.setNeutralMode(NeutralMode.Brake);
 
-		// RAMP
+		Elev_1.configContinuousCurrentLimit(Constants.ELEVATOR_AMP_LIMIT, 10);
+		Elev_1.configPeakCurrentLimit(Constants.ELEVATOR_AMP_TRIGGER, 10);
+		Elev_1.configPeakCurrentDuration(Constants.ELEVATOR_AMP_TIME, 10);
 		Elev_1.configOpenloopRamp(Constants.ELEVATOR_RAMP_TIME, 10);
 
 		Elev_1.setSubsystem("Elevator");
@@ -110,7 +112,7 @@ public class Elevator extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-		 setDefaultCommand(new ElevatorTime(0,0.01));
+		setDefaultCommand(new ElevatorTime(0, 0.01));
 	}
 
 	public static Elevator getInstance() {
@@ -136,6 +138,11 @@ public class Elevator extends Subsystem {
 		public static final double ELEVATOR_SPEED_3 = .6;
 		public static final double ELEVATOR_SPEED_4 = .4;
 		public static final double ELEVATOR_SPEED_5 = .3;
+
+		public static int ELEVATOR_AMP_TRIGGER = 50;
+		public static int ELEVATOR_AMP_LIMIT = 40;
+		public static int ELEVATOR_AMP_TIME = 1000;
+
 	}
 
 }
