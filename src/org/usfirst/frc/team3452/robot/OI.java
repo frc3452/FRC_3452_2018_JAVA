@@ -52,7 +52,7 @@ public class OI {
 		opJoyX.whileHeld(new IntakeControl(-.75, 0.01));
 		opJoyB.whileHeld(new IntakeControl(.75, 0.01));
 		opJoyY.whileHeld(new IntakeControl(.3, 0.01));
-		opJoyA.whenPressed(new ElevatorPosition(2));
+		opJoyA.whenPressed(new ElevatorPosition(3));
 
 		driveSafteyOverriden.whenActive(new OverrideSet(1));
 		driveSafteyOverriden.whenInactive(new OverrideSet(0));
