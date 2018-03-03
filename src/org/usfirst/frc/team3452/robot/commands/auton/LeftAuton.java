@@ -2,6 +2,8 @@ package org.usfirst.frc.team3452.robot.commands.auton;
 
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
+import org.usfirst.frc.team3452.robot.commands.drive.GyroPos;
+import org.usfirst.frc.team3452.robot.commands.drive.ResetGyro;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeControl;
@@ -12,11 +14,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class LeftAuton extends CommandGroup {
 
-
 	public LeftAuton(String priority, int selector) {
 		addSequential(new WaitForGameData());
-		
-		
+
 		if (priority == "SWITCH") {
 			if (Lights.getInstance().gsm().charAt(0) == 'L') {
 				switchL(selector);
@@ -66,7 +66,29 @@ public class LeftAuton extends CommandGroup {
 
 	private void switchR(int mode) {
 		if (mode == 1) {
-			addSequential(new EncoderFrom(11, 11, .3, .3, .5));
+			addSequential(new ResetGyro());
+
+			addParallel(new DriveTime(.25, 0, .5));
+			addSequential(new ElevatorTime(.5, .15));
+			addSequential(new DriveTime(-.25, 0, .225)); //jog forward backwards to drop arm
+
+			addParallel(new ElevatorPosition(1));
+			addSequential(new EncoderFrom(11.3, 11.3, .35, .35,.6)); //drive to far side of switch
+
+			addSequential(new EncoderFrom(.75, -1.5, .5, .5, .5)); //turn
+
+			addSequential(new GyroPos(90, .2, 1)); //fix turn
+			addSequential(new DriveTime(0, 0, .25));
+
+			addSequential(new EncoderFrom(5.5, 5.5, .3, .3, .4)); ///drive around switch
+
+			addParallel(new ElevatorPosition(3.5)); //raise elevator and turns
+			addSequential(new GyroPos(135, .3, 1));
+
+			addSequential(new EncoderFrom(1, 1, .5, .5, .5)); //place
+			addSequential(new IntakeControl(1, .5));
+			addSequential(new EncoderFrom(-1, -1, .5, .5, .5));
+
 		} else if (mode == 2) {
 
 		} else {
@@ -94,11 +116,11 @@ public class LeftAuton extends CommandGroup {
 		}
 	}
 
-private void defaultAuton() {
-    		addSequential(new ElevatorTime(.5, .15));
-    		addSequential(new DriveTime(0, 0, 1));
-    		addSequential(new ElevatorPosition(2));
-    		addSequential(new DriveTime(.2, 0, 3));
-    	}
+	private void defaultAuton() {
+		addSequential(new ElevatorTime(.5, .15));
+		addSequential(new DriveTime(0, 0, 1));
+		addSequential(new ElevatorPosition(2));
+		addSequential(new DriveTime(.2, 0, 3));
+	}
 
 }
