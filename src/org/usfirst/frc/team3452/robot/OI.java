@@ -42,7 +42,7 @@ public class OI {
 		driverJoyB.whileHeld(new IntakeControl(.75, 0.01));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
-		// op JOY
+		// OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
 		opJoyRB.whileHeld(new Climb(.7));
 
