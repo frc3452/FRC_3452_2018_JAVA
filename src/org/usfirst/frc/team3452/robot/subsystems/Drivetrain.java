@@ -39,7 +39,7 @@ public class Drivetrain extends Subsystem {
 
 	// variable init
 	public double m_modify = 1, m_elev_modify = 1, l_pos = 0, r_pos = 0;
-	
+
 	private static Drivetrain instance = new Drivetrain();
 
 	public void initHardware() {
@@ -133,9 +133,9 @@ public class Drivetrain extends Subsystem {
 		R3.enableCurrentLimit(true);
 		R4.enableCurrentLimit(true);
 
-		//COAST MODE
+		// COAST MODE
 		BrakeCoast(NeutralMode.Coast);
-		
+
 		robotDrive.setSubsystem("Drive train");
 		pdp.setSubsystem("Drive train");
 
@@ -190,17 +190,18 @@ public class Drivetrain extends Subsystem {
 		R4.setNeutralMode(mode);
 	}
 
-	public void MotionMagic(double leftpos, double rightpos, double leftaccel, double rightaccel, double topspeed) {
+	public void MotionMagic(double leftpos, double rightpos, double leftaccel, double rightaccel, double leftspeed,
+			double rightspeed) {
 		robotDrive.setSafetyEnabled(false);
 
 		l_pos = leftpos * 4096 * 1;
 		r_pos = rightpos * 4096 * -1;
 
-		L1.configMotionCruiseVelocity((int) (4240 * topspeed), 10);
-		R1.configMotionCruiseVelocity((int) (4240 * topspeed), 10);
-
 		L1.configMotionAcceleration((int) (4096 * leftaccel), 10);
 		R1.configMotionAcceleration((int) (4096 * rightaccel), 10);
+
+		L1.configMotionCruiseVelocity((int) (4240 * leftspeed), 10);
+		R1.configMotionCruiseVelocity((int) (4240 * rightspeed), 10);
 
 		L1.set(ControlMode.MotionMagic, l_pos);
 		R1.set(ControlMode.MotionMagic, r_pos);
@@ -253,7 +254,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	public void LoggerUpdate() {
-		SmartDashboard.putNumber("NavX Angle", Gyro.getFusedHeading());
+		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
 
 		SmartDashboard.putNumber("L1", L1.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("R1", R1.getSelectedSensorPosition(0));
