@@ -5,15 +5,15 @@ import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class EncoderDrive extends Command {
-	private double m_left, m_right, m_lspeed, m_rspeed, m_topspeed;
+	private double m_left, m_right, m_laccel, m_raccel, m_topspeed;
 
-	public EncoderDrive(double left, double right, double leftspeed, double rightspeed, double topspeed) {
+	public EncoderDrive(double left, double right, double leftaccel, double rightaccel, double topspeed) {
 		requires(Drivetrain.getInstance());
 
 		m_left = left;
 		m_right = right;
-		m_lspeed = leftspeed;
-		m_rspeed = rightspeed;
+		m_laccel = leftaccel;
+		m_raccel = rightaccel;
 		m_topspeed = topspeed;
 	}
 
@@ -22,7 +22,8 @@ public class EncoderDrive extends Command {
 	}
 
 	protected void execute() {
-		Drivetrain.getInstance().MotionMagic(m_left, m_right, m_lspeed, m_rspeed, m_topspeed);
+		
+		Drivetrain.getInstance().MotionMagic(m_left, m_right, m_laccel, m_raccel, m_topspeed, m_topspeed);
 	}
 
 	protected boolean isFinished() {
