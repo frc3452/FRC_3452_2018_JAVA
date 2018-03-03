@@ -18,8 +18,13 @@ public class AutonSelector extends Subsystem {
 
 	private String overrideStringPrevious;
 	public String overrideString, autonString;
+	
+	public void initHardware()
+	{
+		
+	}
 
-	public void printSelected() {
+ 	public void printSelected() {
 		m_asA = as_A.getValue();
 		m_asB = as_B.getValue();
 
