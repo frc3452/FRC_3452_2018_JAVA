@@ -1,28 +1,85 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
+import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
+import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
+import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
+import org.usfirst.frc.team3452.robot.commands.signal.WaitForGameData;
+import org.usfirst.frc.team3452.robot.subsystems.Lights;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-/**
- *
- */
 public class RightAuton extends CommandGroup {
 
-    public RightAuton() {
-        // Add Commands here:
-        // e.g. addSequential(new Command1());
-        //      addSequential(new Command2());
-        // these will run in order.
+	public RightAuton(String priority, int selector) {
+		addSequential(new WaitForGameData());
+		
+		
+		if (priority == "SWITCH") {
+			if (Lights.getInstance().gsm().charAt(0) == 'L') {
+				switchL(selector);
+			} else if (Lights.getInstance().gsm().charAt(0) == 'R') {
+				switchR(selector);
+			} else {
+				defaultAuton();
+			}
+		} else if (priority == "SCALE") {
+			if (Lights.getInstance().gsm().charAt(1) == 'L') {
+				scaleL(selector);
+			} else if (Lights.getInstance().gsm().charAt(1) == 'R') {
+				scaleR(selector);
+			} else {
+				defaultAuton();
+			}
+		} else {
+			defaultAuton();
+		}
+	}
 
-        // To run multiple commands at the same time,
-        // use addParallel()
-        // e.g. addParallel(new Command1());
-        //      addSequential(new Command2());
-        // Command1 and Command2 will run in parallel.
+	private void switchL(int mode) {
+		if (mode == 1) {
 
-        // A command group will require all of the subsystems that each member
-        // would require.
-        // e.g. if Command1 requires chassis, and Command2 requires arm,
-        // a CommandGroup containing them would require both the chassis and the
-        // arm.
-    }
+		} else if (mode == 2) {
+
+		} else {
+			defaultAuton();
+		}
+	}
+
+	private void switchR(int mode) {
+		if (mode == 1) {
+
+		} else if (mode == 2) {
+
+		} else {
+			defaultAuton();
+		}
+	}
+
+	private void scaleL(int mode) {
+		if (mode == 1) {
+
+		} else if (mode == 2) {
+
+		} else {
+			defaultAuton();
+		}
+	}
+
+	private void scaleR(int mode) {
+		if (mode == 1) {
+
+		} else if (mode == 2) {
+
+		} else {
+			defaultAuton();
+		}
+	}
+
+	private void defaultAuton() {
+		addSequential(new ElevatorTime(.5, .15));
+		addSequential(new DriveTime(0, 0, 1));
+		addSequential(new ElevatorPosition(2));
+		addSequential(new DriveTime(.2, 0, 3));
+	}
+
 }
