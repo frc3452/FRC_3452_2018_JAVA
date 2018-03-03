@@ -128,7 +128,7 @@ public class Lights extends Subsystem {
 			return "NO";
 		}
 	}
-
+	
 	public void initDefaultCommand() {
 //		 setDefaultCommand(new LightsCycle());
 	}
