@@ -21,21 +21,21 @@ public class Drivetrain extends Subsystem {
 	public static PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 
 	// DRIVETRAIN
-	public static WPI_TalonSRX L1 = new WPI_TalonSRX(Constants.DRIVE_L_1);
-	private static WPI_TalonSRX L2 = new WPI_TalonSRX(Constants.DRIVE_L_2);
-	private static WPI_TalonSRX L3 = new WPI_TalonSRX(Constants.DRIVE_L_3);
-	private static WPI_TalonSRX L4 = new WPI_TalonSRX(Constants.DRIVE_L_4);
+	public static WPI_TalonSRX L1;
+	private static WPI_TalonSRX L2;
+	private static WPI_TalonSRX L3;
+	private static WPI_TalonSRX L4;
 
-	public static WPI_TalonSRX R1 = new WPI_TalonSRX(Constants.DRIVE_R_1);
-	private static WPI_TalonSRX R2 = new WPI_TalonSRX(Constants.DRIVE_R_2);
-	private static WPI_TalonSRX R3 = new WPI_TalonSRX(Constants.DRIVE_R_3);
-	private static WPI_TalonSRX R4 = new WPI_TalonSRX(Constants.DRIVE_R_4);
+	public static WPI_TalonSRX R1;
+	private static WPI_TalonSRX R2;
+	private static WPI_TalonSRX R3;
+	private static WPI_TalonSRX R4;
 
 	// ROBOT DRIVE OBJECT
-	private DifferentialDrive robotDrive = new DifferentialDrive(L1, R1);
+	private DifferentialDrive robotDrive;
 
 	// GYRO
-	public static AHRS Gyro = new AHRS(SPI.Port.kMXP);
+	public static AHRS Gyro;
 
 	// variable init
 	public double m_modify = 1, m_elev_modify = 1, l_pos = 0, r_pos = 0;
@@ -43,6 +43,19 @@ public class Drivetrain extends Subsystem {
 	private static Drivetrain instance = new Drivetrain();
 
 	public void initHardware() {
+		L1 = new WPI_TalonSRX(Constants.DRIVE_L_1);
+		L2 = new WPI_TalonSRX(Constants.DRIVE_L_2);
+		L3 = new WPI_TalonSRX(Constants.DRIVE_L_3);
+		L4 = new WPI_TalonSRX(Constants.DRIVE_L_4);
+		R1 = new WPI_TalonSRX(Constants.DRIVE_R_1);
+		R2 = new WPI_TalonSRX(Constants.DRIVE_R_2);
+		R3 = new WPI_TalonSRX(Constants.DRIVE_R_3);
+		R3 = new WPI_TalonSRX(Constants.DRIVE_R_4);
+		
+		robotDrive = new DifferentialDrive(L1, R1);
+
+		Gyro = new AHRS(SPI.Port.kMXP);
+		
 		robotDrive.setDeadband(0.08);
 		robotDrive.setSafetyEnabled(true);
 
@@ -159,7 +172,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-		setDefaultCommand(new DriveTele());
+		 setDefaultCommand(new DriveTele());
 	}
 
 	public void Arcade(Joystick joy) {

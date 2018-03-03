@@ -20,8 +20,8 @@ public class IntakeSpin extends Command {
 	}
 
 	protected void execute() {
-		Intake.intake_l.set((m_speed * ((m_clockwise) ? -1 : 1)));
-		Intake.intake_l.set((m_speed * ((m_clockwise) ? 1 : -1)));
+		Intake.Intake_L.set((m_speed * ((m_clockwise) ? -1 : 1)));
+		Intake.Intake_R.set((m_speed * ((m_clockwise) ? 1 : -1)));
 	}
 
 	protected boolean isFinished() {

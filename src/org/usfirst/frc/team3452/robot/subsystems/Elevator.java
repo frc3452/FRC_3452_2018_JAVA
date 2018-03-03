@@ -16,12 +16,16 @@ public class Elevator extends Subsystem {
 	public double m_pos = 0;
 	public boolean m_overriden = false;
 
-	public static WPI_TalonSRX Elev_1 = new WPI_TalonSRX(Constants.ELEVATOR_1);
-	private static WPI_TalonSRX Elev_2 = new WPI_TalonSRX(Constants.ELEVATOR_2);
+	public static WPI_TalonSRX Elev_1;
+	private static WPI_TalonSRX Elev_2;
 
 	public static Elevator instance = new Elevator();
 
 	public void initHardware() {
+
+		Elev_1 = new WPI_TalonSRX(Constants.ELEVATOR_1);
+		Elev_2 = new WPI_TalonSRX(Constants.ELEVATOR_2);
+
 		// FOLLOWER
 		Elev_2.follow(Elev_1);
 
@@ -112,7 +116,7 @@ public class Elevator extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-		setDefaultCommand(new ElevatorTime(0, 0.01));
+		 setDefaultCommand(new ElevatorTime(0, 0.01));
 	}
 
 	public static Elevator getInstance() {
