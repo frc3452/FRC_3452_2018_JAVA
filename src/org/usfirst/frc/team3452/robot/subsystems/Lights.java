@@ -1,7 +1,5 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import org.usfirst.frc.team3452.robot.commands.signal.LightsCycle;
-
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.LEDChannel;
 
@@ -18,8 +16,7 @@ public class Lights extends Subsystem {
 		m_hue = 0;
 	}
 
-	public float[] hsv(double hDegrees, double S, double V) {
-		@SuppressWarnings("null")
+	public void hsv(double hDegrees, double S, double V) {
 		float RGB[] = null;
 
 		double R, G, B;
@@ -103,11 +100,12 @@ public class Lights extends Subsystem {
 			}
 		}
 		/* Since we can't pass by reference, return an array */
-		RGB[0] = (float) R;
-		RGB[1] = (float) G;
-		RGB[2] = (float) B;
+		/*
+		 * * RGB[0] = (float) R; RGB[1] = (float) G; RGB[2] = (float) B; return
+		 * RGB;
+		 */
+		rgb((float) RGB[0], (float) RGB[1], (float) RGB[2]);
 
-		return RGB;
 	}
 
 	public void rgb(float r, float g, float b) {
@@ -122,8 +120,16 @@ public class Lights extends Subsystem {
 		canifier.setLEDOutput(brightness, LEDChannel.LEDChannelC);
 	}
 
+	public String gsm() {
+		if (edu.wpi.first.wpilibj.DriverStation.getInstance().getGameSpecificMessage().length() > 0) {
+			return edu.wpi.first.wpilibj.DriverStation.getInstance().getGameSpecificMessage();
+		} else {
+			return "NO";
+		}
+	}
+
 	public void initDefaultCommand() {
-		// setDefaultCommand(new LightsCycle());
+//		 setDefaultCommand(new LightsCycle());
 	}
 
 	public static Lights getInstance() {
