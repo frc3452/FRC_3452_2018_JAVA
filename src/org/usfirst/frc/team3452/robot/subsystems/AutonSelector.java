@@ -7,26 +7,30 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class AutonSelector extends Subsystem {
 
-	private static AnalogInput as_A = new AnalogInput(Constants.AUTO_SELECTOR_1);
-	private static AnalogInput as_B = new AnalogInput(Constants.AUTO_SELECTOR_2);
+	private static AnalogInput as_A;
+	private static AnalogInput as_B;
 
 	private int m_prev_as1, m_prev_as2;
 	private int m_asA, m_asB;
 
-	public String autoCommandName[] = { "NO COMMAND" };
+	public String autoCommandName[] = new String[20];
 	public boolean m_ControllerOverride = false;
 
 	private String overrideStringPrevious;
 	public String overrideString, autonString;
-	
+
 	private static AutonSelector instance = new AutonSelector();
-	
-	public void initHardware()
-	{
-		
+
+	public void initHardware() {
+		for (int i = 0; i < 20; i++) {
+			autoCommandName[i] = "NO COMMAND";
+		}
+
+		as_A = new AnalogInput(Constants.AUTO_SELECTOR_1);
+		as_B = new AnalogInput(Constants.AUTO_SELECTOR_2);
 	}
 
- 	public void printSelected() {
+	public void printSelected() {
 		m_asA = as_A.getValue();
 		m_asB = as_B.getValue();
 
@@ -160,7 +164,7 @@ public class AutonSelector extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-		setDefaultCommand(new LoggerUpdate());
+		 setDefaultCommand(new LoggerUpdate());
 	}
 
 	public static class Constants {
