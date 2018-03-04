@@ -7,6 +7,8 @@ import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
 import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
+import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
+import org.usfirst.frc.team3452.robot.commands.signal.CameraSwitch;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -38,9 +40,10 @@ public class OI {
 		driverJoyB.whileHeld(new IntakeManual(.75));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
+		driverJoyStart.whileHeld(new Climb(.7));
+		
 		// OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
-		opJoyRB.whileHeld(new Climb(.7));
 
 		opJoyBack.whileHeld(new IntakeSpin(.35, true));
 		opJoyStart.whileHeld(new IntakeSpin(.35, false));
@@ -48,7 +51,10 @@ public class OI {
 		opJoyX.whileHeld(new IntakeManual(-.75));
 		opJoyB.whileHeld(new IntakeManual(.75));
 		opJoyY.whileHeld(new IntakeManual(.3));
-		opJoyA.whenPressed(new ElevatorPosition(3));
+		opJoyA.whenPressed(new ElevatorPosition(3.5));
+		
+//		opJoyLClick.whenPressed(new CameraSwitch(0));
+//		opJoyRClick.whenPressed(new CameraSwitch(1));
 
 		driveSafteyOverriden.whenActive(new OverrideSet(1));
 		driveSafteyOverriden.whenInactive(new OverrideSet(0));
