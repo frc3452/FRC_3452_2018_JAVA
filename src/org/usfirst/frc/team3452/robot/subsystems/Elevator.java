@@ -40,8 +40,9 @@ public class Elevator extends Subsystem {
 		// PIDs
 		Elev_1.config_kF(0, 0, 10);
 		Elev_1.config_kP(0, 0.11, 10);
-		Elev_1.config_kI(0, 0.00001, 10);
-		Elev_1.config_kD(0, 1.11, 10);
+		Elev_1.config_kI(0, 0.00004, 10);
+		Elev_1.config_kD(0, 1.1, 10);
+		// was .11, .00001, 1.11
 
 		// SPEED LIMITING
 		Elev_1.configClosedloopRamp(.5, 10);
@@ -129,10 +130,10 @@ public class Elevator extends Subsystem {
 		public static final double ELEVATOR_RAMP_TIME = .5;
 
 		public static final double ELEVATOR_SPEED_1 = 1;
-		public static final double ELEVATOR_SPEED_2 = .8;
-		public static final double ELEVATOR_SPEED_3 = .6;
-		public static final double ELEVATOR_SPEED_4 = .4;
-		public static final double ELEVATOR_SPEED_5 = .3;
+		public static final double ELEVATOR_SPEED_2 = .9;
+		public static final double ELEVATOR_SPEED_3 = .65;
+		public static final double ELEVATOR_SPEED_4 = .5;
+		public static final double ELEVATOR_SPEED_5 = .4;
 
 		public static int ELEVATOR_AMP_TRIGGER = 50;
 		public static int ELEVATOR_AMP_LIMIT = 40;
