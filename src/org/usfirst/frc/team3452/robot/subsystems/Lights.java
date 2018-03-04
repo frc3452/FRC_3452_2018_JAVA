@@ -120,17 +120,18 @@ public class Lights extends Subsystem {
 	}
 
 	public String gsm() {
-		if (edu.wpi.first.wpilibj.DriverStation.getInstance().getGameSpecificMessage().length() > 0) {
-			return edu.wpi.first.wpilibj.DriverStation.getInstance().getGameSpecificMessage();
-		} else {
-			return "NO";
-		}
+		String f;
+		f = edu.wpi.first.wpilibj.DriverStation.getInstance().getGameSpecificMessage();
+		
+		if (f.length() > 0)
+			return f;
+		else
+			return "NOT";
 	}
 
 	public void initDefaultCommand() {
 		// setDefaultCommand(new LightsCycle());
 	}
-
 
 	public static class Constants {
 		public static final int CANIFIER_ID = 20;

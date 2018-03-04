@@ -16,10 +16,12 @@ public class WaitForGameData extends Command {
 	}
 
 	protected void execute() {
+		if (Robot.lights.gsm() == "NOT")
+			System.out.println("ERROR WAITING FOR GAME DATA");
 	}
 
 	protected boolean isFinished() {
-		return ((Robot.lights.gsm() != "NO") ? true : false);
+		return ((Robot.lights.gsm() != "NOT") ? true : false);
 	}
 
 	protected void end() {
