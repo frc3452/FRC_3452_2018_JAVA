@@ -22,6 +22,12 @@ public class AutonSelector extends Subsystem {
 	public void initHardware() {
 		as_A = new AnalogInput(Constants.AUTO_SELECTOR_1);
 		as_B = new AnalogInput(Constants.AUTO_SELECTOR_2);
+		
+		as_A.setSubsystem("AutonSelector");
+		as_B.setSubsystem("AutonSelector");
+		as_A.setName("Selector A");
+		as_B.setName("Selector B");
+		
 
 		for (int i = 0; i < 20; i++) {
 			autoCommandName[i] = "NO COMMAND";
