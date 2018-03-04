@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Climber extends Subsystem {
-	private static Spark Climb_1;
+	private Spark Climb_1;
 
 	public void Control(double speed) {
 		Climb_1.set(Math.abs(speed));

@@ -27,7 +27,7 @@ public class ElevatorManual extends Command {
 	}
 
 	protected void execute() {
-		Elevator.Elev_1.set(ControlMode.PercentOutput,
+		Robot.elevator.Elev_1.set(ControlMode.PercentOutput,
 				(m_joy.getRawAxis(m_controller_axis) * ((m_joy.getRawAxis(m_controller_axis) > 0) ? .6 : .6))); // .4
 	}
 
@@ -36,7 +36,7 @@ public class ElevatorManual extends Command {
 	}
 
 	protected void end() {
-		Elevator.Elev_1.set(ControlMode.PercentOutput, 0);
+		Robot.elevator.Elev_1.set(ControlMode.PercentOutput, 0);
 	}
 	protected void interrupted() {
 		end();

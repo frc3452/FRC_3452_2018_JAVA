@@ -1,5 +1,8 @@
 package org.usfirst.frc.team3452.robot;
 
+import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
+import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
+import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
@@ -27,9 +30,12 @@ public class Robot extends TimedRobot {
 	Command autonomousCommand = null;
 	Command autoCommand[] = new Command[20];
 	Command defaultCommand = null;
+	
+	boolean wasTele = false;
 
 	@Override
 	public void robotInit() {
+		
 		for (int i = 0; i < 20; i++) {
 			autoCommand[i] = null;
 		}
@@ -46,22 +52,33 @@ public class Robot extends TimedRobot {
 
 		defaultCommand = (new DriveTime(.25, 0, 3));
 
-		autoCommand[1] = (new DriveTime(-.25, 0, 1));
-		Robot.autonSelector.autoCommandName[1] = "backwards";
+		autoCommand[1] = (new MiddleAuton("SWITCH", 1));
+		Robot.autonSelector.autoCommandName[1] = "Middle";
 
-		autoCommand[2] = (new DriveTime(.25, 0, 1));
-		Robot.autonSelector.autoCommandName[2] = "forwards";
+		autoCommand[2] = (new MiddleAuton("SWITCH", 2));
+		Robot.autonSelector.autoCommandName[2] =
+				"Middle Auton (Stop after place)";
+
+		autoCommand[3] = (new LeftAuton("SWITCH", 1));
+		Robot.autonSelector.autoCommandName[3] = "Left Auton";
+
+		autoCommand[4] = (new RightAuton("SWITCH", 1));
+		Robot.autonSelector.autoCommandName[4] = "Right Auton";
+		
 	}
 
 	@Override
 	public void disabledInit() {
-		Robot.drive.BrakeCoast(NeutralMode.Coast);
+//		Robot.drive.BrakeCoast(NeutralMode.Coast);
+		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
 	}
 
 	@Override
 	public void disabledPeriodic() {
 		autonChooser();
 		Robot.autonSelector.printSelected();
+		
+		Robot.drive.LoggerUpdate();
 
 		Scheduler.getInstance().run();
 	}
@@ -79,6 +96,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
+		
+		Robot.drive.LoggerUpdate();
 		Scheduler.getInstance().run();
 	}
 
@@ -89,15 +108,20 @@ public class Robot extends TimedRobot {
 		if (autonomousCommand != null) {
 			autonomousCommand.cancel();
 		}
+		
+		wasTele = true;
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		
+		Robot.drive.LoggerUpdate();
 	}
 
 	@Override
 	public void testPeriodic() {
+		Robot.drive.LoggerUpdate();
 	}
 
 	public void controllerChooser() {

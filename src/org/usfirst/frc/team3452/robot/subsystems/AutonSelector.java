@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class AutonSelector extends Subsystem {
 
-	private static AnalogInput as_A;
-	private static AnalogInput as_B;
+	private AnalogInput as_A;
+	private AnalogInput as_B;
 
 	private int m_prev_as1, m_prev_as2;
 	private int m_asA, m_asB;
@@ -162,7 +162,7 @@ public class AutonSelector extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-		setDefaultCommand(new LoggerUpdate());
+//		setDefaultCommand(new LoggerUpdate());
 	}
 
 	public static class Constants {

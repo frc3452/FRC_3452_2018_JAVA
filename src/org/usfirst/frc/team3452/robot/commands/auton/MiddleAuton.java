@@ -5,7 +5,7 @@ import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
-import org.usfirst.frc.team3452.robot.commands.pwm.IntakeControl;
+import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
 import org.usfirst.frc.team3452.robot.commands.signal.WaitForGameData;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -56,7 +56,7 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new EncoderFrom(.4, .4, .4, .4, .4)); // .5 .5 .4 .4
 																// .5
 
-			addSequential(new IntakeControl(1, .5));
+			addSequential(new IntakeTime(1, .5));
 			addSequential(new EncoderFrom(-1.4, -1.4, .3, .3, .2)); // back up
 																	// after
 																	// placing
@@ -88,7 +88,7 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new EncoderFrom(.4, .4, .4, .4, .4)); // .5 .5 .4 .4
 																// .5
 
-			addSequential(new IntakeControl(1, .5));
+			addSequential(new IntakeTime(1, .5));
 			addSequential(new EncoderFrom(-1.4, -1.4, .3, .3, .2)); // back up
 																	// after
 																	// placing
@@ -115,7 +115,7 @@ public class MiddleAuton extends CommandGroup {
 																	// scale
 			addSequential(new EncoderFrom(.6, .6, .4, .4, .5));
 
-			addSequential(new IntakeControl(1, .5));
+			addSequential(new IntakeTime(1, .5));
 			addSequential(new EncoderFrom(-1.4, -1.4, .3, .3, .2)); // back up
 																	// after
 																	// placing
@@ -145,7 +145,7 @@ public class MiddleAuton extends CommandGroup {
 																	// scale
 			addSequential(new EncoderFrom(.6, .6, .4, .4, .5));
 
-			addSequential(new IntakeControl(1, .5));
+			addSequential(new IntakeTime(1, .5));
 			addSequential(new EncoderFrom(-1.4, -1.4, .3, .3, .2)); // back up
 																	// after
 																	// placing

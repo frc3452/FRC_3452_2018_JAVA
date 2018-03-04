@@ -23,7 +23,7 @@ public class ElevatorTime extends Command {
 	}
 
 	protected void execute() {
-		Elevator.Elev_1.set(-m_speed);
+		Robot.elevator.Elev_1.set(-m_speed);
 	}
 
 	protected boolean isFinished() {
@@ -31,7 +31,7 @@ public class ElevatorTime extends Command {
 	}
 
 	protected void end() {
-		Elevator.Elev_1.set(ControlMode.PercentOutput, 0);
+		Robot.elevator.Elev_1.set(ControlMode.PercentOutput, 0);
 	}
 
 	protected void interrupted() {

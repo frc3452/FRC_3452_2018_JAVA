@@ -17,8 +17,8 @@ public class Elevator extends Subsystem {
 	public double m_pos = 0;
 	public boolean m_overriden = false;
 
-	public static WPI_TalonSRX Elev_1;
-	private static WPI_TalonSRX Elev_2;
+	public WPI_TalonSRX Elev_1;
+	private WPI_TalonSRX Elev_2;
 
 	public void initHardware() {
 		Elev_1 = new WPI_TalonSRX(Constants.ELEVATOR_1);
@@ -114,7 +114,7 @@ public class Elevator extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-		setDefaultCommand(new ElevatorTime(0, 0.01));
+		setDefaultCommand(new ElevatorTime(0, 0));
 	}
 
 	public static class Constants {
@@ -122,10 +122,7 @@ public class Elevator extends Subsystem {
 		public static final int ELEVATOR_2 = 10;
 
 		public static final boolean ELEVATOR_1_INVERT = true;
-		public static final boolean ELEVATOR_2_INVERT = false;
-
-		// COMP BOT
-		// public static final boolean ELEVATOR_2_INVERT = true;
+		 public static final boolean ELEVATOR_2_INVERT = true;
 
 		public static final boolean ELEVATOR_ENC_INVERT = false;
 

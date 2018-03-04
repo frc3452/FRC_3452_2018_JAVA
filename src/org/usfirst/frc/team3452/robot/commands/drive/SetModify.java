@@ -21,7 +21,6 @@ public class SetModify extends InstantCommand {
 			}
 		} else {
 			Robot.drive.m_modify = m_modify;
-			;
 		}
 	}
 

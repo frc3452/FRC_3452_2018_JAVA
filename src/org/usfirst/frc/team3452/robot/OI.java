@@ -5,7 +5,7 @@ import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
 import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
-import org.usfirst.frc.team3452.robot.commands.pwm.IntakeControl;
+import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 
@@ -30,60 +30,54 @@ public class OI {
 	public static void init() {
 		buttonInit();
 
-		if (driverJoy.getName() != "") {
-			// DRIVER JOY
-			driverJoyA.whenPressed(new SetModify(-1));
+		// DRIVER JOY
+		driverJoyA.whenPressed(new SetModify(-1));
 
-			driverJoyBack.whenPressed(new OverrideSet(-1));
+		driverJoyBack.whenPressed(new OverrideSet(-1));
+		driverJoyX.whileHeld(new IntakeManual(-.75));
+		driverJoyB.whileHeld(new IntakeManual(.75));
+		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
-			driverJoyX.whileHeld(new IntakeControl(-.75, .01));
-			driverJoyB.whileHeld(new IntakeControl(.75, 0.01));
-			driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
-		}
+		// OP JOY
+		opJoyLB.whileHeld(new ElevatorManual(opJoy));
+		opJoyRB.whileHeld(new Climb(.7));
 
-		if (opJoy.getName() != "") {
-			// OP JOY
-			opJoyLB.whileHeld(new ElevatorManual(opJoy));
-			opJoyRB.whileHeld(new Climb(.7));
+		opJoyBack.whileHeld(new IntakeSpin(.35, true));
+		opJoyStart.whileHeld(new IntakeSpin(.35, false));
 
-			opJoyBack.whileHeld(new IntakeSpin(.35, true));
-			opJoyStart.whileHeld(new IntakeSpin(.35, false));
+		opJoyX.whileHeld(new IntakeManual(-.75));
+		opJoyB.whileHeld(new IntakeManual(.75));
+		opJoyY.whileHeld(new IntakeManual(.3));
+		opJoyA.whenPressed(new ElevatorPosition(3));
 
-			opJoyX.whileHeld(new IntakeControl(-.75, 0.01));
-			opJoyB.whileHeld(new IntakeControl(.75, 0.01));
-			opJoyY.whileHeld(new IntakeControl(.3, 0.01));
-			opJoyA.whenPressed(new ElevatorPosition(3));
+		driveSafteyOverriden.whenActive(new OverrideSet(1));
+		driveSafteyOverriden.whenInactive(new OverrideSet(0));
 
-			driveSafteyOverriden.whenActive(new OverrideSet(1));
-			driveSafteyOverriden.whenInactive(new OverrideSet(0));
-		}
 	}
 
 	private static void buttonInit() {
 		driverJoy = new Joystick(0);
-		if (driverJoy.getName() != "") {
-			driverJoyA = new JoystickButton(driverJoy, 1);
-			driverJoyB = new JoystickButton(driverJoy, 2);
-			driverJoyX = new JoystickButton(driverJoy, 3);
-			driverJoyY = new JoystickButton(driverJoy, 4);
-			driverJoyLB = new JoystickButton(driverJoy, 5);
-			driverJoyRB = new JoystickButton(driverJoy, 6);
-			driverJoyLClick = new JoystickButton(driverJoy, 9);
-			driverJoyRClick = new JoystickButton(driverJoy, 10);
-		}
+		driverJoyA = new JoystickButton(driverJoy, 1);
+		driverJoyB = new JoystickButton(driverJoy, 2);
+		driverJoyX = new JoystickButton(driverJoy, 3);
+		driverJoyY = new JoystickButton(driverJoy, 4);
+		driverJoyLB = new JoystickButton(driverJoy, 5);
+		driverJoyRB = new JoystickButton(driverJoy, 6);
+		driverJoyBack = new JoystickButton(driverJoy, 7);
+		driverJoyStart = new JoystickButton(driverJoy, 8);
+		driverJoyLClick = new JoystickButton(driverJoy, 9);
+		driverJoyRClick = new JoystickButton(driverJoy, 10);
 
 		opJoy = new Joystick(1);
-		if (opJoy.getName() != "") {
-			opJoyA = new JoystickButton(opJoy, 1);
-			opJoyB = new JoystickButton(opJoy, 2);
-			opJoyX = new JoystickButton(opJoy, 3);
-			opJoyY = new JoystickButton(opJoy, 4);
-			opJoyLB = new JoystickButton(opJoy, 5);
-			opJoyRB = new JoystickButton(opJoy, 6);
-			opJoyBack = new JoystickButton(opJoy, 7);
-			opJoyStart = new JoystickButton(opJoy, 8);
-			opJoyLClick = new JoystickButton(opJoy, 9);
-			opJoyRClick = new JoystickButton(opJoy, 10);
-		}
+		opJoyA = new JoystickButton(opJoy, 1);
+		opJoyB = new JoystickButton(opJoy, 2);
+		opJoyX = new JoystickButton(opJoy, 3);
+		opJoyY = new JoystickButton(opJoy, 4);
+		opJoyLB = new JoystickButton(opJoy, 5);
+		opJoyRB = new JoystickButton(opJoy, 6);
+		opJoyBack = new JoystickButton(opJoy, 7);
+		opJoyStart = new JoystickButton(opJoy, 8);
+		opJoyLClick = new JoystickButton(opJoy, 9);
+		opJoyRClick = new JoystickButton(opJoy, 10);
 	}
 }

@@ -19,13 +19,12 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class Drivetrain extends Subsystem {
 	// PDP
-	public static PowerDistributionPanel pdp = new PowerDistributionPanel(0);
+	public PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 
 	// DRIVETRAIN
 	public WPI_TalonSRX L1, R1;
 
-
-	private static WPI_TalonSRX L2, L3, L4, R2, R3, R4;
+	private WPI_TalonSRX L2, L3, L4, R2, R3, R4;
 
 	// ROBOT DRIVE OBJECT
 	private DifferentialDrive robotDrive;
@@ -165,6 +164,16 @@ public class Drivetrain extends Subsystem {
 		R4.setName("R4");
 	}
 
+	public void LoggerUpdate() {
+		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
+
+		SmartDashboard.putNumber("L1", L1.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("R1", R1.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Elevator Enc", Robot.elevator.Elev_1.getSelectedSensorPosition(0));
+
+		SmartDashboard.putString("Selected auton", Robot.autonSelector.autonString);
+	}
+
 	public void initDefaultCommand() {
 		setDefaultCommand(new DriveTele());
 	}
@@ -260,23 +269,15 @@ public class Drivetrain extends Subsystem {
 		R1.setSelectedSensorPosition(0, 0, 10);
 	}
 
-	public void LoggerUpdate() {
-		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
-
-		SmartDashboard.putNumber("L1", L1.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("R1", R1.getSelectedSensorPosition(0));
-
-	}
-
 	public static class Constants {
-		public static final int DRIVE_L_1 = 1, DRIVE_L_2 = 2, DRIVE_L_3 = 3, DRIVE_L_4 = 4;
-		public static final int DRIVE_R_1 = 5, DRIVE_R_2 = 6, DRIVE_R_3 = 7, DRIVE_R_4 = 8;
+		public final static int DRIVE_L_1 = 1, DRIVE_L_2 = 2, DRIVE_L_3 = 3, DRIVE_L_4 = 4;
+		public final static int DRIVE_R_1 = 5, DRIVE_R_2 = 6, DRIVE_R_3 = 7, DRIVE_R_4 = 8;
 
-		public static final int DRIVE_40_AMP_TRIGGER = 60, DRIVE_40_AMP_LIMIT = 30, DRIVE_40_AMP_TIME = 4000;
+		public final static int DRIVE_40_AMP_TRIGGER = 60, DRIVE_40_AMP_LIMIT = 30, DRIVE_40_AMP_TIME = 4000;
 
-		public static final int DRIVE_30_AMP_TRIGGER = 45, DRIVE_30_AMP_LIMIT = 25, DRIVE_30_AMP_TIME = 3000;
+		public final static int DRIVE_30_AMP_TRIGGER = 45, DRIVE_30_AMP_LIMIT = 25, DRIVE_30_AMP_TIME = 3000;
 
-		public static final double DRIVE_RAMP_TIME = 0.125;
+		public final static double DRIVE_RAMP_TIME = 0.125;
 
 	}
 
