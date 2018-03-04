@@ -5,6 +5,7 @@ import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
+import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
@@ -23,6 +24,7 @@ public class Robot extends TimedRobot {
 	public static final Intake intake = new Intake();
 	public static final Climber climber = new Climber();
 	public static final AutonSelector autonSelector = new AutonSelector();
+	public static final Camera camera = new Camera();
 	public static final Lights lights = new Lights();
 
 	public static OI _oi;
@@ -30,12 +32,12 @@ public class Robot extends TimedRobot {
 	Command autonomousCommand = null;
 	Command autoCommand[] = new Command[20];
 	Command defaultCommand = null;
-	
+
 	boolean wasTele = false;
 
 	@Override
 	public void robotInit() {
-		
+
 		for (int i = 0; i < 20; i++) {
 			autoCommand[i] = null;
 		}
@@ -45,6 +47,7 @@ public class Robot extends TimedRobot {
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
 		Robot.lights.initHardware();
+		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 
 		_oi = new OI();
@@ -56,20 +59,19 @@ public class Robot extends TimedRobot {
 		Robot.autonSelector.autoCommandName[1] = "Middle";
 
 		autoCommand[2] = (new MiddleAuton("SWITCH", 2));
-		Robot.autonSelector.autoCommandName[2] =
-				"Middle Auton (Stop after place)";
+		Robot.autonSelector.autoCommandName[2] = "Middle (Stop)";
 
 		autoCommand[3] = (new LeftAuton("SWITCH", 1));
 		Robot.autonSelector.autoCommandName[3] = "Left Auton";
 
 		autoCommand[4] = (new RightAuton("SWITCH", 1));
 		Robot.autonSelector.autoCommandName[4] = "Right Auton";
-		
+
 	}
 
 	@Override
 	public void disabledInit() {
-//		Robot.drive.BrakeCoast(NeutralMode.Coast);
+		//		Robot.drive.BrakeCoast(NeutralMode.Coast);
 		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
 	}
 
@@ -77,7 +79,7 @@ public class Robot extends TimedRobot {
 	public void disabledPeriodic() {
 		autonChooser();
 		Robot.autonSelector.printSelected();
-		
+
 		Robot.drive.LoggerUpdate();
 
 		Scheduler.getInstance().run();
@@ -96,7 +98,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		
+
 		Robot.drive.LoggerUpdate();
 		Scheduler.getInstance().run();
 	}
@@ -108,14 +110,14 @@ public class Robot extends TimedRobot {
 		if (autonomousCommand != null) {
 			autonomousCommand.cancel();
 		}
-		
+
 		wasTele = true;
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		
+
 		Robot.drive.LoggerUpdate();
 	}
 
