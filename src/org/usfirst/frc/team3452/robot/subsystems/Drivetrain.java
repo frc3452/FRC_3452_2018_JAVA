@@ -25,7 +25,7 @@ public class Drivetrain extends Subsystem {
 	public WPI_TalonSRX L1, R1;
 
 	private WPI_TalonSRX L2, L3, L4, R2, R3, R4;
-
+	
 	// ROBOT DRIVE OBJECT
 	private DifferentialDrive robotDrive;
 
@@ -71,8 +71,7 @@ public class Drivetrain extends Subsystem {
 		L1.setSensorPhase(true);
 		R1.setSensorPhase(true);
 
-		L1.config_kF(0, 0, 10); // @ 100%, 4240u/100ms = ((1 * 1023) / 4300) =
-								// .2379
+		L1.config_kF(0, 0, 10); // @ 100%, 4240u/100ms = ((1 * 1023) / 4300) = .2379
 		L1.config_kP(0, 0.425, 10);
 		L1.config_kI(0, 0.0000004, 10); // .0000005
 		L1.config_kD(0, 4.25, 10);
@@ -165,7 +164,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	public void LoggerUpdate() {
-		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
+		SmartDashboard.putNumber("NavX Angle", Gyro.getFusedHeading());
 
 		SmartDashboard.putNumber("L1", L1.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("R1", R1.getSelectedSensorPosition(0));
@@ -184,7 +183,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	public void Arcade(double move, double rotate) {
-		robotDrive.arcadeDrive(move * m_elev_modify, rotate * m_elev_modify);
+		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .16));
 	}
 
 	public void Tank(double left, double right) {
