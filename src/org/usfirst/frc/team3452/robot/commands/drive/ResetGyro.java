@@ -1,18 +1,18 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
+import org.usfirst.frc.team3452.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ResetGyro extends Command {
 
 	public ResetGyro() {
-		requires(Drivetrain.getInstance());
+		requires(Robot.drive);
 	}
 
 	protected void initialize() {
 		setTimeout(0.1);
-		Drivetrain.Gyro.reset();
+		Robot.drive.Gyro.reset();
 	}
 
 	protected void execute() {

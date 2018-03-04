@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -21,26 +22,19 @@ public class Drivetrain extends Subsystem {
 	public static PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 
 	// DRIVETRAIN
-	public static WPI_TalonSRX L1;
-	private static WPI_TalonSRX L2;
-	private static WPI_TalonSRX L3;
-	private static WPI_TalonSRX L4;
+	public WPI_TalonSRX L1, R1;
 
-	public static WPI_TalonSRX R1;
-	private static WPI_TalonSRX R2;
-	private static WPI_TalonSRX R3;
-	private static WPI_TalonSRX R4;
+
+	private static WPI_TalonSRX L2, L3, L4, R2, R3, R4;
 
 	// ROBOT DRIVE OBJECT
 	private DifferentialDrive robotDrive;
 
 	// GYRO
-	public static AHRS Gyro;
+	public AHRS Gyro;
 
 	// variable init
 	public double m_modify = 1, m_elev_modify = 1, l_pos = 0, r_pos = 0;
-
-	private static Drivetrain instance = new Drivetrain();
 
 	public void initHardware() {
 		L1 = new WPI_TalonSRX(Constants.DRIVE_L_1);
@@ -50,12 +44,12 @@ public class Drivetrain extends Subsystem {
 		R1 = new WPI_TalonSRX(Constants.DRIVE_R_1);
 		R2 = new WPI_TalonSRX(Constants.DRIVE_R_2);
 		R3 = new WPI_TalonSRX(Constants.DRIVE_R_3);
-		R3 = new WPI_TalonSRX(Constants.DRIVE_R_4);
-		
+		R4 = new WPI_TalonSRX(Constants.DRIVE_R_4);
+
 		robotDrive = new DifferentialDrive(L1, R1);
 
 		Gyro = new AHRS(SPI.Port.kMXP);
-		
+
 		robotDrive.setDeadband(0.08);
 		robotDrive.setSafetyEnabled(true);
 
@@ -172,12 +166,12 @@ public class Drivetrain extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-		 setDefaultCommand(new DriveTele());
+		setDefaultCommand(new DriveTele());
 	}
 
 	public void Arcade(Joystick joy) {
 		Arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .6 * m_modify));
-		Elevator.getInstance().setDriveLimit();
+		Robot.elevator.setDriveLimit();
 	}
 
 	public void Arcade(double move, double rotate) {
@@ -272,10 +266,6 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putNumber("L1", L1.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("R1", R1.getSelectedSensorPosition(0));
 
-	}
-
-	public static Drivetrain getInstance() {
-		return instance;
 	}
 
 	public static class Constants {

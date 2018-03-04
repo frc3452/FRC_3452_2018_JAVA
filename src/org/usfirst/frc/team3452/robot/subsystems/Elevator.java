@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 
 import com.ctre.phoenix.ParamEnum;
@@ -19,10 +20,7 @@ public class Elevator extends Subsystem {
 	public static WPI_TalonSRX Elev_1;
 	private static WPI_TalonSRX Elev_2;
 
-	public static Elevator instance = new Elevator();
-
 	public void initHardware() {
-
 		Elev_1 = new WPI_TalonSRX(Constants.ELEVATOR_1);
 		Elev_2 = new WPI_TalonSRX(Constants.ELEVATOR_2);
 
@@ -77,18 +75,18 @@ public class Elevator extends Subsystem {
 		if (m_overriden == false) {
 
 			if (pos < 8500)
-				Drivetrain.getInstance().m_elev_modify = Constants.ELEVATOR_SPEED_1;
+				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_1;
 			else if (pos < 12000 && pos > 8500)
-				Drivetrain.getInstance().m_elev_modify = Constants.ELEVATOR_SPEED_2;
+				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_2;
 			else if (pos < 15000 && pos > 12000)
-				Drivetrain.getInstance().m_elev_modify = Constants.ELEVATOR_SPEED_3;
+				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_3;
 			else if (pos < 25000 && pos > 15000)
-				Drivetrain.getInstance().m_elev_modify = Constants.ELEVATOR_SPEED_4;
+				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_4;
 			else if (pos > 25000)
-				Drivetrain.getInstance().m_elev_modify = Constants.ELEVATOR_SPEED_5;
+				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_5;
 
 		} else {
-			Drivetrain.getInstance().m_elev_modify = 1;
+			Robot.drive.m_elev_modify = 1;
 		}
 	}
 
@@ -116,11 +114,7 @@ public class Elevator extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-		 setDefaultCommand(new ElevatorTime(0, 0.01));
-	}
-
-	public static Elevator getInstance() {
-		return instance;
+		setDefaultCommand(new ElevatorTime(0, 0.01));
 	}
 
 	public static class Constants {

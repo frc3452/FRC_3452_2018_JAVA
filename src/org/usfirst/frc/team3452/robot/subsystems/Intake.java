@@ -33,22 +33,14 @@ public class Intake extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-		setDefaultCommand(new IntakeControl(0,0));
+		setDefaultCommand(new IntakeControl(0, 0));
 	}
 
 	public static class Constants {
 		public static final int INTAKE_L = 0;
 		public static final int INTAKE_R = 1;
 
-		public static final boolean INTAKE_L_INVERT = false;
-		public static final boolean INTAKE_R_INVERT = true;
-
-		// COMP BOT
-		// public static final boolean INTAKE_L_INVERT = true;
-		// public static final boolean INTAKE_R_INVERT = false;
-	}
-
-	public static Intake getInstance() {
-		return instance;
+		 public static final boolean INTAKE_L_INVERT = true;
+		 public static final boolean INTAKE_R_INVERT = false;
 	}
 }

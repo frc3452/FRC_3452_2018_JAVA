@@ -1,6 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
+import org.usfirst.frc.team3452.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -8,7 +8,7 @@ public class DriveToStop extends Command {
 	private double m_speed;
 
 	public DriveToStop(double speed) {
-		requires(Drivetrain.getInstance());
+		requires(Robot.drive);
 	}
 
 	protected void initialize() {
@@ -16,17 +16,16 @@ public class DriveToStop extends Command {
 	}
 
 	protected void execute() {
-		Drivetrain.getInstance().Arcade(m_speed, 0);
+		Robot.drive.Arcade(m_speed, 0);
 	}
 
 	protected boolean isFinished() {
-		Drivetrain.getInstance();
-		return (Drivetrain.L1.getSelectedSensorVelocity(0) < 150 || Drivetrain.R1.getSelectedSensorVelocity(0) > -150)
+		return (Robot.drive.L1.getSelectedSensorVelocity(0) < 150 || Robot.drive.R1.getSelectedSensorVelocity(0) > -150)
 				|| isTimedOut();
 	}
 
 	protected void end() {
-		Drivetrain.getInstance().Arcade(0, 0);
+		Robot.drive.Arcade(0, 0);
 	}
 
 	protected void interrupted() {

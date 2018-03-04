@@ -8,8 +8,6 @@ public class Camera extends Subsystem {
 	private static UsbCamera mCamera0, mCamera1;
 	private static VideoSink server;
 
-	public static Camera instance = new Camera();
-
 	public void initHardware() {
 		mCamera0 = CameraServer.getInstance().startAutomaticCapture(0);
 		mCamera0.setResolution(320, 240);
@@ -54,9 +52,5 @@ public class Camera extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-	}
-
-	public static Camera getInstance() {
-		return instance;
 	}
 }

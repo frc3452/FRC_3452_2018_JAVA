@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
@@ -15,11 +16,11 @@ public class OverrideSet extends InstantCommand {
 
 	protected void initialize() {
 		if (m_override == -1) {
-			Elevator.getInstance().m_overriden = !Elevator.getInstance().m_overriden;
+			Robot.elevator.m_overriden = !Robot.elevator.m_overriden;
 		} else if (m_override == 0) {
-			Elevator.getInstance().m_overriden = false;
+			Robot.elevator.m_overriden = false;
 		} else if (m_override == 1) {
-			Elevator.getInstance().m_overriden = true;
+			Robot.elevator.m_overriden = true;
 		}
 	}
 

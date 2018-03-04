@@ -8,13 +8,10 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Lights extends Subsystem {
 
 	private static CANifier canifier;
-
 	public int m_hue;
 
-	private static Lights instance = new Lights();
-
 	public void initHardware() {
-		// canifier = new CANifier(Constants.CANIFIER_ID);
+		canifier = new CANifier(Constants.CANIFIER_ID);
 		m_hue = 0;
 	}
 
@@ -134,9 +131,6 @@ public class Lights extends Subsystem {
 		// setDefaultCommand(new LightsCycle());
 	}
 
-	public static Lights getInstance() {
-		return instance;
-	}
 
 	public static class Constants {
 		public static final int CANIFIER_ID = 20;

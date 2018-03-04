@@ -19,15 +19,13 @@ public class AutonSelector extends Subsystem {
 	private String overrideStringPrevious;
 	public String overrideString, autonString;
 
-	private static AutonSelector instance = new AutonSelector();
-
 	public void initHardware() {
+		as_A = new AnalogInput(Constants.AUTO_SELECTOR_1);
+		as_B = new AnalogInput(Constants.AUTO_SELECTOR_2);
+
 		for (int i = 0; i < 20; i++) {
 			autoCommandName[i] = "NO COMMAND";
 		}
-
-		as_A = new AnalogInput(Constants.AUTO_SELECTOR_1);
-		as_B = new AnalogInput(Constants.AUTO_SELECTOR_2);
 	}
 
 	public void printSelected() {
@@ -164,7 +162,7 @@ public class AutonSelector extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-		 setDefaultCommand(new LoggerUpdate());
+		setDefaultCommand(new LoggerUpdate());
 	}
 
 	public static class Constants {
@@ -213,9 +211,5 @@ public class AutonSelector extends Subsystem {
 		public static final int AUTO_10_L = AUTO_10 - AUTO_V;
 		public static final int AUTO_10_H = AUTO_10 + AUTO_V;
 
-	}
-
-	public static AutonSelector getInstance() {
-		return instance;
 	}
 }

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -11,7 +12,7 @@ public class ElevatorTime extends Command {
 	private double m_speed, m_time;
 
 	public ElevatorTime(double speed, double time) {
-		requires(Elevator.getInstance());
+		requires(Robot.elevator);
 
 		m_speed = speed;
 		m_time = time;

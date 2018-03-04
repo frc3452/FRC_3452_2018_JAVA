@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -8,7 +9,7 @@ public class EncoderDrive extends Command {
 	private double m_left, m_right, m_laccel, m_raccel, m_topspeed;
 
 	public EncoderDrive(double left, double right, double leftaccel, double rightaccel, double topspeed) {
-		requires(Drivetrain.getInstance());
+		requires(Robot.drive);
 
 		m_left = left;
 		m_right = right;
@@ -23,15 +24,15 @@ public class EncoderDrive extends Command {
 
 	protected void execute() {
 		
-		Drivetrain.getInstance().MotionMagic(m_left, m_right, m_laccel, m_raccel, m_topspeed, m_topspeed);
+		Robot.drive.MotionMagic(m_left, m_right, m_laccel, m_raccel, m_topspeed, m_topspeed);
 	}
 
 	protected boolean isFinished() {
-		return Drivetrain.getInstance().isMove(1.3) || isTimedOut();
+		return Robot.drive.isMove(1.3) || isTimedOut();
 	}
 
 	protected void end() {
-		Drivetrain.getInstance().EncoderDone();
+		Robot.drive.EncoderDone();
 	}
 
 	protected void interrupted() {

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.signal;
 
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 
@@ -8,7 +9,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class LoggerUpdate extends Command {
 
     public LoggerUpdate() {
-    	requires(AutonSelector.getInstance());
+    	requires(Robot.autonSelector);
     }
     
     
@@ -17,7 +18,7 @@ public class LoggerUpdate extends Command {
     }
     
     protected void execute() {
-    	Drivetrain.getInstance().LoggerUpdate();
+    	Robot.drive.LoggerUpdate();
     }
 
     protected boolean isFinished() {

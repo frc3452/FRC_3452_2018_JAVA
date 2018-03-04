@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.signal;
 
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
@@ -10,7 +11,7 @@ public class LightsHSV extends InstantCommand {
 
 	public LightsHSV(double h, double s, double v) {
 		super();
-		requires(Lights.getInstance());
+		requires(Robot.lights);
 
 		m_h = h;
 		m_s = s;
@@ -18,7 +19,7 @@ public class LightsHSV extends InstantCommand {
 	}
 
 	protected void initialize() {
-		Lights.getInstance().hsv(m_h, m_s, m_v);
+		Robot.lights.hsv(m_h, m_s, m_v);
 	}
 
 }

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
 import org.usfirst.frc.team3452.robot.commands.drive.GyroPos;
@@ -18,17 +19,17 @@ public class LeftAuton extends CommandGroup {
 		addSequential(new WaitForGameData());
 
 		if (priority == "SWITCH") {
-			if (Lights.getInstance().gsm().charAt(0) == 'L') {
+			if (Robot.lights.gsm().charAt(0) == 'L') {
 				switchL(selector);
-			} else if (Lights.getInstance().gsm().charAt(0) == 'R') {
+			} else if (Robot.lights.gsm().charAt(0) == 'R') {
 				switchR(selector);
 			} else {
 				defaultAuton();
 			}
 		} else if (priority == "SCALE") {
-			if (Lights.getInstance().gsm().charAt(1) == 'L') {
+			if (Robot.lights.gsm().charAt(1) == 'L') {
 				scaleL(selector);
-			} else if (Lights.getInstance().gsm().charAt(1) == 'R') {
+			} else if (Robot.lights.gsm().charAt(1) == 'R') {
 				scaleR(selector);
 			} else {
 				defaultAuton();

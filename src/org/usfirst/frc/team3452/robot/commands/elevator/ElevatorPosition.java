@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -9,7 +10,7 @@ public class ElevatorPosition extends Command {
 	private double m_value;
 
 	public ElevatorPosition(double value) {
-		requires(Elevator.getInstance());
+		requires(Robot.elevator);
 
 		m_value = value;
 	}
@@ -19,15 +20,15 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected void execute() {
-		Elevator.getInstance().Encoder(m_value);
+		Robot.elevator.Encoder(m_value);
 	}
 
 	protected boolean isFinished() {
-		return Elevator.getInstance().isDone(3) || isTimedOut();
+		return Robot.elevator.isDone(3) || isTimedOut();
 	}
 
 	protected void end() {
-		Elevator.getInstance().EncoderDone();
+		Robot.elevator.EncoderDone();
 	}
 
 	protected void interrupted() {

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.pwm;
 
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -10,7 +11,7 @@ public class IntakeSpin extends Command {
 	private boolean m_clockwise;
 
 	public IntakeSpin(double speed, boolean clockwise) {
-		requires(Intake.getInstance());
+		requires(Robot.intake);
 
 		m_speed = speed;
 		m_clockwise = clockwise;
@@ -20,8 +21,8 @@ public class IntakeSpin extends Command {
 	}
 
 	protected void execute() {
-		Intake.Intake_L.set((m_speed * ((m_clockwise) ? -1 : 1)));
-		Intake.Intake_R.set((m_speed * ((m_clockwise) ? 1 : -1)));
+		Robot.intake.Intake_L.set((m_speed * ((m_clockwise) ? -1 : 1)));
+		Robot.intake.Intake_R.set((m_speed * ((m_clockwise) ? 1 : -1)));
 	}
 
 	protected boolean isFinished() {
@@ -29,7 +30,7 @@ public class IntakeSpin extends Command {
 	}
 
 	protected void end() {
-		Intake.getInstance().manual(0);
+		Robot.intake.manual(0);
 	}
 
 	protected void interrupted() {

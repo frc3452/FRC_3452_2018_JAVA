@@ -1,11 +1,8 @@
 package org.usfirst.frc.team3452.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
+import org.usfirst.frc.team3452.robot.subsystems.Climber;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
@@ -13,10 +10,12 @@ import org.usfirst.frc.team3452.robot.subsystems.Lights;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import org.usfirst.frc.team3452.robot.subsystems.Climber;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
-	public static final Drivetrain drivetrain = new Drivetrain();
+	public static final Drivetrain drive = new Drivetrain();
 	public static final Elevator elevator = new Elevator();
 	public static final Intake intake = new Intake();
 	public static final Climber climber = new Climber();
@@ -26,17 +25,21 @@ public class Robot extends TimedRobot {
 	public static OI _oi;
 
 	Command autonomousCommand = null;
-	Command autoCommand[] = { null };
+	Command autoCommand[] = new Command[20];
 	Command defaultCommand = null;
 
 	@Override
 	public void robotInit() {
-		Drivetrain.getInstance().initHardware();
-		Elevator.getInstance().initHardware();
-		Intake.getInstance().initHardware();
-		Climber.getInstance().initHardware();
-		Lights.getInstance().initHardware();
-		AutonSelector.getInstance().initHardware();
+		for (int i = 0; i < 20; i++) {
+			autoCommand[i] = null;
+		}
+
+		Robot.drive.initHardware();
+		Robot.elevator.initHardware();
+		Robot.intake.initHardware();
+		Robot.climber.initHardware();
+		Robot.lights.initHardware();
+		Robot.autonSelector.initHardware();
 
 		_oi = new OI();
 		OI.init();
@@ -44,31 +47,31 @@ public class Robot extends TimedRobot {
 		defaultCommand = (new DriveTime(.25, 0, 3));
 
 		autoCommand[1] = (new DriveTime(-.25, 0, 1));
-		AutonSelector.getInstance().autoCommandName[1] = "backwards";
+		Robot.autonSelector.autoCommandName[1] = "backwards";
 
 		autoCommand[2] = (new DriveTime(.25, 0, 1));
-		AutonSelector.getInstance().autoCommandName[2] = "forwards";
+		Robot.autonSelector.autoCommandName[2] = "forwards";
 	}
 
 	@Override
 	public void disabledInit() {
-		Drivetrain.getInstance().BrakeCoast(NeutralMode.Coast);
+		Robot.drive.BrakeCoast(NeutralMode.Coast);
 	}
 
 	@Override
 	public void disabledPeriodic() {
 		autonChooser();
-		AutonSelector.getInstance().printSelected();
+		Robot.autonSelector.printSelected();
 
 		Scheduler.getInstance().run();
 	}
 
 	@Override
 	public void autonomousInit() {
-		Drivetrain.getInstance().BrakeCoast(NeutralMode.Brake);
+		Robot.drive.BrakeCoast(NeutralMode.Brake);
 
 		autonChooser();
-		AutonSelector.getInstance().printSelected();
+		Robot.autonSelector.printSelected();
 
 		if (autonomousCommand != null)
 			autonomousCommand.start();
@@ -81,7 +84,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-		Drivetrain.getInstance().BrakeCoast(NeutralMode.Coast);
+		Robot.drive.BrakeCoast(NeutralMode.Coast);
 
 		if (autonomousCommand != null) {
 			autonomousCommand.cancel();
@@ -104,63 +107,63 @@ public class Robot extends TimedRobot {
 			// A BUTTON
 			if (OI.driverJoy.getRawButton(1)) {
 				autonomousCommand = autoCommand[1];
-				AutonSelector.getInstance().overrideString = "Controller override 1:\t"
-						+ AutonSelector.getInstance().autoCommandName[1];
-				AutonSelector.getInstance().m_ControllerOverride = true;
+				Robot.autonSelector.overrideString = "Controller override 1:\t"
+						+ Robot.autonSelector.autoCommandName[1];
+				Robot.autonSelector.m_ControllerOverride = true;
 			}
 
 			// B BUTTON
 			else if (OI.driverJoy.getRawButton(2)) {
 				autonomousCommand = autoCommand[2];
-				AutonSelector.getInstance().overrideString = "Controller override 2:\t"
-						+ AutonSelector.getInstance().autoCommandName[2];
-				AutonSelector.getInstance().m_ControllerOverride = true;
+				Robot.autonSelector.overrideString = "Controller override 2:\t"
+						+ Robot.autonSelector.autoCommandName[2];
+				Robot.autonSelector.m_ControllerOverride = true;
 			}
 
 			// X BUTTON
 			else if (OI.driverJoy.getRawButton(3)) {
 				autonomousCommand = autoCommand[3];
-				AutonSelector.getInstance().overrideString = "Controller override 3:\t"
-						+ AutonSelector.getInstance().autoCommandName[3];
-				AutonSelector.getInstance().m_ControllerOverride = true;
+				Robot.autonSelector.overrideString = "Controller override 3:\t"
+						+ Robot.autonSelector.autoCommandName[3];
+				Robot.autonSelector.m_ControllerOverride = true;
 			}
 
 			// Y BUTTON
 			else if (OI.driverJoy.getRawButton(4)) {
 				autonomousCommand = autoCommand[4];
-				AutonSelector.getInstance().overrideString = "Controller override 4:\t"
-						+ AutonSelector.getInstance().autoCommandName[4];
-				AutonSelector.getInstance().m_ControllerOverride = true;
+				Robot.autonSelector.overrideString = "Controller override 4:\t"
+						+ Robot.autonSelector.autoCommandName[4];
+				Robot.autonSelector.m_ControllerOverride = true;
 			}
 
 			// BACK BUTTON
 			else if (OI.driverJoy.getRawButton(7)) {
 				autonomousCommand = autoCommand[5];
-				AutonSelector.getInstance().overrideString = "Controller override 5:\t"
-						+ AutonSelector.getInstance().autoCommandName[5];
-				AutonSelector.getInstance().m_ControllerOverride = true;
+				Robot.autonSelector.overrideString = "Controller override 5:\t"
+						+ Robot.autonSelector.autoCommandName[5];
+				Robot.autonSelector.m_ControllerOverride = true;
 			}
 
 			// START BUTTON
 			else if (OI.driverJoy.getRawButton(8)) {
 				autonomousCommand = autoCommand[6];
-				AutonSelector.getInstance().overrideString = "Controller override 6:\t"
-						+ AutonSelector.getInstance().autoCommandName[6];
-				AutonSelector.getInstance().m_ControllerOverride = true;
+				Robot.autonSelector.overrideString = "Controller override 6:\t"
+						+ Robot.autonSelector.autoCommandName[6];
+				Robot.autonSelector.m_ControllerOverride = true;
 			}
 
 			// LEFT CLICK
 			else if (OI.driverJoy.getRawButton(9)) {
 				autonomousCommand = defaultCommand;
-				AutonSelector.getInstance().overrideString = "Controller override: DEFAULT AUTO SELECTED";
+				Robot.autonSelector.overrideString = "Controller override: DEFAULT AUTO SELECTED";
 
-				AutonSelector.getInstance().m_ControllerOverride = true;
+				Robot.autonSelector.m_ControllerOverride = true;
 			}
 
 			// RIGHT CLICK
 			else if (OI.driverJoy.getRawButton(10)) {
-				AutonSelector.getInstance().m_ControllerOverride = false;
-				System.out.println("Auto override disengaged. " + AutonSelector.getInstance().autonString);
+				Robot.autonSelector.m_ControllerOverride = false;
+				System.out.println("Auto override disengaged. " + Robot.autonSelector.autonString);
 			}
 		}
 
@@ -170,8 +173,8 @@ public class Robot extends TimedRobot {
 		controllerChooser();
 
 		// if not overriden
-		if (AutonSelector.getInstance().m_ControllerOverride == false) {
-			switch (AutonSelector.getInstance().uglyAnalog()) {
+		if (Robot.autonSelector.m_ControllerOverride == false) {
+			switch (Robot.autonSelector.uglyAnalog()) {
 			case 1:
 				autonomousCommand = autoCommand[1];
 				break;

@@ -6,15 +6,12 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Climber extends Subsystem {
 	private static Spark Climb_1;
 
-	public static Climber instance = new Climber();
-
 	public void Control(double speed) {
 		Climb_1.set(Math.abs(speed));
 	}
 
 	public void initHardware() {
 		Climb_1 = new Spark(Constants.CLIMBER_1);
-
 		Climb_1.setInverted(Constants.CLIMBER_1_INVERT);
 
 		Climb_1.setSubsystem("Climber");
@@ -22,10 +19,6 @@ public class Climber extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-	}
-
-	public static Climber getInstance() {
-		return instance;
 	}
 
 	public static class Constants {
