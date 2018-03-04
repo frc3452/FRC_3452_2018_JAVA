@@ -1,7 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -24,11 +23,12 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected boolean isFinished() {
-		return Robot.elevator.isDone(3) || isTimedOut();
+		return Robot.elevator.isDone(1.5) || isTimedOut();
 	}
 
 	protected void end() {
 		Robot.elevator.EncoderDone();
+		System.out.println("Elevator done");
 	}
 
 	protected void interrupted() {
