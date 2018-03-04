@@ -67,7 +67,7 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new DriveTime(-.25, 0, .225)); // jog forward backwards to drop arm
 
 			addParallel(new ElevatorPosition(1));
-			addSequential(new EncoderFrom(11.3, 11.3, .35, .35, .6)); // drive to far side of switch
+			addSequential(new EncoderFrom(11.3, 11.3, .35, .35, .5)); // drive to far side of switch
 
 			addSequential(new EncoderFrom(.75, -1.5, .5, .5, .5)); // turn
 
