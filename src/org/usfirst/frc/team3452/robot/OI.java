@@ -38,6 +38,7 @@ public class OI {
 		driverJoyX.whileHeld(new IntakeManual(-.75));
 		driverJoyB.whileHeld(new IntakeManual(.75));
 		
+		driverJoyLB.whenPressed(new EncoderGyro(20,20,.4,.4,.6));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
 		driverJoyBack.whenPressed(new OverrideSet(-1));
