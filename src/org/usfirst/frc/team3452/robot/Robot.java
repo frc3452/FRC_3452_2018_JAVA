@@ -37,7 +37,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-
 		for (int i = 0; i < 20; i++) {
 			autoCommand[i] = null;
 		}
