@@ -15,7 +15,7 @@ public class SetModify extends InstantCommand {
 	protected void initialize() {
 		if (m_modify == -1) {
 			if (Robot.drive.m_modify == 1) {
-				Robot.drive.m_modify = .5;
+				Robot.drive.m_modify = .6;
 			} else {
 				Robot.drive.m_modify = 1;
 			}
