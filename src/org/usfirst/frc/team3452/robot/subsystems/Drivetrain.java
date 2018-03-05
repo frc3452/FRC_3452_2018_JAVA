@@ -1,13 +1,5 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SerialPort;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
 
@@ -17,6 +9,13 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class Drivetrain extends Subsystem {
 	// PDP
 	public PowerDistributionPanel pdp = new PowerDistributionPanel(0);
@@ -25,7 +24,7 @@ public class Drivetrain extends Subsystem {
 	public WPI_TalonSRX L1, R1;
 
 	private WPI_TalonSRX L2, L3, L4, R2, R3, R4;
-	
+
 	// ROBOT DRIVE OBJECT
 	private DifferentialDrive robotDrive;
 
@@ -164,10 +163,14 @@ public class Drivetrain extends Subsystem {
 	}
 
 	public void LoggerUpdate() {
-		SmartDashboard.putNumber("NavX Angle", Gyro.getFusedHeading());
+		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
 
 		SmartDashboard.putNumber("L1", L1.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("R1", R1.getSelectedSensorPosition(0));
+		
+		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 4096);
+		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 4096);
+		
 		SmartDashboard.putNumber("Elevator Enc", Robot.elevator.Elev_1.getSelectedSensorPosition(0));
 
 		SmartDashboard.putString("Selected auton", Robot.autonSelector.autonString);
@@ -185,13 +188,13 @@ public class Drivetrain extends Subsystem {
 	public void Arcade(double move, double rotate) {
 		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .16));
 	}
-	
+
 	public void Tank(double left, double right) {
 		robotDrive.tankDrive(left * m_elev_modify, right * m_elev_modify);
 	}
 
 	public void Tank(Joystick joy) {
-		robotDrive.tankDrive(joy.getRawAxis(1) * m_elev_modify, joy.getRawAxis(5) * m_elev_modify);
+		robotDrive.tankDrive(joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
 	}
 
 	public void BrakeCoast(NeutralMode mode) {
@@ -252,7 +255,7 @@ public class Drivetrain extends Subsystem {
 		robotDrive.setSafetyEnabled(true);
 	}
 
-	public boolean isMove(double multiplier) {
+	public boolean encoderIsDone(double multiplier) {
 		if ((L1.getSelectedSensorPosition(0) < (l_pos + (102 * multiplier))
 				&& L1.getSelectedSensorPosition(0) > (l_pos - (102 * multiplier)))
 				&& R1.getSelectedSensorPosition(0) < (r_pos + (102 * multiplier))

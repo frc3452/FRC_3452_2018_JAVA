@@ -29,8 +29,8 @@ public class EncoderGyro extends Command {
 
 	protected void execute() {
 		c_gyro = Robot.drive.Gyro.getAngle();
-		
-		if (c_gyro > i_gyro)
+
+		if (c_gyro > i_gyro) 
 			Robot.drive.MotionMagic(l_pos, r_pos, l_accel, r_accel, m_speed * (1 - (.03 * Math.abs(c_gyro))), m_speed);
 		else
 			Robot.drive.MotionMagic(l_pos, r_pos, l_accel, r_accel, m_speed, m_speed * (1 - (.03 * Math.abs(c_gyro))));
@@ -38,7 +38,7 @@ public class EncoderGyro extends Command {
 	}
 
 	protected boolean isFinished() {
-		return isTimedOut();
+		return Robot.drive.encoderIsDone(1.3) || isTimedOut();
 	}
 
 	protected void end() {

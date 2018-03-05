@@ -15,7 +15,8 @@ public class DriveTele extends Command {
 	}
 
 	protected void execute() {
-		Robot.drive.Arcade(OI.driverJoy);
+//		Robot.drive.Arcade(OI.driverJoy);
+		Robot.drive.Tank(OI.driverJoy);
 	}
 
 	protected boolean isFinished() {

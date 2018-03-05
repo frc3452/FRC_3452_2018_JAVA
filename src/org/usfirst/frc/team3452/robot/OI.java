@@ -1,6 +1,7 @@
 
 package org.usfirst.frc.team3452.robot;
 
+import org.usfirst.frc.team3452.robot.commands.drive.EncoderGyro;
 import org.usfirst.frc.team3452.robot.commands.drive.SetModify;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
@@ -8,7 +9,6 @@ import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
 import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
-import org.usfirst.frc.team3452.robot.commands.signal.WaitForGameData;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -35,12 +35,14 @@ public class OI {
 		// DRIVER JOY
 		driverJoyA.whenPressed(new SetModify(-1));
 
-		driverJoyBack.whenPressed(new OverrideSet(-1));
 		driverJoyX.whileHeld(new IntakeManual(-.75));
 		driverJoyB.whileHeld(new IntakeManual(.75));
+		
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
+		driverJoyBack.whenPressed(new OverrideSet(-1));
 		driverJoyStart.whileHeld(new Climb(.7));
+		
 
 		// OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));

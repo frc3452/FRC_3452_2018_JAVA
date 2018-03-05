@@ -23,12 +23,12 @@ public class EncoderDrive extends Command {
 	}
 
 	protected void execute() {
-		
+
 		Robot.drive.MotionMagic(m_left, m_right, m_laccel, m_raccel, m_topspeed, m_topspeed);
 	}
 
 	protected boolean isFinished() {
-		return Robot.drive.isMove(1.3) || isTimedOut();
+		return Robot.drive.encoderIsDone(1.3) || isTimedOut();
 	}
 
 	protected void end() {
