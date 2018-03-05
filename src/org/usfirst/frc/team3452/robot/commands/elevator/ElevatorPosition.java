@@ -15,7 +15,7 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected void initialize() {
-		setTimeout(2);
+		setTimeout(4);
 	}
 
 	protected void execute() {
@@ -28,7 +28,7 @@ public class ElevatorPosition extends Command {
 
 	protected void end() {
 		Robot.elevator.EncoderDone();
-		System.out.println("Elevator done");
+		System.out.println("Elevator position completed.");
 	}
 
 	protected void interrupted() {

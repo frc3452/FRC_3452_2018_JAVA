@@ -3,6 +3,8 @@ package org.usfirst.frc.team3452.robot.commands.drive;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class EncoderDrive extends Command {
@@ -28,11 +30,12 @@ public class EncoderDrive extends Command {
 	}
 
 	protected boolean isFinished() {
-		return Robot.drive.encoderIsDone(1.3) || isTimedOut();
+		return Robot.drive.encoderIsDone(1.5) || isTimedOut();
 	}
 
 	protected void end() {
 		Robot.drive.EncoderDone();
+		System.out.println("Encoder drive completed.");
 	}
 
 	protected void interrupted() {
