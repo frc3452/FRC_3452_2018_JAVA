@@ -39,13 +39,10 @@ public class Elevator extends Subsystem {
 
 		// PIDs
 		Elev_1.config_kF(0, 0, 10);
-		Elev_1.config_kP(0, 0.11, 10);
-		Elev_1.config_kI(0, 0.00004, 10);
-		Elev_1.config_kD(0, 1.1, 10);
+		Elev_1.config_kP(0, 0.09, 10);
+		Elev_1.config_kI(0, 0.000025, 10);
+		Elev_1.config_kD(0, 2.5, 10);
 		// was .11, .00001, 1.11
-
-		// SPEED LIMITING
-		Elev_1.configClosedloopRamp(.5, 10);
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
 		Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);
@@ -58,11 +55,24 @@ public class Elevator extends Subsystem {
 		Elev_1.setNeutralMode(NeutralMode.Brake);
 		Elev_2.setNeutralMode(NeutralMode.Brake);
 
+		
+		//CURRENT LIMITING
 		Elev_1.configContinuousCurrentLimit(Constants.ELEVATOR_AMP_LIMIT, 10);
 		Elev_1.configPeakCurrentLimit(Constants.ELEVATOR_AMP_TRIGGER, 10);
 		Elev_1.configPeakCurrentDuration(Constants.ELEVATOR_AMP_TIME, 10);
-		Elev_1.configOpenloopRamp(Constants.ELEVATOR_RAMP_TIME, 10);
 
+		Elev_2.configContinuousCurrentLimit(Constants.ELEVATOR_AMP_LIMIT, 10);
+		Elev_2.configPeakCurrentLimit(Constants.ELEVATOR_AMP_TRIGGER, 10);
+		Elev_2.configPeakCurrentDuration(Constants.ELEVATOR_AMP_TIME, 10);
+
+		Elev_1.enableCurrentLimit(true);
+		Elev_2.enableCurrentLimit(true);
+
+		Elev_1.configOpenloopRamp(Constants.ELEVATOR_OPEN_RAMP_TIME, 10);
+		Elev_1.configClosedloopRamp(Constants.ELEVATOR_CLOSED_RAMP_TIME, 10);
+
+		
+		//SHUFFLEBOARD
 		Elev_1.setSubsystem("Elevator");
 		Elev_2.setSubsystem("Elevator");
 
@@ -92,7 +102,7 @@ public class Elevator extends Subsystem {
 	}
 
 	public void Encoder(double position) {
-		Elev_1.configPeakOutputForward(.4, 10);
+		Elev_1.configPeakOutputForward(.45, 10);
 		Elev_1.configPeakOutputReverse(-.8, 10);
 		m_pos = -position * 4096;
 		Elev_1.set(ControlMode.Position, m_pos);
@@ -127,7 +137,8 @@ public class Elevator extends Subsystem {
 
 		public static final boolean ELEVATOR_ENC_INVERT = false;
 
-		public static final double ELEVATOR_RAMP_TIME = .5;
+		public static final double ELEVATOR_OPEN_RAMP_TIME = .5;
+		public static final double ELEVATOR_CLOSED_RAMP_TIME = .25;
 
 		public static final double ELEVATOR_SPEED_1 = 1;
 		public static final double ELEVATOR_SPEED_2 = .9;
