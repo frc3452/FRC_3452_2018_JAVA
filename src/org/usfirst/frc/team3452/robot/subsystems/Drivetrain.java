@@ -194,7 +194,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	public void Tank(Joystick joy) {
-		robotDrive.tankDrive(joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
+		robotDrive.tankDrive(-joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
 	}
 
 	public void BrakeCoast(NeutralMode mode) {
