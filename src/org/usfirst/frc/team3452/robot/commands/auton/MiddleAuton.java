@@ -154,6 +154,7 @@ public class MiddleAuton extends CommandGroup {
 	}
 
 	private void defaultAuton() {
+		//TODO add default
 		addSequential(new ElevatorTime(.5, .15));
 		addSequential(new DriveTime(0, 0, 1));
 		addSequential(new ElevatorPosition(2));

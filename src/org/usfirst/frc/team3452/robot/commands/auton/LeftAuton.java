@@ -26,6 +26,7 @@ public class LeftAuton extends CommandGroup {
 				defaultAuton();
 			}
 		} else if (priority == "SCALE") {
+			//TODO Left Scale
 			if (Robot.lights.gsm().charAt(1) == 'L') {
 				scaleL(selector);
 			} else if (Robot.lights.gsm().charAt(1) == 'R') {
@@ -60,6 +61,7 @@ public class LeftAuton extends CommandGroup {
 
 	private void switchR(int mode) {
 		if (mode == 1) {
+			//FIXME LEFT POS RIGHT SWITCH
 			addSequential(new ResetGyro());
 
 			addParallel(new DriveTime(.25, 0, .5));
@@ -111,6 +113,8 @@ public class LeftAuton extends CommandGroup {
 	}
 
 	private void defaultAuton() {
+		//TODO add default
+		
 		addSequential(new ElevatorTime(.5, .15));
 		addSequential(new DriveTime(0, 0, 1));
 		addSequential(new ElevatorPosition(2));
