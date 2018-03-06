@@ -70,8 +70,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
-		//		Robot.drive.BrakeCoast(NeutralMode.Coast);
-		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
+		Robot.drive.BrakeCoast(NeutralMode.Coast);
+		//		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
 	}
 
 	@Override
