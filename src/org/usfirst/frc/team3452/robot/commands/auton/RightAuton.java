@@ -19,39 +19,48 @@ public class RightAuton extends CommandGroup {
 	public RightAuton(String priority, int selector) {
 		addSequential(new WaitForGameData());
 
+		if (Robot.lights.gsm() != "NOT") {
+
 			if (priority == "SWITCH") {
 				if (Robot.lights.gsm().charAt(0) == 'L') {
 					switchL(selector);
 				} else if (Robot.lights.gsm().charAt(0) == 'R') {
 					switchR(selector);
-
 				}
 			} else if (priority == "SCALE") {
-				//TODO Left Scale
 				if (Robot.lights.gsm().charAt(1) == 'L') {
 					scaleL(selector);
 				} else if (Robot.lights.gsm().charAt(1) == 'R') {
 					scaleR(selector);
 				}
 			} else {
+				System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
 				defaultAuton();
 			}
-	}
-
-	private void switchL(int mode) {
-		if (mode == 1) {
-			// TODO RIGHT POS LEFT SWITCH
-			addSequential(new EncoderReset());
-		} else if (mode == 2) {
-			addSequential(new EncoderReset());
 		} else {
+			System.out.println("ERROR Game data not found; running default");
 			defaultAuton();
 		}
 	}
 
+	private void switchL(int mode) {
+		//		if (mode == 1) {
+		switch (mode) {
+		case 1:
+			addSequential(new EncoderReset());
+			break;
+		case 2:
+			addSequential(new EncoderReset());
+			break;
+		default:
+			defaultAuton();
+			break;
+		}
+	}
+
 	private void switchR(int mode) {
-		if (mode == 1) {
-			//FIXME Test Robot Right Switch Right 
+		switch (mode) {
+		case 1:
 			addSequential(new ResetGyro());
 			addSequential(new EncoderReset());
 
@@ -66,26 +75,33 @@ public class RightAuton extends CommandGroup {
 			addSequential(new EncoderFrom(.8, .8, .5, .5, .5)); // drive and drop
 			addSequential(new IntakeTime(1, .5));
 			addSequential(new EncoderFrom(-.5, -.5, .5, .5, .5));
-
-		} else if (mode == 2) {
+			break;
+		case 2:
 			addSequential(new EncoderReset());
-		} else {
+			break;
+		default:
 			defaultAuton();
+			break;
+
 		}
 	}
 
 	private void scaleL(int mode) {
-		if (mode == 1) {
+		switch (mode) {
+		case 1:
 			addSequential(new EncoderReset());
-		} else if (mode == 2) {
-
-		} else {
+		case 2:
+			addSequential(new EncoderReset());
+			break;
+		default:
 			defaultAuton();
+			break;
 		}
 	}
 
 	private void scaleR(int mode) {
-		if (mode == 1) {
+		switch (mode) {
+		case 1:
 			addSequential(new ResetGyro());
 			addSequential(new EncoderReset()); //reset
 
@@ -104,18 +120,20 @@ public class RightAuton extends CommandGroup {
 			addSequential(new DriveTime(-.4, 0, 1.6));
 			addSequential(new ElevatorTime(-.4, 10));
 			addSequential(new GyroPos(225, .4, 1));
-
-		} else if (mode == 2) {
+			break;
+		case 2:
 			addSequential(new EncoderReset());
-		} else {
+			break;
+		default:
 			defaultAuton();
+			break;
 		}
 	}
 
 	private void defaultAuton() {
 		// TODO add default
 		addSequential(new EncoderReset());
-		
+
 		addSequential(new ElevatorTime(.5, .15));
 		addSequential(new DriveTime(0, 0, 1));
 		addSequential(new ElevatorPosition(2));

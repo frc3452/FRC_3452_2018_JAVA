@@ -19,26 +19,33 @@ public class LeftAuton extends CommandGroup {
 	public LeftAuton(String priority, int selector) {
 		addSequential(new WaitForGameData());
 
-		if (priority == "SWITCH") {
-			if (Robot.lights.gsm().charAt(0) == 'L') {
-				switchL(selector);
-			} else if (Robot.lights.gsm().charAt(0) == 'R') {
-				switchR(selector);
-			}
-		} else if (priority == "SCALE") {
-			//TODO Left Scale
-			if (Robot.lights.gsm().charAt(1) == 'L') {
-				scaleL(selector);
-			} else if (Robot.lights.gsm().charAt(1) == 'R') {
-				scaleR(selector);
+		if (Robot.lights.gsm() != "NOT") {
+
+			if (priority == "SWITCH") {
+				if (Robot.lights.gsm().charAt(0) == 'L') {
+					switchL(selector);
+				} else if (Robot.lights.gsm().charAt(0) == 'R') {
+					switchR(selector);
+				}
+			} else if (priority == "SCALE") {
+				if (Robot.lights.gsm().charAt(1) == 'L') {
+					scaleL(selector);
+				} else if (Robot.lights.gsm().charAt(1) == 'R') {
+					scaleR(selector);
+				}
+			} else {
+				System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
+				defaultAuton();
 			}
 		} else {
+			System.out.println("ERROR Game data not found; running default");
 			defaultAuton();
 		}
 	}
 
 	private void switchL(int mode) {
-		if (mode == 1) {
+		switch (mode) {
+		case 1:
 			addSequential(new ResetGyro());
 			addSequential(new EncoderReset());
 
@@ -53,16 +60,19 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new EncoderFrom(.8, .8, .5, .5, .5)); // drive and drop
 			addSequential(new IntakeTime(1, .5));
 			addSequential(new EncoderFrom(-.5, -.5, .5, .5, .5));
-
-		} else if (mode == 2) {
+			break;
+		case 2:
 			addSequential(new EncoderReset());
-		} else {
+			break;
+		default:
 			defaultAuton();
+			break;
 		}
 	}
 
 	private void switchR(int mode) {
-		if (mode == 1) {
+		switch (mode) {
+		case 1:
 			//FIXME LEFT POS RIGHT SWITCH
 			addSequential(new ResetGyro());
 			addSequential(new EncoderReset());
@@ -85,16 +95,19 @@ public class LeftAuton extends CommandGroup {
 			//			addSequential(new EncoderFrom(1, 1, .5, .5, .5)); // place
 			//			addSequential(new IntakeTime(1, .5));
 			//			addSequential(new EncoderFrom(-1, -1, .5, .5, .5));
-
-		} else if (mode == 2) {
+			break;
+		case 2:
 			addSequential(new EncoderReset());
-		} else {
+			break;
+		default:
 			defaultAuton();
+			break;
 		}
 	}
 
 	private void scaleL(int mode) {
-		if (mode == 1) {
+		switch (mode) {
+		case 1:
 			addSequential(new ResetGyro());
 			addSequential(new EncoderReset()); //reset
 
@@ -102,7 +115,7 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
 
-//			addSequential(new ElevatorPosition(1)); //lift for drive
+			//			addSequential(new ElevatorPosition(1)); //lift for drive
 			addSequential(new ElevatorTime(.75, .75));
 			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, .016)); // drive to far side of switch
 			addSequential(new EncoderFrom(.2, -.4, .4, .4, .5)); //turn to switch
@@ -115,20 +128,27 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new ElevatorTime(-.4, 10));
 			addSequential(new GyroPos(135, .4, 1));
 
-		} else if (mode == 2) {
+			break;
+		case 2:
 			addSequential(new EncoderReset());
-		} else {
+			break;
+		default:
 			defaultAuton();
+			break;
 		}
 	}
 
 	private void scaleR(int mode) {
-		if (mode == 1) {
+		switch (mode) {
+		case 1:
 			addSequential(new EncoderReset());
-		} else if (mode == 2) {
+			break;
+		case 2:
 			addSequential(new EncoderReset());
-		} else {
+			break;
+		default:
 			defaultAuton();
+			break;
 		}
 	}
 

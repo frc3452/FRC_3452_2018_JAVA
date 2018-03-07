@@ -16,26 +16,33 @@ public class MiddleAuton extends CommandGroup {
 	public MiddleAuton(String priority, int selector) {
 		addSequential(new WaitForGameData());
 
-		if (priority == "SWITCH") {
-			if (Robot.lights.gsm().charAt(0) == 'L') {
-				switchL(selector);
-			} else if (Robot.lights.gsm().charAt(0) == 'R') {
-				switchR(selector);
-			}
-		} else if (priority == "SCALE") {
-			//TODO Left Scale
-			if (Robot.lights.gsm().charAt(1) == 'L') {
-				scaleL(selector);
-			} else if (Robot.lights.gsm().charAt(1) == 'R') {
-				scaleR(selector);
+		if (Robot.lights.gsm() != "NOT") {
+
+			if (priority == "SWITCH") {
+				if (Robot.lights.gsm().charAt(0) == 'L') {
+					switchL(selector);
+				} else if (Robot.lights.gsm().charAt(0) == 'R') {
+					switchR(selector);
+				}
+			} else if (priority == "SCALE") {
+				if (Robot.lights.gsm().charAt(1) == 'L') {
+					scaleL(selector);
+				} else if (Robot.lights.gsm().charAt(1) == 'R') {
+					scaleR(selector);
+				}
+			} else {
+				System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
+				defaultAuton();
 			}
 		} else {
+			System.out.println("ERROR Game data not found; running default");
 			defaultAuton();
 		}
 	}
 
 	private void switchL(int mode) {
-		if (mode == 1) {
+		switch (mode) {
+		case 1:
 			addSequential(new EncoderReset());
 			addParallel(new DriveTime(.25, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
@@ -51,8 +58,8 @@ public class MiddleAuton extends CommandGroup {
 
 			addSequential(new IntakeTime(1, 1));
 			addSequential(new EncoderFrom(-1.4, -1.4, .3, .3, .2)); // back up  after placing
-
-		} else if (mode == 2) {
+			break;
+		case 2:
 			addSequential(new EncoderReset());
 			addParallel(new DriveTime(.25, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
@@ -72,13 +79,16 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new EncoderFrom(-.43 - .1, .75 + .1, .6, .6, .6)); // spin, drive, around switch and go forward
 			addSequential(new EncoderFrom(4.85 - 1.1, 3.35 - .5, .3, .3, .5));
 			addSequential(new EncoderFrom(1.5, 1.5, .3, .3, .4));
-		} else {
+			break;
+		default:
 			defaultAuton();
+			break;
 		}
 	}
 
 	private void switchR(int mode) {
-		if (mode == 1) {
+		switch (mode) {
+		case 1:
 			addSequential(new EncoderReset());
 			addParallel(new DriveTime(.25, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
@@ -95,7 +105,8 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new IntakeTime(1, .5));
 			addSequential(new EncoderFrom(-1.4, -1.4, .3, .3, .2)); // back up after placing
 
-		} else if (mode == 2) {
+			break;
+		case 2:
 			addSequential(new EncoderReset());
 			addParallel(new DriveTime(.25, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
@@ -115,35 +126,45 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new EncoderFrom(.75, -.43, .6, .6, .6)); // spin, drive around switch and goforward
 			addSequential(new EncoderFrom(3.35, 4.75, .3, .3, .5));
 			addSequential(new EncoderFrom(1.5, 1.5, .3, .3, .4));
-		} else {
+			break;
+		default:
 			defaultAuton();
+			break;
 		}
 	}
 
 	private void scaleL(int mode) {
-		if (mode == 1) {
+		switch (mode) {
+		case 1:
 			addSequential(new EncoderReset());
-		} else if (mode == 2) {
+			break;
+		case 2:
 			addSequential(new EncoderReset());
-		} else {
+			break;
+		default:
 			defaultAuton();
+			break;
 		}
 	}
 
 	private void scaleR(int mode) {
-		if (mode == 1) {
+		switch (mode) {
+		case 1:
 			addSequential(new EncoderReset());
-		} else if (mode == 2) {
+			break;
+		case 2:
 			addSequential(new EncoderReset());
-		} else {
+			break;
+		default:
 			defaultAuton();
+			break;
 		}
 	}
 
 	private void defaultAuton() {
 		//TODO add default
 		addSequential(new EncoderReset());
-		
+
 		addSequential(new ElevatorTime(.5, .15));
 		addSequential(new DriveTime(0, 0, 1));
 		addSequential(new ElevatorPosition(2));
