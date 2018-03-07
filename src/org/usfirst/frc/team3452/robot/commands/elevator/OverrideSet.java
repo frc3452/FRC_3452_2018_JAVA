@@ -1,7 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
