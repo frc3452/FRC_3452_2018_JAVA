@@ -45,7 +45,8 @@ public class Robot extends TimedRobot {
 		Robot.elevator.initHardware();
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
-		Robot.lights.initHardware();
+		//TODO Z~Uncomment
+//		Robot.lights.initHardware();
 		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 
@@ -55,23 +56,25 @@ public class Robot extends TimedRobot {
 		defaultCommand = (new DriveTime(.25, 0, 3));
 
 		autoCommand[1] = (new MiddleAuton("SWITCH", 1));
-		Robot.autonSelector.autoCommandName[1] = "Middle";
+		Robot.autonSelector.autoCommandName[1] = "Middle: Switch";
 
-		autoCommand[2] = (new MiddleAuton("SWITCH", 2));
-		Robot.autonSelector.autoCommandName[2] = "Middle (Stop)";
+		autoCommand[2] = (new LeftAuton("SWITCH", 1));
+		Robot.autonSelector.autoCommandName[2] = "Left: Switch";
 
-		autoCommand[3] = (new LeftAuton("SWITCH", 1));
-		Robot.autonSelector.autoCommandName[3] = "Left Auton";
+		autoCommand[3] = (new LeftAuton("SCALE", 1));
+		Robot.autonSelector.autoCommandName[3] = "Left: Scale";
 
 		autoCommand[4] = (new RightAuton("SWITCH", 1));
-		Robot.autonSelector.autoCommandName[4] = "Right Auton";
+		Robot.autonSelector.autoCommandName[4] = "Right: Switch";
 
+		autoCommand[5] = (new RightAuton("SCALE", 1));
+		Robot.autonSelector.autoCommandName[5] = "Right: Scale";
 	}
 
 	@Override
 	public void disabledInit() {
 		Robot.drive.BrakeCoast(NeutralMode.Coast);
-		//		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
+		//				Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
 	}
 
 	@Override
