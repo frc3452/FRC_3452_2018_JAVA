@@ -9,8 +9,6 @@ public class Lights extends Subsystem {
 
 	private static CANifier canifier;
 	public int m_hue = 0;
-	public boolean fieldDataFound = false;
-	public boolean gameDataFound;
 
 	public void initHardware() {
 		canifier = new CANifier(Constants.CANIFIER_ID);
