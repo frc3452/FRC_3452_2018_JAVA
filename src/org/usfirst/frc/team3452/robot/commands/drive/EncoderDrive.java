@@ -1,10 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class EncoderDrive extends Command {
@@ -25,7 +22,6 @@ public class EncoderDrive extends Command {
 	}
 
 	protected void execute() {
-
 		Robot.drive.MotionMagic(m_left, m_right, m_laccel, m_raccel, m_topspeed, m_topspeed);
 	}
 
