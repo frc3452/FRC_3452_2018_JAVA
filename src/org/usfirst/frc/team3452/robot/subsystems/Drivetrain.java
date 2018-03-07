@@ -34,6 +34,21 @@ public class Drivetrain extends Subsystem {
 	// variable init
 	public double m_modify = 1, m_elev_modify = 1, l_pos = 0, r_pos = 0;
 
+	public void LoggerUpdate() {
+		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
+
+		SmartDashboard.putNumber("L1", L1.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("R1", R1.getSelectedSensorPosition(0));
+
+		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 4096);
+		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 4096);
+
+		SmartDashboard.putNumber("Elevator Enc", Robot.elevator.Elev_1.getSelectedSensorPosition(0));
+
+		SmartDashboard.putString("Selected auton", Robot.autonSelector.autonString);
+		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
+	}
+
 	public void initHardware() {
 		L1 = new WPI_TalonSRX(Constants.DRIVE_L_1);
 		L2 = new WPI_TalonSRX(Constants.DRIVE_L_2);
@@ -50,8 +65,6 @@ public class Drivetrain extends Subsystem {
 
 		robotDrive.setDeadband(0.08);
 		robotDrive.setSafetyEnabled(true);
-
-		Gyro.reset();
 
 		// follower mode
 		L2.follow(L1);
@@ -160,20 +173,9 @@ public class Drivetrain extends Subsystem {
 		R2.setName("R2");
 		R3.setName("R3");
 		R4.setName("R4");
-	}
 
-	public void LoggerUpdate() {
-		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
-
-		SmartDashboard.putNumber("L1", L1.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("R1", R1.getSelectedSensorPosition(0));
-		
-		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 4096);
-		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 4096);
-		
-		SmartDashboard.putNumber("Elevator Enc", Robot.elevator.Elev_1.getSelectedSensorPosition(0));
-
-		SmartDashboard.putString("Selected auton", Robot.autonSelector.autonString);
+		//MUST BE AT END
+		Gyro.reset();
 	}
 
 	public void initDefaultCommand() {
@@ -259,11 +261,20 @@ public class Drivetrain extends Subsystem {
 		if ((L1.getSelectedSensorPosition(0) < (l_pos + (102 * multiplier))
 				&& L1.getSelectedSensorPosition(0) > (l_pos - (102 * multiplier)))
 				&& R1.getSelectedSensorPosition(0) < (r_pos + (102 * multiplier))
-				&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier))) {
+				&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier)))
 			return true;
-		} else {
+		else
 			return false;
-		}
+	}
+
+	public boolean encoderIsDoneEither(double multiplier) {
+		if (((L1.getSelectedSensorPosition(0) < (l_pos + (102 * multiplier))
+				&& L1.getSelectedSensorPosition(0) > (l_pos - (102 * multiplier))))
+				|| (R1.getSelectedSensorPosition(0) < (r_pos + (102 * multiplier))
+						&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier))))
+			return true;
+		else
+			return false;
 	}
 
 	public void EncoderReset() {
