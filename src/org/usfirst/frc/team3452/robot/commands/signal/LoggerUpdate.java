@@ -1,8 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.signal;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
 
