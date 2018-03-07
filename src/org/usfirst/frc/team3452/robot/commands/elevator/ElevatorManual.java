@@ -2,7 +2,6 @@ package org.usfirst.frc.team3452.robot.commands.elevator;
 
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -28,7 +27,7 @@ public class ElevatorManual extends Command {
 
 	protected void execute() {
 		Robot.elevator.Elev_1.set(ControlMode.PercentOutput,
-				(m_joy.getRawAxis(m_controller_axis) * ((m_joy.getRawAxis(m_controller_axis) > 0) ? .6 : .6))); // .4
+				(m_joy.getRawAxis(m_controller_axis) * ((m_joy.getRawAxis(m_controller_axis) > 0) ? .6 : .75))); // .6 up .75 down
 	}
 
 	protected boolean isFinished() {
@@ -38,6 +37,7 @@ public class ElevatorManual extends Command {
 	protected void end() {
 		Robot.elevator.Elev_1.set(ControlMode.PercentOutput, 0);
 	}
+
 	protected void interrupted() {
 		end();
 	}
