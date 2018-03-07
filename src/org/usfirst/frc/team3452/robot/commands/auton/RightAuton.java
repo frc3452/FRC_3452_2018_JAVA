@@ -118,6 +118,7 @@ public class RightAuton extends CommandGroup {
 		switch (mode) {
 		case 1:
 			defaultAuton();
+			break;
 		case 2:
 			defaultAuton();
 			break;

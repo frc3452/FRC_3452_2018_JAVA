@@ -40,8 +40,6 @@ public class EncoderGyro extends Command {
 		else if (c_gyro < t_gyro)
 			Robot.drive.MotionMagic(l_pos, r_pos, l_accel, r_accel, m_speed,
 					m_speed * (1 - (k * Math.abs(c_gyro - t_gyro))));
-
-		System.out.println((1 - (k * Math.abs(c_gyro - t_gyro))));
 	}
 
 	protected boolean isFinished() {
