@@ -1,7 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -27,6 +26,12 @@ public class ElevatorTime extends Command {
 	}
 
 	protected boolean isFinished() {
+		if (Robot.elevator.Elev_1.getSensorCollection().isRevLimitSwitchClosed() && m_speed > 0)
+			return true;
+
+		if (Robot.elevator.Elev_1.getSensorCollection().isFwdLimitSwitchClosed() && m_speed < 0)
+			return true;
+
 		return isTimedOut();
 	}
 
