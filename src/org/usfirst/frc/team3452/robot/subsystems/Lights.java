@@ -8,16 +8,15 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Lights extends Subsystem {
 
 	private static CANifier canifier;
-	public int m_hue;
+	public int m_hue = 0;
+	public boolean fieldDataFound = false;
+	public boolean gameDataFound;
 
 	public void initHardware() {
 		canifier = new CANifier(Constants.CANIFIER_ID);
-		m_hue = 0;
 	}
 
 	public void hsv(double hDegrees, double S, double V) {
-		float RGB[] = null;
-
 		double R, G, B;
 		double H = hDegrees;
 
@@ -103,8 +102,8 @@ public class Lights extends Subsystem {
 		 * * RGB[0] = (float) R; RGB[1] = (float) G; RGB[2] = (float) B; return
 		 * RGB;
 		 */
-		rgb((float) RGB[0], (float) RGB[1], (float) RGB[2]);
 
+		rgb((float) R, (float) G, (float) B);
 	}
 
 	public void rgb(float r, float g, float b) {
@@ -122,7 +121,7 @@ public class Lights extends Subsystem {
 	public String gsm() {
 		String f;
 		f = edu.wpi.first.wpilibj.DriverStation.getInstance().getGameSpecificMessage();
-		
+
 		if (f.length() > 0)
 			return f;
 		else
