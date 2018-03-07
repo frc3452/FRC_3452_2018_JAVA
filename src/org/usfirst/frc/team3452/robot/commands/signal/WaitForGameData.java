@@ -1,8 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.signal;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
-import org.usfirst.frc.team3452.robot.subsystems.Lights;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -13,6 +11,9 @@ public class WaitForGameData extends Command {
 	}
 
 	protected void initialize() {
+		setTimeout(3);
+
+		Robot.lights.gameDataFound = false;
 	}
 
 	protected void execute() {
@@ -21,10 +22,15 @@ public class WaitForGameData extends Command {
 	}
 
 	protected boolean isFinished() {
-		return ((Robot.lights.gsm() != "NOT") ? true : false);
+		return (Robot.lights.gsm() != "NOT" || isTimedOut());
 	}
 
 	protected void end() {
+		if (Robot.lights.gsm() != "NOT") {
+			Robot.lights.gameDataFound = true;
+		} else {
+			Robot.lights.gameDataFound = false;
+		}
 	}
 
 	protected void interrupted() {
