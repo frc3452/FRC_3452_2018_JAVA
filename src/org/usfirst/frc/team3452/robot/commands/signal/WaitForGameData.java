@@ -12,8 +12,6 @@ public class WaitForGameData extends Command {
 
 	protected void initialize() {
 		setTimeout(3);
-
-		Robot.lights.gameDataFound = false;
 	}
 
 	protected void execute() {
@@ -26,11 +24,6 @@ public class WaitForGameData extends Command {
 	}
 
 	protected void end() {
-		if (Robot.lights.gsm() != "NOT") {
-			Robot.lights.gameDataFound = true;
-		} else {
-			Robot.lights.gameDataFound = false;
-		}
 	}
 
 	protected void interrupted() {
