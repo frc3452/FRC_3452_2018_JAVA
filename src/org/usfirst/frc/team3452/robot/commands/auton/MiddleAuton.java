@@ -16,24 +16,26 @@ public class MiddleAuton extends CommandGroup {
 	public MiddleAuton(String priority, int selector) {
 		addSequential(new WaitForGameData());
 
+		//IF DATA FOUND
 		if (Robot.lights.gsm() != "NOT") {
 
-			if (priority == "SWITCH") {
-				if (Robot.lights.gsm().charAt(0) == 'L') {
+			switch (priority) {
+			case "SWITCH":
+				switch (Robot.lights.gsm().charAt(0)) {
+				case 'L':
 					switchL(selector);
-				} else if (Robot.lights.gsm().charAt(0) == 'R') {
+					break;
+				case 'R':
 					switchR(selector);
+					break;
 				}
-			} else if (priority == "SCALE") {
-				if (Robot.lights.gsm().charAt(1) == 'L') {
-					scaleL(selector);
-				} else if (Robot.lights.gsm().charAt(1) == 'R') {
-					scaleR(selector);
-				}
-			} else {
+				break;
+			default:
 				System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
 				defaultAuton();
+				break;
 			}
+
 		} else {
 			System.out.println("ERROR Game data not found; running default");
 			defaultAuton();
@@ -41,6 +43,7 @@ public class MiddleAuton extends CommandGroup {
 	}
 
 	private void switchL(int mode) {
+		//COMPLETE
 		switch (mode) {
 		case 1:
 			addSequential(new EncoderReset());
@@ -87,6 +90,7 @@ public class MiddleAuton extends CommandGroup {
 	}
 
 	private void switchR(int mode) {
+		//COMPLETE
 		switch (mode) {
 		case 1:
 			addSequential(new EncoderReset());
@@ -126,34 +130,6 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new EncoderFrom(.75, -.43, .6, .6, .6)); // spin, drive around switch and goforward
 			addSequential(new EncoderFrom(3.35, 4.75, .3, .3, .5));
 			addSequential(new EncoderFrom(1.5, 1.5, .3, .3, .4));
-			break;
-		default:
-			defaultAuton();
-			break;
-		}
-	}
-
-	private void scaleL(int mode) {
-		switch (mode) {
-		case 1:
-			addSequential(new EncoderReset());
-			break;
-		case 2:
-			addSequential(new EncoderReset());
-			break;
-		default:
-			defaultAuton();
-			break;
-		}
-	}
-
-	private void scaleR(int mode) {
-		switch (mode) {
-		case 1:
-			addSequential(new EncoderReset());
-			break;
-		case 2:
-			addSequential(new EncoderReset());
 			break;
 		default:
 			defaultAuton();

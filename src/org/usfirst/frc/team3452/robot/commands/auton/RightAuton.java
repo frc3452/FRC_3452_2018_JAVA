@@ -19,24 +19,51 @@ public class RightAuton extends CommandGroup {
 	public RightAuton(String priority, int selector) {
 		addSequential(new WaitForGameData());
 
+		//IF DATA FOUND
 		if (Robot.lights.gsm() != "NOT") {
 
-			if (priority == "SWITCH") {
-				if (Robot.lights.gsm().charAt(0) == 'L') {
+			switch (priority) {
+
+			case "SWITCH":
+				switch (Robot.lights.gsm().charAt(0)) {
+				case 'L':
 					switchL(selector);
-				} else if (Robot.lights.gsm().charAt(0) == 'R') {
+					break;
+				case 'R':
 					switchR(selector);
+					break;
 				}
-			} else if (priority == "SCALE") {
-				if (Robot.lights.gsm().charAt(1) == 'L') {
+				break;
+			case "SCALE":
+				switch (Robot.lights.gsm().charAt(1)) {
+				case 'L':
 					scaleL(selector);
+					break;
+				case 'R':
+					scaleR(selector);
+					break;
+				}
+				break;
+			case "SIDE":
+				//FIXME Investigate if R R L starts switch and then scale auto
+				//1. switch R, 2. scale R, 3. switch L
+				if (Robot.lights.gsm().charAt(0) == 'R') {
+					switchR(selector);
+					break;
 				} else if (Robot.lights.gsm().charAt(1) == 'R') {
 					scaleR(selector);
+					break;
+				} else if (Robot.lights.gsm().charAt(0) == 'L') {
+					switchL(selector);
+					break;
 				}
-			} else {
+				break;
+			default:
 				System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
 				defaultAuton();
+				break;
 			}
+
 		} else {
 			System.out.println("ERROR Game data not found; running default");
 			defaultAuton();
@@ -44,13 +71,13 @@ public class RightAuton extends CommandGroup {
 	}
 
 	private void switchL(int mode) {
-		//		if (mode == 1) {
+		//FIXME RIGHT POS LEFT SWITCH
 		switch (mode) {
 		case 1:
-			addSequential(new EncoderReset());
+			defaultAuton();
 			break;
 		case 2:
-			addSequential(new EncoderReset());
+			defaultAuton();
 			break;
 		default:
 			defaultAuton();
@@ -87,11 +114,12 @@ public class RightAuton extends CommandGroup {
 	}
 
 	private void scaleL(int mode) {
+		//FIXME RIGHT POS LEFT SCALE
 		switch (mode) {
 		case 1:
-			addSequential(new EncoderReset());
+			defaultAuton();
 		case 2:
-			addSequential(new EncoderReset());
+			defaultAuton();
 			break;
 		default:
 			defaultAuton();
@@ -122,7 +150,7 @@ public class RightAuton extends CommandGroup {
 			addSequential(new GyroPos(225, .4, 1));
 			break;
 		case 2:
-			addSequential(new EncoderReset());
+			defaultAuton();
 			break;
 		default:
 			defaultAuton();
@@ -131,13 +159,15 @@ public class RightAuton extends CommandGroup {
 	}
 
 	private void defaultAuton() {
-		// TODO add default
+		addSequential(new ResetGyro());
 		addSequential(new EncoderReset());
 
+		addParallel(new DriveTime(.25, 0, .5));
 		addSequential(new ElevatorTime(.5, .15));
-		addSequential(new DriveTime(0, 0, 1));
-		addSequential(new ElevatorPosition(2));
-		addSequential(new DriveTime(.2, 0, 3));
+		addSequential(new DriveTime(-.25, 0, .225)); // jog forward backwards to drop arm
+
+		addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, .017)); // drive to side of switch
+		addSequential(new ElevatorPosition(5)); // raise arm
 	}
 
 }
