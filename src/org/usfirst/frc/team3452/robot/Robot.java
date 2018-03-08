@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
 		//TODO Z~Uncomment
-//		Robot.lights.initHardware();
+		//		Robot.lights.initHardware();
 		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 
@@ -81,14 +81,13 @@ public class Robot extends TimedRobot {
 
 		autoCommand[9] = (new RightAuton("R_SCALE_P", 1));
 		Robot.autonSelector.autoCommandName[9] = "Right: Scale Priority";
-
 	}
 
 	@Override
 	public void disabledInit() {
 		//TODO Z~Uncomment
-		Robot.drive.BrakeCoast(NeutralMode.Coast);
-		//				Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
+		//		Robot.drive.BrakeCoast(NeutralMode.Coast);
+		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
 	}
 
 	@Override

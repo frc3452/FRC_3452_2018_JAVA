@@ -40,7 +40,7 @@ public class Elevator extends Subsystem {
 		// PIDs
 		Elev_1.config_kF(0, 0, 10);
 		Elev_1.config_kP(0, 0.09, 10);
-		Elev_1.config_kI(0, 0.000045, 10);
+		Elev_1.config_kI(0, 0.000065, 10);
 		Elev_1.config_kD(0, 2.5, 10);
 		// was 0, .09, .000025, 2.5
 

@@ -42,7 +42,7 @@ public class OI {
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
 		driverJoyBack.whenPressed(new OverrideSet(-1));
-		driverJoyStart.whenPressed(new ClimbRelease(1, .5));
+		driverJoyStart.whenPressed(new ClimbRelease(1, .0625));
 
 		// OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
