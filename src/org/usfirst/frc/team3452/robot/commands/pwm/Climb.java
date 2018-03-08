@@ -17,7 +17,7 @@ public class Climb extends Command {
 	}
 
 	protected void execute() {
-		Robot.climber.Control(m_speed);
+		Robot.climber.control(m_speed);
 	}
 
 	protected boolean isFinished() {
@@ -25,7 +25,7 @@ public class Climb extends Command {
 	}
 
 	protected void end() {
-		Robot.climber.Control(0);
+		Robot.climber.control(0);
 	}
 
 	protected void interrupted() {

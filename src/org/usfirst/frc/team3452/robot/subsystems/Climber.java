@@ -1,21 +1,36 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Direction;
+import edu.wpi.first.wpilibj.Relay.Value;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Climber extends Subsystem {
-	private Spark Climb_1;
+	private Spark climb_1;
 
-	public void Control(double speed) {
-		Climb_1.set(Math.abs(speed));
+	private Relay climb_release;
+
+	public void control(double speed) {
+		climb_1.set(Math.abs(speed));
+	}
+
+	public void release(boolean release) {
+		climb_release.set((release ? Value.kForward : Value.kOff));
 	}
 
 	public void initHardware() {
-		Climb_1 = new Spark(Constants.CLIMBER_1);
-		Climb_1.setInverted(Constants.CLIMBER_1_INVERT);
+		climb_1 = new Spark(Constants.CLIMBER_1);
+		climb_1.setInverted(Constants.CLIMBER_1_INVERT);
 
-		Climb_1.setSubsystem("Climber");
-		Climb_1.setName("Climb_1");
+		climb_1.setSubsystem("Climber");
+		climb_1.setName("climb_1");
+
+		climb_release.setSubsystem("Climber");
+		climb_release.setName("Climb_release");
+
+		climb_release = new Relay(Constants.CLIMBER_RELEASE, Relay.Direction.kForward);
 	}
 
 	public void initDefaultCommand() {
@@ -24,6 +39,8 @@ public class Climber extends Subsystem {
 	public static class Constants {
 		public static final int CLIMBER_1 = 2;
 		public static final boolean CLIMBER_1_INVERT = false;
+
+		public static final int CLIMBER_RELEASE = 1;
 
 	}
 }

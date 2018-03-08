@@ -6,6 +6,7 @@ import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
 import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
+import org.usfirst.frc.team3452.robot.commands.pwm.ClimbRelease;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.commands.signal.CameraSwitch;
@@ -37,11 +38,13 @@ public class OI {
 
 		driverJoyX.whileHeld(new IntakeManual(-.75));
 		driverJoyB.whileHeld(new IntakeManual(.75));
+		driverJoyY.whileHeld(new Climb(.7));
 
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
 		driverJoyBack.whenPressed(new OverrideSet(-1));
-		driverJoyStart.whileHeld(new Climb(.7));
+		
+		driverJoyStart.whileHeld(new ClimbRelease(true));
 
 		// OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
