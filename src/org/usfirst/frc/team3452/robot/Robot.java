@@ -1,9 +1,9 @@
 package org.usfirst.frc.team3452.robot;
 
+import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
 import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
-import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
@@ -46,14 +46,14 @@ public class Robot extends TimedRobot {
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
 		//TODO Z~Uncomment
-		//		Robot.lights.initHardware();
+//		Robot.lights.initHardware();
 		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 
 		_oi = new OI();
 		OI.init();
 
-		defaultCommand = (new DriveTime(.25, 0, 3));
+		defaultCommand = (new DefaultAutonomous());
 
 		autoCommand[1] = (new MiddleAuton("SWITCH", 1));
 		Robot.autonSelector.autoCommandName[1] = "Middle: Switch";
