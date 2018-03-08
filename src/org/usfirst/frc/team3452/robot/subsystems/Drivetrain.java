@@ -40,8 +40,8 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putNumber("L1", L1.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("R1", R1.getSelectedSensorPosition(0));
 
-		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 4096);
-		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 4096);
+		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 1);
+		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 1);
 
 		SmartDashboard.putNumber("Elevator Enc", Robot.elevator.Elev_1.getSelectedSensorPosition(0));
 
@@ -227,7 +227,7 @@ public class Drivetrain extends Subsystem {
 		R1.set(ControlMode.MotionMagic, r_pos);
 	}
 
-	public void Encoder(double left, double right, double leftspeed, double rightspeed) {
+	public void encoder(double left, double right, double leftspeed, double rightspeed) {
 		robotDrive.setSafetyEnabled(false);
 
 		L1.configPeakOutputForward(leftspeed, 10);
@@ -242,7 +242,17 @@ public class Drivetrain extends Subsystem {
 		R1.set(ControlMode.Position, r_pos);
 	}
 
-	public void EncoderDone() {
+	public boolean encoderSpeedIsUnder(double value) {
+		double l = L1.getSelectedSensorVelocity(0);
+		double r = R1.getSelectedSensorVelocity(0);
+		
+		if (l < value && r < value)
+			return true;
+		else
+			return false;
+	}
+
+	public void encoderDone() {
 		R1.configPeakOutputForward(1, 0);
 		R1.configPeakOutputReverse(-1, 0);
 		L1.configPeakOutputForward(1, 0);
@@ -277,7 +287,7 @@ public class Drivetrain extends Subsystem {
 			return false;
 	}
 
-	public void EncoderReset() {
+	public void encoderReset() {
 		L1.setSelectedSensorPosition(0, 0, 10);
 		R1.setSelectedSensorPosition(0, 0, 10);
 	}
