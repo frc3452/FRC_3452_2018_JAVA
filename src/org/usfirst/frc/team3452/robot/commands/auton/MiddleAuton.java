@@ -140,7 +140,6 @@ public class MiddleAuton extends CommandGroup {
 	}
 
 	private void defaultAuton() {
-		//TODO add default
 		addSequential(new EncoderReset());
 		addSequential(new ResetGyro());
 

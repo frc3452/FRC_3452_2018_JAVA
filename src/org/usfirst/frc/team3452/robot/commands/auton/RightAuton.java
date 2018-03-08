@@ -76,7 +76,6 @@ public class RightAuton extends CommandGroup {
 	}
 
 	private void switchL(int mode) {
-		//FIXME RIGHT POS LEFT SWITCH
 		switch (mode) {
 		case 1:
 			addSequential(new ResetGyro());
@@ -99,9 +98,6 @@ public class RightAuton extends CommandGroup {
 			addSequential(new IntakeTime(.7, .5));
 			addSequential(new EncoderFrom(-.5, -.5, .5, .5, .5));
 
-			break;
-		case 2:
-			defaultAuton();
 			break;
 		default:
 			defaultAuton();
@@ -127,9 +123,6 @@ public class RightAuton extends CommandGroup {
 			addSequential(new IntakeTime(1, .5));
 			addSequential(new EncoderFrom(-.5, -.5, .5, .5, .5));
 			break;
-		case 2:
-			addSequential(new EncoderReset());
-			break;
 		default:
 			defaultAuton();
 			break;
@@ -138,10 +131,8 @@ public class RightAuton extends CommandGroup {
 	}
 
 	private void scaleL(int mode) {
-		//FIXME RIGHT POS LEFT SCALE
 		switch (mode) {
 		case 1:
-			//FIXME LEFT POS RIGHT SCALE
 			addSequential(new ResetGyro());
 			addSequential(new EncoderReset());
 
@@ -162,9 +153,6 @@ public class RightAuton extends CommandGroup {
 			addSequential(new EncoderFrom(2.61, 2.41, .1, .1, .15));
 
 			addSequential(new IntakeTime(.5, 1));
-			break;
-		case 2:
-			defaultAuton();
 			break;
 		default:
 			defaultAuton();
@@ -193,9 +181,6 @@ public class RightAuton extends CommandGroup {
 			addSequential(new DriveTime(-.4, 0, 1.6));
 			addSequential(new ElevatorTime(-.4, 10));
 			addSequential(new GyroPos(225, .4, 1));
-			break;
-		case 2:
-			defaultAuton();
 			break;
 		default:
 			defaultAuton();
