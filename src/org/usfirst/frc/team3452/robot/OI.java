@@ -32,7 +32,7 @@ public class OI {
 	public static void init() {
 		buttonInit();
 
-//		// DRIVER JOY
+		//		// DRIVER JOY
 		driverJoyA.whenPressed(new SetModify(-1));
 
 		driverJoyX.whileHeld(new IntakeManual(-.75));
@@ -42,7 +42,7 @@ public class OI {
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
 		driverJoyBack.whenPressed(new OverrideSet(-1));
-		driverJoyStart.whenPressed(new ClimbRelease(1,.5));
+		driverJoyStart.whenPressed(new ClimbRelease(1, .5));
 
 		// OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
@@ -55,8 +55,8 @@ public class OI {
 		opJoyY.whileHeld(new IntakeManual(.3));
 		opJoyA.whenPressed(new ElevatorPosition(3.5));
 
-//		opJoyLClick.whenPressed(new CameraSwitch(0));
-//		opJoyRClick.whenPressed(new CameraSwitch(1));
+		//		opJoyLClick.whenPressed(new CameraSwitch(0));
+		//		opJoyRClick.whenPressed(new CameraSwitch(1));
 
 		driveSafteyOverriden.whenActive(new OverrideSet(1));
 		driveSafteyOverriden.whenInactive(new OverrideSet(0));

@@ -36,7 +36,7 @@ public class Climber extends Subsystem {
 		public static final boolean CLIMBER_1_INVERT = false;
 
 		public static final int CLIMBER_RELEASE = 3;
-		public static final boolean CLIMBER_RELEASE_INVERT = false;
+		public static final boolean CLIMBER_RELEASE_INVERT = true;
 
 	}
 }
