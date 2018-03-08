@@ -8,8 +8,8 @@ public class EncoderGyro extends Command {
 
 	private double l_pos, r_pos, l_accel, r_accel, m_speed, c_gyro, t_gyro, k;
 
-	public EncoderGyro(double leftpos, double rightpos, double leftaccel, double rightaccel, double speed,
-			double angle, double constant) {
+	public EncoderGyro(double leftpos, double rightpos, double leftaccel, double rightaccel, double speed, double angle,
+			double constant) {
 		requires(Robot.drive);
 
 		l_pos = leftpos;
@@ -24,7 +24,6 @@ public class EncoderGyro extends Command {
 
 	protected void initialize() {
 		setTimeout(10);
-		t_gyro = Robot.drive.Gyro.getAngle();
 	}
 
 	protected void execute() {
@@ -47,7 +46,7 @@ public class EncoderGyro extends Command {
 	}
 
 	protected void end() {
-		Robot.drive.EncoderDone();
+		Robot.drive.encoderDone();
 	}
 
 	protected void interrupted() {
