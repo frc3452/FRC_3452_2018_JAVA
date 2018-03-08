@@ -11,7 +11,7 @@ public class EncoderReset extends InstantCommand {
         requires(Robot.drive);
     }
     protected void initialize() {
-    	Robot.drive.EncoderReset();
+    	Robot.drive.encoderReset();
     }
 
 }
