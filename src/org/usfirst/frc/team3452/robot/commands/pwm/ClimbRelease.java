@@ -6,16 +6,17 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ClimbRelease extends Command {
 
-	private boolean m_release;
+	private double m_release, m_timeout;
 
-	public ClimbRelease(boolean release) {
+	public ClimbRelease(double release, double timeout) {
 		requires(Robot.climber);
 
 		m_release = release;
+		m_timeout = timeout;
 	}
 
 	protected void initialize() {
-		
+		setTimeout(m_timeout);
 	}
 
 	protected void execute() {
@@ -23,11 +24,11 @@ public class ClimbRelease extends Command {
 	}
 
 	protected boolean isFinished() {
-		return false;
+		return isTimedOut();
 	}
 
 	protected void end() {
-		Robot.climber.release(false);
+		Robot.climber.release(0);
 	}
 
 	protected void interrupted() {
