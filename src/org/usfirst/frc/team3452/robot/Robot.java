@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
 		//TODO Z~Uncomment
-//		Robot.lights.initHardware();
+		//		Robot.lights.initHardware();
 		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 
@@ -69,6 +69,19 @@ public class Robot extends TimedRobot {
 
 		autoCommand[5] = (new RightAuton("SCALE", 1));
 		Robot.autonSelector.autoCommandName[5] = "Right: Scale";
+
+		autoCommand[6] = (new LeftAuton("L_SWITCH_P", 1));
+		Robot.autonSelector.autoCommandName[6] = "Left: Switch Priority";
+
+		autoCommand[7] = (new LeftAuton("L_SCALE_P", 1));
+		Robot.autonSelector.autoCommandName[7] = "Left: Scale Priority";
+
+		autoCommand[8] = (new RightAuton("R_SWITCH_P", 1));
+		Robot.autonSelector.autoCommandName[8] = "Right: Switch Priority";
+
+		autoCommand[9] = (new RightAuton("R_SCALE_P", 1));
+		Robot.autonSelector.autoCommandName[9] = "Right: Scale Priority";
+
 	}
 
 	@Override
@@ -229,8 +242,10 @@ public class Robot extends TimedRobot {
 				break;
 			case 9:
 				autonomousCommand = autoCommand[9];
+				break;
 			case 10:
 				autonomousCommand = autoCommand[10];
+				break;
 			case 11:
 				autonomousCommand = autoCommand[11];
 				break;
@@ -260,6 +275,7 @@ public class Robot extends TimedRobot {
 				break;
 			case 20:
 				autonomousCommand = autoCommand[20];
+				break;
 			case 3452:
 				autonomousCommand = defaultCommand;
 				break;
