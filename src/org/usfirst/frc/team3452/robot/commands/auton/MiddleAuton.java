@@ -4,6 +4,7 @@ import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
+import org.usfirst.frc.team3452.robot.commands.drive.ResetGyro;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
@@ -19,23 +20,20 @@ public class MiddleAuton extends CommandGroup {
 		//IF DATA FOUND
 		if (Robot.lights.gsm() != "NOT") {
 
-			switch (priority) {
-			case "SWITCH":
-				switch (Robot.lights.gsm().charAt(0)) {
-				case 'L':
+			if (priority == "SWITCH") {
+				if (Robot.lights.gsm().charAt(0) == 'L') {
 					switchL(selector);
-					break;
-				case 'R':
+					addSequential(new DriveTime(0, 0, 16));
+				} else if (Robot.lights.gsm().charAt(0) == 'R') {
 					switchR(selector);
-					break;
+					addSequential(new DriveTime(0, 0, 16));
+				} else {
+					defaultAuton();
 				}
-				break;
-			default:
+			} else {
 				System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
 				defaultAuton();
-				break;
 			}
-
 		} else {
 			System.out.println("ERROR Game data not found; running default");
 			defaultAuton();
@@ -52,6 +50,7 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new DriveTime(-.25, 0, .225)); // jog forward backwards to drop arm
 
 			addSequential(new EncoderFrom(1.45, 1.45, .3, .3, .4)); // INIT DRIVE
+			addParallel(new IntakeTime(-.2, 1));
 
 			addParallel(new ElevatorPosition(4.2));
 			addSequential(new EncoderFrom(-0.38, .75, .5, .5, .5)); // turn left
@@ -69,6 +68,7 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new DriveTime(-.25, 0, .225)); // jog forward backwards to drop arm
 
 			addSequential(new EncoderFrom(1.45, 1.45, .3, .3, .4)); // INIT DRIVE
+			addParallel(new IntakeTime(-.2, 1));
 
 			addParallel(new ElevatorPosition(4.2));
 			addSequential(new EncoderFrom(-0.38, .75, .5, .5, .5)); // turn left
@@ -99,6 +99,7 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new DriveTime(-.25, 0, .25)); // jog forward backwards to drop arm
 
 			addSequential(new EncoderFrom(1.45, 1.45, .3, .3, .4)); // INIT DRIVE
+			addParallel(new IntakeTime(-.2, 1));
 
 			addParallel(new ElevatorPosition(4.2));
 			addSequential(new EncoderFrom(.75, -0.38, .4, .4, .5)); // turn right
@@ -117,7 +118,8 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new DriveTime(-.25, 0, .25)); // jog forward backwards to drop arm
 
 			addSequential(new EncoderFrom(1.45, 1.45, .3, .3, .4)); // INIT DRIVE
-
+			addParallel(new IntakeTime(-.2, 1));
+			
 			addParallel(new ElevatorPosition(4.2));
 			addSequential(new EncoderFrom(.75, -0.38, .4, .4, .5)); // turn right
 
@@ -140,11 +142,13 @@ public class MiddleAuton extends CommandGroup {
 	private void defaultAuton() {
 		//TODO add default
 		addSequential(new EncoderReset());
+		addSequential(new ResetGyro());
 
+		addSequential(new EncoderFrom(1.8, 6.7, .5, .5, .5));
+		addSequential(new EncoderFrom(-3.15, -3.15, .5, .5, .5));
+
+		addSequential(new DriveTime(.25, 0, .5));
 		addSequential(new ElevatorTime(.5, .15));
-		addSequential(new DriveTime(0, 0, 1));
-		addSequential(new ElevatorPosition(2));
-		addSequential(new DriveTime(.2, 0, 3));
-
+		addSequential(new DriveTime(.125, 0, 1));
 	}
 }

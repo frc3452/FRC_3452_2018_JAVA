@@ -22,46 +22,51 @@ public class LeftAuton extends CommandGroup {
 		//IF DATA FOUND
 		if (Robot.lights.gsm() != "NOT") {
 
-			switch (priority) {
+			if (priority == "SWITCH") {
 
-			case "SWITCH":
-				switch (Robot.lights.gsm().charAt(0)) {
-				case 'L':
-					switchL(selector);
-					break;
-				case 'R':
-					switchR(selector);
-					break;
-				}
-				break;
-			case "SCALE":
-				switch (Robot.lights.gsm().charAt(1)) {
-				case 'L':
-					scaleL(selector);
-					break;
-				case 'R':
-					scaleR(selector);
-					break;
-				}
-				break;
-			case "SIDE":
-				//FIXME Investigate if L L R starts switch and then scale auto
-				//1. switch L, 2. scale L, 3. switch R
 				if (Robot.lights.gsm().charAt(0) == 'L') {
 					switchL(selector);
-					break;
-				} else if (Robot.lights.gsm().charAt(1) == 'L') {
-					scaleL(selector);
-					break;
+					addSequential(new DriveTime(0, 0, 16));
+
 				} else if (Robot.lights.gsm().charAt(0) == 'R') {
 					switchR(selector);
-					break;
+					addSequential(new DriveTime(0, 0, 16));
 				}
-				break;
-			default:
+
+			} else if (priority == "SCALE") {
+				if (Robot.lights.gsm().charAt(1) == 'L') {
+
+					scaleL(selector);
+					addSequential(new DriveTime(0, 0, 16));
+
+				} else if (Robot.lights.gsm().charAt(1) == 'R') {
+					scaleR(selector);
+					addSequential(new DriveTime(0, 0, 16));
+				}
+
+			} else if (priority == "L_SWITCH_P") {
+				if (Robot.lights.gsm().charAt(0) == 'L') {
+					switchL(selector);
+					addSequential(new DriveTime(0, 0, 16));
+				} else if (Robot.lights.gsm().charAt(1) == 'L') {
+					scaleL(selector);
+					addSequential(new DriveTime(0, 0, 16));
+				} else {
+					defaultAuton();
+				}
+			} else if (priority == "L_SCALE_P") {
+				if (Robot.lights.gsm().charAt(1) == 'L') {
+					scaleL(selector);
+					addSequential(new DriveTime(0, 0, 16));
+				} else if (Robot.lights.gsm().charAt(0) == 'L') {
+					switchL(selector);
+					addSequential(new DriveTime(0, 0, 16));
+				} else {
+					defaultAuton();
+				}
+			} else {
 				System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
 				defaultAuton();
-				break;
 			}
 
 		} else {
@@ -82,10 +87,10 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new DriveTime(-.25, 0, .225)); // jog forward backwards to drop arm
 
 			addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, .017)); // drive to side of switch
-			addSequential(new ElevatorPosition(3.5)); // raise arm
 
+			addParallel(new ElevatorPosition(3.5)); // raise arm
 			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch
-			addSequential(new EncoderFrom(.8, .8, .5, .5, .5)); // drive and drop
+			addSequential(new EncoderFrom(1.1, 1.1, .5, .5, .5)); // drive and drop
 			addSequential(new IntakeTime(1, .5));
 			addSequential(new EncoderFrom(-.5, -.5, .5, .5, .5));
 			break;
@@ -99,23 +104,29 @@ public class LeftAuton extends CommandGroup {
 	}
 
 	private void switchR(int mode) {
-		//COMPLETE
+		//FIXME LEFT POS RIGHT SWITCH
 		switch (mode) {
 		case 1:
 			addSequential(new ResetGyro());
 			addSequential(new EncoderReset());
 
-			addParallel(new DriveTime(.25, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
-			addSequential(new DriveTime(-.25, 0, .225)); // jog forward backwards to drop arm
 
-			addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, .017)); // drive to side of switch
-			addSequential(new ElevatorPosition(3.5)); // raise arm
+			addSequential(new EncoderGyro(11.2, 11.2, .4, .4, .4, 0, .017)); // drive to side of switch
 
-			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch
-			addSequential(new EncoderFrom(.8, .8, .5, .5, .5)); // drive and drop
-			addSequential(new IntakeTime(1, .5));
+			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
+			addParallel(new ElevatorPosition(2)); //raise
+
+			addSequential(new EncoderReset());
+			addSequential(new EncoderGyro(6.95, 6.95, .4, .4, .4, 90, 0.021)); //drive back of switch
+
+			addSequential(new ElevatorPosition(4.5)); //raise and turn to switch
+			addSequential(new EncoderFrom(.55, -.42, .6, .6, .65));
+			addSequential(new DriveTime(.65, 0, .5));
+
+			addSequential(new IntakeTime(.7, .5));
 			addSequential(new EncoderFrom(-.5, -.5, .5, .5, .5));
+
 			break;
 		case 2:
 			addSequential(new EncoderReset());
@@ -137,7 +148,7 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
 
-			addSequential(new ElevatorPosition(1)); //lift for drive
+			addSequential(new ElevatorPosition(1.5)); //lift for drive
 			//			addSequential(new ElevatorTime(.75, .75));
 			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, .016)); // drive to far side of switch
 			addSequential(new EncoderFrom(.2, -.4, .4, .4, .5)); //turn to switch
@@ -164,7 +175,27 @@ public class LeftAuton extends CommandGroup {
 		switch (mode) {
 		case 1:
 			//FIXME LEFT POS RIGHT SCALE
-			defaultAuton();
+			addSequential(new ResetGyro());
+			addSequential(new EncoderReset());
+
+			addSequential(new ElevatorTime(.5, .15));
+
+			addSequential(new EncoderGyro(11.5, 11.5, .6, .6, .65, 0, .017)); // drive to side of switch
+
+			addParallel(new ElevatorPosition(2)); //raise
+			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
+
+			addSequential(new EncoderReset());
+			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, 0.011)); //drive front of scale
+
+			addSequential(new EncoderFrom(-1.5, .75, .5, .5, .5));
+
+			addSequential(new ElevatorPosition(15)); //raise and turn to switch
+
+			addSequential(new EncoderFrom(2.41, 2.61, .1, .1, .15));
+
+			addSequential(new IntakeTime(.5, 1));
+
 			break;
 		case 2:
 			addSequential(new EncoderReset());
