@@ -11,7 +11,7 @@ public class Climber extends Subsystem {
 	}
 
 	public void release(double release) {
-		climb_release.set(Math.abs(release));
+		climb_release.set((release));
 	}
 
 	public void initHardware() {
