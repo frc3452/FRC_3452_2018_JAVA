@@ -16,6 +16,7 @@ public class AutonSelector extends Subsystem {
 
 	private String overrideStringPrevious;
 	public String overrideString, autonString;
+	public String gameMsg = "NOT";
 
 	public void initHardware() {
 		as_A = new AnalogInput(Constants.AUTO_SELECTOR_1);
@@ -170,8 +171,8 @@ public class AutonSelector extends Subsystem {
 	}
 
 	public static class Constants {
-		public static final int AUTO_SELECTOR_1 = 3;
-		public static final int AUTO_SELECTOR_2 = 2;
+		public static final int AUTO_SELECTOR_1 = 2;
+		public static final int AUTO_SELECTOR_2 = 3;
 
 		public static final int AUTO_V = 15;
 		public static final int AUTO_1 = 2684;

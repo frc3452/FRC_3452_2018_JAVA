@@ -15,28 +15,35 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class MiddleAuton extends CommandGroup {
 
 	public MiddleAuton(String priority, int selector) {
+		addSequential(new ResetGyro());
+		addSequential(new EncoderReset());
 		addSequential(new WaitForGameData());
 
-		//IF DATA FOUND
-		if (Robot.lights.gsm() != "NOT") {
+		if (priority == "D") {
+			defaultAuton();
+		} else {
 
-			if (priority == "SWITCH") {
-				if (Robot.lights.gsm().charAt(0) == 'L') {
-					switchL(selector);
-					addSequential(new DriveTime(0, 0, 16));
-				} else if (Robot.lights.gsm().charAt(0) == 'R') {
-					switchR(selector);
-					addSequential(new DriveTime(0, 0, 16));
+			//IF DATA FOUND
+			if (Robot.autonSelector.gameMsg != "NOT") {
+
+				if (priority == "SWITCH") {
+					if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
+						switchL(selector);
+						addSequential(new DriveTime(0, 0, 16));
+					} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
+						switchR(selector);
+						addSequential(new DriveTime(0, 0, 16));
+					} else {
+						defaultAuton();
+					}
 				} else {
+					System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
 					defaultAuton();
 				}
 			} else {
-				System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
+				System.out.println("ERROR Game data not found; running default");
 				defaultAuton();
 			}
-		} else {
-			System.out.println("ERROR Game data not found; running default");
-			defaultAuton();
 		}
 	}
 
@@ -44,7 +51,6 @@ public class MiddleAuton extends CommandGroup {
 		//COMPLETE
 		switch (mode) {
 		case 1:
-			addSequential(new EncoderReset());
 			addParallel(new DriveTime(.25, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.25, 0, .225)); // jog forward backwards to drop arm
@@ -62,7 +68,6 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new EncoderFrom(-1.4, -1.4, .3, .3, .2)); // back up  after placing
 			break;
 		case 2:
-			addSequential(new EncoderReset());
 			addParallel(new DriveTime(.25, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.25, 0, .225)); // jog forward backwards to drop arm
@@ -93,10 +98,9 @@ public class MiddleAuton extends CommandGroup {
 		//COMPLETE
 		switch (mode) {
 		case 1:
-			addSequential(new EncoderReset());
-			addParallel(new DriveTime(.25, 0, .5));
+			//			addParallel(new DriveTime(.25, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
-			addSequential(new DriveTime(-.25, 0, .25)); // jog forward backwards to drop arm
+			//			addSequential(new DriveTime(-.25, 0, .25)); // jog forward backwards to drop arm
 
 			addSequential(new EncoderFrom(1.45, 1.45, .3, .3, .4)); // INIT DRIVE
 			addParallel(new IntakeTime(-.2, 1));
@@ -112,14 +116,13 @@ public class MiddleAuton extends CommandGroup {
 
 			break;
 		case 2:
-			addSequential(new EncoderReset());
-			addParallel(new DriveTime(.25, 0, .5));
+			//			addParallel(new DriveTime(.25, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
-			addSequential(new DriveTime(-.25, 0, .25)); // jog forward backwards to drop arm
+			//			addSequential(new DriveTime(-.25, 0, .25)); // jog forward backwards to drop arm
 
 			addSequential(new EncoderFrom(1.45, 1.45, .3, .3, .4)); // INIT DRIVE
 			addParallel(new IntakeTime(-.2, 1));
-			
+
 			addParallel(new ElevatorPosition(4.2));
 			addSequential(new EncoderFrom(.75, -0.38, .4, .4, .5)); // turn right
 
@@ -140,9 +143,6 @@ public class MiddleAuton extends CommandGroup {
 	}
 
 	private void defaultAuton() {
-		addSequential(new EncoderReset());
-		addSequential(new ResetGyro());
-
 		addSequential(new EncoderFrom(1.8, 6.7, .5, .5, .5));
 		addSequential(new EncoderFrom(-3.15, -3.15, .5, .5, .5));
 

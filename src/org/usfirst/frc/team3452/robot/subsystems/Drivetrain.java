@@ -43,7 +43,7 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 1);
 		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 1);
 
-		SmartDashboard.putNumber("Elevator Enc", Robot.elevator.Elev_1.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Elevator Enc", -Robot.elevator.Elev_1.getSelectedSensorPosition(0));
 
 		SmartDashboard.putString("Selected auton", Robot.autonSelector.autonString);
 		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());

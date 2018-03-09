@@ -40,7 +40,7 @@ public class Elevator extends Subsystem {
 		// PIDs
 		Elev_1.config_kF(0, 0, 10);
 		Elev_1.config_kP(0, 0.09, 10);
-		Elev_1.config_kI(0, 0.000065, 10);
+		Elev_1.config_kI(0, 0.000075, 10);
 		Elev_1.config_kD(0, 2.5, 10);
 		// was 0, .09, .000025, 2.5
 
@@ -55,7 +55,6 @@ public class Elevator extends Subsystem {
 		Elev_1.setNeutralMode(NeutralMode.Brake);
 		Elev_2.setNeutralMode(NeutralMode.Brake);
 
-		
 		//CURRENT LIMITING
 		Elev_1.configContinuousCurrentLimit(Constants.ELEVATOR_AMP_LIMIT, 10);
 		Elev_1.configPeakCurrentLimit(Constants.ELEVATOR_AMP_TRIGGER, 10);
@@ -71,7 +70,6 @@ public class Elevator extends Subsystem {
 		Elev_1.configOpenloopRamp(Constants.ELEVATOR_OPEN_RAMP_TIME, 10);
 		Elev_1.configClosedloopRamp(Constants.ELEVATOR_CLOSED_RAMP_TIME, 10);
 
-		
 		//SHUFFLEBOARD
 		Elev_1.setSubsystem("Elevator");
 		Elev_2.setSubsystem("Elevator");
@@ -143,13 +141,12 @@ public class Elevator extends Subsystem {
 		public static final double ELEVATOR_SPEED_1 = 1;
 		public static final double ELEVATOR_SPEED_2 = .9;
 		public static final double ELEVATOR_SPEED_3 = .65;
-		public static final double ELEVATOR_SPEED_4 = .5;
-		public static final double ELEVATOR_SPEED_5 = .4;
+		public static final double ELEVATOR_SPEED_4 = .55;
+		public static final double ELEVATOR_SPEED_5 = .45;
 
 		public static int ELEVATOR_AMP_TRIGGER = 50;
 		public static int ELEVATOR_AMP_LIMIT = 40;
 		public static int ELEVATOR_AMP_TIME = 1000;
-
 	}
 
 }

@@ -24,6 +24,7 @@ public class WaitForGameData extends Command {
 	}
 
 	protected void end() {
+		
 	}
 
 	protected void interrupted() {

@@ -17,48 +17,50 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class RightAuton extends CommandGroup {
 
 	public RightAuton(String priority, int selector) {
+		addSequential(new ResetGyro());
+		addSequential(new EncoderReset());
 		addSequential(new WaitForGameData());
 
 		//IF DATA FOUND
-		if (Robot.lights.gsm() != "NOT") {
+		if (Robot.autonSelector.gameMsg != "NOT") {
 
 			if (priority == "SWITCH") {
 
-				if (Robot.lights.gsm().charAt(0) == 'L') {
+				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
 					switchL(selector);
 					addSequential(new DriveTime(0, 0, 16));
 
-				} else if (Robot.lights.gsm().charAt(0) == 'R') {
+				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
 					switchR(selector);
 					addSequential(new DriveTime(0, 0, 16));
 				}
 
 			} else if (priority == "SCALE") {
 
-				if (Robot.lights.gsm().charAt(1) == 'L') {
+				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
 					scaleL(selector);
 					addSequential(new DriveTime(0, 0, 16));
 
-				} else if (Robot.lights.gsm().charAt(1) == 'R') {
+				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
 					scaleR(selector);
 					addSequential(new DriveTime(0, 0, 16));
 				}
 
 			} else if (priority == "R_SWITCH_P") {
-				if (Robot.lights.gsm().charAt(0) == 'R') {
+				if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
 					switchR(selector);
 					addSequential(new DriveTime(0, 0, 16));
-				} else if (Robot.lights.gsm().charAt(1) == 'R') {
+				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
 					scaleR(selector);
 					addSequential(new DriveTime(0, 0, 16));
 				} else {
 					defaultAuton();
 				}
 			} else if (priority == "R_SCALE_P") {
-				if (Robot.lights.gsm().charAt(1) == 'R') {
+				if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
 					scaleR(selector);
 					addSequential(new DriveTime(0, 0, 16));
-				} else if (Robot.lights.gsm().charAt(0) == 'R') {
+				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
 					switchR(selector);
 					addSequential(new DriveTime(0, 0, 16));
 				} else {
@@ -78,10 +80,9 @@ public class RightAuton extends CommandGroup {
 	private void switchL(int mode) {
 		switch (mode) {
 		case 1:
-			addSequential(new ResetGyro());
-			addSequential(new EncoderReset());
-
+			addParallel(new DriveTime(.45, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
+			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
 
 			addSequential(new EncoderGyro(11.2, 11.2, .4, .4, .4, 0, .017)); // drive to side of switch
 
@@ -108,13 +109,10 @@ public class RightAuton extends CommandGroup {
 	private void switchR(int mode) {
 		switch (mode) {
 		case 1:
-			addSequential(new ResetGyro());
-			addSequential(new EncoderReset());
-
-			addParallel(new DriveTime(.25, 0, .5));
+			addParallel(new DriveTime(.45, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
-			addSequential(new DriveTime(-.25, 0, .225)); // jog forward backwards to drop arm
-
+			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
+			
 			addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, .017)); // drive to side of switch
 
 			addParallel(new ElevatorPosition(5)); // raise arm
@@ -133,10 +131,9 @@ public class RightAuton extends CommandGroup {
 	private void scaleL(int mode) {
 		switch (mode) {
 		case 1:
-			addSequential(new ResetGyro());
-			addSequential(new EncoderReset());
-
+			addParallel(new DriveTime(.45, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
+			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
 
 			addSequential(new EncoderGyro(11.5, 11.5, .6, .6, .65, 0, .017)); // drive to side of switch
 
@@ -163,13 +160,10 @@ public class RightAuton extends CommandGroup {
 	private void scaleR(int mode) {
 		switch (mode) {
 		case 1:
-			addSequential(new ResetGyro());
-			addSequential(new EncoderReset()); //reset
-
 			addParallel(new DriveTime(.45, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
-
+			
 			addParallel(new ElevatorPosition(1)); //lift for drive
 			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, .016)); // drive to far side of switch
 			addSequential(new EncoderFrom(-.4, .2, .4, .4, .5)); //turn to switch
@@ -189,13 +183,10 @@ public class RightAuton extends CommandGroup {
 	}
 
 	private void defaultAuton() {
-		addSequential(new ResetGyro());
-		addSequential(new EncoderReset());
-
-		addParallel(new DriveTime(.25, 0, .5));
+		addParallel(new DriveTime(.45, 0, .5));
 		addSequential(new ElevatorTime(.5, .15));
-		addSequential(new DriveTime(-.25, 0, .225)); // jog forward backwards to drop arm
-
+		addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
+		
 		addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, .017)); // drive to side of switch
 		addSequential(new ElevatorPosition(5)); // raise arm
 	}

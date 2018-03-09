@@ -15,6 +15,7 @@ import org.usfirst.frc.team3452.robot.subsystems.Lights;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
@@ -35,8 +36,13 @@ public class Robot extends TimedRobot {
 
 	boolean wasTele = false;
 
+	Timer timer = new Timer();
+
 	@Override
 	public void robotInit() {
+		timer.stop();
+		timer.reset();
+
 		for (int i = 0; i < 20; i++) {
 			autoCommand[i] = null;
 		}
@@ -45,7 +51,6 @@ public class Robot extends TimedRobot {
 		Robot.elevator.initHardware();
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
-		//TODO Z~Uncomment
 		//		Robot.lights.initHardware();
 		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
@@ -55,38 +60,19 @@ public class Robot extends TimedRobot {
 
 		defaultCommand = (new DefaultAutonomous());
 
-		autoCommand[1] = (new MiddleAuton("SWITCH", 1));
 		Robot.autonSelector.autoCommandName[1] = "Middle: Switch";
-
-		autoCommand[2] = (new LeftAuton("SWITCH", 1));
 		Robot.autonSelector.autoCommandName[2] = "Left: Switch";
-
-		autoCommand[3] = (new LeftAuton("SCALE", 1));
 		Robot.autonSelector.autoCommandName[3] = "Left: Scale";
-
-		autoCommand[4] = (new RightAuton("SWITCH", 1));
 		Robot.autonSelector.autoCommandName[4] = "Right: Switch";
-
-		autoCommand[5] = (new RightAuton("SCALE", 1));
 		Robot.autonSelector.autoCommandName[5] = "Right: Scale";
-
-		autoCommand[6] = (new LeftAuton("L_SWITCH_P", 1));
 		Robot.autonSelector.autoCommandName[6] = "Left: Switch Priority";
-
-		autoCommand[7] = (new LeftAuton("L_SCALE_P", 1));
 		Robot.autonSelector.autoCommandName[7] = "Left: Scale Priority";
-
-		autoCommand[8] = (new RightAuton("R_SWITCH_P", 1));
 		Robot.autonSelector.autoCommandName[8] = "Right: Switch Priority";
-
-		autoCommand[9] = (new RightAuton("R_SCALE_P", 1));
 		Robot.autonSelector.autoCommandName[9] = "Right: Scale Priority";
 	}
 
 	@Override
 	public void disabledInit() {
-		//TODO Z~Uncomment
-		//		Robot.drive.BrakeCoast(NeutralMode.Coast);
 		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
 	}
 
@@ -102,6 +88,83 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
+		
+		
+		// Start waiting for timer to run out
+		timer.reset();
+		timer.start();
+		
+		/*
+		
+		// assume we aren't going to find field data 
+		int foundFieldData = 0;
+		
+		// keep looping until we have field data for 5s have gone by being careful to not
+		// use too much CPU time (using a delay of 100ms between the loops).
+		while(foundFieldData == 0 && timer.get() < 5)
+		{
+			// Wait for timer
+			try 
+			{
+				// Wait 100ms
+				Thread.sleep(100);
+			}
+			catch (InterruptedException e) 
+			{
+				// Only get this if someone else poked our thread.  Just ignoring this. (
+				// Verified by a 
+				
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+		
+			// We have field data if we read anything except for "NOT"
+			if(Robot.autonSelector.gameMsg != "NOT")
+			{				
+				foundFieldData = 1;
+			}
+		}
+ 		
+		// Reset our priorities if field data was found successfully
+		if(foundFieldData == 1)
+		{
+			autoCommand[1] = (new MiddleAuton("SWITCH", 1));
+			autoCommand[2] = (new LeftAuton("SWITCH", 1));
+			autoCommand[3] = (new LeftAuton("SCALE", 1));
+			autoCommand[4] = (new RightAuton("SWITCH", 1));
+			autoCommand[5] = (new RightAuton("SCALE", 1));
+			autoCommand[6] = (new LeftAuton("L_SWITCH_P", 1));
+			autoCommand[7] = (new LeftAuton("L_SCALE_P", 1));
+			autoCommand[8] = (new RightAuton("R_SWITCH_P", 1));
+			autoCommand[9] = (new RightAuton("R_SCALE_P", 1));	
+		}
+		else
+		{			
+			// Didn't get field data so just do default
+			autonomousCommand = (new DefaultAutonomous());			
+		}
+
+		*/
+		
+		do {
+			Robot.autonSelector.gameMsg = Robot.lights.gsm();
+			autoCommand[1] = (new MiddleAuton("SWITCH", 1));
+			autoCommand[2] = (new LeftAuton("SWITCH", 1));
+			autoCommand[3] = (new LeftAuton("SCALE", 1));
+			autoCommand[4] = (new RightAuton("SWITCH", 1));
+			autoCommand[5] = (new RightAuton("SCALE", 1));
+			autoCommand[6] = (new LeftAuton("L_SWITCH_P", 1));
+			autoCommand[7] = (new LeftAuton("L_SCALE_P", 1));
+			autoCommand[8] = (new RightAuton("R_SWITCH_P", 1));
+			autoCommand[9] = (new RightAuton("R_SCALE_P", 1));
+
+		} while (Robot.autonSelector.gameMsg == "NOT" && timer.get() < 5);
+
+
+		if (timer.get() > 5) {
+			autonomousCommand = (new DefaultAutonomous());
+		}
+
 		Robot.drive.BrakeCoast(NeutralMode.Brake);
 
 		autonChooser();
@@ -109,6 +172,7 @@ public class Robot extends TimedRobot {
 
 		if (autonomousCommand != null)
 			autonomousCommand.start();
+
 	}
 
 	@Override
@@ -146,49 +210,49 @@ public class Robot extends TimedRobot {
 
 			// A BUTTON
 			if (OI.driverJoy.getRawButton(1)) {
-				autonomousCommand = autoCommand[1];
+				autonomousCommand = autoCommand[6];
 				Robot.autonSelector.overrideString = "Controller override 1:\t"
-						+ Robot.autonSelector.autoCommandName[1];
+						+ Robot.autonSelector.autoCommandName[6];
 				Robot.autonSelector.m_ControllerOverride = true;
 			}
 
 			// B BUTTON
 			else if (OI.driverJoy.getRawButton(2)) {
-				autonomousCommand = autoCommand[2];
+				autonomousCommand = autoCommand[7];
 				Robot.autonSelector.overrideString = "Controller override 2:\t"
-						+ Robot.autonSelector.autoCommandName[2];
+						+ Robot.autonSelector.autoCommandName[7];
 				Robot.autonSelector.m_ControllerOverride = true;
 			}
 
 			// X BUTTON
 			else if (OI.driverJoy.getRawButton(3)) {
-				autonomousCommand = autoCommand[3];
+				autonomousCommand = autoCommand[8];
 				Robot.autonSelector.overrideString = "Controller override 3:\t"
-						+ Robot.autonSelector.autoCommandName[3];
+						+ Robot.autonSelector.autoCommandName[8];
 				Robot.autonSelector.m_ControllerOverride = true;
 			}
 
 			// Y BUTTON
 			else if (OI.driverJoy.getRawButton(4)) {
-				autonomousCommand = autoCommand[4];
+				autonomousCommand = autoCommand[9];
 				Robot.autonSelector.overrideString = "Controller override 4:\t"
-						+ Robot.autonSelector.autoCommandName[4];
+						+ Robot.autonSelector.autoCommandName[9];
 				Robot.autonSelector.m_ControllerOverride = true;
 			}
 
 			// BACK BUTTON
 			else if (OI.driverJoy.getRawButton(7)) {
-				autonomousCommand = autoCommand[5];
+				autonomousCommand = autoCommand[1];
 				Robot.autonSelector.overrideString = "Controller override 5:\t"
-						+ Robot.autonSelector.autoCommandName[5];
+						+ Robot.autonSelector.autoCommandName[1];
 				Robot.autonSelector.m_ControllerOverride = true;
 			}
 
 			// START BUTTON
 			else if (OI.driverJoy.getRawButton(8)) {
-				autonomousCommand = autoCommand[6];
+				autonomousCommand = autoCommand[2];
 				Robot.autonSelector.overrideString = "Controller override 6:\t"
-						+ Robot.autonSelector.autoCommandName[6];
+						+ Robot.autonSelector.autoCommandName[2];
 				Robot.autonSelector.m_ControllerOverride = true;
 			}
 

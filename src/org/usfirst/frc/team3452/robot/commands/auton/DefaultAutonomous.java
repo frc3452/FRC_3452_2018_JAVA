@@ -9,12 +9,10 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class DefaultAutonomous extends CommandGroup {
 
 	public DefaultAutonomous() {
-		addParallel(new DriveTime(.45, 0, .5));
 		addSequential(new ElevatorTime(.5, .15));
-		addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
 
-		addSequential(new DriveTime(0, 0, 4));
-		addSequential(new ElevatorPosition(3));
-		addSequential(new DriveTime(.25, 0, 5));
+		addSequential(new DriveTime(0, 0, 1));
+		addSequential(new ElevatorTime(.5, .7));
+		addSequential(new DriveTime(.4, 0, 5));
 	}
 }
