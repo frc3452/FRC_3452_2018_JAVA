@@ -278,6 +278,7 @@ public class Robot extends TimedRobot {
 
 		// if not overriden
 		if (Robot.autonSelector.m_ControllerOverride == false) {
+
 			switch (Robot.autonSelector.uglyAnalog()) {
 			case 1:
 				autonomousCommand = autoCommand[1];

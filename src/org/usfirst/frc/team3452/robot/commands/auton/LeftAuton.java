@@ -119,7 +119,7 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new EncoderFrom(.55, -.42, .6, .6, .65));
 			addSequential(new DriveTime(.65, 0, .5));
 
-			addSequential(new IntakeTime(.7, .5));
+			addSequential(new IntakeTime(.3, 2));
 			addSequential(new EncoderFrom(-.5, -.5, .5, .5, .5));
 
 			break;

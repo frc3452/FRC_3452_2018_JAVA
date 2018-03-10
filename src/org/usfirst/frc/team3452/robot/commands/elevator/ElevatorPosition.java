@@ -15,7 +15,7 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected void initialize() {
-		setTimeout(4);
+		setTimeout(3);
 	}
 
 	protected void execute() {
@@ -29,7 +29,7 @@ public class ElevatorPosition extends Command {
 		if (Robot.elevator.Elev_1.getSensorCollection().isFwdLimitSwitchClosed() && m_value < 0)
 			return true;
 		
-		return Robot.elevator.isDone(1.5) || isTimedOut();
+		return Robot.elevator.isDone(3.5) || isTimedOut();
 	}
 
 	protected void end() {
