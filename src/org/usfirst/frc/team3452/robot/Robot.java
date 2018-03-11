@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
 	public static final Lights lights = new Lights();
 
 	public static OI _oi;
-
+\\TODO encoder percent done, retune , elevator ramp limit speed, restructure auto selecotr
 	Command autonomousCommand = null;
 	Command autoCommand[] = new Command[20];
 	Command defaultCommand = null;
