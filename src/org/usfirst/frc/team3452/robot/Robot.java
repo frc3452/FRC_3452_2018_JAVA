@@ -94,57 +94,6 @@ public class Robot extends TimedRobot {
 		timer.reset();
 		timer.start();
 		
-		/*
-		
-		// assume we aren't going to find field data 
-		int foundFieldData = 0;
-		
-		// keep looping until we have field data for 5s have gone by being careful to not
-		// use too much CPU time (using a delay of 100ms between the loops).
-		while(foundFieldData == 0 && timer.get() < 5)
-		{
-			// Wait for timer
-			try 
-			{
-				// Wait 100ms
-				Thread.sleep(100);
-			}
-			catch (InterruptedException e) 
-			{
-				// Only get this if someone else poked our thread.  Just ignoring this. (
-				// Verified by a 
-				
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-			}
-		
-			// We have field data if we read anything except for "NOT"
-			if(Robot.autonSelector.gameMsg != "NOT")
-			{				
-				foundFieldData = 1;
-			}
-		}
- 		
-		// Reset our priorities if field data was found successfully
-		if(foundFieldData == 1)
-		{
-			autoCommand[1] = (new MiddleAuton("SWITCH", 1));
-			autoCommand[2] = (new LeftAuton("SWITCH", 1));
-			autoCommand[3] = (new LeftAuton("SCALE", 1));
-			autoCommand[4] = (new RightAuton("SWITCH", 1));
-			autoCommand[5] = (new RightAuton("SCALE", 1));
-			autoCommand[6] = (new LeftAuton("L_SWITCH_P", 1));
-			autoCommand[7] = (new LeftAuton("L_SCALE_P", 1));
-			autoCommand[8] = (new RightAuton("R_SWITCH_P", 1));
-			autoCommand[9] = (new RightAuton("R_SCALE_P", 1));	
-		}
-		else
-		{			
-			// Didn't get field data so just do default
-			autonomousCommand = (new DefaultAutonomous());			
-		}
-
-		*/
 		
 		do {
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
