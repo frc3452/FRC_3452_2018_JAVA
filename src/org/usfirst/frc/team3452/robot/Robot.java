@@ -29,16 +29,21 @@ public class Robot extends TimedRobot {
 	public static final Lights lights = new Lights();
 
 	public static OI _oi;
+	
+	//auto selector init
 	Command autonomousCommand = null;
 	Command autoCommand[] = new Command[20];
 	Command defaultCommand = null;
 
+	//flag
 	boolean wasTele = false;
 
+	//init timer
 	Timer timer = new Timer();
 
 	@Override
 	public void robotInit() {
+		//init timer
 		timer.stop();
 		timer.reset();
 
@@ -59,6 +64,7 @@ public class Robot extends TimedRobot {
 
 		defaultCommand = (new DefaultAutonomous());
 
+		//naming for commands 
 		Robot.autonSelector.autoCommandName[1] = "Middle: Switch";
 		Robot.autonSelector.autoCommandName[2] = "Left: Switch";
 		Robot.autonSelector.autoCommandName[3] = "Left: Scale";
@@ -72,6 +78,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
+		//first time enabled set to coast, after tele brake
 		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
 	}
 
@@ -89,7 +96,10 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		timer.reset();
 		timer.start();
+		//timer start
 
+	
+		//keep overriding while game data bad or controller override not set
 		do {
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
 			autoCommand[1] = (new MiddleAuton("SWITCH", 1));
@@ -109,8 +119,9 @@ public class Robot extends TimedRobot {
 
 		} while ((Robot.autonSelector.gameMsg == "NOT" && timer.get() < 5)
 				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
-		//Reset values until data is found 
+	
 
+		//if loop above failed
 		if (timer.get() > 5) {
 			autonomousCommand = (new DefaultAutonomous());
 		}
