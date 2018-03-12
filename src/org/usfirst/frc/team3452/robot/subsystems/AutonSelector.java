@@ -12,8 +12,10 @@ public class AutonSelector extends Subsystem {
 	private int m_asA, m_asB;
 
 	public String autoCommandName[] = new String[20];
-	public boolean m_ControllerOverride = false;
+	public boolean controllerOverride = false;
+	public boolean confirmOverride = false;
 
+	public int overrideValue = 1;
 	private String overrideStringPrevious;
 	public String overrideString, autonString;
 	public String gameMsg = "NOT";
@@ -38,7 +40,7 @@ public class AutonSelector extends Subsystem {
 		m_asB = as_B.getValue();
 
 		// If overriden, print overide
-		if (m_ControllerOverride && (overrideString != overrideStringPrevious))
+		if (controllerOverride && (overrideString != overrideStringPrevious))
 			System.out.println(overrideString);
 
 		if (((m_asA + 8 < m_prev_as1 || m_prev_as1 < m_asA - 8)

@@ -88,64 +88,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		
-		
-		// Start waiting for timer to run out
 		timer.reset();
 		timer.start();
-		
-		/*
-		
-		// assume we aren't going to find field data 
-		int foundFieldData = 0;
-		
-		// keep looping until we have field data for 5s have gone by being careful to not
-		// use too much CPU time (using a delay of 100ms between the loops).
-		while(foundFieldData == 0 && timer.get() < 5)
-		{
-			// Wait for timer
-			try 
-			{
-				// Wait 100ms
-				Thread.sleep(100);
-			}
-			catch (InterruptedException e) 
-			{
-				// Only get this if someone else poked our thread.  Just ignoring this. (
-				// Verified by a 
-				
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-			}
-		
-			// We have field data if we read anything except for "NOT"
-			if(Robot.autonSelector.gameMsg != "NOT")
-			{				
-				foundFieldData = 1;
-			}
-		}
- 		
-		// Reset our priorities if field data was found successfully
-		if(foundFieldData == 1)
-		{
-			autoCommand[1] = (new MiddleAuton("SWITCH", 1));
-			autoCommand[2] = (new LeftAuton("SWITCH", 1));
-			autoCommand[3] = (new LeftAuton("SCALE", 1));
-			autoCommand[4] = (new RightAuton("SWITCH", 1));
-			autoCommand[5] = (new RightAuton("SCALE", 1));
-			autoCommand[6] = (new LeftAuton("L_SWITCH_P", 1));
-			autoCommand[7] = (new LeftAuton("L_SCALE_P", 1));
-			autoCommand[8] = (new RightAuton("R_SWITCH_P", 1));
-			autoCommand[9] = (new RightAuton("R_SCALE_P", 1));	
-		}
-		else
-		{			
-			// Didn't get field data so just do default
-			autonomousCommand = (new DefaultAutonomous());			
-		}
 
-		*/
-		
 		do {
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
 			autoCommand[1] = (new MiddleAuton("SWITCH", 1));
@@ -158,8 +103,14 @@ public class Robot extends TimedRobot {
 			autoCommand[8] = (new RightAuton("R_SWITCH_P", 1));
 			autoCommand[9] = (new RightAuton("R_SCALE_P", 1));
 
-		} while (Robot.autonSelector.gameMsg == "NOT" && timer.get() < 5);
+			if (Robot.autonSelector.controllerOverride) {
+				autonomousCommand = autoCommand[Robot.autonSelector.overrideValue];
+				Robot.autonSelector.confirmOverride = true;
+			}
 
+		} while ((Robot.autonSelector.gameMsg == "NOT" && timer.get() < 5)
+				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
+		//Reset values until data is found 
 
 		if (timer.get() > 5) {
 			autonomousCommand = (new DefaultAutonomous());
@@ -210,63 +161,68 @@ public class Robot extends TimedRobot {
 
 			// A BUTTON
 			if (OI.driverJoy.getRawButton(1)) {
-				autonomousCommand = autoCommand[6];
+				Robot.autonSelector.overrideValue = 6;
 				Robot.autonSelector.overrideString = "Controller override 1:\t"
 						+ Robot.autonSelector.autoCommandName[6];
-				Robot.autonSelector.m_ControllerOverride = true;
+				Robot.autonSelector.controllerOverride = true;
+				Robot.autonSelector.confirmOverride = false;
 			}
 
 			// B BUTTON
 			else if (OI.driverJoy.getRawButton(2)) {
-				autonomousCommand = autoCommand[7];
+				Robot.autonSelector.overrideValue = 7;
 				Robot.autonSelector.overrideString = "Controller override 2:\t"
 						+ Robot.autonSelector.autoCommandName[7];
-				Robot.autonSelector.m_ControllerOverride = true;
+				Robot.autonSelector.controllerOverride = true;
+				Robot.autonSelector.confirmOverride = false;
 			}
 
 			// X BUTTON
 			else if (OI.driverJoy.getRawButton(3)) {
-				autonomousCommand = autoCommand[8];
+				Robot.autonSelector.overrideValue = 8;
 				Robot.autonSelector.overrideString = "Controller override 3:\t"
 						+ Robot.autonSelector.autoCommandName[8];
-				Robot.autonSelector.m_ControllerOverride = true;
+				Robot.autonSelector.controllerOverride = true;
+				Robot.autonSelector.confirmOverride = false;
 			}
 
 			// Y BUTTON
 			else if (OI.driverJoy.getRawButton(4)) {
-				autonomousCommand = autoCommand[9];
+				Robot.autonSelector.overrideValue = 9;
 				Robot.autonSelector.overrideString = "Controller override 4:\t"
 						+ Robot.autonSelector.autoCommandName[9];
-				Robot.autonSelector.m_ControllerOverride = true;
+				Robot.autonSelector.controllerOverride = true;
+				Robot.autonSelector.confirmOverride = false;
 			}
 
 			// BACK BUTTON
 			else if (OI.driverJoy.getRawButton(7)) {
-				autonomousCommand = autoCommand[1];
+				Robot.autonSelector.overrideValue = 1;
 				Robot.autonSelector.overrideString = "Controller override 5:\t"
 						+ Robot.autonSelector.autoCommandName[1];
-				Robot.autonSelector.m_ControllerOverride = true;
+				Robot.autonSelector.controllerOverride = true;
+				Robot.autonSelector.confirmOverride = false;
 			}
 
 			// START BUTTON
 			else if (OI.driverJoy.getRawButton(8)) {
-				autonomousCommand = autoCommand[2];
+				Robot.autonSelector.overrideValue = 2;
 				Robot.autonSelector.overrideString = "Controller override 6:\t"
 						+ Robot.autonSelector.autoCommandName[2];
-				Robot.autonSelector.m_ControllerOverride = true;
+				Robot.autonSelector.controllerOverride = true;
+				Robot.autonSelector.confirmOverride = false;
 			}
 
 			// LEFT CLICK
 			else if (OI.driverJoy.getRawButton(9)) {
 				autonomousCommand = defaultCommand;
 				Robot.autonSelector.overrideString = "Controller override: DEFAULT AUTO SELECTED";
-
-				Robot.autonSelector.m_ControllerOverride = true;
+				Robot.autonSelector.controllerOverride = true;
 			}
 
 			// RIGHT CLICK
 			else if (OI.driverJoy.getRawButton(10)) {
-				Robot.autonSelector.m_ControllerOverride = false;
+				Robot.autonSelector.controllerOverride = false;
 				System.out.println("Auto override disengaged. " + Robot.autonSelector.autonString);
 			}
 		}
@@ -277,75 +233,13 @@ public class Robot extends TimedRobot {
 		controllerChooser();
 
 		// if not overriden
-		if (Robot.autonSelector.m_ControllerOverride == false) {
+		if (Robot.autonSelector.controllerOverride == false) {
 
-			switch (Robot.autonSelector.uglyAnalog()) {
-			case 1:
-				autonomousCommand = autoCommand[1];
-				break;
-			case 2:
-				autonomousCommand = autoCommand[2];
-				break;
-			case 3:
-				autonomousCommand = autoCommand[3];
-				break;
-			case 4:
-				autonomousCommand = autoCommand[4];
-				break;
-			case 5:
-				autonomousCommand = autoCommand[5];
-				break;
-			case 6:
-				autonomousCommand = autoCommand[6];
-				break;
-			case 7:
-				autonomousCommand = autoCommand[7];
-				break;
-			case 8:
-				autonomousCommand = autoCommand[8];
-				break;
-			case 9:
-				autonomousCommand = autoCommand[9];
-				break;
-			case 10:
-				autonomousCommand = autoCommand[10];
-				break;
-			case 11:
-				autonomousCommand = autoCommand[11];
-				break;
-			case 12:
-				autonomousCommand = autoCommand[12];
-				break;
-			case 13:
-				autonomousCommand = autoCommand[13];
-				break;
-			case 14:
-				autonomousCommand = autoCommand[14];
-				break;
-			case 15:
-				autonomousCommand = autoCommand[15];
-				break;
-			case 16:
-				autonomousCommand = autoCommand[16];
-				break;
-			case 17:
-				autonomousCommand = autoCommand[17];
-				break;
-			case 18:
-				autonomousCommand = autoCommand[18];
-				break;
-			case 19:
-				autonomousCommand = autoCommand[19];
-				break;
-			case 20:
-				autonomousCommand = autoCommand[20];
-				break;
-			case 3452:
+			//If selector feedback nominal
+			if (Robot.autonSelector.uglyAnalog() > 20 || Robot.autonSelector.uglyAnalog() < 1) {
+				autonomousCommand = autoCommand[Robot.autonSelector.uglyAnalog()];
+			} else {
 				autonomousCommand = defaultCommand;
-				break;
-			default:
-				autonomousCommand = defaultCommand;
-				break;
 			}
 		}
 	}
