@@ -4,7 +4,7 @@ I got bored one night and tried out Java. I found it's much easier than cpp. We 
 
 # Functions:
 
-##Closed loop TalonSRX Motion Magic control with NavX gyro assist
+## Closed loop TalonSRX Motion Magic control with NavX gyro assist
 [Command](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/commands/drive/EncoderGyro.java)
 
 ## Physical autonomous selectors
