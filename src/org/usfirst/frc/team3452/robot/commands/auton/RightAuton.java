@@ -20,7 +20,12 @@ public class RightAuton extends CommandGroup {
 		addSequential(new ResetGyro());
 		addSequential(new EncoderReset());
 		addSequential(new WaitForGameData());
-
+		
+		if (priority == "D")
+		{
+			defaultAuton();
+		} else {
+		
 		//IF DATA FOUND
 		if (Robot.autonSelector.gameMsg != "NOT") {
 
@@ -75,6 +80,7 @@ public class RightAuton extends CommandGroup {
 			System.out.println("ERROR Game data not found; running default");
 			defaultAuton();
 		}
+	}
 	}
 
 	private void switchL(int mode) {
