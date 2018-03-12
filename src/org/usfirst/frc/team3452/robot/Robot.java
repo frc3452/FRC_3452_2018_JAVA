@@ -29,7 +29,6 @@ public class Robot extends TimedRobot {
 	public static final Lights lights = new Lights();
 
 	public static OI _oi;
-
 	Command autonomousCommand = null;
 	Command autoCommand[] = new Command[20];
 	Command defaultCommand = null;
