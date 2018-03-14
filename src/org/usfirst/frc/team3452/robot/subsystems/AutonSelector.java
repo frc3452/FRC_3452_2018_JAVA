@@ -16,8 +16,8 @@ public class AutonSelector extends Subsystem {
 	public boolean confirmOverride = false;
 
 	public int overrideValue = 1;
-	private String overrideStringPrevious;
-	public String overrideString, autonString;
+	private String overrideStringPrevious = "";
+	public String overrideString = "", autonString = "";
 	public String gameMsg = "NOT";
 
 	public void initHardware() {
