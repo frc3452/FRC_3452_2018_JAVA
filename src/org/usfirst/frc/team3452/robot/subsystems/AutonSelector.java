@@ -11,7 +11,7 @@ public class AutonSelector extends Subsystem {
 	private int m_prev_as1, m_prev_as2;
 	private int m_asA, m_asB;
 
-	public String autoCommandName[] = new String[20];
+	public String autoCommandName[] = new String[21];
 	public boolean controllerOverride = false;
 	public boolean confirmOverride = false;
 
@@ -30,7 +30,7 @@ public class AutonSelector extends Subsystem {
 		as_B.setName("Selector B");
 		
 
-		for (int i = 0; i < 21; i++) {
+		for (int i = 0; i < 20; i++) {
 			autoCommandName[i] = "NO COMMAND";
 		}
 	}

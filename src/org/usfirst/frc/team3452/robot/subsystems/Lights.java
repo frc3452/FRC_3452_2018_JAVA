@@ -1,18 +1,26 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.CANifier.LEDChannel;
+import org.usfirst.frc.team3452.robot.commands.signal.LightsCycle;
 
+import com.ctre.phoenix.CANifier;
+
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Lights extends Subsystem {
 	private static CANifier canifier;
-	
-	public int m_hue = 0;
-	public int c_r = 0, c_g = 0, c_b = 0;
+
+	public int m_hue = 225;
+	public double p_h = 0, p_s = 0, p_v = 0;
+
+	public Timer lightTimer = new Timer();
 
 	public void initHardware() {
 		canifier = new CANifier(Constants.CANIFIER_ID);
+
+		lightTimer.stop();
+		lightTimer.reset();
+		lightTimer.start();
 	}
 
 	public void hsv(double hDegrees, double S, double V) {
@@ -22,7 +30,6 @@ public class Lights extends Subsystem {
 		if (H < 0) {
 			H += 360;
 		}
-		;
 		if (H >= 360) {
 			H -= 360;
 		}
@@ -95,11 +102,9 @@ public class Lights extends Subsystem {
 				break;
 			}
 		}
-		/* Since we can't pass by reference, return an array */
-		/*
-		 * * RGB[0] = (float) R; RGB[1] = (float) G; RGB[2] = (float) B; return
-		 * RGB;
-		 */
+		p_h = H;
+		p_s = S;
+		p_v = V;
 
 		rgb((float) R, (float) G, (float) B);
 	}
@@ -108,12 +113,6 @@ public class Lights extends Subsystem {
 		canifier.setLEDOutput(r, CANifier.LEDChannel.LEDChannelA);
 		canifier.setLEDOutput(g, CANifier.LEDChannel.LEDChannelB);
 		canifier.setLEDOutput(b, CANifier.LEDChannel.LEDChannelC);
-	}
-
-	public void brightness(double brightness) {
-		canifier.setLEDOutput(c_r * brightness, LEDChannel.LEDChannelA);
-		canifier.setLEDOutput(c_g * brightness, LEDChannel.LEDChannelB);
-		canifier.setLEDOutput(c_b * brightness, LEDChannel.LEDChannelC);
 	}
 
 	public String gsm() {
@@ -127,7 +126,7 @@ public class Lights extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-//		 setDefaultCommand(new LightsCycle());
+		setDefaultCommand(new LightsCycle());
 	}
 
 	public static class Constants {

@@ -5,6 +5,7 @@ import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
 import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
+import org.usfirst.frc.team3452.robot.commands.signal.LightsCycle;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
@@ -33,7 +34,7 @@ public class Robot extends TimedRobot {
 
 	//auto selector init
 	Command autonomousCommand = null;
-	Command autoCommand[] = new Command[20];
+	Command autoCommand[] = new Command[21];
 	Command defaultCommand = null;
 
 	//flag for teleop 
@@ -48,7 +49,8 @@ public class Robot extends TimedRobot {
 		autoTimer.stop();
 		autoTimer.reset();
 
-		for (int i = 0; i < 20; i++) {
+		
+		for (int i = 0; i < 21; i++) {
 			autoCommand[i] = null;
 		}
 
@@ -75,6 +77,7 @@ public class Robot extends TimedRobot {
 		Robot.autonSelector.autoCommandName[7] = "Left: Scale Priority";
 		Robot.autonSelector.autoCommandName[8] = "Right: Switch Priority";
 		Robot.autonSelector.autoCommandName[9] = "Right: Scale Priority";
+		
 	}
 
 	@Override
@@ -89,6 +92,8 @@ public class Robot extends TimedRobot {
 		Robot.autonSelector.printSelected();
 
 		Robot.drive.LoggerUpdate();
+		
+		Robot.lights.hsv(1,1,1);
 
 		Scheduler.getInstance().run();
 	}

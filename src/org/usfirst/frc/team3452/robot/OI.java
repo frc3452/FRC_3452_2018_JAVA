@@ -5,7 +5,7 @@ import org.usfirst.frc.team3452.robot.commands.drive.SetModify;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
-import org.usfirst.frc.team3452.robot.commands.signal.LightsRGB;
+import org.usfirst.frc.team3452.robot.commands.signal.LightsHSV;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -43,13 +43,13 @@ public class OI {
 		//		driverJoyStart.whileHeld(new ClimbRelease());
 
 		// OP JOY
-		opJoyA.whenPressed(new LightsRGB(255, 0, 0));
-		opJoyB.whenPressed(new LightsRGB(0, 255, 0));
-		opJoyX.whenPressed(new LightsRGB(0, 0, 255));
-		opJoyLB.whenPressed(new LightsRGB(255, 255, 255));
-		opJoyRB.whenPressed(new LightsRGB(0, 0, 0));
-		opJoyBack.whenPressed(new LightsRGB(32, 92, 54));
-		opJoyStart.whenPressed(new LightsRGB(254, 194, 13));
+		opJoyA.whenPressed(new LightsHSV(360, 1, 1, "R"));
+		opJoyB.whenPressed(new LightsHSV(270, 1, 1, ""));
+//		opJoyX.whileHeld(new LightsHSV(180, 1, 1, ""));
+//		opJoyLB.whileHeld(new LightsHSV(90, 1, 1, ""));
+//		opJoyRB.whileHeld(new LightsHSV(135, 1, 1, ""));
+//		opJoyBack.whileHeld(new LightsHSV(225, 1, 1, ""));
+//		opJoyStart.whileHeld(new LightsHSV(0, 0, 0, ""));
 
 		//		opJoyLB.whileHeld(new ElevatorManual(opJoy));
 		//		opJoyX.whileHeld(new IntakeManual(-.75));

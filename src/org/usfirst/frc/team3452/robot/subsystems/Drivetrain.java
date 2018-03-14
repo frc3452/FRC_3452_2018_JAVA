@@ -55,11 +55,23 @@ public class Drivetrain extends Subsystem {
 		
 		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
 	}
-
+	
 	public void initHardware()
 	{
+		L1 = new WPI_TalonSRX(Constants.DRIVE_L_1);
+		L2 = new WPI_TalonSRX(Constants.DRIVE_L_2);
+		L3 = new WPI_TalonSRX(Constants.DRIVE_L_3);
+		L4 = new WPI_TalonSRX(Constants.DRIVE_L_4);
+		
+		R1 = new WPI_TalonSRX(Constants.DRIVE_R_1);
+		R2 = new WPI_TalonSRX(Constants.DRIVE_R_2);
+		R3 = new WPI_TalonSRX(Constants.DRIVE_R_3);
+		R4 = new WPI_TalonSRX(Constants.DRIVE_R_4);
+		
 	
 		Gyro = new AHRS(SPI.Port.kMXP);
+		
+		robotDrive = new DifferentialDrive(L1, R1);
 
 		robotDrive.setDeadband(0.08);
 		robotDrive.setSafetyEnabled(true);
