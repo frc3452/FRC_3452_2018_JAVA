@@ -8,6 +8,7 @@ import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.signal.LightsRGB;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -64,7 +65,7 @@ public class OI {
 		driveSafteyOverriden.whenInactive(new OverrideSet(0));
 	}
 	
-	public void rumble(int controller, double intensity)
+	public static void rumble(int controller, double intensity)
 	{
 	if (controller == 1)
 		{
