@@ -1,3 +1,4 @@
+
 package org.usfirst.frc.team3452.robot;
 
 import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
@@ -101,6 +102,7 @@ public class Robot extends TimedRobot {
 	
 		//keep overriding while game data bad or controller override not set
 		do {
+			
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
 			autoCommand[1] = (new MiddleAuton("SWITCH", 1));
 			autoCommand[2] = (new LeftAuton("SWITCH", 1));

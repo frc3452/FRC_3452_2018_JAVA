@@ -48,10 +48,6 @@ public class OI {
 		// OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
 
-		opJoyBack.whileHeld(new IntakeSpin(.35, true));
-				
-		opJoyStart.whileHeld(new IntakeSpin(.35, false));
-
 		opJoyX.whileHeld(new IntakeManual(-.75));
 		opJoyB.whileHeld(new IntakeManual(.75));
 		opJoyY.whileHeld(new IntakeManual(.3));
