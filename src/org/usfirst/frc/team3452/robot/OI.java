@@ -3,13 +3,9 @@ package org.usfirst.frc.team3452.robot;
 
 import org.usfirst.frc.team3452.robot.commands.drive.SetModify;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
-import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
-import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
-import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
-import org.usfirst.frc.team3452.robot.commands.pwm.ClimbRelease;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
-import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
+import org.usfirst.frc.team3452.robot.commands.signal.LightsRGB;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -38,22 +34,28 @@ public class OI {
 
 		driverJoyX.whileHeld(new IntakeManual(-.75));
 		driverJoyB.whileHeld(new IntakeManual(.75));
-		driverJoyY.whileHeld(new Climb(.7));
+//		driverJoyY.whileHeld(new Climb(.7));
 
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
 		driverJoyBack.whenPressed(new OverrideSet(-1));
-		driverJoyStart.whileHeld(new ClimbRelease());
+//		driverJoyStart.whileHeld(new ClimbRelease());
 
 		// OP JOY
-		opJoyLB.whileHeld(new ElevatorManual(opJoy));
+		opJoyA.whenPressed(new LightsRGB(255, 0, 0));
+		opJoyB.whenPressed(new LightsRGB(0, 255, 0));
+		opJoyX.whenPressed(new LightsRGB(0, 0, 255));
+		opJoyLB.whenPressed(new LightsRGB(255, 255, 255));
+		opJoyRB.whenPressed(new LightsRGB(0, 0, 0));
+		opJoyBack.whenPressed(new LightsRGB(32, 92, 54));
+		opJoyStart.whenPressed(new LightsRGB(254, 194, 13));
 
-		opJoyX.whileHeld(new IntakeManual(-.75));
-		opJoyB.whileHeld(new IntakeManual(.75));
-		opJoyY.whileHeld(new IntakeManual(.3));
-		opJoyA.whenPressed(new ElevatorPosition(3.5));
-		
-		opJoyRB.whenPressed(new ElevatorTime(.6, 11));
+		//		opJoyLB.whileHeld(new ElevatorManual(opJoy));
+		//		opJoyX.whileHeld(new IntakeManual(-.75));
+		//		opJoyB.whileHeld(new IntakeManual(.75));
+		//		opJoyY.whileHeld(new IntakeManual(.3));
+		//		opJoyA.whenPressed(new ElevatorPosition(3.5));
+		//		opJoyRB.whenPressed(new ElevatorTime(.6, 11));
 
 		//		opJoyLClick.whenPressed(new CameraSwitch(0));
 		//		opJoyRClick.whenPressed(new CameraSwitch(1));

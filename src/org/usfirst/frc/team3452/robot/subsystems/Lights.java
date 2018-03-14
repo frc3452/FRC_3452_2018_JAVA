@@ -6,9 +6,10 @@ import com.ctre.phoenix.CANifier.LEDChannel;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Lights extends Subsystem {
-
 	private static CANifier canifier;
+	
 	public int m_hue = 0;
+	public int c_r = 0, c_g = 0, c_b = 0;
 
 	public void initHardware() {
 		canifier = new CANifier(Constants.CANIFIER_ID);
@@ -25,7 +26,6 @@ public class Lights extends Subsystem {
 		if (H >= 360) {
 			H -= 360;
 		}
-		;
 
 		if (V <= 0) {
 			R = G = B = 0;
@@ -111,9 +111,9 @@ public class Lights extends Subsystem {
 	}
 
 	public void brightness(double brightness) {
-		canifier.setLEDOutput(brightness, LEDChannel.LEDChannelA);
-		canifier.setLEDOutput(brightness, LEDChannel.LEDChannelB);
-		canifier.setLEDOutput(brightness, LEDChannel.LEDChannelC);
+		canifier.setLEDOutput(c_r * brightness, LEDChannel.LEDChannelA);
+		canifier.setLEDOutput(c_g * brightness, LEDChannel.LEDChannelB);
+		canifier.setLEDOutput(c_b * brightness, LEDChannel.LEDChannelC);
 	}
 
 	public String gsm() {
@@ -127,10 +127,10 @@ public class Lights extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-		// setDefaultCommand(new LightsCycle());
+//		 setDefaultCommand(new LightsCycle());
 	}
 
 	public static class Constants {
-		public static final int CANIFIER_ID = 20;
+		public static final int CANIFIER_ID = 0;
 	}
 }

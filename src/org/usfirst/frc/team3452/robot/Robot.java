@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
 	public static final Lights lights = new Lights();
 
 	public static OI _oi;
-	
+
 	//auto selector init
 	Command autonomousCommand = null;
 	Command autoCommand[] = new Command[20];
@@ -56,7 +56,7 @@ public class Robot extends TimedRobot {
 		Robot.elevator.initHardware();
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
-		//		Robot.lights.initHardware();
+		Robot.lights.initHardware();
 		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 
@@ -99,10 +99,9 @@ public class Robot extends TimedRobot {
 		timer.start();
 		//timer start
 
-	
 		//keep overriding while game data bad or controller override not set
 		do {
-			
+
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
 			autoCommand[1] = (new MiddleAuton("SWITCH", 1));
 			autoCommand[2] = (new LeftAuton("SWITCH", 1));
@@ -121,7 +120,6 @@ public class Robot extends TimedRobot {
 
 		} while ((Robot.autonSelector.gameMsg == "NOT" && timer.get() < 5)
 				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
-	
 
 		//if loop above failed
 		if (timer.get() > 5) {
@@ -248,7 +246,7 @@ public class Robot extends TimedRobot {
 		if (Robot.autonSelector.controllerOverride == false) {
 
 			//If selector feedback nominal
-			if (Robot.autonSelector.uglyAnalog() > 20 || Robot.autonSelector.uglyAnalog() < 1) {
+			if (Robot.autonSelector.uglyAnalog() < 20 && Robot.autonSelector.uglyAnalog() > 1) {
 				autonomousCommand = autoCommand[Robot.autonSelector.uglyAnalog()];
 			} else {
 				autonomousCommand = defaultCommand;
