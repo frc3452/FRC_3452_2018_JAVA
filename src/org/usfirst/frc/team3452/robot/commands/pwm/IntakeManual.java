@@ -21,10 +21,7 @@ public class IntakeManual extends Command {
 	protected void execute() {
 		Robot.intake.manual(m_speed);
 
-		OI.driverJoy.setRumble(RumbleType.kLeftRumble, 1);
-		OI.driverJoy.setRumble(RumbleType.kRightRumble, 1);
-		OI.opJoy.setRumble(RumbleType.kLeftRumble, 1);
-		OI.opJoy.setRumble(RumbleType.kRightRumble, 1);
+		OI.rumble(3, 1);
 	}
 
 	protected boolean isFinished() {
@@ -34,10 +31,7 @@ public class IntakeManual extends Command {
 	protected void end() {
 		Robot.intake.manual(0);
 
-		OI.driverJoy.setRumble(RumbleType.kLeftRumble, 0);
-		OI.driverJoy.setRumble(RumbleType.kRightRumble, 0);
-		OI.opJoy.setRumble(RumbleType.kLeftRumble, 0);
-		OI.opJoy.setRumble(RumbleType.kRightRumble, 0);
+		OI.rumble(3,0);
 	}
 
 	protected void interrupted() {
