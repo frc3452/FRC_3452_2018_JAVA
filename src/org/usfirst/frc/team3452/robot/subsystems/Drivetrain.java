@@ -32,7 +32,8 @@ public class Drivetrain extends Subsystem {
 	public AHRS Gyro;
 
 	// variable init
-	public double m_modify = 1, m_elev_modify = 1, l_pos = 0, r_pos = 0;
+	public double m_modify = 1, m_elev_modify = 1;
+	public double l_pos = 0, r_pos = 0, lp_pos = -3452, rp_pos = -3452;
 	//TODO encoder percent done for running elevator part way through motion magic
 
 	public void LoggerUpdate() {
@@ -43,10 +44,15 @@ public class Drivetrain extends Subsystem {
 
 		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 1);
 		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 1);
+		
+		SmartDashboard.putNumber("L1 % Complete", lp_pos);
+		SmartDashboard.putNumber("R1 % Complete", rp_pos);
 
 		SmartDashboard.putNumber("Elevator Enc", Robot.elevator.Elev_1.getSelectedSensorPosition(0));
 
 		SmartDashboard.putString("Selected auton", Robot.autonSelector.autonString);
+		SmartDashboard.putString("Override String", Robot.autonSelector.overrideString);
+		
 		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
 	}
 
@@ -219,6 +225,9 @@ public class Drivetrain extends Subsystem {
 		l_pos = leftpos * 4096 * 1;
 		r_pos = rightpos * 4096 * -1;
 
+		lp_pos = Math.abs(L1.getSelectedSensorPosition(0) / (4096 * l_pos));
+		rp_pos = Math.abs(R1.getSelectedSensorPosition(0) / (4096 * r_pos));
+
 		L1.configMotionAcceleration((int) (4096 * leftaccel), 10);
 		R1.configMotionAcceleration((int) (4096 * rightaccel), 10);
 
@@ -240,6 +249,9 @@ public class Drivetrain extends Subsystem {
 		l_pos = left * 4096;
 		r_pos = -right * 4096;
 
+		lp_pos = Math.abs(L1.getSelectedSensorPosition(0) / (4096 * l_pos));
+		rp_pos = Math.abs(R1.getSelectedSensorPosition(0) / (4096 * r_pos));
+
 		L1.set(ControlMode.Position, l_pos);
 		R1.set(ControlMode.Position, r_pos);
 	}
@@ -247,7 +259,7 @@ public class Drivetrain extends Subsystem {
 	public boolean encoderSpeedIsUnder(double value) {
 		double l = L1.getSelectedSensorVelocity(0);
 		double r = R1.getSelectedSensorVelocity(0);
-		
+
 		if (l < value && r < value)
 			return true;
 		else
@@ -265,6 +277,8 @@ public class Drivetrain extends Subsystem {
 
 		l_pos = 0;
 		r_pos = 0;
+		lp_pos = -3452;
+		rp_pos = -3452;
 
 		robotDrive.setSafetyEnabled(true);
 	}
