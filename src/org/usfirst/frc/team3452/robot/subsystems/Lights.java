@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.signal.LightsCycle;
 
 import com.ctre.phoenix.CANifier;
@@ -12,6 +13,8 @@ public class Lights extends Subsystem {
 
 	public int m_hue = 225;
 	public double p_h = 0, p_s = 0, p_v = 0;
+	private double pulseBrightness = 0;
+	private boolean pulseDirection = true;
 
 	public Timer lightTimer = new Timer();
 
@@ -115,6 +118,26 @@ public class Lights extends Subsystem {
 		canifier.setLEDOutput(b, CANifier.LEDChannel.LEDChannelC);
 	}
 
+	public void pulse(int h, double s, double low, double high, double pulseIntensity) {
+
+		if (pulseDirection) {
+			pulseBrightness += pulseIntensity;
+		} else {
+			pulseBrightness -= pulseIntensity;
+		}
+
+		if (pulseBrightness >= high) {
+			pulseDirection = false;
+		}
+		if (pulseBrightness <= low) {
+			pulseDirection = true;
+		}
+
+		hsv(h, s, pulseBrightness);
+
+		Robot.lights.m_hue = h;
+	}
+
 	public String gsm() {
 		String f;
 		f = edu.wpi.first.wpilibj.DriverStation.getInstance().getGameSpecificMessage();
@@ -126,7 +149,7 @@ public class Lights extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-		setDefaultCommand(new LightsCycle());
+		//		setDefaultCommand(new LightsCycle());
 	}
 
 	public static class Constants {

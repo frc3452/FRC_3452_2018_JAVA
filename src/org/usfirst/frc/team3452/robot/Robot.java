@@ -49,7 +49,6 @@ public class Robot extends TimedRobot {
 		autoTimer.stop();
 		autoTimer.reset();
 
-		
 		for (int i = 0; i < 21; i++) {
 			autoCommand[i] = null;
 		}
@@ -77,13 +76,14 @@ public class Robot extends TimedRobot {
 		Robot.autonSelector.autoCommandName[7] = "Left: Scale Priority";
 		Robot.autonSelector.autoCommandName[8] = "Right: Switch Priority";
 		Robot.autonSelector.autoCommandName[9] = "Right: Scale Priority";
-		
+
 	}
 
 	@Override
 	public void disabledInit() {
 		//first time enabled set to coast, after tele brake
 		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
+
 	}
 
 	@Override
@@ -92,10 +92,10 @@ public class Robot extends TimedRobot {
 		Robot.autonSelector.printSelected();
 
 		Robot.drive.LoggerUpdate();
-		
-		Robot.lights.hsv(1,1,1);
-
 		Scheduler.getInstance().run();
+
+		//PULSE DURING DISABLE
+		Robot.lights.pulse(260 , 1, 0, .1, 0.002);
 	}
 
 	@Override
@@ -150,6 +150,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
+		Robot.lights.hsv(260, 1, .05);
+		
 		Robot.drive.BrakeCoast(NeutralMode.Coast);
 
 		if (autonomousCommand != null) {

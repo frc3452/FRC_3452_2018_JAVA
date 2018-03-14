@@ -3,10 +3,14 @@ package org.usfirst.frc.team3452.robot;
 
 import org.usfirst.frc.team3452.robot.commands.drive.SetModify;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
+import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.signal.LightsHSV;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
+import org.usfirst.frc.team3452.robot.triggers.IntakeIn;
+import org.usfirst.frc.team3452.robot.triggers.IntakeOut;
+import org.usfirst.frc.team3452.robot.triggers.IntakeStop;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
@@ -18,6 +22,9 @@ public class OI {
 	public static Joystick opJoy = new Joystick(1);
 
 	public static DriveSafteyOverriden driveSafteyOverriden = new DriveSafteyOverriden();
+	public static IntakeIn intakeIn = new IntakeIn();
+	public static IntakeOut intakeOut = new IntakeOut();
+	public static IntakeStop intakeStop = new IntakeStop();
 
 	@SuppressWarnings("unused")
 	private static Button driverJoyA, driverJoyB, driverJoyX, driverJoyY, driverJoyLB, driverJoyRB, driverJoyBack,
@@ -43,23 +50,19 @@ public class OI {
 		//		driverJoyStart.whileHeld(new ClimbRelease());
 
 		// OP JOY
-		opJoyA.whenPressed(new LightsHSV(360, 1, 1, "R"));
-		opJoyB.whenPressed(new LightsHSV(270, 1, 1, ""));
-//		opJoyX.whileHeld(new LightsHSV(180, 1, 1, ""));
-//		opJoyLB.whileHeld(new LightsHSV(90, 1, 1, ""));
-//		opJoyRB.whileHeld(new LightsHSV(135, 1, 1, ""));
-//		opJoyBack.whileHeld(new LightsHSV(225, 1, 1, ""));
-//		opJoyStart.whileHeld(new LightsHSV(0, 0, 0, ""));
-
-		//		opJoyLB.whileHeld(new ElevatorManual(opJoy));
-		//		opJoyX.whileHeld(new IntakeManual(-.75));
-		//		opJoyB.whileHeld(new IntakeManual(.75));
-		//		opJoyY.whileHeld(new IntakeManual(.3));
-		//		opJoyA.whenPressed(new ElevatorPosition(3.5));
-		//		opJoyRB.whenPressed(new ElevatorTime(.6, 11));
+		opJoyLB.whileHeld(new ElevatorManual(opJoy));
+		opJoyX.whileHeld(new IntakeManual(-.75));
+		opJoyB.whileHeld(new IntakeManual(.75));
+		opJoyY.whileHeld(new IntakeManual(.3));
+		opJoyA.whenPressed(new ElevatorPosition(3.5));
+		opJoyStart.whileHeld(new LightsHSV(0, 1, 1, "RANDOM"));
 
 		//		opJoyLClick.whenPressed(new CameraSwitch(0));
 		//		opJoyRClick.whenPressed(new CameraSwitch(1));
+
+		intakeIn.whenActive(new LightsHSV(330, 1, .7, ""));
+		intakeOut.whenActive(new LightsHSV(55, 1, .7, ""));
+		intakeStop.whenActive(new LightsHSV(260, 1, .5, ""));
 
 		driveSafteyOverriden.whenActive(new OverrideSet(1));
 		driveSafteyOverriden.whenInactive(new OverrideSet(0));

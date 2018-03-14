@@ -35,7 +35,7 @@ public class Elevator extends Subsystem {
 		Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
 		Elev_1.setSelectedSensorPosition(0, 0, 10);
 		Elev_1.setSelectedSensorPosition(0, 0, 10);
-		Elev_1.setSensorPhase(false);
+		Elev_1.setSensorPhase(Constants.ELEVATOR_ENC_INVERT);
 
 		// PIDs
 		Elev_1.config_kF(0, 0, 10);
@@ -98,9 +98,9 @@ public class Elevator extends Subsystem {
 		} else {
 			Robot.drive.m_elev_modify = 1;
 		}
-		
+
 		//TODO Change to ramping instead of staging?
-		
+
 	}
 
 	public void Encoder(double position) {
@@ -134,10 +134,10 @@ public class Elevator extends Subsystem {
 		public static final int ELEVATOR_1 = 9;
 		public static final int ELEVATOR_2 = 10;
 
-		public static final boolean ELEVATOR_1_INVERT = false;
-		public static final boolean ELEVATOR_2_INVERT = false;
+		public static final boolean ELEVATOR_1_INVERT = true;
+		public static final boolean ELEVATOR_2_INVERT = true;
 
-		public static final boolean ELEVATOR_ENC_INVERT = true;
+		public static final boolean ELEVATOR_ENC_INVERT = false;
 
 		public static final double ELEVATOR_OPEN_RAMP_TIME = .5;
 		public static final double ELEVATOR_CLOSED_RAMP_TIME = .25;

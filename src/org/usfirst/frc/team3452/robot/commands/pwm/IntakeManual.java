@@ -20,8 +20,7 @@ public class IntakeManual extends Command {
 
 	protected void execute() {
 		Robot.intake.manual(m_speed);
-
-		OI.rumble(3, 1);
+		OI.rumble(3, .4);
 	}
 
 	protected boolean isFinished() {
