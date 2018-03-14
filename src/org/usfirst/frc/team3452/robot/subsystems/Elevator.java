@@ -134,10 +134,10 @@ public class Elevator extends Subsystem {
 		public static final int ELEVATOR_1 = 9;
 		public static final int ELEVATOR_2 = 10;
 
-		public static final boolean ELEVATOR_1_INVERT = true;
-		public static final boolean ELEVATOR_2_INVERT = true;
+		public static final boolean ELEVATOR_1_INVERT = false;
+		public static final boolean ELEVATOR_2_INVERT = false;
 
-		public static final boolean ELEVATOR_ENC_INVERT = false;
+		public static final boolean ELEVATOR_ENC_INVERT = true;
 
 		public static final double ELEVATOR_OPEN_RAMP_TIME = .5;
 		public static final double ELEVATOR_CLOSED_RAMP_TIME = .25;
