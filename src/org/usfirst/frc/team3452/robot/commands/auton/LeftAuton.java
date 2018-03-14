@@ -6,7 +6,7 @@ import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderGyro;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
 import org.usfirst.frc.team3452.robot.commands.drive.GyroPos;
-import org.usfirst.frc.team3452.robot.commands.drive.ResetGyro;
+import org.usfirst.frc.team3452.robot.commands.drive.GyroReset;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
@@ -18,8 +18,8 @@ public class LeftAuton extends CommandGroup {
 
 	public LeftAuton(String priority, int selector) {
 		addSequential(new EncoderReset());
-		addSequential(new ResetGyro());
-		;
+		addSequential(new GyroReset());
+
 		addSequential(new WaitForGameData());
 
 		//IF DATA FOUND

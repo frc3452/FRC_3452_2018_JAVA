@@ -4,7 +4,7 @@ import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
-import org.usfirst.frc.team3452.robot.commands.drive.ResetGyro;
+import org.usfirst.frc.team3452.robot.commands.drive.GyroReset;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class MiddleAuton extends CommandGroup {
 
 	public MiddleAuton(String priority, int selector) {
-		addSequential(new ResetGyro());
+		addSequential(new GyroReset());
 		addSequential(new EncoderReset());
 		addSequential(new WaitForGameData());
 
