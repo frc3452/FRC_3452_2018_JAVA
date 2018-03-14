@@ -143,6 +143,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
+		//TODO YELLOW LOW BRIGHTNESS
+// 		Robot.lights.pulse(
 
 		Robot.drive.LoggerUpdate();
 		Scheduler.getInstance().run();
@@ -150,6 +152,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
+		//GREEN LOW BRIGHTNESS
 		Robot.lights.hsv(260, 1, .05);
 		
 		Robot.drive.BrakeCoast(NeutralMode.Coast);
