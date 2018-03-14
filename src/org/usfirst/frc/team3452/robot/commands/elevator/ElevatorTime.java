@@ -22,7 +22,7 @@ public class ElevatorTime extends Command {
 	}
 
 	protected void execute() {
-		Robot.elevator.Elev_1.set(-m_speed);
+		Robot.elevator.Elev_1.set(m_speed);
 	}
 
 	protected boolean isFinished() {
