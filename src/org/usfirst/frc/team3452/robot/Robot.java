@@ -36,17 +36,17 @@ public class Robot extends TimedRobot {
 	Command autoCommand[] = new Command[20];
 	Command defaultCommand = null;
 
-	//flag
+	//flag for teleop 
 	boolean wasTele = false;
 
 	//init timer
-	Timer timer = new Timer();
+	Timer autoTimer = new Timer();
 
 	@Override
 	public void robotInit() {
 		//init timer
-		timer.stop();
-		timer.reset();
+		autoTimer.stop();
+		autoTimer.reset();
 
 		for (int i = 0; i < 20; i++) {
 			autoCommand[i] = null;
@@ -95,8 +95,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		timer.reset();
-		timer.start();
+		autoTimer.reset();
+		autoTimer.start();
 		//timer start
 
 		//keep overriding while game data bad or controller override not set
@@ -118,11 +118,11 @@ public class Robot extends TimedRobot {
 				Robot.autonSelector.confirmOverride = true;
 			}
 
-		} while ((Robot.autonSelector.gameMsg == "NOT" && timer.get() < 5)
+		} while ((Robot.autonSelector.gameMsg == "NOT" && autoTimer.get() < 5)
 				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
 
 		//if loop above failed
-		if (timer.get() > 5) {
+		if (autoTimer.get() > 5) {
 			autonomousCommand = (new DefaultAutonomous());
 		}
 
