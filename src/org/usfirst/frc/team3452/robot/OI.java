@@ -35,12 +35,12 @@ public class OI {
 
 		driverJoyX.whileHeld(new IntakeManual(-.75));
 		driverJoyB.whileHeld(new IntakeManual(.75));
-//		driverJoyY.whileHeld(new Climb(.7));
+		//		driverJoyY.whileHeld(new Climb(.7));
 
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
 		driverJoyBack.whenPressed(new OverrideSet(-1));
-//		driverJoyStart.whileHeld(new ClimbRelease());
+		//		driverJoyStart.whileHeld(new ClimbRelease());
 
 		// OP JOY
 		opJoyA.whenPressed(new LightsRGB(255, 0, 0));
@@ -64,24 +64,21 @@ public class OI {
 		driveSafteyOverriden.whenActive(new OverrideSet(1));
 		driveSafteyOverriden.whenInactive(new OverrideSet(0));
 	}
-	
-	public static void rumble(int controller, double intensity)
-	{
-	if (controller == 1)
-		{
-		driverJoy.setRumble(RumbleType.kLeftRumble, intensity);
-		driverJoy.setRumble(RumbleType.kRightRumble, intensity);
-		} else if (controller == 2)
-	{
-		opJoy.setRumble(RumbleType.kLeftRumble, intensity);
-		opJoy.setRumble(RumbleType.kRightRumble, intensity);} else if (controller == 3)
-	{
-		driverJoy.setRumble(RumbleType.kLeftRumble, intensity);
-		driverJoy.setRumble(RumbleType.kRightRumble, intensity);
+
+	public static void rumble(int controller, double intensity) {
+		if (controller == 1) {
+			driverJoy.setRumble(RumbleType.kLeftRumble, intensity);
+			driverJoy.setRumble(RumbleType.kRightRumble, intensity);
+		} else if (controller == 2) {
 			opJoy.setRumble(RumbleType.kLeftRumble, intensity);
-		opJoy.setRumble(RumbleType.kRightRumble, intensity);
-	}
-	
+			opJoy.setRumble(RumbleType.kRightRumble, intensity);
+		} else if (controller == 3) {
+			driverJoy.setRumble(RumbleType.kLeftRumble, intensity);
+			driverJoy.setRumble(RumbleType.kRightRumble, intensity);
+			opJoy.setRumble(RumbleType.kLeftRumble, intensity);
+			opJoy.setRumble(RumbleType.kRightRumble, intensity);
+		}
+
 	}
 
 	private static void buttonInit() {
