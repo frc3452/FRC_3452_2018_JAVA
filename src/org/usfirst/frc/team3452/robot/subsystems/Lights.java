@@ -1,10 +1,12 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.commands.signal.LightsCycle;
 
 import com.ctre.phoenix.CANifier;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -18,12 +20,35 @@ public class Lights extends Subsystem {
 
 	public Timer lightTimer = new Timer();
 
+	public NetworkTableEntry centerX;
+	public NetworkTableEntry centerY;
+
+	private double tempArray[] = new double[10];
+
 	public void initHardware() {
+		for (int i = 0; i < 10; i++)
+			tempArray[i] = 3452;
+
 		canifier = new CANifier(Constants.CANIFIER_ID);
 
 		lightTimer.stop();
 		lightTimer.reset();
 		lightTimer.start();
+
+		NetworkTableInstance inst = NetworkTableInstance.getDefault();
+		NetworkTable table = inst.getTable("/GRIP/vision");
+
+		centerX = table.getEntry("centerX");
+		centerY = table.getEntry("centerY");
+
+	}
+
+	public double centerX(int cube) {
+		return centerX.getDoubleArray(tempArray)[cube];
+	}
+
+	public int visionLength() {
+		return centerX.getDoubleArray(tempArray).length;
 	}
 
 	public void hsv(double hDegrees, double S, double V) {
@@ -119,6 +144,10 @@ public class Lights extends Subsystem {
 	}
 
 	public void pulse(int h, double s, double low, double high, double pulseIntensity) {
+		if (pulseIntensity > high / 15)
+			pulseIntensity = high / 15;
+
+		System.out.println(pulseIntensity);
 
 		if (pulseDirection) {
 			pulseBrightness += pulseIntensity;
