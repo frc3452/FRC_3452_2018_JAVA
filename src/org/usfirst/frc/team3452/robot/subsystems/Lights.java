@@ -147,8 +147,6 @@ public class Lights extends Subsystem {
 		if (pulseIntensity > high / 15)
 			pulseIntensity = high / 15;
 
-		System.out.println(pulseIntensity);
-
 		if (pulseDirection) {
 			pulseBrightness += pulseIntensity;
 		} else {

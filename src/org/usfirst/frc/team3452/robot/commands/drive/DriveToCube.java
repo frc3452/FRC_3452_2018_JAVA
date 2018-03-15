@@ -37,19 +37,19 @@ public class DriveToCube extends Command {
 			Robot.drive.Arcade(.3, 0);
 		}
 
-		Robot.intake.manual(-1);
+		Robot.intake.manual(-.75);
 
 		if (Robot.drive.pdp.getCurrent(9) > 10 || Robot.drive.pdp.getCurrent(8) > 10)
 			intake_startup = true;
-		
+
 		if (intake_startup && (Robot.drive.pdp.getCurrent(9) < 7.5 || Robot.drive.pdp.getCurrent(8) < 7.5))
 			intake_stable = true;
-		
+
 		if (intake_stable && (Robot.drive.pdp.getCurrent(9) > 10 || Robot.drive.pdp.getCurrent(8) > 10))
 			m_complete = true;
 
 		System.out.println("startup: " + intake_startup + "\t\t\tstable: " + intake_stable);
-//		System.out.println(Robot.drive.pdp.getCurrent(9) + "\t\t" + Robot.drive.pdp.getCurrent(8));
+		//		System.out.println(Robot.drive.pdp.getCurrent(9) + "\t\t" + Robot.drive.pdp.getCurrent(8));
 	}
 
 	protected boolean isFinished() {

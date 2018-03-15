@@ -5,6 +5,7 @@ import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
 import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
+import org.usfirst.frc.team3452.robot.commands.signal.LightsCycle;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
@@ -37,6 +38,7 @@ public class Robot extends TimedRobot {
 	Command autonomousCommand = null;
 	Command autoCommand[] = new Command[21];
 	Command defaultCommand = null;
+	Command lightCycle = (new LightsCycle());
 
 	//flag for teleop 
 	boolean wasTele = false;
@@ -97,10 +99,16 @@ public class Robot extends TimedRobot {
 
 		//PULSE DURING DISABLE
 		if (DriverStation.getInstance().isDSAttached()) {
-			Robot.lights.pulse(250, 1, 0.01, .12, 0.0012);
+			Robot.lights.pulse(250, 1, 0.01, .12, 0.001);
+
 		} else {
+			Robot.lights.hsv(Robot.lights.m_hue, 1, .18);
+				Robot.lights.m_hue++;
+			if (Robot.lights.m_hue > 360)
+				Robot.lights.m_hue = 0;
+
 			//increase pulsing speed while not connected
-			Robot.lights.pulse(0, 1, 0.01, .15, 0.15 / 10 * (autoTimer.get() / 110));
+			//			Robot.lights.pulse(0, 1, 0.01, .15, 0.15 / 10 * (autoTimer.get() / 110));
 		}
 	}
 
