@@ -5,7 +5,6 @@ import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
 import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
-import org.usfirst.frc.team3452.robot.commands.signal.LightsCycle;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
@@ -16,6 +15,8 @@ import org.usfirst.frc.team3452.robot.subsystems.Lights;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -48,6 +49,7 @@ public class Robot extends TimedRobot {
 		//init timer
 		autoTimer.stop();
 		autoTimer.reset();
+		autoTimer.start();
 
 		for (int i = 0; i < 21; i++) {
 			autoCommand[i] = null;
@@ -83,7 +85,6 @@ public class Robot extends TimedRobot {
 	public void disabledInit() {
 		//first time enabled set to coast, after tele brake
 		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
-
 	}
 
 	@Override
@@ -95,7 +96,12 @@ public class Robot extends TimedRobot {
 		Scheduler.getInstance().run();
 
 		//PULSE DURING DISABLE
-		Robot.lights.pulse(260 , 1, 0, .1, 0.002);
+		if (DriverStation.getInstance().isDSAttached()) {
+			Robot.lights.pulse(250, 1, 0.01, .12, 0.0012);
+		} else {
+			//increase pulsing speed while not connected
+			Robot.lights.pulse(0, 1, 0.01, .15, 0.15 / 10 * (autoTimer.get() / 110));
+		}
 	}
 
 	@Override
@@ -126,7 +132,8 @@ public class Robot extends TimedRobot {
 		} while ((Robot.autonSelector.gameMsg == "NOT" && autoTimer.get() < 5)
 				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
 
-		//if loop above failed
+		//by the time it gets to this, the time shouldn't be over 5 seconds
+		//if so, error occured and we need to set the default
 		if (autoTimer.get() > 5) {
 			autonomousCommand = (new DefaultAutonomous());
 		}
@@ -143,8 +150,10 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		//TODO YELLOW LOW BRIGHTNESS
-// 		Robot.lights.pulse(
+		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
+			Robot.lights.pulse(0, 1, .01, .1, 0.004);
+		else
+			Robot.lights.pulse(120, 1, .01, .1, 0.004);
 
 		Robot.drive.LoggerUpdate();
 		Scheduler.getInstance().run();
@@ -153,8 +162,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		//GREEN LOW BRIGHTNESS
-		Robot.lights.hsv(260, 1, .05);
-		
+		Robot.lights.hsv(250, 1, .2);
+
 		Robot.drive.BrakeCoast(NeutralMode.Coast);
 
 		if (autonomousCommand != null) {
