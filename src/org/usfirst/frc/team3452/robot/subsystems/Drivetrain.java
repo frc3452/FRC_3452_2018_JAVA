@@ -44,7 +44,7 @@ public class Drivetrain extends Subsystem {
 
 		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 1);
 		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 1);
-		
+
 		SmartDashboard.putNumber("L1 % Complete", lp_pos);
 		SmartDashboard.putNumber("R1 % Complete", rp_pos);
 
@@ -52,25 +52,25 @@ public class Drivetrain extends Subsystem {
 
 		SmartDashboard.putString("Selected auton", Robot.autonSelector.autonString);
 		SmartDashboard.putString("Override String", Robot.autonSelector.overrideString);
-		
+
 		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
+
+//		System.out.println(Robot.lights.vision.getNumber("width", -3452));
 	}
-	
-	public void initHardware()
-	{
+
+	public void initHardware() {
 		L1 = new WPI_TalonSRX(Constants.DRIVE_L_1);
 		L2 = new WPI_TalonSRX(Constants.DRIVE_L_2);
 		L3 = new WPI_TalonSRX(Constants.DRIVE_L_3);
 		L4 = new WPI_TalonSRX(Constants.DRIVE_L_4);
-		
+
 		R1 = new WPI_TalonSRX(Constants.DRIVE_R_1);
 		R2 = new WPI_TalonSRX(Constants.DRIVE_R_2);
 		R3 = new WPI_TalonSRX(Constants.DRIVE_R_3);
 		R4 = new WPI_TalonSRX(Constants.DRIVE_R_4);
-		
-	
+
 		Gyro = new AHRS(SPI.Port.kMXP);
-		
+
 		robotDrive = new DifferentialDrive(L1, R1);
 
 		robotDrive.setDeadband(0.08);
