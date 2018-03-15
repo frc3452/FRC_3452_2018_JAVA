@@ -3,7 +3,6 @@ package org.usfirst.frc.team3452.robot.commands.pwm;
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.Robot;
 
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class IntakeManual extends Command {
@@ -11,7 +10,7 @@ public class IntakeManual extends Command {
 
 	public IntakeManual(double speed) {
 		requires(Robot.intake);
-
+		
 		m_speed = speed;
 	}
 

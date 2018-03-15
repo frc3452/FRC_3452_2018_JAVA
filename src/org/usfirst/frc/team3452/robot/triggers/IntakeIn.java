@@ -10,6 +10,6 @@ import edu.wpi.first.wpilibj.buttons.Trigger;
 public class IntakeIn extends Trigger {
 
     public boolean get() {
-    	return (Robot.intake.Intake_L.get() < 0);
+    	return (Robot.intake.Intake_L.get() > 0);
     }
 }
