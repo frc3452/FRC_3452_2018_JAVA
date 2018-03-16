@@ -32,9 +32,6 @@ public class LightsHSV extends Command {
 			Robot.lights.hsv(m_h, m_s, m_v);
 			break;
 		}
-		
-		System.out.println("EXECUTE");
-
 	}
 
 	protected boolean isFinished() {

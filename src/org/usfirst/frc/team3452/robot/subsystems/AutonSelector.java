@@ -23,12 +23,11 @@ public class AutonSelector extends Subsystem {
 	public void initHardware() {
 		as_A = new AnalogInput(Constants.AUTO_SELECTOR_1);
 		as_B = new AnalogInput(Constants.AUTO_SELECTOR_2);
-		
+
 		as_A.setSubsystem("AutonSelector");
 		as_B.setSubsystem("AutonSelector");
 		as_A.setName("Selector A");
 		as_B.setName("Selector B");
-		
 
 		for (int i = 0; i < 20; i++) {
 			autoCommandName[i] = "NO COMMAND";
@@ -38,6 +37,8 @@ public class AutonSelector extends Subsystem {
 	public void printSelected() {
 		m_asA = as_A.getValue();
 		m_asB = as_B.getValue();
+
+//		System.out.println(as_A.getValue() + "\t\t\t" + as_B.getValue());
 
 		// If overriden, print overide
 		if (controllerOverride && (overrideString != overrideStringPrevious))
@@ -169,14 +170,14 @@ public class AutonSelector extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-//		setDefaultCommand(new LoggerUpdate());
+		//		setDefaultCommand(new LoggerUpdate());
 	}
 
 	public static class Constants {
-		public static final int AUTO_SELECTOR_1 = 3;
-		public static final int AUTO_SELECTOR_2 = 2;
+		public static final int AUTO_SELECTOR_1 = 1; //3
+		public static final int AUTO_SELECTOR_2 = 0;
 
-		public static final int AUTO_V = 15;
+		public static final int AUTO_V = 50; //15
 		public static final int AUTO_1 = 2684;
 		public static final int AUTO_2 = 2994;
 		public static final int AUTO_3 = 3187;

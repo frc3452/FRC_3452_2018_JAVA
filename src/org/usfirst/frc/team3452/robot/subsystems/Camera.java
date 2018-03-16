@@ -12,7 +12,7 @@ public class Camera extends Subsystem {
 		mCamera0 = CameraServer.getInstance().startAutomaticCapture(0);
 		mCamera0.setResolution(640, 480);
 		mCamera0.setFPS(30);
-		mCamera0.setExposureManual(50);
+		mCamera0.setExposureManual(40);
 
 //		mCamera1 = CameraServer.getInstance().startAutomaticCapture(1);
 //		mCamera1.setResolution(180, 120);

@@ -38,7 +38,6 @@ public class Robot extends TimedRobot {
 	Command autonomousCommand = null;
 	Command autoCommand[] = new Command[21];
 	Command defaultCommand = null;
-	Command lightCycle = (new LightsCycle());
 
 	//flag for teleop 
 	boolean wasTele = false;
@@ -102,13 +101,13 @@ public class Robot extends TimedRobot {
 			Robot.lights.pulse(250, 1, 0.01, .12, 0.001);
 
 		} else {
-			Robot.lights.hsv(Robot.lights.m_hue, 1, .18);
-				Robot.lights.m_hue++;
-			if (Robot.lights.m_hue > 360)
-				Robot.lights.m_hue = 0;
+			//			Robot.lights.hsv(Robot.lights.m_hue, 1, .18);
+			//				Robot.lights.m_hue++;
+			//			if (Robot.lights.m_hue > 360)
+			//				Robot.lights.m_hue = 0;
 
-			//increase pulsing speed while not connected
-			//			Robot.lights.pulse(0, 1, 0.01, .15, 0.15 / 10 * (autoTimer.get() / 110));
+			//			increase pulsing speed while not connected
+			Robot.lights.pulse(0, 1, 0.01, .15, 0.15 / 10 * (autoTimer.get() / 110));
 		}
 	}
 
@@ -120,7 +119,6 @@ public class Robot extends TimedRobot {
 
 		//keep overriding while game data bad or controller override not set
 		do {
-
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
 			autoCommand[1] = (new MiddleAuton("SWITCH", 1));
 			autoCommand[2] = (new LeftAuton("SWITCH", 1));

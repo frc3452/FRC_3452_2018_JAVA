@@ -54,8 +54,7 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putString("Override String", Robot.autonSelector.overrideString);
 
 		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
-
-//		System.out.println(Robot.lights.vision.getNumber("width", -3452));
+		
 	}
 
 	public void initHardware() {

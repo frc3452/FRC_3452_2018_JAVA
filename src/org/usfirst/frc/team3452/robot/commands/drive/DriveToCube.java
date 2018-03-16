@@ -15,7 +15,7 @@ public class DriveToCube extends Command {
 	}
 
 	protected void initialize() {
-		setTimeout(8);
+		setTimeout(17);
 		m_complete = false;
 		intake_startup = false;
 		intake_stable = false;
@@ -42,14 +42,17 @@ public class DriveToCube extends Command {
 		if (Robot.drive.pdp.getCurrent(9) > 10 || Robot.drive.pdp.getCurrent(8) > 10)
 			intake_startup = true;
 
-		if (intake_startup && (Robot.drive.pdp.getCurrent(9) < 7.5 || Robot.drive.pdp.getCurrent(8) < 7.5))
+		if (intake_startup && (Robot.drive.pdp.getCurrent(9) < 5 || Robot.drive.pdp.getCurrent(8) < 5))
 			intake_stable = true;
 
-		if (intake_stable && (Robot.drive.pdp.getCurrent(9) > 10 || Robot.drive.pdp.getCurrent(8) > 10))
-			m_complete = true;
+		if (intake_stable && (Robot.drive.pdp.getCurrent(9) > 6.5 || Robot.drive.pdp.getCurrent(8) > 6.5)) {
+//			m_complete = true;
+			setTimeout(1.5);
+		}
+		
 
-		System.out.println("startup: " + intake_startup + "\t\t\tstable: " + intake_stable);
-		//		System.out.println(Robot.drive.pdp.getCurrent(9) + "\t\t" + Robot.drive.pdp.getCurrent(8));
+//		System.out.println("startup: " + intake_startup + "\t\t\tstable: " + intake_stable);
+				System.out.println(Robot.drive.pdp.getCurrent(9) + "\t\t" + Robot.drive.pdp.getCurrent(8));
 	}
 
 	protected boolean isFinished() {
