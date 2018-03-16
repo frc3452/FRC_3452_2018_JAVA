@@ -79,9 +79,10 @@ public class LeftAuton extends CommandGroup {
 	}
 
 	private void switchL(int mode) {
-		//COMPLETE
 		switch (mode) {
 		case 1:
+			break;
+		case 3620:
 			addParallel(new DriveTime(.25, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.25, 0, .225)); // jog forward backwards to drop arm
@@ -103,6 +104,8 @@ public class LeftAuton extends CommandGroup {
 	private void switchR(int mode) {
 		switch (mode) {
 		case 1:
+			break;
+		case 3620:
 			addParallel(new DriveTime(.45, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
@@ -132,6 +135,8 @@ public class LeftAuton extends CommandGroup {
 	private void scaleL(int mode) {
 		switch (mode) {
 		case 1:
+			break;
+		case 3620:
 			addParallel(new DriveTime(.45, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
@@ -159,6 +164,8 @@ public class LeftAuton extends CommandGroup {
 	private void scaleR(int mode) {
 		switch (mode) {
 		case 1:
+			break;
+		case 3620:
 			addParallel(new DriveTime(.45, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
