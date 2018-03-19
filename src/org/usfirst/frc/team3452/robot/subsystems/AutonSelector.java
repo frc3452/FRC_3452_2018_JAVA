@@ -38,7 +38,7 @@ public class AutonSelector extends Subsystem {
 		m_asA = as_A.getValue();
 		m_asB = as_B.getValue();
 
-//		System.out.println(as_A.getValue() + "\t\t\t" + as_B.getValue());
+		//		System.out.println(as_A.getValue() + "\t\t\t" + as_B.getValue());
 
 		// If overriden, print overide
 		if (controllerOverride && (overrideString != overrideStringPrevious))
@@ -47,57 +47,10 @@ public class AutonSelector extends Subsystem {
 		if (((m_asA + 8 < m_prev_as1 || m_prev_as1 < m_asA - 8)
 				|| (m_asB + 8 < m_prev_as2 || m_prev_as2 < m_asB - 8))) {
 
-			// upon update print out current value
-			// switch statement for selector 1
-
-			if (m_asA < Constants.AUTO_1 + Constants.AUTO_V && m_asA > Constants.AUTO_1 - Constants.AUTO_V) {
-				if (m_asB > Constants.AUTO_1_L && m_asB < Constants.AUTO_1_H) {
-					autonString = "A / 1  " + autoCommandName[1];
-				} else if (m_asB > Constants.AUTO_2_L && m_asB < Constants.AUTO_2_H) {
-					autonString = "A / 2  " + autoCommandName[2];
-				} else if (m_asB > Constants.AUTO_3_L && m_asB < Constants.AUTO_3_H) {
-					autonString = "A / 3  " + autoCommandName[3];
-				} else if (m_asB > Constants.AUTO_4_L && m_asB < Constants.AUTO_4_H) {
-					autonString = "A / 4  " + autoCommandName[4];
-				} else if (m_asB > Constants.AUTO_5_L && m_asB < Constants.AUTO_5_H) {
-					autonString = "A / 5  " + autoCommandName[5];
-				} else if (m_asB > Constants.AUTO_6_L && m_asB < Constants.AUTO_6_H) {
-					autonString = "A / 6  " + autoCommandName[6];
-				} else if (m_asB > Constants.AUTO_7_L && m_asB < Constants.AUTO_7_H) {
-					autonString = "A / 7  " + autoCommandName[7];
-				} else if (m_asB > Constants.AUTO_8_L && m_asB < Constants.AUTO_8_H) {
-					autonString = "A / 8  " + autoCommandName[8];
-				} else if (m_asB > Constants.AUTO_9_L && m_asB < Constants.AUTO_9_H) {
-					autonString = "A / 9  " + autoCommandName[9];
-				} else if (m_asB > Constants.AUTO_10_L && m_asB < Constants.AUTO_10_H) {
-					autonString = "A / 10 " + autoCommandName[10];
-				} else {
-					autonString = "AUTON NOT SELECTED";
-				}
-			} else if (m_asA < Constants.AUTO_2 + Constants.AUTO_V && m_asA > Constants.AUTO_2 - Constants.AUTO_V) {
-				if (m_asB > Constants.AUTO_1_L && m_asB < Constants.AUTO_1_H) {
-					autonString = "B / 1  " + autoCommandName[11];
-				} else if (m_asB > Constants.AUTO_2_L && m_asB < Constants.AUTO_2_H) {
-					autonString = "B / 2  " + autoCommandName[12];
-				} else if (m_asB > Constants.AUTO_3_L && m_asB < Constants.AUTO_3_H) {
-					autonString = "B / 3  " + autoCommandName[13];
-				} else if (m_asB > Constants.AUTO_4_L && m_asB < Constants.AUTO_4_H) {
-					autonString = "B / 4  " + autoCommandName[14];
-				} else if (m_asB > Constants.AUTO_5_L && m_asB < Constants.AUTO_5_H) {
-					autonString = "B / 5  " + autoCommandName[15];
-				} else if (m_asB > Constants.AUTO_6_L && m_asB < Constants.AUTO_6_H) {
-					autonString = "B / 6  " + autoCommandName[16];
-				} else if (m_asB > Constants.AUTO_7_L && m_asB < Constants.AUTO_7_H) {
-					autonString = "B / 7  " + autoCommandName[17];
-				} else if (m_asB > Constants.AUTO_8_L && m_asB < Constants.AUTO_8_H) {
-					autonString = "B / 8  " + autoCommandName[18];
-				} else if (m_asB > Constants.AUTO_9_L && m_asB < Constants.AUTO_9_H) {
-					autonString = "B / 9  " + autoCommandName[19];
-				} else if (m_asB > Constants.AUTO_10_L && m_asB < Constants.AUTO_10_H) {
-					autonString = "B / 10 " + autoCommandName[20];
-				} else {
-					autonString = "AUTON NOT SELECTED";
-				}
+			if ((uglyAnalog() <= 10) && (uglyAnalog() >= 1)) {
+				autonString = "A / " + uglyAnalog() + ": " + autoCommandName[uglyAnalog()];
+			} else if ((uglyAnalog() >= 11) && (uglyAnalog() <= 20)) {
+				autonString = "B / " + uglyAnalog() + ": " + autoCommandName[uglyAnalog()];
 			} else {
 				autonString = "AUTON NOT SELECTED";
 			}
@@ -110,6 +63,7 @@ public class AutonSelector extends Subsystem {
 		m_prev_as2 = m_asB;
 
 		overrideStringPrevious = overrideString;
+
 	}
 
 	public int uglyAnalog() {
@@ -177,7 +131,7 @@ public class AutonSelector extends Subsystem {
 		public static final int AUTO_SELECTOR_1 = 1; //3
 		public static final int AUTO_SELECTOR_2 = 0;
 
-		public static final int AUTO_V = 50; //15
+		public static final int AUTO_V = 25; //15
 		public static final int AUTO_1 = 2684;
 		public static final int AUTO_2 = 2994;
 		public static final int AUTO_3 = 3187;

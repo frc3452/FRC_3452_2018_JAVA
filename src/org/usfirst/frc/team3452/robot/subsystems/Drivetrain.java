@@ -39,8 +39,8 @@ public class Drivetrain extends Subsystem {
 	public void LoggerUpdate() {
 		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
 
-		SmartDashboard.putNumber("L1", L1.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("R1", R1.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("L1", (double) L1.getSelectedSensorPosition(0) / 4096);
+		SmartDashboard.putNumber("R1", (double) -R1.getSelectedSensorPosition(0) / 4096);
 
 		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 1);
 		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 1);
@@ -54,7 +54,7 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putString("Override String", Robot.autonSelector.overrideString);
 
 		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
-		
+
 	}
 
 	public void initHardware() {
@@ -94,14 +94,13 @@ public class Drivetrain extends Subsystem {
 
 		L1.config_kF(0, 0, 10); // @ 100%, 4240u/100ms = ((1 * 1023) / 4300) = .2379
 		L1.config_kP(0, 0.425, 10);
-		L1.config_kI(0, 0.0000004, 10); // .0000005
+		L1.config_kI(0, 0.0000004, 10); //.0000005
 		L1.config_kD(0, 4.25, 10);
 
 		R1.config_kF(0, 0, 10);
-		R1.config_kP(0, 0.425, 10);
+		R1.config_kP(0, 0.8, 10); //.8
 		R1.config_kI(0, 0.0000004, 10);
 		R1.config_kD(0, 4.25, 10);
-		//TODO retune PID
 
 		// NOMINAL OUTPUT
 		L1.configNominalOutputForward(0, 10);
@@ -193,6 +192,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	public void Arcade(Joystick joy) {
+//		Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify), joy.getRawAxis(4) * m_modify);
 		Arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .6 * m_modify));
 		Robot.elevator.setDriveLimit();
 	}
@@ -227,8 +227,8 @@ public class Drivetrain extends Subsystem {
 		l_pos = leftpos * 4096 * 1;
 		r_pos = rightpos * 4096 * -1;
 
-		lp_pos = Math.abs(L1.getSelectedSensorPosition(0) / (4096 * l_pos));
-		rp_pos = Math.abs(R1.getSelectedSensorPosition(0) / (4096 * r_pos));
+		lp_pos = Math.abs((double) L1.getSelectedSensorPosition(0) / (4096 * leftpos));
+		rp_pos = Math.abs((double) R1.getSelectedSensorPosition(0) / (4096 * rightpos));
 
 		L1.configMotionAcceleration((int) (4096 * leftaccel), 10);
 		R1.configMotionAcceleration((int) (4096 * rightaccel), 10);

@@ -2,7 +2,8 @@
 package org.usfirst.frc.team3452.robot;
 
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
-import org.usfirst.frc.team3452.robot.commands.drive.DriveToCube;
+import org.usfirst.frc.team3452.robot.commands.drive.EncoderGyro;
+import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
 import org.usfirst.frc.team3452.robot.commands.drive.SetModify;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class OI {
 	public static Joystick driverJoy = new Joystick(0);
@@ -49,9 +51,18 @@ public class OI {
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 		driverJoyBack.whenPressed(new OverrideSet(-1));
 		//		driverJoyStart.whileHeld(new ClimbRelease());
-		
-		driverJoyLB.whenPressed(new DriveToCube());
-		driverJoyStart.whenPressed(new DriveTime(0,0,0.1));
+
+		//		driverJoyLB.whenPressed(new DriveToCube());
+		//		driverJoyLB.whenPressed(new EncoderFrom(3, 3, .25, .25, 3));
+//		driverJoyLB.whenPressed(new Test());
+//		driverJoyLB.whenPressed(new CommandGroup() 
+//				{
+//			{
+//				addSequential(new EncoderReset());
+//				addSequential(new EncoderGyro(5, 5, .25, .25, .5, 0, .03));
+//			}
+//				});
+		driverJoyStart.whenPressed(new DriveTime(0, 0, 0.1));
 
 		// OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
@@ -61,12 +72,9 @@ public class OI {
 		opJoyA.whenPressed(new ElevatorPosition(3.5));
 		opJoyStart.toggleWhenPressed(new LightsHSV(0, 1, 1, "RANDOM"));
 
-		//		opJoyLClick.whenPressed(new CameraSwitch(0));
-		//		opJoyRClick.whenPressed(new CameraSwitch(1));
-
 		intakeIn.whenActive(new LightsHSV(55, 1, .7, ""));
 		intakeOut.whenActive(new LightsHSV(330, 1, .7, ""));
-		intakeStop.whenActive(new LightsHSV(260, 1, .5, ""));
+		intakeStop.whenActive(new LightsHSV(258, 1, .3, ""));
 
 		driveSafteyOverriden.whenActive(new OverrideSet(1));
 		driveSafteyOverriden.whenInactive(new OverrideSet(0));
@@ -80,10 +88,8 @@ public class OI {
 			opJoy.setRumble(RumbleType.kLeftRumble, intensity);
 			opJoy.setRumble(RumbleType.kRightRumble, intensity);
 		} else if (controller == 3) {
-			driverJoy.setRumble(RumbleType.kLeftRumble, intensity);
-			driverJoy.setRumble(RumbleType.kRightRumble, intensity);
-			opJoy.setRumble(RumbleType.kLeftRumble, intensity);
-			opJoy.setRumble(RumbleType.kRightRumble, intensity);
+			rumble(1, intensity);
+			rumble(2, intensity);
 		}
 
 	}

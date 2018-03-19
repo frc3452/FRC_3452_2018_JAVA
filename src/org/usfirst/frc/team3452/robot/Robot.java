@@ -1,11 +1,9 @@
-
 package org.usfirst.frc.team3452.robot;
 
 import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
 import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
-import org.usfirst.frc.team3452.robot.commands.signal.LightsCycle;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
@@ -43,7 +41,7 @@ public class Robot extends TimedRobot {
 	boolean wasTele = false;
 
 	//init timer
-	Timer autoTimer = new Timer();
+	private static Timer autoTimer = new Timer();
 
 	@Override
 	public void robotInit() {
@@ -61,7 +59,7 @@ public class Robot extends TimedRobot {
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
 		Robot.lights.initHardware();
-		Robot.camera.initHardware();
+		//		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 
 		_oi = new OI();
@@ -82,10 +80,16 @@ public class Robot extends TimedRobot {
 
 	}
 
+	public void robotPeriodic() {
+		handleLEDs();
+		Robot.drive.LoggerUpdate();
+	}
+
 	@Override
 	public void disabledInit() {
 		//first time enabled set to coast, after tele brake
-		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
+		//		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
+		Robot.drive.BrakeCoast(NeutralMode.Coast);
 	}
 
 	@Override
@@ -93,22 +97,8 @@ public class Robot extends TimedRobot {
 		autonChooser();
 		Robot.autonSelector.printSelected();
 
-		Robot.drive.LoggerUpdate();
 		Scheduler.getInstance().run();
 
-		//PULSE DURING DISABLE
-		if (DriverStation.getInstance().isDSAttached()) {
-			Robot.lights.pulse(250, 1, 0.01, .12, 0.001);
-
-		} else {
-			//			Robot.lights.hsv(Robot.lights.m_hue, 1, .18);
-			//				Robot.lights.m_hue++;
-			//			if (Robot.lights.m_hue > 360)
-			//				Robot.lights.m_hue = 0;
-
-			//			increase pulsing speed while not connected
-			Robot.lights.pulse(0, 1, 0.01, .15, 0.15 / 10 * (autoTimer.get() / 110));
-		}
 	}
 
 	@Override
@@ -117,9 +107,15 @@ public class Robot extends TimedRobot {
 		autoTimer.start();
 		//timer start
 
+		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
+			Robot.lights.pulse(0, 1, .01, .1, 0.004);
+		else
+			Robot.lights.pulse(120, 1, .01, .1, 0.004);
+
 		//keep overriding while game data bad or controller override not set
 		do {
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
+
 			autoCommand[1] = (new MiddleAuton("SWITCH", 1));
 			autoCommand[2] = (new LeftAuton("SWITCH", 1));
 			autoCommand[3] = (new LeftAuton("SCALE", 1));
@@ -135,12 +131,12 @@ public class Robot extends TimedRobot {
 				Robot.autonSelector.confirmOverride = true;
 			}
 
-		} while ((Robot.autonSelector.gameMsg == "NOT" && autoTimer.get() < 5)
+		} while ((Robot.autonSelector.gameMsg == "NOT" && autoTimer.get() < 3)
 				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
 
 		//by the time it gets to this, the time shouldn't be over 5 seconds
 		//if so, error occured and we need to set the default
-		if (autoTimer.get() > 5) {
+		if (autoTimer.get() > 3) {
 			autonomousCommand = (new DefaultAutonomous());
 		}
 
@@ -156,12 +152,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
-			Robot.lights.pulse(0, 1, .01, .1, 0.004);
-		else
-			Robot.lights.pulse(120, 1, .01, .1, 0.004);
-
-		Robot.drive.LoggerUpdate();
 		Scheduler.getInstance().run();
 	}
 
@@ -182,12 +172,36 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		Robot.drive.LoggerUpdate();
 	}
 
 	@Override
 	public void testPeriodic() {
-		Robot.drive.LoggerUpdate();
+	}
+
+	public void handleLEDs() {
+		if (DriverStation.getInstance().isDisabled()) {
+
+			//IF CONNECTED LOW GREEN
+			if (DriverStation.getInstance().isDSAttached()) {
+				Robot.lights.pulse(258, 1, 0.01, .12, 0.002);
+			} else {
+
+				//IF AT EVENT PULSE RED, FADE IF NOT
+				if (DriverStation.getInstance().isFMSAttached()) {
+					//			increase pulsing speed while not connected
+					Robot.lights.pulse(0, 1, 0.01, .15, 0.15 / 10 * (autoTimer.get() / 110));
+				} else {
+					Robot.lights.hsv(Robot.lights.m_hue, 1, .18);
+					Robot.lights.m_hue++;
+					if (Robot.lights.m_hue > 360)
+						Robot.lights.m_hue = 0;
+				}
+			}
+
+			//TEST
+		} else if (DriverStation.getInstance().isTest()) {
+			Robot.lights.pulse(55, 1, .01, .2, .08);
+		}
 	}
 
 	public void controllerChooser() {
@@ -271,7 +285,7 @@ public class Robot extends TimedRobot {
 		if (Robot.autonSelector.controllerOverride == false) {
 
 			//If selector feedback nominal
-			if (Robot.autonSelector.uglyAnalog() < 20 && Robot.autonSelector.uglyAnalog() > 1) {
+			if (Robot.autonSelector.uglyAnalog() <= 20 && Robot.autonSelector.uglyAnalog() >= 1) {
 				autonomousCommand = autoCommand[Robot.autonSelector.uglyAnalog()];
 			} else {
 				autonomousCommand = defaultCommand;

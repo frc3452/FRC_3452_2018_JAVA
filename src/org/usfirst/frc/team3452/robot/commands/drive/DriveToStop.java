@@ -20,7 +20,7 @@ public class DriveToStop extends Command {
 	}
 
 	protected boolean isFinished() {
-		return Robot.drive.encoderSpeedIsUnder(100) || isTimedOut();
+		return Robot.drive.encoderSpeedIsUnder(60) || isTimedOut();
 	}
 
 	protected void end() {

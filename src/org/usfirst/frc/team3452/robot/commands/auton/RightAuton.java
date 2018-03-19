@@ -2,6 +2,7 @@ package org.usfirst.frc.team3452.robot.commands.auton;
 
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
+import org.usfirst.frc.team3452.robot.commands.drive.DriveToStop;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderGyro;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
@@ -9,8 +10,8 @@ import org.usfirst.frc.team3452.robot.commands.drive.GyroPos;
 import org.usfirst.frc.team3452.robot.commands.drive.GyroReset;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
+import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
-import org.usfirst.frc.team3452.robot.commands.signal.WaitForGameData;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -19,73 +20,65 @@ public class RightAuton extends CommandGroup {
 	public RightAuton(String priority, int selector) {
 		addSequential(new GyroReset());
 		addSequential(new EncoderReset());
-		addSequential(new WaitForGameData());
-		
-		if (priority == "D")
-		{
+
+		if (priority == "D") {
 			defaultAuton();
 		} else {
-		
-		//IF DATA FOUND
-		if (Robot.autonSelector.gameMsg != "NOT") {
 
-			if (priority == "SWITCH") {
+			//IF DATA FOUND
+			if (Robot.autonSelector.gameMsg != "NOT") {
 
-				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
-					switchL(selector);
-					addSequential(new DriveTime(0, 0, 16));
+				if (priority == "SWITCH") {
 
-				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-					switchR(selector);
-					addSequential(new DriveTime(0, 0, 16));
-				}
+					if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
+						switchL(selector);
 
-			} else if (priority == "SCALE") {
+					} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
+						switchR(selector);
+					}
 
-				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-					scaleL(selector);
-					addSequential(new DriveTime(0, 0, 16));
+				} else if (priority == "SCALE") {
 
-				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-					scaleR(selector);
-					addSequential(new DriveTime(0, 0, 16));
-				}
+					if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
+						scaleL(selector);
 
-			} else if (priority == "R_SWITCH_P") {
-				if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-					switchR(selector);
-					addSequential(new DriveTime(0, 0, 16));
-				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-					scaleR(selector);
-					addSequential(new DriveTime(0, 0, 16));
+					} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
+						scaleR(selector);
+					}
+
+				} else if (priority == "R_SWITCH_P") {
+					if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
+						switchR(selector);
+					} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
+						scaleR(selector);
+					} else {
+						defaultAuton();
+					}
+				} else if (priority == "R_SCALE_P") {
+					if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
+						scaleR(selector);
+					} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
+						switchR(selector);
+					} else {
+						defaultAuton();
+					}
 				} else {
+					System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
 					defaultAuton();
 				}
-			} else if (priority == "R_SCALE_P") {
-				if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-					scaleR(selector);
-					addSequential(new DriveTime(0, 0, 16));
-				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-					switchR(selector);
-					addSequential(new DriveTime(0, 0, 16));
-				} else {
-					defaultAuton();
-				}
+
 			} else {
-				System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
+				//			System.out.println("ERROR Game data not found; running default");
 				defaultAuton();
 			}
-
-		} else {
-			System.out.println("ERROR Game data not found; running default");
-			defaultAuton();
 		}
-	}
+		addSequential(new DriveTime(0, 0, 16));
 	}
 
 	private void switchL(int mode) {
 		switch (mode) {
 		case 1:
+			defaultAuton();
 			break;
 		case 3620:
 			addParallel(new DriveTime(.45, 0, .5));
@@ -116,13 +109,32 @@ public class RightAuton extends CommandGroup {
 
 	private void switchR(int mode) {
 		switch (mode) {
+		
 		case 1:
+			addParallel(new DriveTime(.45, 0, .5));
+			addSequential(new ElevatorTime(.5, .15));
+			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
+
+			addSequential(new CommandGroup() {
+				{
+					addParallel(new ElevatorWhileDrive(3.5, .7, true));
+					addSequential(new EncoderGyro(7.91, 7.91, .6, .6, .7, 0, .017)); // drive to side of switch
+				}
+			});
+			addSequential(new EncoderFrom(-1.5, 0.75, .5, .5, .5)); // turn to switch
+
+			addSequential(new DriveTime(.5, 0, .75)); //hit switch
+			addSequential(new DriveToStop(.4));
+
+			addSequential(new IntakeTime(1, .5)); //drop and backup
+			addParallel(new DriveTime(-.5, 0, .8));
+			addSequential(new ElevatorTime(.1, 10));
 			break;
 		case 3620:
 			addParallel(new DriveTime(.45, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
-			
+
 			addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, .017)); // drive to side of switch
 
 			addParallel(new ElevatorPosition(5)); // raise arm
@@ -141,6 +153,7 @@ public class RightAuton extends CommandGroup {
 	private void scaleL(int mode) {
 		switch (mode) {
 		case 1:
+			defaultAuton();
 			break;
 		case 3620:
 			addParallel(new DriveTime(.45, 0, .5));
@@ -172,12 +185,13 @@ public class RightAuton extends CommandGroup {
 	private void scaleR(int mode) {
 		switch (mode) {
 		case 1:
+			defaultAuton();
 			break;
 		case 3620:
 			addParallel(new DriveTime(.45, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
-			
+
 			addParallel(new ElevatorPosition(1)); //lift for drive
 			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, .016)); // drive to far side of switch
 			addSequential(new EncoderFrom(-.4, .2, .4, .4, .5)); //turn to switch
@@ -200,7 +214,7 @@ public class RightAuton extends CommandGroup {
 		addParallel(new DriveTime(.45, 0, .5));
 		addSequential(new ElevatorTime(.5, .15));
 		addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
-		
+
 		addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, .017)); // drive to side of switch
 		addSequential(new ElevatorPosition(5)); // raise arm
 	}

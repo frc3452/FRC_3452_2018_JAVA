@@ -8,10 +8,13 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveToCube extends Command {
 
+	private double m_speed;
 	private boolean m_complete = false, intake_startup = false, intake_stable = false;
 
-	public DriveToCube() {
+	public DriveToCube(double speed) {
 		requires(Robot.drive);
+
+		m_speed = speed;
 	}
 
 	protected void initialize() {
@@ -26,15 +29,15 @@ public class DriveToCube extends Command {
 			//			System.out.println(Robot.lights.centerX(0));
 
 			if (Robot.lights.centerX(0) < 335 && Robot.lights.centerX(0) > 325) {
-				Robot.drive.Arcade(0.45, 0);
+				Robot.drive.Arcade(m_speed, 0);
 				//				m_complete = true;
 			} else if (Robot.lights.centerX(0) > 335) {
-				Robot.drive.Arcade(0.45, .125 * 2.1);
+				Robot.drive.Arcade(m_speed, .125 * 2.1);
 			} else if (Robot.lights.centerX(0) < 325) {
-				Robot.drive.Arcade(0.45, -.125 * 2.1);
+				Robot.drive.Arcade(m_speed, -.125 * 2.1);
 			}
 		} else {
-			Robot.drive.Arcade(.3, 0);
+			Robot.drive.Arcade(m_speed, 0);
 		}
 
 		Robot.intake.manual(-.75);
@@ -46,13 +49,12 @@ public class DriveToCube extends Command {
 			intake_stable = true;
 
 		if (intake_stable && (Robot.drive.pdp.getCurrent(9) > 6.5 || Robot.drive.pdp.getCurrent(8) > 6.5)) {
-//			m_complete = true;
+			//			m_complete = true;
 			setTimeout(1.5);
 		}
-		
 
-//		System.out.println("startup: " + intake_startup + "\t\t\tstable: " + intake_stable);
-				System.out.println(Robot.drive.pdp.getCurrent(9) + "\t\t" + Robot.drive.pdp.getCurrent(8));
+		//		System.out.println("startup: " + intake_startup + "\t\t\tstable: " + intake_stable);
+		System.out.println(Robot.drive.pdp.getCurrent(9) + "\t\t" + Robot.drive.pdp.getCurrent(8));
 	}
 
 	protected boolean isFinished() {
