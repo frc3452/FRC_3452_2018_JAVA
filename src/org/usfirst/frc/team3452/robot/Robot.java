@@ -88,8 +88,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledInit() {
 		//first time enabled set to coast, after tele brake
-		//		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
-		Robot.drive.BrakeCoast(NeutralMode.Coast);
+				Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
+//		Robot.drive.BrakeCoast(NeutralMode.Coast);
 	}
 
 	@Override
@@ -179,14 +179,15 @@ public class Robot extends TimedRobot {
 	}
 
 	public void handleLEDs() {
+		
 		if (DriverStation.getInstance().isDisabled()) {
 
 			//IF CONNECTED LOW GREEN
 			if (DriverStation.getInstance().isDSAttached()) {
-				Robot.lights.pulse(258, 1, 0.01, .12, 0.002);
+				Robot.lights.pulse(258, 1, 0.01, .12, 0.0015);
 			} else {
 
-				//IF AT EVENT PULSE RED, FADE IF NOT
+				//IF AT EVENT PULSE RED, FADE HUE IF NOT
 				if (DriverStation.getInstance().isFMSAttached()) {
 					//			increase pulsing speed while not connected
 					Robot.lights.pulse(0, 1, 0.01, .15, 0.15 / 10 * (autoTimer.get() / 110));

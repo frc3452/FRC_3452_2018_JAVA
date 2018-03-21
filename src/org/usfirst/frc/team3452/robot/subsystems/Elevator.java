@@ -146,7 +146,7 @@ public class Elevator extends Subsystem {
 		public static final double ELEVATOR_SPEED_2 = .9;
 		public static final double ELEVATOR_SPEED_3 = .65;
 		public static final double ELEVATOR_SPEED_4 = .55;
-		public static final double ELEVATOR_SPEED_5 = .45;
+		public static final double ELEVATOR_SPEED_5 = .48; //.45
 
 		public static int ELEVATOR_AMP_TRIGGER = 50;
 		public static int ELEVATOR_AMP_LIMIT = 40;

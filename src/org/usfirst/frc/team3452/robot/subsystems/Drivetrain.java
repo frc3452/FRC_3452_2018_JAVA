@@ -198,7 +198,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	public void Arcade(double move, double rotate) {
-		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .16));
+		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .2));
 	}
 
 	public void Tank(double left, double right) {
