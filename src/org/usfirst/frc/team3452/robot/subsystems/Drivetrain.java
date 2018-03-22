@@ -34,7 +34,6 @@ public class Drivetrain extends Subsystem {
 	// variable init
 	public double m_modify = 1, m_elev_modify = 1;
 	public double l_pos = 0, r_pos = 0, lp_pos = -3452, rp_pos = -3452;
-	//TODO encoder percent done for running elevator part way through motion magic
 
 	public void LoggerUpdate() {
 		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());

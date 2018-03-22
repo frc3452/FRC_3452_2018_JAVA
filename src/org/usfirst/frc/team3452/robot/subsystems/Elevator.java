@@ -43,7 +43,6 @@ public class Elevator extends Subsystem {
 		Elev_1.config_kI(0, 0.000028, 10);
 		Elev_1.config_kD(0, 2.5, 10);
 		// was 0, .09, .000075, 2.5
-		//TODO retune PID
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
 		Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);
@@ -98,8 +97,6 @@ public class Elevator extends Subsystem {
 		} else {
 			Robot.drive.m_elev_modify = 1;
 		}
-
-		//TODO Change to ramping instead of staging?
 
 	}
 
