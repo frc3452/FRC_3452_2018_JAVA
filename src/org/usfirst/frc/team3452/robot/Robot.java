@@ -59,7 +59,7 @@ public class Robot extends TimedRobot {
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
 		Robot.lights.initHardware();
-		//		Robot.camera.initHardware();
+		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 
 		_oi = new OI();
@@ -88,8 +88,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledInit() {
 		//first time enabled set to coast, after tele brake
-				Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
-//		Robot.drive.BrakeCoast(NeutralMode.Coast);
+		Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
+		//		Robot.drive.BrakeCoast(NeutralMode.Coast);
 	}
 
 	@Override
@@ -143,6 +143,7 @@ public class Robot extends TimedRobot {
 		Robot.drive.BrakeCoast(NeutralMode.Brake);
 
 		autonChooser();
+		
 		Robot.autonSelector.printSelected();
 
 		if (autonomousCommand != null)
@@ -179,7 +180,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public void handleLEDs() {
-		
+
 		if (DriverStation.getInstance().isDisabled()) {
 
 			//IF CONNECTED LOW GREEN
@@ -278,7 +279,7 @@ public class Robot extends TimedRobot {
 		}
 
 	}
-
+	
 	public void autonChooser() {
 		controllerChooser();
 

@@ -229,7 +229,7 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new EncoderFrom(2.41, 2.61, .1, .1, .15));
 
 			addSequential(new IntakeTime(.5, 1));
-			
+
 			break;
 
 		case 3620:
