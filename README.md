@@ -17,7 +17,7 @@ I got bored one night and tried out Java. I found it's much easier than cpp. We 
 ### Drive train speed limiting based off elevator positioning along with override
 [Handling](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/subsystems/Elevator.java)
 
-[Implementation](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/Robot.java)
+[Implementation](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/subsystems/Drivetrain.java)
 
 [Override](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/commands/elevator/OverrideSet.java)
 
