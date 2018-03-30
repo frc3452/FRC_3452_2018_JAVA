@@ -143,7 +143,7 @@ public class Robot extends TimedRobot {
 		Robot.drive.BrakeCoast(NeutralMode.Brake);
 
 		autonChooser();
-		
+
 		Robot.autonSelector.printSelected();
 
 		if (autonomousCommand != null)
@@ -279,7 +279,7 @@ public class Robot extends TimedRobot {
 		}
 
 	}
-	
+
 	public void autonChooser() {
 		controllerChooser();
 
