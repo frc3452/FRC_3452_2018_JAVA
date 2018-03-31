@@ -51,6 +51,8 @@ public class AutonSelector extends Subsystem {
 				autonString = "A / " + uglyAnalog() + ": " + autoCommandName[uglyAnalog()];
 			} else if ((uglyAnalog() >= 11) && (uglyAnalog() <= 20)) {
 				autonString = "B / " + uglyAnalog() + ": " + autoCommandName[uglyAnalog()];
+			} else if ((uglyAnalog() >= 21) && (uglyAnalog() <= 30)) {
+				autonString = "C / " + uglyAnalog() + ": " + autoCommandName[uglyAnalog()];
 			} else {
 				autonString = "AUTON NOT SELECTED";
 			}
@@ -59,11 +61,9 @@ public class AutonSelector extends Subsystem {
 
 		// update values for one time display
 		m_prev_as1 = m_asA;
-
 		m_prev_as2 = m_asB;
 
 		overrideStringPrevious = overrideString;
-
 	}
 
 	public int uglyAnalog() {
@@ -113,6 +113,31 @@ public class AutonSelector extends Subsystem {
 				return 19;
 			} else if (m_asB > Constants.AUTO_10_L && m_asB < Constants.AUTO_10_H) {
 				return 20;
+			} else {
+				// ERROR
+				return 3452;
+			}
+		} else if (m_asA < Constants.AUTO_3 + Constants.AUTO_V && m_asA > Constants.AUTO_3 - Constants.AUTO_V) {
+			if (m_asB > Constants.AUTO_1_L && m_asB < Constants.AUTO_1_H) {
+				return 21;
+			} else if (m_asB > Constants.AUTO_2_L && m_asB < Constants.AUTO_2_H) {
+				return 22;
+			} else if (m_asB > Constants.AUTO_3_L && m_asB < Constants.AUTO_3_H) {
+				return 23;
+			} else if (m_asB > Constants.AUTO_4_L && m_asB < Constants.AUTO_4_H) {
+				return 24;
+			} else if (m_asB > Constants.AUTO_5_L && m_asB < Constants.AUTO_5_H) {
+				return 25;
+			} else if (m_asB > Constants.AUTO_6_L && m_asB < Constants.AUTO_6_H) {
+				return 26;
+			} else if (m_asB > Constants.AUTO_7_L && m_asB < Constants.AUTO_7_H) {
+				return 27;
+			} else if (m_asB > Constants.AUTO_8_L && m_asB < Constants.AUTO_8_H) {
+				return 28;
+			} else if (m_asB > Constants.AUTO_9_L && m_asB < Constants.AUTO_9_H) {
+				return 29;
+			} else if (m_asB > Constants.AUTO_10_L && m_asB < Constants.AUTO_10_H) {
+				return 30;
 			} else {
 				// ERROR
 				return 3452;
