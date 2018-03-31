@@ -279,8 +279,8 @@ public class Drivetrain extends Subsystem {
 
 		l_pos = 0;
 		r_pos = 0;
-		lp_pos = -3452;
-		rp_pos = -3452;
+		lp_pos = 3452;
+		rp_pos = 3452;
 
 		robotDrive.setSafetyEnabled(true);
 	}
