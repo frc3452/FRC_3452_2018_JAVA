@@ -61,7 +61,7 @@ public class OI {
 		opJoyY.whileHeld(new IntakeManual(.3));
 
 		opDown.whenPressed(new ElevatorPosition(-1));
-		opUp.whenPressed(new ElevatorPosition(15));
+		opUp.whenPressed(new ElevatorPosition(8.2));
 		opLeft.whenPressed(new ElevatorPosition(3.5));
 		opRight.whenPressed(new ElevatorPosition(.6));
 
