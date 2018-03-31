@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
 
 	//auto selector init
 	Command autonomousCommand = null;
-	Command autoCommand[] = new Command[21];
+	Command autoCommand[] = new Command[31];
 	Command defaultCommand = null;
 
 	//flag for teleop 
@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
 		autoTimer.reset();
 		autoTimer.start();
 
-		for (int i = 0; i < 21; i++) {
+		for (int i = 0; i < 31; i++) {
 			autoCommand[i] = null;
 		}
 
@@ -78,6 +78,14 @@ public class Robot extends TimedRobot {
 		Robot.autonSelector.autoCommandName[8] = "Right: Switch Priority";
 		Robot.autonSelector.autoCommandName[9] = "Right: Scale Priority";
 
+		Robot.autonSelector.autoCommandName[12] = "(MISJO) Left: Switch";
+		Robot.autonSelector.autoCommandName[13] = "(MISJO) Left: Scale";
+		Robot.autonSelector.autoCommandName[14] = "(MISJO) Right: Switch";
+		Robot.autonSelector.autoCommandName[15] = "(MISJO) Right: Scale";
+		Robot.autonSelector.autoCommandName[16] = "(MISJO) Left: Switch Priority";
+		Robot.autonSelector.autoCommandName[17] = "(MISJO) Left: Scale Priority";
+		Robot.autonSelector.autoCommandName[18] = "(MISJO) Right: Switch Priority";
+		Robot.autonSelector.autoCommandName[19] = "(MISJO) Right: Scale Priority";
 	}
 
 	public void robotPeriodic() {
@@ -125,6 +133,15 @@ public class Robot extends TimedRobot {
 			autoCommand[7] = (new LeftAuton("L_SCALE_P", 1));
 			autoCommand[8] = (new RightAuton("R_SWITCH_P", 1));
 			autoCommand[9] = (new RightAuton("R_SCALE_P", 1));
+
+			autoCommand[12] = (new LeftAuton("SWITCH", 3620));
+			autoCommand[13] = (new LeftAuton("SCALE", 3620));
+			autoCommand[14] = (new RightAuton("SWITCH", 3620));
+			autoCommand[15] = (new RightAuton("SCALE", 3620));
+			autoCommand[16] = (new LeftAuton("L_SWITCH_P", 3620));
+			autoCommand[17] = (new LeftAuton("L_SCALE_P", 3620));
+			autoCommand[18] = (new RightAuton("R_SWITCH_P", 3620));
+			autoCommand[19] = (new RightAuton("R_SCALE_P", 3620));
 
 			if (Robot.autonSelector.controllerOverride) {
 				autonomousCommand = autoCommand[Robot.autonSelector.overrideValue];
