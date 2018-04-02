@@ -78,14 +78,12 @@ public class Robot extends TimedRobot {
 		Robot.autonSelector.autoCommandName[8] = "Right: Switch Priority";
 		Robot.autonSelector.autoCommandName[9] = "Right: Scale Priority";
 
-		Robot.autonSelector.autoCommandName[12] = "(MISJO) Left: Switch";
-		Robot.autonSelector.autoCommandName[13] = "(MISJO) Left: Scale";
-		Robot.autonSelector.autoCommandName[14] = "(MISJO) Right: Switch";
-		Robot.autonSelector.autoCommandName[15] = "(MISJO) Right: Scale";
-		Robot.autonSelector.autoCommandName[16] = "(MISJO) Left: Switch Priority";
-		Robot.autonSelector.autoCommandName[17] = "(MISJO) Left: Scale Priority";
-		Robot.autonSelector.autoCommandName[18] = "(MISJO) Right: Switch Priority";
-		Robot.autonSelector.autoCommandName[19] = "(MISJO) Right: Scale Priority";
+		Robot.autonSelector.autoCommandName[11] = "(MISJO) Left: Switch";
+		Robot.autonSelector.autoCommandName[12] = "(MISJO) Right: Switch";
+		Robot.autonSelector.autoCommandName[13] = "(MISJO) Left: Switch Priority";
+		Robot.autonSelector.autoCommandName[14] = "(MISJO) Left: Scale Priority";
+		Robot.autonSelector.autoCommandName[15] = "(MISJO) Right: Switch Priority";
+		Robot.autonSelector.autoCommandName[16] = "(MISJO) Right: Scale Priority";
 	}
 
 	public void robotPeriodic() {
@@ -134,14 +132,12 @@ public class Robot extends TimedRobot {
 			autoCommand[8] = (new RightAuton("R_SWITCH_P", 1));
 			autoCommand[9] = (new RightAuton("R_SCALE_P", 1));
 
-			autoCommand[12] = (new LeftAuton("SWITCH", 3620));
-			autoCommand[13] = (new LeftAuton("SCALE", 3620));
-			autoCommand[14] = (new RightAuton("SWITCH", 3620));
-			autoCommand[15] = (new RightAuton("SCALE", 3620));
-			autoCommand[16] = (new LeftAuton("L_SWITCH_P", 3620));
-			autoCommand[17] = (new LeftAuton("L_SCALE_P", 3620));
-			autoCommand[18] = (new RightAuton("R_SWITCH_P", 3620));
-			autoCommand[19] = (new RightAuton("R_SCALE_P", 3620));
+			autoCommand[11] = (new LeftAuton("SWITCH", 3620));
+			autoCommand[12] = (new RightAuton("SWITCH", 3620));
+			autoCommand[13] = (new LeftAuton("L_SWITCH_P", 3620));
+			autoCommand[14] = (new LeftAuton("L_SCALE_P", 3620));
+			autoCommand[15] = (new RightAuton("R_SWITCH_P", 3620));
+			autoCommand[16] = (new RightAuton("R_SCALE_P", 3620));
 
 			if (Robot.autonSelector.controllerOverride) {
 				autonomousCommand = autoCommand[Robot.autonSelector.overrideValue];
@@ -204,7 +200,7 @@ public class Robot extends TimedRobot {
 				Robot.lights.pulse(258, 1, 0.01, .12, 0.0015);
 			} else {
 
-				//IF AT EVENT PULSE RED, FADE HUE IF NOT
+				//IF FMS PULSE RED, IF NO FMS RGB FADE
 				if (DriverStation.getInstance().isFMSAttached()) {
 					//			increase pulsing speed while not connected
 					Robot.lights.pulse(0, 1, 0.01, .15, 0.15 / 10 * (autoTimer.get() / 110));
