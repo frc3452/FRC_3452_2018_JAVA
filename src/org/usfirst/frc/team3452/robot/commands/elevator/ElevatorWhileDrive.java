@@ -23,7 +23,7 @@ public class ElevatorWhileDrive extends Command {
 	}
 
 	protected void execute() {
-		if ((m_side ? Robot.drive.lp_pos : Robot.drive.rp_pos) > m_percent)
+		if ((m_side ? (Robot.drive.lp_pos) : (Robot.drive.rp_pos)) > m_percent)
 			Robot.elevator.Encoder(m_value);
 	}
 

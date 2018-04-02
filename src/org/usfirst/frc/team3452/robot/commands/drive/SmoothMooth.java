@@ -13,14 +13,14 @@ public class SmoothMooth extends Command {
 
 	private double c_l, c_r, l_adjust, r_adjust, c_gyro;
 
-	public SmoothMooth(double left, double right, double accel, double fasteraccel, double speed,
+	public SmoothMooth(double left, double right, double accel, double lessaccel, double speed,
 			double percentForStraight, double heading, double constant) {
 		requires(Robot.drive);
 
 		m_left = left;
 		m_right = right;
 		m_accel = accel;
-		g_accel = fasteraccel;
+		g_accel = lessaccel;
 		m_speed = speed;
 		straight_percent = percentForStraight;
 		m_heading = heading;
@@ -46,7 +46,7 @@ public class SmoothMooth extends Command {
 			} else if (m_right > m_left) {
 				Robot.drive.MotionMagic(m_left, m_right, m_accel, g_accel, m_speed * l_adjust, m_speed * r_adjust);
 			} else if (m_right == m_left) {
-				Robot.drive.MotionMagic(m_left, m_right, m_accel, m_accel, m_speed * l_adjust, m_speed * r_adjust);
+				Robot.drive.MotionMagic(m_left, m_right, g_accel, g_accel, m_speed * l_adjust, m_speed * r_adjust);
 			}
 		} else {
 			Robot.drive.MotionMagic(m_left, m_right, m_accel, m_accel, m_speed * l_adjust, m_speed * r_adjust);
@@ -54,6 +54,7 @@ public class SmoothMooth extends Command {
 
 		//keep straight until turn at _ percent
 		if (c_l < straight_percent || c_r < straight_percent) {
+			
 			if (c_gyro < m_heading + .4 && c_gyro > m_heading - .4) {
 				l_adjust = 1;
 				r_adjust = 1;

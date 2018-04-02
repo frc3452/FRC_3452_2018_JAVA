@@ -11,7 +11,7 @@ public class AutonSelector extends Subsystem {
 	private int m_prev_as1, m_prev_as2;
 	private int m_asA, m_asB;
 
-	public String autoCommandName[] = new String[21];
+	public String autoCommandName[] = new String[31];
 	public boolean controllerOverride = false;
 	public boolean confirmOverride = false;
 
@@ -29,7 +29,7 @@ public class AutonSelector extends Subsystem {
 		as_A.setName("Selector A");
 		as_B.setName("Selector B");
 
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 30; i++) {
 			autoCommandName[i] = "NO COMMAND";
 		}
 	}
@@ -50,9 +50,9 @@ public class AutonSelector extends Subsystem {
 			if ((uglyAnalog() <= 10) && (uglyAnalog() >= 1)) {
 				autonString = "A / " + uglyAnalog() + ": " + autoCommandName[uglyAnalog()];
 			} else if ((uglyAnalog() >= 11) && (uglyAnalog() <= 20)) {
-				autonString = "B / " + uglyAnalog() + ": " + autoCommandName[uglyAnalog()];
+				autonString = "B / " + (uglyAnalog() - 10) + ": " + autoCommandName[uglyAnalog()];
 			} else if ((uglyAnalog() >= 21) && (uglyAnalog() <= 30)) {
-				autonString = "C / " + uglyAnalog() + ": " + autoCommandName[uglyAnalog()];
+				autonString = "C / " + (uglyAnalog() - 20)+ ": " + autoCommandName[uglyAnalog()];
 			} else {
 				autonString = "AUTON NOT SELECTED";
 			}

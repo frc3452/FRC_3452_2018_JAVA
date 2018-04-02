@@ -24,7 +24,7 @@ public class GyroPos extends Command {
 		m_gyro = Robot.drive.Gyro.getFusedHeading();
 		System.out.println(m_gyro);
 
-		if (m_gyro > 360 && m_gyro > 180) {
+		if (m_gyro < 360 && m_gyro > 180) {
 			if ((m_gyro < (m_target + 180)) && (m_gyro > m_target)) {
 				Robot.drive.Arcade(0, -m_speed);
 			} else {

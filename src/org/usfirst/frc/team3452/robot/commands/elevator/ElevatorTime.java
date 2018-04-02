@@ -18,7 +18,7 @@ public class ElevatorTime extends Command {
 	}
 
 	protected void initialize() {
-		setTimeout(m_time);
+		setTimeout(-m_time);
 	}
 
 	protected void execute() {
