@@ -2,13 +2,17 @@ package org.usfirst.frc.team3452.robot.commands.auton;
 
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
+import org.usfirst.frc.team3452.robot.commands.drive.DriveToCube;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveToStop;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderDrive;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
+import org.usfirst.frc.team3452.robot.commands.drive.GyroPos;
 import org.usfirst.frc.team3452.robot.commands.drive.GyroReset;
+import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
+import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -51,19 +55,55 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
 
-			addSequential(new EncoderDrive(1, 2.2, .8, .8, .6));
+			addSequential(new EncoderDrive(1, 2.2, .8, .8, .6)); //init curve
 
+			//drive to switch
 			addSequential(new CommandGroup() {
 				{
-					addParallel(new ElevatorWhileDrive(3.5, .3, true));
-					addSequential(new EncoderFrom(4.2, 3.8, .7, .7, .6));
+					addParallel(new ElevatorWhileDrive(3.5, .15, true));
+					addSequential(new EncoderFrom(4.2, 3.6, .7, .7, .6));
 				}
 			});
 
+			//hit switch
 			addSequential(new DriveTime(.5, 0, .5));
 			addSequential(new DriveToStop(.3));
 
-			addSequential(new IntakeTime(-.5, 1.5));
+			addSequential(new IntakeTime(.5, .5)); //first place
+
+			//backup
+			addSequential(new EncoderFrom(-3.8, -3.8, .45, .45, .6));
+
+			//lower and reset encoders
+			addParallel(new ElevatorPosition(-15));
+			addSequential(new EncoderReset());
+
+			//TODO Swap gyro for encoder movement
+			//TURN AND GRAB CUBE
+			addSequential(new CommandGroup() {
+				{
+					addSequential(new GyroPos(40, .4, 1));
+					addSequential(new DriveToCube(.43));
+					addParallel(new IntakeTime(.5, 2.5));
+					addSequential(new EncoderDrive(0, 0, .5, .5, .6));
+				}
+			});
+
+			//DRIVE TO SWITCH
+			addSequential(new CommandGroup() {
+				{
+					addSequential(new ElevatorWhileDrive(3.5, .5, true));
+					addSequential(new EncoderFrom(3, 3, .45, .45, .6));
+				}
+			});
+
+			//hit switch
+			addSequential(new DriveTime(.5, 0, .5));
+			addSequential(new DriveToStop(.3));
+
+			addSequential(new IntakeTime(.5, 1.5)); //second place
+
+			//back up
 			addParallel(new DriveTime(-.5, 0, 1.5));
 			addSequential(new ElevatorTime(.1, 10));
 

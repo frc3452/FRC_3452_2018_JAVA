@@ -40,23 +40,23 @@ public class RightAuton extends CommandGroup {
 				} else if (priority == "SCALE") {
 
 					if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-						scaleL(selector);
+						scaleL(3620);
 
 					} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-						scaleR(selector);
+						scaleR(3620);
 					}
 
 				} else if (priority == "R_SWITCH_P") {
 					if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
 						switchR(selector);
 					} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-						scaleR(selector);
+						scaleR(3620);
 					} else {
 						defaultAuton();
 					}
 				} else if (priority == "R_SCALE_P") {
 					if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-						scaleR(selector);
+						scaleR(3620);
 					} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
 						switchR(selector);
 					} else {
@@ -78,6 +78,7 @@ public class RightAuton extends CommandGroup {
 	private void switchL(int mode) {
 		switch (mode) {
 		case 1:
+			//TODO Switch opposite 
 			defaultAuton();
 			break;
 		case 3620:

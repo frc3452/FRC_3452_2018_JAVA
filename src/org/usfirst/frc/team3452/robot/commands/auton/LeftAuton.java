@@ -4,6 +4,7 @@ import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveToCube;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveToStop;
+import org.usfirst.frc.team3452.robot.commands.drive.EncoderDrive;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderGyro;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
@@ -41,23 +42,23 @@ public class LeftAuton extends CommandGroup {
 
 				} else if (priority == "SCALE") {
 					if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-						scaleL(selector);
+						scaleL(3620);
 
 					} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-						scaleR(selector);
+						scaleR(3620);
 					}
 
 				} else if (priority == "L_SWITCH_P") {
 					if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
 						switchL(selector);
 					} else if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-						scaleL(selector);
+						scaleL(3620);
 					} else {
 						defaultAuton();
 					}
 				} else if (priority == "L_SCALE_P") {
 					if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-						scaleL(selector);
+						scaleL(3620);
 					} else if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
 						switchL(selector);
 					} else {
@@ -123,6 +124,7 @@ public class LeftAuton extends CommandGroup {
 	private void switchR(int mode) {
 		switch (mode) {
 		case 1:
+			//TODO Switch opposite
 			defaultAuton();
 			break;
 		case 3620:
@@ -161,24 +163,28 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new CommandGroup() {
 				{
-					addParallel(new ElevatorWhileDrive(15, .7, true));
-					addSequential(new SmoothMooth(13.44 - .5, 12.8, .25, .1, .5, .9, 0, .017));
+					addParallel(new ElevatorWhileDrive(15, .57, true));
+					addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, .016)); // drive to far side of switch
+					addSequential(new EncoderFrom(.2, -.4, .4, .4, .5)); //turn
 				}
 			});
 
-			addSequential(new EncoderFrom(.81, .81, .1, .1, .2)); //turn to switch
+			addSequential(new EncoderFrom(.81, .81, .1, .1, .2)); //drive to scale
+			addSequential(new DriveTime(0, 0, 10));
 			addSequential(new IntakeTime(.4, 1)); //shoot, back up down and spin
 
 			addSequential(new CommandGroup() {
 				{
 					addParallel(new EncoderFrom(-2, -2, .2, .2, .3));
-					addSequential(new ElevatorTime(.1, .5));
-					addSequential(new ElevatorTime(.75, 1));
+					addSequential(new ElevatorTime(-.1, .5));
+					addSequential(new ElevatorTime(-.75, 1));
 				}
 			});
 
+			addSequential(new EncoderReset());
 			addSequential(new GyroPos(110, .5, 2));
 			addSequential(new DriveToCube(.45));
+			addSequential(new EncoderDrive(0, 0, .25, .25, .5));
 
 			break;
 		case 3620:
