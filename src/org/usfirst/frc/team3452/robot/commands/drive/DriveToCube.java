@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveToCube extends Command {
 
-	private double m_speed;
-	private boolean m_complete = false, intake_startup = false, intake_stable = false;
+	private double m_speed, m_centerX;
+	private boolean m_complete, flag_1, flag_2;
 
 	public DriveToCube(double speed) {
 		requires(Robot.drive);
@@ -20,41 +20,49 @@ public class DriveToCube extends Command {
 	protected void initialize() {
 		setTimeout(17);
 		m_complete = false;
-		intake_startup = false;
-		intake_stable = false;
+		flag_1 = false;
+		flag_2 = false;
 	}
 
 	protected void execute() {
-		if (Robot.lights.visionLength() > 0) {
-			//			System.out.println(Robot.lights.centerX(0));
+		if (Robot.lights.centerX(0) == 3452)
+			m_centerX = 320;
+		else
+			m_centerX = Robot.lights.centerX(0);
 
-			if (Robot.lights.centerX(0) < 335 && Robot.lights.centerX(0) > 325) {
+		if (Robot.lights.visionLength() > 0) {
+
+			if (m_centerX < 335 && m_centerX > 325) {
 				Robot.drive.Arcade(m_speed, 0);
+
 				//				m_complete = true;
-			} else if (Robot.lights.centerX(0) > 335) {
+
+			} else if (m_centerX > 335) {
+
 				Robot.drive.Arcade(m_speed, .125 * 2.1);
-			} else if (Robot.lights.centerX(0) < 325) {
+
+			} else if (m_centerX < 325) {
+
 				Robot.drive.Arcade(m_speed, -.125 * 2.1);
+
 			}
 		} else {
 			Robot.drive.Arcade(m_speed, 0);
 		}
 
-		Robot.intake.manual(-.75);
+		Robot.intake.manual(-.9);
 
-		if (Robot.drive.pdp.getCurrent(9) > 10 || Robot.drive.pdp.getCurrent(8) > 10)
-			intake_startup = true;
+		if (Robot.drive.pdp.getCurrent(9) > 8 || Robot.drive.pdp.getCurrent(8) > 8)
+			flag_1 = true;
 
-		if (intake_startup && (Robot.drive.pdp.getCurrent(9) < 5 || Robot.drive.pdp.getCurrent(8) < 5))
-			intake_stable = true;
+		if (flag_1 && (Robot.drive.pdp.getCurrent(9) < 6 || Robot.drive.pdp.getCurrent(8) < 6))
+			flag_2 = true;
 
-		if (intake_stable && (Robot.drive.pdp.getCurrent(9) > 6.5 || Robot.drive.pdp.getCurrent(8) > 6.5)) {
-			//			m_complete = true;
-			setTimeout(1.5);
-		}
+		if (flag_2 && (Robot.drive.pdp.getCurrent(9) > 11 || Robot.drive.pdp.getCurrent(8) > 11))
+			setTimeout(1.2);
 
-		//		System.out.println("startup: " + intake_startup + "\t\t\tstable: " + intake_stable);
-		System.out.println(Robot.drive.pdp.getCurrent(9) + "\t\t" + Robot.drive.pdp.getCurrent(8));
+		System.out.println(m_centerX);
+		//		System.out.println(Robot.drive.pdp.getCurrent(9) + "\t\t" + Robot.drive.pdp.getCurrent(8));
 	}
 
 	protected boolean isFinished() {
