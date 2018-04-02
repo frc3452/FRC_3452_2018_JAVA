@@ -45,7 +45,10 @@ public class Lights extends Subsystem {
 	}
 
 	public double centerX(int cube) {
-		return centerX.getDoubleArray(tempArray)[cube];
+		if (visionLength() > 0)
+			return centerX.getDoubleArray(tempArray)[cube];
+		else
+			return 3452;
 	}
 
 	public int visionLength() {
@@ -177,7 +180,7 @@ public class Lights extends Subsystem {
 	}
 
 	public void initDefaultCommand() {
-//		setDefaultCommand(new LightsCycle());
+		//		setDefaultCommand(new LightsCycle());
 	}
 
 	private static class Constants {
