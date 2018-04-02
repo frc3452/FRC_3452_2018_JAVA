@@ -18,11 +18,11 @@ public class ElevatorTime extends Command {
 	}
 
 	protected void initialize() {
-		setTimeout(-m_time);
+		setTimeout(m_time);
 	}
 
 	protected void execute() {
-		Robot.elevator.Elev_1.set(m_speed);
+		Robot.elevator.Elev_1.set(-m_speed);
 	}
 
 	protected boolean isFinished() {
