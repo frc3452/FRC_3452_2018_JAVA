@@ -1,7 +1,6 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.commands.signal.LightsCycle;
 
 import com.ctre.phoenix.CANifier;
 
