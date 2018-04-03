@@ -1,6 +1,4 @@
 # FRC_3452_2018_JAVA
-I got bored one night and tried out Java. I found it's much easier than cpp. We fully converted in 3 days.
-
 
 # Functions:
 
