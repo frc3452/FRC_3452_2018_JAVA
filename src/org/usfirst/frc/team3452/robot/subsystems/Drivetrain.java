@@ -34,7 +34,7 @@ public class Drivetrain extends Subsystem {
 
 	// variable init
 	public double m_modify = 1, m_elev_modify = 1;
-	public double l_pos = 0, r_pos = 0, lp_pos = -3452, rp_pos = -3452;
+	public double l_pos = 0, r_pos = 0, lp_pos = 0, rp_pos = 0;
 
 	//init timer
 	public Timer timer = new Timer();
@@ -57,15 +57,16 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putString("Override String", Robot.autonSelector.overrideString);
 
 		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
-		
-		SmartDashboard.putBoolean("IS MOVE", (Robot.drive.encoderSpeedIsUnder(60)));
+
+		SmartDashboard.putNumber("Selector A", Robot.autonSelector.as_A.getValue());
+		SmartDashboard.putNumber("Selector B", Robot.autonSelector.as_B.getValue());
 	}
 
 	public void initHardware() {
 		timer.stop();
 		timer.reset();
 		timer.start();
-		
+
 		L1 = new WPI_TalonSRX(Constants.DRIVE_L_1);
 		L2 = new WPI_TalonSRX(Constants.DRIVE_L_2);
 		L3 = new WPI_TalonSRX(Constants.DRIVE_L_3);
