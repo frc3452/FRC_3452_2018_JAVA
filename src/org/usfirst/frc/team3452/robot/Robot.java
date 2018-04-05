@@ -50,7 +50,6 @@ public class Robot extends TimedRobot {
 		Robot.drive.initHardware();
 		Robot.elevator.initHardware();
 		Robot.intake.initHardware();
-		/
 		Robot.climber.initHardware();
 		//				TODO LEDs
 		Robot.lights.initHardware();
