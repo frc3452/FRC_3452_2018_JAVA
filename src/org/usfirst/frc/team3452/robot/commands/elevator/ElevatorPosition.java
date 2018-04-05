@@ -2,7 +2,6 @@ package org.usfirst.frc.team3452.robot.commands.elevator;
 
 import org.usfirst.frc.team3452.robot.Robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevatorPosition extends Command {
@@ -35,7 +34,7 @@ public class ElevatorPosition extends Command {
 
 	protected void end() {
 		Robot.elevator.EncoderDone();
-		System.out.println("Elevator position completed: " + DriverStation.getInstance().getMatchTime());
+		System.out.println("Elevator position completed: " + Robot.drive.timer.get());
 	}
 
 	protected void interrupted() {
