@@ -186,13 +186,13 @@ public class Robot extends TimedRobot {
 		if (DriverStation.getInstance().isDisabled()) {
 			//IF CONNECTED LOW GREEN
 			if (DriverStation.getInstance().isDSAttached()) {
-				Robot.lights.pulse(258, 1, 0.25, 1, 0.05);
+				Robot.lights.pulse(258, 1, 0.15, 1, 0.025);
 			} else {
 
 				//IF FMS PULSE RED, IF NO FMS RGB FADE
 				if (DriverStation.getInstance().isFMSAttached()) {
 					//			increase pulsing speed while not connected
-					Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 50));
+					Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 100));
 				} else {
 					Robot.lights.hsv(Robot.lights.m_hue, 1, 1);
 					Robot.lights.m_hue++;
