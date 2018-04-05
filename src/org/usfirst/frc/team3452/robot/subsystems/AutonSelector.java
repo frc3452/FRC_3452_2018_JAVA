@@ -1,3 +1,4 @@
+
 package org.usfirst.frc.team3452.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -5,8 +6,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class AutonSelector extends Subsystem {
 
-	private AnalogInput as_A;
-	private AnalogInput as_B;
+	public AnalogInput as_A;
+	public AnalogInput as_B;
 
 	private int m_prev_as1, m_prev_as2;
 	private int m_asA, m_asB;
@@ -29,7 +30,7 @@ public class AutonSelector extends Subsystem {
 		as_A.setName("Selector A");
 		as_B.setName("Selector B");
 
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 31; i++) {
 			autoCommandName[i] = "NO COMMAND";
 		}
 	}
@@ -47,7 +48,7 @@ public class AutonSelector extends Subsystem {
 		if (((m_asA + 8 < m_prev_as1 || m_prev_as1 < m_asA - 8)
 				|| (m_asB + 8 < m_prev_as2 || m_prev_as2 < m_asB - 8))) {
 
-			if ((uglyAnalog() <= 10) && (uglyAnalog() >= 1)) {
+			if ((uglyAnalog() >= 1) && (uglyAnalog() <= 10)) {
 				autonString = "A / " + uglyAnalog() + ": " + autoCommandName[uglyAnalog()];
 			} else if ((uglyAnalog() >= 11) && (uglyAnalog() <= 20)) {
 				autonString = "B / " + (uglyAnalog() - 10) + ": " + autoCommandName[uglyAnalog()];
@@ -153,20 +154,21 @@ public class AutonSelector extends Subsystem {
 	}
 
 	public static class Constants {
-		public static final int AUTO_SELECTOR_1 = 1; //3
-		public static final int AUTO_SELECTOR_2 = 0;
-
-		public static final int AUTO_V = 25; //15
-		public static final int AUTO_1 = 2684;
-		public static final int AUTO_2 = 2994;
-		public static final int AUTO_3 = 3187;
-		public static final int AUTO_4 = 3322;
-		public static final int AUTO_5 = 3427;
-		public static final int AUTO_6 = 3507;
-		public static final int AUTO_7 = 3568;
-		public static final int AUTO_8 = 3660;
-		public static final int AUTO_9 = 3722;
-		public static final int AUTO_10 = 3782;
+		public static final int AUTO_SELECTOR_1 = 1; //2
+		public static final int AUTO_SELECTOR_2 = 0; //3
+		
+		//TODO AUTO TUNE
+		public static final int AUTO_V = 15; //15
+		public static final int AUTO_1 = 2661;
+		public static final int AUTO_2 = 2963;
+		public static final int AUTO_3 = 3150;
+		public static final int AUTO_4 = 3280;
+		public static final int AUTO_5 = 3885;
+		public static final int AUTO_6 = 3463;
+		public static final int AUTO_7 = 3521;
+		public static final int AUTO_8 = 3612;
+		public static final int AUTO_9 = 3673;
+		public static final int AUTO_10 = 3734;
 
 		public static final int AUTO_1_L = AUTO_1 - AUTO_V;
 		public static final int AUTO_1_H = AUTO_1 + AUTO_V;
