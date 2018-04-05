@@ -78,8 +78,33 @@ public class RightAuton extends CommandGroup {
 	private void switchL(int mode) {
 		switch (mode) {
 		case 1:
-			//TODO Switch opposite 
-			defaultAuton();
+			addParallel(new DriveTime(.45, 0, .5));
+			addSequential(new ElevatorTime(.5, .15));
+			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
+
+			//add .3?
+			addSequential(new EncoderGyro(11, 11, .4, .4, .5, 0, .017)); // drive to side of switch
+
+			addSequential(new EncoderFrom(-1.5, 0.75, .5, .5, .5)); // turn to switch 
+
+			addSequential(new EncoderReset());
+			addSequential(new CommandGroup() {
+				{
+					addParallel(new ElevatorWhileDrive(3.5, .6, true));
+					addSequential(new EncoderGyro(10.5, 10.5, .5, .5, .6, 180, 0.021)); //drive back of switch
+				}
+			});
+
+			addSequential(new GyroPos(172, .35, 1));
+
+			addSequential(new DriveTime(.5, 0, .75)); //hit switch
+			addSequential(new DriveToStop(.4));
+
+			addSequential(new IntakeTime(.5, 1));
+
+			addParallel(new DriveTime(-.5, 0, .8));
+			addSequential(new ElevatorTime(-.15, 10));
+
 			break;
 		case 3620:
 			addParallel(new DriveTime(.45, 0, .5));
@@ -110,7 +135,7 @@ public class RightAuton extends CommandGroup {
 
 	private void switchR(int mode) {
 		switch (mode) {
-		
+
 		case 1:
 			addParallel(new DriveTime(.45, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
@@ -129,7 +154,7 @@ public class RightAuton extends CommandGroup {
 
 			addSequential(new IntakeTime(1, .5)); //drop and backup
 			addParallel(new DriveTime(-.5, 0, .8));
-			addSequential(new ElevatorTime(.1, 10));
+			addSequential(new ElevatorTime(-.1, 10));
 			break;
 		case 3620:
 			addParallel(new DriveTime(.45, 0, .5));
@@ -217,7 +242,7 @@ public class RightAuton extends CommandGroup {
 		addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
 
 		addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, .017)); // drive to side of switch
-		addSequential(new ElevatorPosition(5)); // raise arm
+		addSequential(new ElevatorPosition(3.5)); // raise arm
 	}
 
 }

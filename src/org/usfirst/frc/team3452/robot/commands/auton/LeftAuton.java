@@ -97,7 +97,7 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new IntakeTime(1, .5)); //drop and back up
 			addParallel(new DriveTime(-.5, 0, .8));
-			addSequential(new ElevatorTime(.1, 10));
+			addSequential(new ElevatorTime(-.15, 10));
 
 			break;
 		case 3620:
@@ -123,8 +123,32 @@ public class LeftAuton extends CommandGroup {
 	private void switchR(int mode) {
 		switch (mode) {
 		case 1:
-			//TODO Switch opposite
-			defaultAuton();
+			addParallel(new DriveTime(.45, 0, .5));
+			addSequential(new ElevatorTime(.5, .15));
+			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
+
+			addSequential(new EncoderGyro(11.3, 11.3, .4, .4, .5, 0, .017)); // drive to side of switch
+
+			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
+
+			addSequential(new EncoderReset());
+			addSequential(new CommandGroup() {
+				{
+					addParallel(new ElevatorWhileDrive(3.5, .6, true));
+					addSequential(new EncoderGyro(10.5, 10.5, .5, .5, .6, 90, 0.021)); //drive back of switch
+				}
+			});
+
+			addSequential(new GyroPos(190, .45, 3));
+
+			addSequential(new DriveTime(.5, 0, .75)); //hit switch
+			addSequential(new DriveToStop(.4));
+
+			addSequential(new IntakeTime(.5, 1));
+
+			addParallel(new DriveTime(-.5, 0, .8));
+			addSequential(new ElevatorTime(-.15, 10));
+			
 			break;
 		case 3620:
 			addParallel(new DriveTime(.45, 0, .5));
@@ -134,12 +158,16 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new EncoderGyro(11.2, 11.2, .4, .4, .4, 0, .017)); // drive to side of switch
 
 			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
-			addParallel(new ElevatorPosition(2)); //raise
 
 			addSequential(new EncoderReset());
-			addSequential(new EncoderGyro(6.95, 6.95, .4, .4, .4, 90, 0.021)); //drive back of switch
 
-			addSequential(new ElevatorPosition(4.5)); //raise and turn to switch
+			addSequential(new CommandGroup() {
+				{
+					addSequential(new ElevatorWhileDrive(3.5, .6, true));
+					addSequential(new EncoderGyro(6.95, 6.95, .4, .4, .4, 90, 0.021)); //drive back of switch
+				}
+			});
+
 			addSequential(new EncoderFrom(.55, -.42, .6, .6, .65));
 			addSequential(new DriveTime(.65, 0, .5));
 
