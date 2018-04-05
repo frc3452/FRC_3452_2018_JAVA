@@ -21,8 +21,11 @@ public class Playback extends Subsystem {
 	FileReader fr;
 	BufferedReader br;
 
-	//	 TIME, LEFT VEL, RIGHT VEL, TARGET ELEVATOR POSITION, INTAKE SPEED
-	double RP1A[] = new double[900], RP1B[] = new double[900], RP1C[] = new double[900];
+	//	 TIME, LEFT VEL, RIGHT VEL
+	//TODO PLAYBACK VARS
+	double RP1A[] = new double[1]; // = new double[900];
+	double RP1B[] = new double[1]; // = new double[900];
+	double RP1C[] = new double[1]; // = new double[900];
 
 	public void initHardware() {
 	}
@@ -49,9 +52,9 @@ public class Playback extends Subsystem {
 				}
 
 				System.out.println(comma1 + "\t" + comma2);
-//				System.out.println(st.charAt(comma1 - 1) + "\t" + st.charAt(comma2));
-//				System.out.println(Double.parseDouble(st.substring(comma1 - 1, comma2)));
-//				RP1B[posInFile] = Double.parseDouble(st.substring(comma1, comma2));
+				//				System.out.println(st.charAt(comma1 - 1) + "\t" + st.charAt(comma2));
+				//				System.out.println(Double.parseDouble(st.substring(comma1 - 1, comma2)));
+				//				RP1B[posInFile] = Double.parseDouble(st.substring(comma1, comma2));
 
 				comma1 = 0;
 				comma2 = 0;
@@ -148,7 +151,7 @@ public class Playback extends Subsystem {
 
 	public void initDefaultCommand() {
 	}
-	
+
 	public enum TASK {
 		RECORD, PARSE, PLAY;
 	}

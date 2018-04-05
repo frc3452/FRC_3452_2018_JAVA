@@ -16,6 +16,7 @@ import org.usfirst.frc.team3452.robot.subsystems.Playback;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -50,15 +51,11 @@ public class Robot extends TimedRobot {
 		Robot.elevator.initHardware();
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
-
-		//		TODO LEDs
-		//		Robot.lights.initHardware();
-
-		//TODO CAMERA
-		//		Robot.camera.initHardware();
-		//TODO PLAYBACK
-		Robot.playback.initHardware();
+		//				TODO LEDs
+		Robot.lights.initHardware();
+		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
+		//		Robot.playback.initHardware();
 
 		_oi = new OI();
 		OI.init();
@@ -86,15 +83,15 @@ public class Robot extends TimedRobot {
 
 	public void robotPeriodic() {
 		//		TODO LEDS
-		//		handleLEDs();
+		handleLEDs();
 		Robot.drive.LoggerUpdate();
 	}
 
 	@Override
 	public void disabledInit() {
 		//first time enabled set to coast, after tele brake
-		//				Robot.drive.BrakeCoast((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
-		Robot.drive.brake(NeutralMode.Coast);
+		Robot.drive.brake((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
+		//		Robot.drive.brake(NeutralMode.Coast);
 	}
 
 	@Override
@@ -103,7 +100,6 @@ public class Robot extends TimedRobot {
 		Robot.autonSelector.printSelected();
 
 		Scheduler.getInstance().run();
-
 	}
 
 	@Override
@@ -141,16 +137,11 @@ public class Robot extends TimedRobot {
 		} while ((Robot.autonSelector.gameMsg == "NOT" && Robot.drive.timer.get() < 3)
 				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
 
-		//		if (Robot.drive.timer.get() > 3) {
-		//			autonomousCommand = (new DefaultAutonomous());
-		//		}
-		//run default for appropriate command instead
-
 		//TODO LEDs
-//		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
-//			Robot.lights.hsv(0, 1, .5);
-//		else
-//			Robot.lights.hsv(120, 1, .5);
+		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
+			Robot.lights.hsv(0, 1, .5);
+		else
+			Robot.lights.hsv(120, 1, .5);
 
 		Robot.drive.brake(NeutralMode.Brake);
 
@@ -159,7 +150,6 @@ public class Robot extends TimedRobot {
 
 		if (autonomousCommand != null)
 			autonomousCommand.start();
-
 	}
 
 	@Override
@@ -171,7 +161,7 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		//TODO LEDs
 		//GREEN LOW BRIGHTNESS
-		//		Robot.lights.hsv(250, 1, .5);
+		Robot.lights.hsv(250, 1, .5);
 
 		Robot.drive.brake(NeutralMode.Coast);
 
@@ -298,7 +288,7 @@ public class Robot extends TimedRobot {
 		if (Robot.autonSelector.controllerOverride == false) {
 
 			//If selector feedback nominal
-			if (Robot.autonSelector.uglyAnalog() <= 20 && Robot.autonSelector.uglyAnalog() >= 1) {
+			if (Robot.autonSelector.uglyAnalog() <= 30 && Robot.autonSelector.uglyAnalog() >= 1) {
 				autonomousCommand = autoCommand[Robot.autonSelector.uglyAnalog()];
 			} else {
 				autonomousCommand = defaultCommand;
