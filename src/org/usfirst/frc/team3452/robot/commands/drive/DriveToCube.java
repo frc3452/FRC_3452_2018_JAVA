@@ -16,7 +16,7 @@ public class DriveToCube extends Command {
 	}
 
 	protected void initialize() {
-		setTimeout(17);
+		setTimeout(8);
 		m_complete = false;
 		flag_1 = false;
 		flag_2 = false;
