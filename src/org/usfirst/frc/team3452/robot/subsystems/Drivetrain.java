@@ -12,6 +12,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,6 +36,9 @@ public class Drivetrain extends Subsystem {
 	public double m_modify = 1, m_elev_modify = 1;
 	public double l_pos = 0, r_pos = 0, lp_pos = -3452, rp_pos = -3452;
 
+	//init timer
+	public Timer timer = new Timer();
+
 	public void LoggerUpdate() {
 		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
 
@@ -51,12 +55,17 @@ public class Drivetrain extends Subsystem {
 
 		SmartDashboard.putString("Selected auton", Robot.autonSelector.autonString);
 		SmartDashboard.putString("Override String", Robot.autonSelector.overrideString);
-		
-		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
 
+		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
+		
+		SmartDashboard.putBoolean("IS MOVE", (Robot.drive.encoderSpeedIsUnder(60)));
 	}
 
 	public void initHardware() {
+		timer.stop();
+		timer.reset();
+		timer.start();
+		
 		L1 = new WPI_TalonSRX(Constants.DRIVE_L_1);
 		L2 = new WPI_TalonSRX(Constants.DRIVE_L_2);
 		L3 = new WPI_TalonSRX(Constants.DRIVE_L_3);
@@ -159,7 +168,7 @@ public class Drivetrain extends Subsystem {
 		R4.enableCurrentLimit(true);
 
 		// COAST MODE
-		BrakeCoast(NeutralMode.Coast);
+		brake(NeutralMode.Coast);
 
 		robotDrive.setSubsystem("Drive train");
 		pdp.setSubsystem("Drive train");
@@ -191,7 +200,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	public void Arcade(Joystick joy) {
-//		Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify), joy.getRawAxis(4) * m_modify);
+		//		Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify), joy.getRawAxis(4) * m_modify);
 		Arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .6 * m_modify));
 		Robot.elevator.setDriveLimit();
 	}
@@ -208,7 +217,7 @@ public class Drivetrain extends Subsystem {
 		robotDrive.tankDrive(-joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
 	}
 
-	public void BrakeCoast(NeutralMode mode) {
+	public void brake(NeutralMode mode) {
 		L1.setNeutralMode(mode);
 		L2.setNeutralMode(mode);
 		L3.setNeutralMode(mode);
@@ -320,5 +329,4 @@ public class Drivetrain extends Subsystem {
 		public final static double DRIVE_RAMP_TIME = 0.125;
 
 	}
-
 }
