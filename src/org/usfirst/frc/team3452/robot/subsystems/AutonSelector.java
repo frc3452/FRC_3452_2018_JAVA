@@ -52,7 +52,7 @@ public class AutonSelector extends Subsystem {
 			} else if ((uglyAnalog() >= 11) && (uglyAnalog() <= 20)) {
 				autonString = "B / " + (uglyAnalog() - 10) + ": " + autoCommandName[uglyAnalog()];
 			} else if ((uglyAnalog() >= 21) && (uglyAnalog() <= 30)) {
-				autonString = "C / " + (uglyAnalog() - 20)+ ": " + autoCommandName[uglyAnalog()];
+				autonString = "C / " + (uglyAnalog() - 20) + ": " + autoCommandName[uglyAnalog()];
 			} else {
 				autonString = "AUTON NOT SELECTED";
 			}
