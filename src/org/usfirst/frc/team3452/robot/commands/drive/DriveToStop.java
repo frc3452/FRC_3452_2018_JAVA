@@ -9,6 +9,8 @@ public class DriveToStop extends Command {
 
 	public DriveToStop(double speed) {
 		requires(Robot.drive);
+		
+		m_speed = speed;
 	}
 
 	protected void initialize() {
