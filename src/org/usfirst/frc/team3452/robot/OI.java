@@ -8,6 +8,7 @@ import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
 import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.CONTROLLER;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -40,11 +41,10 @@ public class OI {
 		driverJoyA.whenPressed(new SetModify(-1));
 
 		driverJoyX.whileHeld(new IntakeManual(-.8));
-		driverJoyB.whileHeld(new IntakeManual(.8));
+		driverJoyB.whileHeld(new IntakeManual(.75));
 
 		driverJoyY.whileHeld(new Climb(1));
-//		driverJoyY.whileHeld(new Record("Recording1", TASK.PARSE));
-		
+
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
 		driverJoyBack.whenPressed(new OverrideSet(-1));
@@ -58,7 +58,7 @@ public class OI {
 		// 				OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
 		opJoyX.whileHeld(new IntakeManual(-.8));
-		opJoyB.whileHeld(new IntakeManual(.8));
+		opJoyB.whileHeld(new IntakeManual(.75));
 		opJoyY.whileHeld(new IntakeManual(.3));
 
 		opJoyBack.whileHeld(new IntakeSpin(.35, true));
@@ -73,7 +73,6 @@ public class OI {
 		//				TRIGGERS
 		driveSafteyOverriden.whenActive(new OverrideSet(1));
 		driveSafteyOverriden.whenInactive(new OverrideSet(0));
-
 	}
 
 	private static void buttonInit() {
@@ -114,16 +113,20 @@ public class OI {
 
 	}
 
-	public static void rumble(int controller, double intensity) {
-		if (controller == 1) {
+	public static void rumble(CONTROLLER joy, double intensity) {
+		switch (joy) {
+		case DRIVER:
 			driverJoy.setRumble(RumbleType.kLeftRumble, intensity);
 			driverJoy.setRumble(RumbleType.kRightRumble, intensity);
-		} else if (controller == 2) {
+			break;
+		case OPERATOR:
 			opJoy.setRumble(RumbleType.kLeftRumble, intensity);
 			opJoy.setRumble(RumbleType.kRightRumble, intensity);
-		} else if (controller == 3) {
-			rumble(1, intensity);
-			rumble(2, intensity);
+			break;
+		case BOTH:
+			rumble(CONTROLLER.DRIVER, intensity);
+			rumble(CONTROLLER.OPERATOR, intensity);
+			break;
 		}
 	}
 }
