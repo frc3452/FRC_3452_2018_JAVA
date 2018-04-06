@@ -2,6 +2,7 @@ package org.usfirst.frc.team3452.robot.commands.pwm;
 
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.CONTROLLER;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -19,7 +20,7 @@ public class IntakeManual extends Command {
 
 	protected void execute() {
 		Robot.intake.manual(m_speed);
-		OI.rumble(3, .4);
+		OI.rumble(CONTROLLER.BOTH, .4);
 	}
 
 	protected boolean isFinished() {
@@ -28,8 +29,7 @@ public class IntakeManual extends Command {
 
 	protected void end() {
 		Robot.intake.manual(0);
-
-		OI.rumble(3,0);
+		OI.rumble(CONTROLLER.BOTH,0);
 	}
 
 	protected void interrupted() {
