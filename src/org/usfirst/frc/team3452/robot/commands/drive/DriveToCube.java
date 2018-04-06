@@ -33,8 +33,6 @@ public class DriveToCube extends Command {
 			if (m_centerX < 335 && m_centerX > 325) {
 				Robot.drive.Arcade(m_speed, 0);
 
-				//				m_complete = true;
-
 			} else if (m_centerX > 335) {
 
 				Robot.drive.Arcade(m_speed, .125 * 2.1);
@@ -56,7 +54,7 @@ public class DriveToCube extends Command {
 		if (flag_1 && (Robot.drive.pdp.getCurrent(9) < 6 || Robot.drive.pdp.getCurrent(8) < 6))
 			flag_2 = true;
 
-		if (flag_2 && (Robot.drive.pdp.getCurrent(9) > 11 || Robot.drive.pdp.getCurrent(8) > 11))
+		if (flag_2 && (Robot.drive.pdp.getCurrent(9) > 7.5 || Robot.drive.pdp.getCurrent(8) > 7.5))
 			setTimeout(1.2);
 
 		System.out.println(m_centerX);
