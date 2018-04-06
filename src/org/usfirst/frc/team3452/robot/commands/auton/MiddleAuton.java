@@ -28,14 +28,13 @@ public class MiddleAuton extends CommandGroup {
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
 					switchL(selector);
-					addSequential(new DriveTime(0, 0, 16));
 				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
 					switchR(selector);
-					addSequential(new DriveTime(0, 0, 16));
 				} else {
 					defaultAuton();
-					addSequential(new DriveTime(0, 0, 16));
 				}
+			} else if (priority == "D") {
+				defaultAuton();
 			} else {
 				System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
 				defaultAuton();
@@ -44,11 +43,13 @@ public class MiddleAuton extends CommandGroup {
 			//			System.out.println("ERROR Game data not found; running default");
 			defaultAuton();
 		}
+		addSequential(new DriveTime(0, 0, 16));
 	}
 
 	private void switchL(int mode) {
 		switch (mode) {
 		case 1:
+
 			addParallel(new DriveTime(.45, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
@@ -119,6 +120,7 @@ public class MiddleAuton extends CommandGroup {
 	private void switchR(int mode) {
 		switch (mode) {
 		case 1:
+
 			addParallel(new DriveTime(.45, 0, .5));
 			addSequential(new ElevatorTime(.5, .15));
 			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm

@@ -23,10 +23,6 @@ public class LeftAuton extends CommandGroup {
 		addSequential(new EncoderReset());
 		addSequential(new GyroReset());
 
-		if (priority == "D") {
-			defaultAuton();
-		} else {
-
 			//IF DATA FOUND
 			if (Robot.autonSelector.gameMsg != "NOT") {
 
@@ -63,6 +59,9 @@ public class LeftAuton extends CommandGroup {
 					} else {
 						defaultAuton();
 					}
+					
+				}else if (priority == "D"){
+					defaultAuton();
 				} else {
 					System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
 					defaultAuton();
@@ -72,9 +71,8 @@ public class LeftAuton extends CommandGroup {
 				//			System.out.println("ERROR Game data not found; running default");
 				defaultAuton();
 			}
+			addSequential(new DriveTime(0, 0, 16));
 		}
-		addSequential(new DriveTime(0, 0, 16));
-	}
 
 	private void switchL(int mode) {
 		switch (mode) {

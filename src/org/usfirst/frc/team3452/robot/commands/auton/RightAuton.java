@@ -62,6 +62,8 @@ public class RightAuton extends CommandGroup {
 					} else {
 						defaultAuton();
 					}
+				} else if (priority == "D") {
+					defaultAuton();
 				} else {
 					System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
 					defaultAuton();
