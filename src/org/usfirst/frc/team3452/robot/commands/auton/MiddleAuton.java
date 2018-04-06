@@ -12,19 +12,21 @@ import org.usfirst.frc.team3452.robot.commands.drive.GyroReset;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
+import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class MiddleAuton extends CommandGroup {
 
-	public MiddleAuton(String priority, int selector) {
+	public MiddleAuton(AO option, int selector) {
 		addSequential(new EncoderReset());
 		addSequential(new GyroReset());
 
 		//IF DATA FOUND
 		if (Robot.autonSelector.gameMsg != "NOT") {
 
-			if (priority == "SWITCH") {
+			switch (option) {
+			case SWITCH:
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
 					switchL(selector);
@@ -33,16 +35,21 @@ public class MiddleAuton extends CommandGroup {
 				} else {
 					defaultAuton();
 				}
-			} else if (priority == "D") {
+
+				break;
+			case DEFAULT:
 				defaultAuton();
-			} else {
-				System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
+				break;
+			default:
+				System.out.println("ERROR Auto priority " + option + " not accepted; running default");
 				defaultAuton();
+				break;
 			}
 		} else {
-			//			System.out.println("ERROR Game data not found; running default");
+			//if game data bad
 			defaultAuton();
 		}
+
 		addSequential(new DriveTime(0, 0, 16));
 	}
 

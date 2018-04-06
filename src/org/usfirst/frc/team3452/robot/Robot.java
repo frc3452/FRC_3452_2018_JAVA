@@ -12,6 +12,7 @@ import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
 import org.usfirst.frc.team3452.robot.subsystems.Playback;
+import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -62,27 +63,37 @@ public class Robot extends TimedRobot {
 		defaultCommand = (new DefaultAutonomous());
 
 		//naming for commands 
+
 		Robot.autonSelector.autoCommandName[1] = "Middle: Switch";
 		Robot.autonSelector.autoCommandName[2] = "Left: Switch";
 		Robot.autonSelector.autoCommandName[3] = "Left: Scale";
 		Robot.autonSelector.autoCommandName[4] = "Right: Switch";
 		Robot.autonSelector.autoCommandName[5] = "Right: Scale";
-		Robot.autonSelector.autoCommandName[6] = "Left: Switch Priority";
-		Robot.autonSelector.autoCommandName[7] = "Left: Scale Priority";
-		Robot.autonSelector.autoCommandName[8] = "Right: Switch Priority";
-		Robot.autonSelector.autoCommandName[9] = "Right: Scale Priority";
 
-		Robot.autonSelector.autoCommandName[11] = "(MISJO) Left: Switch";
-		Robot.autonSelector.autoCommandName[12] = "(MISJO) Right: Switch";
-		Robot.autonSelector.autoCommandName[13] = "(MISJO) Left: Switch Priority";
-		Robot.autonSelector.autoCommandName[14] = "(MISJO) Left: Scale Priority";
-		Robot.autonSelector.autoCommandName[15] = "(MISJO) Right: Switch Priority";
-		Robot.autonSelector.autoCommandName[16] = "(MISJO) Right: Scale Priority";
-		
-		Robot.autonSelector.autoCommandName[21] = "Middle Default";
-		Robot.autonSelector.autoCommandName[22] = "Left Default";
-		Robot.autonSelector.autoCommandName[23] = "Right Default";
-		
+		Robot.autonSelector.autoCommandName[11] = "Left Only: Switch Priority";
+		Robot.autonSelector.autoCommandName[12] = "Left Only: Scale Priority";
+		Robot.autonSelector.autoCommandName[13] = "Left Only: Switch Only";
+		Robot.autonSelector.autoCommandName[14] = "Left Only: Scale Only";
+
+		Robot.autonSelector.autoCommandName[15] = "Right Only: Switch Priority";
+		Robot.autonSelector.autoCommandName[16] = "Right Only: Scale Priority";
+		Robot.autonSelector.autoCommandName[17] = "Right Only: Switch Only";
+		Robot.autonSelector.autoCommandName[18] = "Right Only: Scale Only";
+
+		Robot.autonSelector.autoCommandName[19] = "Left: Default";
+		Robot.autonSelector.autoCommandName[20] = "Right: Default";
+
+		Robot.autonSelector.autoCommandName[21] = "(MISJO) Middle: Switch";
+		Robot.autonSelector.autoCommandName[22] = "(MISJO) Left: Switch";
+		Robot.autonSelector.autoCommandName[23] = "(MISJO) Left: Scale";
+		Robot.autonSelector.autoCommandName[24] = "(MISJO) Right: Switch";
+		Robot.autonSelector.autoCommandName[25] = "(MISJO) Right: Scale";
+
+		Robot.autonSelector.autoCommandName[26] = "(MISJO) Left Only: Switch Priority";
+		Robot.autonSelector.autoCommandName[27] = "(MISJO) Left Only: Scale Priority";
+		Robot.autonSelector.autoCommandName[28] = "(MISJO) Right Only: Switch Priority";
+		Robot.autonSelector.autoCommandName[29] = "(MISJO) Right Only: Scale Priority";
+
 	}
 
 	public void robotPeriodic() {
@@ -115,26 +126,35 @@ public class Robot extends TimedRobot {
 		do {
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
 
-			autoCommand[1] = (new MiddleAuton("SWITCH", 1));
-			autoCommand[2] = (new LeftAuton("SWITCH", 1));
-			autoCommand[3] = (new LeftAuton("SCALE", 1));
-			autoCommand[4] = (new RightAuton("SWITCH", 1));
-			autoCommand[5] = (new RightAuton("SCALE", 1));
-			autoCommand[6] = (new LeftAuton("L_SWITCH_P", 1));
-			autoCommand[7] = (new LeftAuton("L_SCALE_P", 1));
-			autoCommand[8] = (new RightAuton("R_SWITCH_P", 1));
-			autoCommand[9] = (new RightAuton("R_SCALE_P", 1));
+			autoCommand[1] = (new MiddleAuton(AO.SWITCH, 1));
+			autoCommand[2] = (new LeftAuton(AO.SWITCH, 1));
+			autoCommand[3] = (new LeftAuton(AO.SCALE, 1));
+			autoCommand[4] = (new RightAuton(AO.SWITCH, 1));
+			autoCommand[5] = (new RightAuton(AO.SCALE, 1));
 
-			autoCommand[11] = (new LeftAuton("SWITCH", 3620));
-			autoCommand[12] = (new RightAuton("SWITCH", 3620));
-			autoCommand[13] = (new LeftAuton("L_SWITCH_P", 3620));
-			autoCommand[14] = (new LeftAuton("L_SCALE_P", 3620));
-			autoCommand[15] = (new RightAuton("R_SWITCH_P", 3620));
-			autoCommand[16] = (new RightAuton("R_SCALE_P", 3620));
-			
-			autoCommand[21] = (new MiddleAuton("D", 1));
-			autoCommand[22] = (new LeftAuton("D", 1));
-			autoCommand[23] = (new RightAuton("D", 1));
+			autoCommand[11] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, 1));
+			autoCommand[12] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, 1));
+			autoCommand[13] = (new LeftAuton(AO.SWITCH_ONLY, 1));
+			autoCommand[14] = (new LeftAuton(AO.SCALE_ONLY, 1));
+
+			autoCommand[15] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, 1));
+			autoCommand[16] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, 1));
+			autoCommand[17] = (new RightAuton(AO.SWITCH_ONLY, 1));
+			autoCommand[18] = (new RightAuton(AO.SCALE_ONLY, 1));
+
+			autoCommand[19] = (new LeftAuton(AO.DEFAULT, 1));
+			autoCommand[20] = (new RightAuton(AO.DEFAULT, 1));
+
+			autoCommand[21] = (new MiddleAuton(AO.SWITCH, 3620));
+			autoCommand[22] = (new LeftAuton(AO.SWITCH, 3620));
+			autoCommand[23] = (new LeftAuton(AO.SCALE, 3620));
+			autoCommand[24] = (new RightAuton(AO.SWITCH, 3620));
+			autoCommand[25] = (new RightAuton(AO.SCALE, 3620));
+
+			autoCommand[26] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, 3620));
+			autoCommand[27] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, 3620));
+			autoCommand[28] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, 3620));
+			autoCommand[29] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, 3620));
 
 			if (Robot.autonSelector.controllerOverride) {
 				autonomousCommand = autoCommand[Robot.autonSelector.overrideValue];
@@ -144,6 +164,7 @@ public class Robot extends TimedRobot {
 		} while ((Robot.autonSelector.gameMsg == "NOT" && Robot.drive.timer.get() < 3)
 				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
 
+		//SET COLOR ACCORDING TO ALLIANCE
 		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
 			Robot.lights.hsv(0, 1, .5);
 		else
@@ -197,6 +218,7 @@ public class Robot extends TimedRobot {
 				//IF FMS PULSE RED, IF NO FMS RGB FADE
 				if (DriverStation.getInstance().isFMSAttached()) {
 					//			increase pulsing speed while not connected
+					//TODO FADE YELLOW WHEN CONNECTED, WHEN BUTTON PRESSED GO GREEN
 					Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 100));
 				} else {
 					Robot.lights.hsv(Robot.lights.m_hue, 1, 1);

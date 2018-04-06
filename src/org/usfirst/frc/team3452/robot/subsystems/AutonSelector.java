@@ -153,12 +153,16 @@ public class AutonSelector extends Subsystem {
 		//		setDefaultCommand(new LoggerUpdate());
 	}
 
+	public static enum AO {
+		SWITCH, SCALE, SWITCH_PRIORITY_NO_CROSS, SCALE_PRIORITY_NO_CROSS, SWITCH_ONLY, SCALE_ONLY, DEFAULT;
+	}
+
 	public static class Constants {
 		public static final int AUTO_SELECTOR_1 = 2; //1
 		public static final int AUTO_SELECTOR_2 = 3; //0
-		
+
 		//TODO AUTO TUNE
-		public static final int AUTO_V = 15; 
+		public static final int AUTO_V = 15;
 		public static final int AUTO_1 = 2683; //2661
 		public static final int AUTO_2 = 2994; //2963
 		public static final int AUTO_3 = 3186; //3150

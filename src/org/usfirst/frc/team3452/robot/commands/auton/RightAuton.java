@@ -12,67 +12,93 @@ import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
+import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class RightAuton extends CommandGroup {
 
-	public RightAuton(String priority, int selector) {
+	public RightAuton(AO option, int selector) {
 		addSequential(new GyroReset());
 		addSequential(new EncoderReset());
 
-		if (priority == "D") {
-			defaultAuton();
-		} else {
+		//IF DATA FOUND
+		if (Robot.autonSelector.gameMsg != "NOT") {
 
-			//IF DATA FOUND
-			if (Robot.autonSelector.gameMsg != "NOT") {
+			switch (option) {
+			case SWITCH:
 
-				if (priority == "SWITCH") {
+				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
+					switchL(selector);
 
-					if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
-						switchL(selector);
+				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
+					switchR(selector);
+				}
 
-					} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-						switchR(selector);
-					}
+				break;
+			case SCALE:
 
-				} else if (priority == "SCALE") {
+				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
+					scaleL(3620);
 
-					if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-						scaleL(3620);
+				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
+					scaleR(3620);
+				}
 
-					} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-						scaleR(3620);
-					}
+				break;
+			case SWITCH_PRIORITY_NO_CROSS:
 
-				} else if (priority == "R_SWITCH_P") {
-					if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-						switchR(selector);
-					} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-						scaleR(3620);
-					} else {
-						defaultAuton();
-					}
-				} else if (priority == "R_SCALE_P") {
-					if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-						scaleR(3620);
-					} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-						switchR(selector);
-					} else {
-						defaultAuton();
-					}
-				} else if (priority == "D") {
-					defaultAuton();
+				if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
+					switchR(selector);
+				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
+					scaleR(3620);
 				} else {
-					System.out.println("ERROR Auto priority " + priority + " not accepted; running default");
 					defaultAuton();
 				}
 
-			} else {
-				//			System.out.println("ERROR Game data not found; running default");
+				break;
+			case SCALE_PRIORITY_NO_CROSS:
+
+				if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
+					scaleR(3620);
+				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
+					switchR(selector);
+				} else {
+					defaultAuton();
+				}
+
+				break;
+			case SWITCH_ONLY:
+
+				if (Robot.autonSelector.gameMsg.charAt(0) == 'R')
+					switchR(1);
+				else
+					defaultAuton();
+
+				break;
+			case SCALE_ONLY:
+
+				if (Robot.autonSelector.gameMsg.charAt(1) == 'R')
+					switchR(1);
+				else
+					defaultAuton();
+
+				break;
+			case DEFAULT:
+
 				defaultAuton();
+
+				break;
+			default:
+
+				System.out.println("ERROR Auto priority " + option + " not accepted; running default");
+				defaultAuton();
+
+				break;
 			}
+		} else {
+			//game data not found
+			defaultAuton();
 		}
 		addSequential(new DriveTime(0, 0, 16));
 	}
