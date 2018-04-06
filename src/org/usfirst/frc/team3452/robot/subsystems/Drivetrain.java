@@ -202,7 +202,7 @@ public class Drivetrain extends Subsystem {
 
 	public void Arcade(Joystick joy) {
 		//		Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify), joy.getRawAxis(4) * m_modify);
-		Arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .6 * m_modify));
+		Arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .635 * m_modify));
 		Robot.elevator.setDriveLimit();
 	}
 
@@ -329,5 +329,9 @@ public class Drivetrain extends Subsystem {
 
 		public final static double DRIVE_RAMP_TIME = 0.125;
 
+	}
+
+	public static enum CONTROLLER {
+		DRIVER, OPERATOR, BOTH;
 	}
 }
