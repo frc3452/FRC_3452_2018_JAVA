@@ -154,21 +154,21 @@ public class AutonSelector extends Subsystem {
 	}
 
 	public static class Constants {
-		public static final int AUTO_SELECTOR_1 = 1; //2
-		public static final int AUTO_SELECTOR_2 = 0; //3
+		public static final int AUTO_SELECTOR_1 = 2; //1
+		public static final int AUTO_SELECTOR_2 = 3; //0
 		
 		//TODO AUTO TUNE
-		public static final int AUTO_V = 15; //15
-		public static final int AUTO_1 = 2661;
-		public static final int AUTO_2 = 2963;
-		public static final int AUTO_3 = 3150;
-		public static final int AUTO_4 = 3280;
-		public static final int AUTO_5 = 3885;
-		public static final int AUTO_6 = 3463;
-		public static final int AUTO_7 = 3521;
-		public static final int AUTO_8 = 3612;
-		public static final int AUTO_9 = 3673;
-		public static final int AUTO_10 = 3734;
+		public static final int AUTO_V = 15; 
+		public static final int AUTO_1 = 2683; //2661
+		public static final int AUTO_2 = 2994; //2963
+		public static final int AUTO_3 = 3186; //3150
+		public static final int AUTO_4 = 3320; //3280
+		public static final int AUTO_5 = 3428; //3885
+		public static final int AUTO_6 = 3506; //3463
+		public static final int AUTO_7 = 3565; //3521
+		public static final int AUTO_8 = 3659; //3612
+		public static final int AUTO_9 = 3721; //3673
+		public static final int AUTO_10 = 3783; //3734
 
 		public static final int AUTO_1_L = AUTO_1 - AUTO_V;
 		public static final int AUTO_1_H = AUTO_1 + AUTO_V;
