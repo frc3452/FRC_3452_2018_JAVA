@@ -51,7 +51,6 @@ public class Robot extends TimedRobot {
 		Robot.elevator.initHardware();
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
-		//				TODO LEDs
 		Robot.lights.initHardware();
 		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
@@ -79,10 +78,14 @@ public class Robot extends TimedRobot {
 		Robot.autonSelector.autoCommandName[14] = "(MISJO) Left: Scale Priority";
 		Robot.autonSelector.autoCommandName[15] = "(MISJO) Right: Switch Priority";
 		Robot.autonSelector.autoCommandName[16] = "(MISJO) Right: Scale Priority";
+		
+		Robot.autonSelector.autoCommandName[21] = "Middle Default";
+		Robot.autonSelector.autoCommandName[22] = "Left Default";
+		Robot.autonSelector.autoCommandName[23] = "Right Default";
+		
 	}
 
 	public void robotPeriodic() {
-		//		TODO LEDS
 		handleLEDs();
 		Robot.drive.LoggerUpdate();
 	}
@@ -128,6 +131,10 @@ public class Robot extends TimedRobot {
 			autoCommand[14] = (new LeftAuton("L_SCALE_P", 3620));
 			autoCommand[15] = (new RightAuton("R_SWITCH_P", 3620));
 			autoCommand[16] = (new RightAuton("R_SCALE_P", 3620));
+			
+			autoCommand[21] = (new MiddleAuton("D", 1));
+			autoCommand[22] = (new LeftAuton("D", 1));
+			autoCommand[23] = (new RightAuton("D", 1));
 
 			if (Robot.autonSelector.controllerOverride) {
 				autonomousCommand = autoCommand[Robot.autonSelector.overrideValue];
@@ -137,7 +144,6 @@ public class Robot extends TimedRobot {
 		} while ((Robot.autonSelector.gameMsg == "NOT" && Robot.drive.timer.get() < 3)
 				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
 
-		//TODO LEDs
 		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
 			Robot.lights.hsv(0, 1, .5);
 		else
@@ -159,7 +165,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-		//TODO LEDs
 		//GREEN LOW BRIGHTNESS
 		Robot.lights.hsv(250, 1, .5);
 
@@ -186,7 +191,7 @@ public class Robot extends TimedRobot {
 		if (DriverStation.getInstance().isDisabled()) {
 			//IF CONNECTED LOW GREEN
 			if (DriverStation.getInstance().isDSAttached()) {
-				Robot.lights.pulse(258, 1, 0.15, 1, 0.025);
+				Robot.lights.pulse(258, 1, 0.1, .4, 0.025 / 3.5);
 			} else {
 
 				//IF FMS PULSE RED, IF NO FMS RGB FADE
