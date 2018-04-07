@@ -233,7 +233,6 @@ public class Robot extends TimedRobot {
 				//IF CONNECTED LOW GREEN
 				if (DriverStation.getInstance().isDSAttached()) {
 
-					//TODO FADE YELLOW WHEN CONNECTED, WHEN BUTTON PRESSED GO GREEN
 					if (readyForMatch)
 						Robot.lights.pulse(258, 1, 0.1, .4, 0.025 / 3.5);
 					else

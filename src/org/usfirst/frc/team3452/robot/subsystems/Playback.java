@@ -22,7 +22,6 @@ public class Playback extends Subsystem {
 	BufferedReader br;
 
 	//	 TIME, LEFT VEL, RIGHT VEL
-	//TODO PLAYBACK VARS
 	double RP1A[] = new double[1]; // = new double[900];
 	double RP1B[] = new double[1]; // = new double[900];
 	double RP1C[] = new double[1]; // = new double[900];

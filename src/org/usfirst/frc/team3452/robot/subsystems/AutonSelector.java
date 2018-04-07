@@ -161,7 +161,6 @@ public class AutonSelector extends Subsystem {
 		public static final int AUTO_SELECTOR_1 = 2; //1
 		public static final int AUTO_SELECTOR_2 = 3; //0
 
-		//TODO AUTO TUNE
 		public static final int AUTO_V = 15;
 		public static final int AUTO_1 = 2683; //2661
 		public static final int AUTO_2 = 2994; //2963
