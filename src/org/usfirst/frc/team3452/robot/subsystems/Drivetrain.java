@@ -34,7 +34,7 @@ public class Drivetrain extends Subsystem {
 
 	// variable init
 	public double m_modify = 1, m_elev_modify = 1;
-	public double l_pos = 0, r_pos = 0, lp_pos = 0, rp_pos = 0;
+	public double l_pos = 0, r_pos = 0, p_pos;
 
 	//init timer
 	public Timer timer = new Timer();
@@ -48,8 +48,7 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 1);
 		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 1);
 
-		SmartDashboard.putNumber("L1 % Complete", lp_pos);
-		SmartDashboard.putNumber("R1 % Complete", rp_pos);
+		SmartDashboard.putNumber("% Complete", p_pos);
 
 		SmartDashboard.putNumber("Elevator Enc", -Robot.elevator.Elev_1.getSelectedSensorPosition(0));
 
@@ -236,8 +235,8 @@ public class Drivetrain extends Subsystem {
 		l_pos = leftpos * 4096 * 1;
 		r_pos = rightpos * 4096 * -1;
 
-		lp_pos = Math.abs((double) L1.getSelectedSensorPosition(0) / (4096 * leftpos));
-		rp_pos = Math.abs((double) R1.getSelectedSensorPosition(0) / (4096 * rightpos));
+		p_pos = Math.abs((double) ((L1.getSelectedSensorPosition(0) / (4096 * leftpos))
+				+ (R1.getSelectedSensorPosition(0) / (4096 * rightpos))) / 2);
 
 		L1.configMotionAcceleration((int) (4096 * leftaccel), 10);
 		R1.configMotionAcceleration((int) (4096 * rightaccel), 10);
@@ -249,7 +248,7 @@ public class Drivetrain extends Subsystem {
 		R1.set(ControlMode.MotionMagic, r_pos);
 	}
 
-	public void encoder(double left, double right, double leftspeed, double rightspeed) {
+	public void encoder(double leftpos, double rightpos, double leftspeed, double rightspeed) {
 		robotDrive.setSafetyEnabled(false);
 
 		L1.configPeakOutputForward(leftspeed, 10);
@@ -257,11 +256,11 @@ public class Drivetrain extends Subsystem {
 		R1.configPeakOutputForward(rightspeed, 10);
 		R1.configPeakOutputReverse(-rightspeed, 10);
 
-		l_pos = left * 4096;
-		r_pos = -right * 4096;
+		l_pos = leftpos * 4096;
+		r_pos = -rightpos * 4096;
 
-		lp_pos = Math.abs(L1.getSelectedSensorPosition(0) / (4096 * l_pos));
-		rp_pos = Math.abs(R1.getSelectedSensorPosition(0) / (4096 * r_pos));
+		p_pos = Math.abs((double) ((L1.getSelectedSensorPosition(0) / (4096 * leftpos))
+				+ (R1.getSelectedSensorPosition(0) / (4096 * rightpos))) / 2);
 
 		L1.set(ControlMode.Position, l_pos);
 		R1.set(ControlMode.Position, r_pos);
@@ -288,8 +287,8 @@ public class Drivetrain extends Subsystem {
 
 		l_pos = 0;
 		r_pos = 0;
-		lp_pos = 3452;
-		rp_pos = 3452;
+		
+		p_pos = 3452;
 
 		robotDrive.setSafetyEnabled(true);
 	}
