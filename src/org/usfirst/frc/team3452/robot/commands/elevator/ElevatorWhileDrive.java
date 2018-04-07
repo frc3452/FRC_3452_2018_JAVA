@@ -7,14 +7,12 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ElevatorWhileDrive extends Command {
 
 	private double m_value, m_percent;
-	private boolean m_side;
 
-	public ElevatorWhileDrive(double value, double atPercent, boolean side) {
+	public ElevatorWhileDrive(double value, double atPercent) {
 		requires(Robot.elevator);
 
 		m_value = value;
 		m_percent = atPercent;
-		m_side = side;
 	}
 
 	protected void initialize() {
@@ -23,7 +21,7 @@ public class ElevatorWhileDrive extends Command {
 	}
 
 	protected void execute() {
-		if ((m_side ? (Robot.drive.lp_pos) : (Robot.drive.rp_pos)) > m_percent)
+		if (Robot.drive.p_pos > m_percent)
 			Robot.elevator.Encoder(m_value);
 	}
 
