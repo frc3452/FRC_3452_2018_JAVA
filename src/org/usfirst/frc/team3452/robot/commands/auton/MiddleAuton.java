@@ -57,16 +57,16 @@ public class MiddleAuton extends CommandGroup {
 		switch (mode) {
 		case 1:
 
-			addParallel(new DriveTime(.45, 0, .5));
-			addSequential(new ElevatorTime(.5, .15));
-			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
+			addParallel(new DriveTime(.55, 0, .5));
+			addSequential(new ElevatorTime(.5, .1725));
+			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
 			addSequential(new EncoderDrive(1, 2.2, .8, .8, .6)); //init curve
 
 			//drive to switch
 			addSequential(new CommandGroup() {
 				{
-					addParallel(new ElevatorWhileDrive(3.5, .2, true));
+					addParallel(new ElevatorWhileDrive(3.5, .2));
 					addSequential(new EncoderFrom(4.2, 3.6, .6, .6, .7));
 				}
 			});
@@ -80,7 +80,7 @@ public class MiddleAuton extends CommandGroup {
 			//backup
 			addSequential(new CommandGroup() {
 				{
-					addParallel(new ElevatorWhileDrive(-15, .75, true));
+					addParallel(new ElevatorWhileDrive(-15, .75));
 					addSequential(new EncoderFrom(-3.8, -3.8, .45, .45, .6));
 				}
 			});
@@ -93,7 +93,7 @@ public class MiddleAuton extends CommandGroup {
 				{
 					addSequential(new GyroPos(35, .4, 1));
 					addSequential(new DriveToCube(.55));
-					addParallel(new IntakeTime(.5, 1.5));
+					addParallel(new IntakeTime(-.5, 1.5));
 					addSequential(new EncoderDrive(0, 0, .5, .5, .6));
 				}
 			});
@@ -101,7 +101,7 @@ public class MiddleAuton extends CommandGroup {
 			//DRIVE TO SWITCH
 			addSequential(new CommandGroup() {
 				{
-					addSequential(new ElevatorWhileDrive(3.5, .6, true));
+					addSequential(new ElevatorWhileDrive(3.5, .6));
 					addSequential(new EncoderFrom(3, 3, .45, .45, .6));
 				}
 			});
@@ -127,16 +127,17 @@ public class MiddleAuton extends CommandGroup {
 	private void switchR(int mode) {
 		switch (mode) {
 		case 1:
-
-			addParallel(new DriveTime(.45, 0, .5));
-			addSequential(new ElevatorTime(.5, .15));
-			addSequential(new DriveTime(-.45, 0, .225)); // jog forward backwards to drop arm
-
+			addParallel(new DriveTime(.55, 0, .5));
+			addSequential(new ElevatorTime(.5, .1725));
+			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
+			
+			addSequential(new DriveTime(0,0,10));
+			
 			addSequential(new EncoderDrive(2.5, 1, .8, .8, .6));
 
 			addSequential(new CommandGroup() {
 				{
-					addParallel(new ElevatorWhileDrive(3.5, .3, false));
+					addParallel(new ElevatorWhileDrive(3.5, .3));
 					addSequential(new EncoderFrom(3.3 + .15, 4.2 + .38, .6, .6, .7));
 				}
 			});
@@ -144,12 +145,12 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new DriveTime(.5, 0, .5));
 			addSequential(new DriveToStop(.3));
 
-			addSequential(new IntakeTime(-.5, .5)); //PLACE 1
+			addSequential(new IntakeTime(.5, .5)); //PLACE 1
 
 			//backup
 			addSequential(new CommandGroup() {
 				{
-					addParallel(new ElevatorWhileDrive(-15, .5, true));
+					addParallel(new ElevatorWhileDrive(-15, .5));
 					addSequential(new EncoderFrom(-3.8, -3.8, .45, .45, .6));
 				}
 			});
@@ -162,7 +163,7 @@ public class MiddleAuton extends CommandGroup {
 				{
 					addSequential(new GyroPos(330, .35, 1));
 					addSequential(new DriveToCube(.55));
-					addParallel(new IntakeTime(.5, 1.5));
+					addParallel(new IntakeTime(-.5, 1.5));
 					addSequential(new EncoderDrive(0, 0, .6, .6, .6));
 				}
 			});
@@ -170,7 +171,7 @@ public class MiddleAuton extends CommandGroup {
 			//DRIVE TO SWITCH
 			addSequential(new CommandGroup() {
 				{
-					addSequential(new ElevatorWhileDrive(3.5, .6, true));
+					addSequential(new ElevatorWhileDrive(3.5, .6));
 					addSequential(new EncoderFrom(3, 3, .45, .45, .6));
 				}
 			});
@@ -193,9 +194,9 @@ public class MiddleAuton extends CommandGroup {
 	}
 
 	private void defaultAuton() {
-		addSequential(new DriveTime(.25, 0, .5));
-		addSequential(new ElevatorTime(.5, .15));
-		addSequential(new DriveTime(.125, 0, 1));
+		addParallel(new DriveTime(.55, 0, .5));
+		addSequential(new ElevatorTime(.5, .1725));
+		addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
 		addSequential(new EncoderFrom(7.2, 2, .35, .35, .5));
 		addSequential(new DriveTime(-.4, 0, 7));
