@@ -1,3 +1,4 @@
+
 package org.usfirst.frc.team3452.robot;
 
 import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
@@ -8,6 +9,7 @@ import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.CONTROLLER;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
@@ -40,7 +42,7 @@ public class Robot extends TimedRobot {
 	Command defaultCommand = null;
 
 	//flag for teleop 
-	boolean wasTele = false;
+	boolean wasTele = false, readyForMatch = false, wasTest = false;
 
 	@Override
 	public void robotInit() {
@@ -64,41 +66,42 @@ public class Robot extends TimedRobot {
 
 		//naming for commands 
 
-		Robot.autonSelector.autoCommandName[1] = "Middle: Switch";
-		Robot.autonSelector.autoCommandName[2] = "Left: Switch";
-		Robot.autonSelector.autoCommandName[3] = "Left: Scale";
-		Robot.autonSelector.autoCommandName[4] = "Right: Switch";
-		Robot.autonSelector.autoCommandName[5] = "Right: Scale";
+		Robot.autonSelector.autoCommandName[1] = "Middle - Switch";
+		Robot.autonSelector.autoCommandName[2] = "Left - Switch";
+		Robot.autonSelector.autoCommandName[3] = "Left - Scale";
+		Robot.autonSelector.autoCommandName[4] = "Right - Switch";
+		Robot.autonSelector.autoCommandName[5] = "Right - Scale";
 
-		Robot.autonSelector.autoCommandName[11] = "Left Only: Switch Priority";
-		Robot.autonSelector.autoCommandName[12] = "Left Only: Scale Priority";
-		Robot.autonSelector.autoCommandName[13] = "Left Only: Switch Only";
-		Robot.autonSelector.autoCommandName[14] = "Left Only: Scale Only";
+		Robot.autonSelector.autoCommandName[11] = "Left Only - Switch Priority";
+		Robot.autonSelector.autoCommandName[12] = "Left Only - Scale Priority";
+		Robot.autonSelector.autoCommandName[13] = "Left Only - Switch Only";
+		Robot.autonSelector.autoCommandName[14] = "Left Only - Scale Only";
 
-		Robot.autonSelector.autoCommandName[15] = "Right Only: Switch Priority";
-		Robot.autonSelector.autoCommandName[16] = "Right Only: Scale Priority";
-		Robot.autonSelector.autoCommandName[17] = "Right Only: Switch Only";
-		Robot.autonSelector.autoCommandName[18] = "Right Only: Scale Only";
+		Robot.autonSelector.autoCommandName[15] = "Right Only - Switch Priority";
+		Robot.autonSelector.autoCommandName[16] = "Right Only - Scale Priority";
+		Robot.autonSelector.autoCommandName[17] = "Right Only - Switch Only";
+		Robot.autonSelector.autoCommandName[18] = "Right Only - Scale Only";
 
-		Robot.autonSelector.autoCommandName[19] = "Left: Default";
-		Robot.autonSelector.autoCommandName[20] = "Right: Default";
+		Robot.autonSelector.autoCommandName[19] = "Left - Default";
+		Robot.autonSelector.autoCommandName[20] = "Right - Default";
 
-		Robot.autonSelector.autoCommandName[21] = "(MISJO) Middle: Switch";
-		Robot.autonSelector.autoCommandName[22] = "(MISJO) Left: Switch";
-		Robot.autonSelector.autoCommandName[23] = "(MISJO) Left: Scale";
-		Robot.autonSelector.autoCommandName[24] = "(MISJO) Right: Switch";
-		Robot.autonSelector.autoCommandName[25] = "(MISJO) Right: Scale";
+		Robot.autonSelector.autoCommandName[21] = "(MISJO) Middle - Switch";
+		Robot.autonSelector.autoCommandName[22] = "(MISJO) Left - Switch";
+		Robot.autonSelector.autoCommandName[23] = "(MISJO) Left - Scale";
+		Robot.autonSelector.autoCommandName[24] = "(MISJO) Right - Switch";
+		Robot.autonSelector.autoCommandName[25] = "(MISJO) Right - Scale";
 
-		Robot.autonSelector.autoCommandName[26] = "(MISJO) Left Only: Switch Priority";
-		Robot.autonSelector.autoCommandName[27] = "(MISJO) Left Only: Scale Priority";
-		Robot.autonSelector.autoCommandName[28] = "(MISJO) Right Only: Switch Priority";
-		Robot.autonSelector.autoCommandName[29] = "(MISJO) Right Only: Scale Priority";
+		Robot.autonSelector.autoCommandName[26] = "(MISJO) Left Only - Switch Priority";
+		Robot.autonSelector.autoCommandName[27] = "(MISJO) Left Only - Scale Priority";
+		Robot.autonSelector.autoCommandName[28] = "(MISJO) Right Only - Switch Priority";
+		Robot.autonSelector.autoCommandName[29] = "(MISJO) Right Only - Scale Priority";
 
 	}
 
 	public void robotPeriodic() {
 		handleLEDs();
 		Robot.drive.LoggerUpdate();
+
 	}
 
 	@Override
@@ -112,6 +115,11 @@ public class Robot extends TimedRobot {
 	public void disabledPeriodic() {
 		autonChooser();
 		Robot.autonSelector.printSelected();
+
+		if (wasTest)
+			OI.rumble(CONTROLLER.BOTH, 1);
+		else
+			OI.rumble(CONTROLLER.BOTH, 0);
 
 		Scheduler.getInstance().run();
 	}
@@ -204,33 +212,49 @@ public class Robot extends TimedRobot {
 	}
 
 	@Override
+	public void testInit() {
+		wasTest = true;
+	}
+
+	@Override
 	public void testPeriodic() {
 	}
 
 	public void handleLEDs() {
 
-		if (DriverStation.getInstance().isDisabled()) {
-			//IF CONNECTED LOW GREEN
-			if (DriverStation.getInstance().isDSAttached()) {
-				Robot.lights.pulse(258, 1, 0.1, .4, 0.025 / 3.5);
-			} else {
+		if (OI.driverJoy.getRawButton(2) && OI.driverJoy.getRawButton(7) && OI.driverJoy.getRawButton(8))
+			readyForMatch = true;
 
-				//IF FMS PULSE RED, IF NO FMS RGB FADE
-				if (DriverStation.getInstance().isFMSAttached()) {
-					//			increase pulsing speed while not connected
+		if (wasTest) {
+			Robot.lights.pulse(55, 1, .2, .8, .1);
+		} else {
+
+			if (DriverStation.getInstance().isDisabled()) {
+				//IF CONNECTED LOW GREEN
+				if (DriverStation.getInstance().isDSAttached()) {
+
 					//TODO FADE YELLOW WHEN CONNECTED, WHEN BUTTON PRESSED GO GREEN
-					Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 100));
+					if (readyForMatch)
+						Robot.lights.pulse(258, 1, 0.1, .4, 0.025 / 3.5);
+					else
+						Robot.lights.pulse(330, 1, .1, .4, 0.025 / 3.5);
+
 				} else {
-					Robot.lights.hsv(Robot.lights.m_hue, 1, 1);
-					Robot.lights.m_hue++;
-					if (Robot.lights.m_hue > 360)
-						Robot.lights.m_hue = 0;
+
+					//IF FMS PULSE RED, IF NO FMS RGB FADE
+					if (DriverStation.getInstance().isFMSAttached()) {
+
+						//			increase pulsing speed while not connected
+						Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 100));
+
+					} else {
+						Robot.lights.hsv(Robot.lights.m_hue, 1, 1);
+						Robot.lights.m_hue++;
+						if (Robot.lights.m_hue > 360)
+							Robot.lights.m_hue = 0;
+					}
 				}
 			}
-
-			//TEST
-		} else if (DriverStation.getInstance().isTest()) {
-			Robot.lights.pulse(55, 1, .2, .8, .1);
 		}
 	}
 
