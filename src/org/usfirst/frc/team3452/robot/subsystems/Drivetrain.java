@@ -235,9 +235,11 @@ public class Drivetrain extends Subsystem {
 		l_pos = leftpos * 4096 * 1;
 		r_pos = rightpos * 4096 * -1;
 
-		p_pos = Math.abs((double) ((L1.getSelectedSensorPosition(0) / (4096 * leftpos))
-				+ (R1.getSelectedSensorPosition(0) / (4096 * rightpos))) / 2);
+		double lp_pos = Math.abs((double) (L1.getSelectedSensorPosition(0) / (4096 * leftpos)));
+		double rp_pos = Math.abs((double) (R1.getSelectedSensorPosition(0) / (4096 * rightpos)));
 
+		p_pos = (lp_pos + rp_pos) / 2;
+		
 		L1.configMotionAcceleration((int) (4096 * leftaccel), 10);
 		R1.configMotionAcceleration((int) (4096 * rightaccel), 10);
 
@@ -287,7 +289,7 @@ public class Drivetrain extends Subsystem {
 
 		l_pos = 0;
 		r_pos = 0;
-		
+
 		p_pos = 3452;
 
 		robotDrive.setSafetyEnabled(true);
