@@ -46,12 +46,12 @@ public class OI {
 		driverJoyY.whileHeld(new Climb(1));
 
 		//TODO TEST
-//		driverJoyLB.whenPressed(new CommandGroup() {
-//			{
-//				addParallel(new IntakeWhileDrive(1, .6, 1));
-//				addSequential(new EncoderFrom(10, 20, .2, .2, .5));
-//			}
-//		});
+		//		driverJoyLB.whenPressed(new CommandGroup() {
+		//			{
+		//				addParallel(new IntakeWhileDrive(1, .6, 1));
+		//				addSequential(new EncoderFrom(10, 20, .2, .2, .5));
+		//			}
+		//		});
 
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
