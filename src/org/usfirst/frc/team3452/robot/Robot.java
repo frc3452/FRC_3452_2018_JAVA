@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
 
 	//auto selector init
 	Command autonomousCommand = null;
-	Command autoCommand[] = new Command[31];
+	Command autoCommand[] = new Command[41];
 	Command defaultCommand = null;
 
 	//flag for teleop 
@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		for (int i = 0; i < 31; i++) {
+		for (int i = 0; i < 41; i++) {
 			autoCommand[i] = null;
 		}
 
@@ -86,16 +86,16 @@ public class Robot extends TimedRobot {
 		Robot.autonSelector.autoCommandName[19] = "Left - Default";
 		Robot.autonSelector.autoCommandName[20] = "Right - Default";
 
-		Robot.autonSelector.autoCommandName[21] = "(MISJO) Middle - Switch";
-		Robot.autonSelector.autoCommandName[22] = "(MISJO) Left - Switch";
-		Robot.autonSelector.autoCommandName[23] = "(MISJO) Left - Scale";
-		Robot.autonSelector.autoCommandName[24] = "(MISJO) Right - Switch";
-		Robot.autonSelector.autoCommandName[25] = "(MISJO) Right - Scale";
+		Robot.autonSelector.autoCommandName[21] = "(MIFOR) Middle - Switch";
+		Robot.autonSelector.autoCommandName[22] = "(MIFOR) Left - Switch";
+		Robot.autonSelector.autoCommandName[23] = "(MIFOR) Left - Scale";
+		Robot.autonSelector.autoCommandName[24] = "(MIFOR) Right - Switch";
+		Robot.autonSelector.autoCommandName[25] = "(MIFOR) Right - Scale";
 
-		Robot.autonSelector.autoCommandName[26] = "(MISJO) Left Only - Switch Priority";
-		Robot.autonSelector.autoCommandName[27] = "(MISJO) Left Only - Scale Priority";
-		Robot.autonSelector.autoCommandName[28] = "(MISJO) Right Only - Switch Priority";
-		Robot.autonSelector.autoCommandName[29] = "(MISJO) Right Only - Scale Priority";
+		Robot.autonSelector.autoCommandName[26] = "(MIFOR) Left Only - Switch Priority";
+		Robot.autonSelector.autoCommandName[27] = "(MIFOR) Left Only - Scale Priority";
+		Robot.autonSelector.autoCommandName[28] = "(MIFOR) Right Only - Switch Priority";
+		Robot.autonSelector.autoCommandName[29] = "(MIFOR) Right Only - Scale Priority";
 
 	}
 
@@ -264,54 +264,54 @@ public class Robot extends TimedRobot {
 
 			// A BUTTON
 			if (OI.driverJoy.getRawButton(1)) {
-				Robot.autonSelector.overrideValue = 6;
+				Robot.autonSelector.overrideValue = 2;
 				Robot.autonSelector.overrideString = "Controller override 1:\t"
-						+ Robot.autonSelector.autoCommandName[6];
+						+ Robot.autonSelector.autoCommandName[2];
 				Robot.autonSelector.controllerOverride = true;
 				Robot.autonSelector.confirmOverride = false;
 			}
 
 			// B BUTTON
 			else if (OI.driverJoy.getRawButton(2)) {
-				Robot.autonSelector.overrideValue = 7;
+				Robot.autonSelector.overrideValue = 3;
 				Robot.autonSelector.overrideString = "Controller override 2:\t"
-						+ Robot.autonSelector.autoCommandName[7];
+						+ Robot.autonSelector.autoCommandName[3];
 				Robot.autonSelector.controllerOverride = true;
 				Robot.autonSelector.confirmOverride = false;
 			}
 
 			// X BUTTON
 			else if (OI.driverJoy.getRawButton(3)) {
-				Robot.autonSelector.overrideValue = 8;
+				Robot.autonSelector.overrideValue = 4;
 				Robot.autonSelector.overrideString = "Controller override 3:\t"
-						+ Robot.autonSelector.autoCommandName[8];
+						+ Robot.autonSelector.autoCommandName[4];
 				Robot.autonSelector.controllerOverride = true;
 				Robot.autonSelector.confirmOverride = false;
 			}
 
 			// Y BUTTON
 			else if (OI.driverJoy.getRawButton(4)) {
-				Robot.autonSelector.overrideValue = 9;
+				Robot.autonSelector.overrideValue = 5;
 				Robot.autonSelector.overrideString = "Controller override 4:\t"
-						+ Robot.autonSelector.autoCommandName[9];
+						+ Robot.autonSelector.autoCommandName[5];
 				Robot.autonSelector.controllerOverride = true;
 				Robot.autonSelector.confirmOverride = false;
 			}
 
 			// BACK BUTTON
 			else if (OI.driverJoy.getRawButton(7)) {
-				Robot.autonSelector.overrideValue = 1;
+				Robot.autonSelector.overrideValue = 13;
 				Robot.autonSelector.overrideString = "Controller override 5:\t"
-						+ Robot.autonSelector.autoCommandName[1];
+						+ Robot.autonSelector.autoCommandName[13];
 				Robot.autonSelector.controllerOverride = true;
 				Robot.autonSelector.confirmOverride = false;
 			}
 
 			// START BUTTON
 			else if (OI.driverJoy.getRawButton(8)) {
-				Robot.autonSelector.overrideValue = 2;
+				Robot.autonSelector.overrideValue = 17;
 				Robot.autonSelector.overrideString = "Controller override 6:\t"
-						+ Robot.autonSelector.autoCommandName[2];
+						+ Robot.autonSelector.autoCommandName[17];
 				Robot.autonSelector.controllerOverride = true;
 				Robot.autonSelector.confirmOverride = false;
 			}
@@ -339,7 +339,7 @@ public class Robot extends TimedRobot {
 		if (Robot.autonSelector.controllerOverride == false) {
 
 			//If selector feedback nominal
-			if (Robot.autonSelector.uglyAnalog() <= 30 && Robot.autonSelector.uglyAnalog() >= 1) {
+			if (Robot.autonSelector.uglyAnalog() <= 40 && Robot.autonSelector.uglyAnalog() >= 1) {
 				autonomousCommand = autoCommand[Robot.autonSelector.uglyAnalog()];
 			} else {
 				autonomousCommand = defaultCommand;

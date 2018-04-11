@@ -12,7 +12,7 @@ public class AutonSelector extends Subsystem {
 	private int m_prev_as1, m_prev_as2;
 	private int m_asA, m_asB;
 
-	public String autoCommandName[] = new String[31];
+	public String autoCommandName[] = new String[41];
 	public boolean controllerOverride = false;
 	public boolean confirmOverride = false;
 
@@ -30,7 +30,7 @@ public class AutonSelector extends Subsystem {
 		as_A.setName("Selector A");
 		as_B.setName("Selector B");
 
-		for (int i = 0; i < 31; i++) {
+		for (int i = 0; i < 41; i++) {
 			autoCommandName[i] = "NO COMMAND";
 		}
 	}
@@ -54,6 +54,8 @@ public class AutonSelector extends Subsystem {
 				autonString = "B / " + (uglyAnalog() - 10) + ": " + autoCommandName[uglyAnalog()];
 			} else if ((uglyAnalog() >= 21) && (uglyAnalog() <= 30)) {
 				autonString = "C / " + (uglyAnalog() - 20) + ": " + autoCommandName[uglyAnalog()];
+			} else if ((uglyAnalog() >= 31) && (uglyAnalog() <= 40)) {
+				autonString = "D / " + (uglyAnalog() - 30) + ": " + autoCommandName[uglyAnalog()];
 			} else {
 				autonString = "AUTON NOT SELECTED";
 			}
@@ -143,19 +145,50 @@ public class AutonSelector extends Subsystem {
 				// ERROR
 				return 3452;
 			}
+		}else if ((m_asA < Constants.AUTO_4 + Constants.AUTO_V && m_asA > Constants.AUTO_4 - Constants.AUTO_V)){
+			if (m_asB > Constants.AUTO_1_L && m_asB < Constants.AUTO_1_H) {
+				return 31;
+			} else if (m_asB > Constants.AUTO_2_L && m_asB < Constants.AUTO_2_H) {
+				return 32;
+			} else if (m_asB > Constants.AUTO_3_L && m_asB < Constants.AUTO_3_H) {
+				return 33;
+			} else if (m_asB > Constants.AUTO_4_L && m_asB < Constants.AUTO_4_H) {
+				return 34;
+			} else if (m_asB > Constants.AUTO_5_L && m_asB < Constants.AUTO_5_H) {
+				return 35;
+			} else if (m_asB > Constants.AUTO_6_L && m_asB < Constants.AUTO_6_H) {
+				return 36;
+			} else if (m_asB > Constants.AUTO_7_L && m_asB < Constants.AUTO_7_H) {
+				return 37;
+			} else if (m_asB > Constants.AUTO_8_L && m_asB < Constants.AUTO_8_H) {
+				return 38;
+			} else if (m_asB > Constants.AUTO_9_L && m_asB < Constants.AUTO_9_H) {
+				return 39;
+			} else if (m_asB > Constants.AUTO_10_L && m_asB < Constants.AUTO_10_H) {
+				return 40;
+			} else {
+				// ERROR
+				return 3452;
+			}
 		} else {
 			// ERROR
 			return 3452;
 		}
+		
+		
+		/*
+		 * @return Number between 1 - 40, A1 = 1, A10 = 10, B1 = 11, B10 = 20
+		 * 
+		 */
 	}
 
 	public void initDefaultCommand() {
-		//		setDefaultCommand(new LoggerUpdate());
 	}
 
 	public static enum AV {
 		FOREST_HILLS, CURRENT;
 	}
+
 	public static enum AO {
 		SWITCH, SCALE, SWITCH_PRIORITY_NO_CROSS, SCALE_PRIORITY_NO_CROSS, SWITCH_ONLY, SCALE_ONLY, DEFAULT;
 	}
@@ -165,16 +198,28 @@ public class AutonSelector extends Subsystem {
 		public static final int AUTO_SELECTOR_2 = 3; //0
 
 		public static final int AUTO_V = 15;
-		public static final int AUTO_1 = 2683; //2661
-		public static final int AUTO_2 = 2994; //2963
-		public static final int AUTO_3 = 3186; //3150
-		public static final int AUTO_4 = 3320; //3280
-		public static final int AUTO_5 = 3428; //3885
-		public static final int AUTO_6 = 3506; //3463
-		public static final int AUTO_7 = 3565; //3521
-		public static final int AUTO_8 = 3659; //3612
-		public static final int AUTO_9 = 3721; //3673
-		public static final int AUTO_10 = 3783; //3734
+
+//		public static final int AUTO_1 = 2661;
+//		public static final int AUTO_2 = 2963;
+//		public static final int AUTO_3 = 3150;
+//		public static final int AUTO_4 = 3280;
+//		public static final int AUTO_5 = 3885;
+//		public static final int AUTO_6 = 3463;
+//		public static final int AUTO_7 = 3521;
+//		public static final int AUTO_8 = 3612;
+//		public static final int AUTO_9 = 3673;
+//		public static final int AUTO_10 = 3734;
+
+		public static final int AUTO_1 = 2683;
+		public static final int AUTO_2 = 2994;
+		public static final int AUTO_3 = 3186;
+		public static final int AUTO_4 = 3320;
+		public static final int AUTO_5 = 3428;
+		public static final int AUTO_6 = 3506;
+		public static final int AUTO_7 = 3565;
+		public static final int AUTO_8 = 3659;
+		public static final int AUTO_9 = 3721;
+		public static final int AUTO_10 = 3783;
 
 		public static final int AUTO_1_L = AUTO_1 - AUTO_V;
 		public static final int AUTO_1_H = AUTO_1 + AUTO_V;
