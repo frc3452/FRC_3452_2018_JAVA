@@ -6,6 +6,8 @@ import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
+import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
+import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
@@ -14,7 +16,6 @@ import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
 import org.usfirst.frc.team3452.robot.subsystems.Playback;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -101,7 +102,6 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic() {
 		handleLEDs();
 		Robot.drive.LoggerUpdate();
-
 	}
 
 	@Override
@@ -134,35 +134,35 @@ public class Robot extends TimedRobot {
 		do {
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
 
-			autoCommand[1] = (new MiddleAuton(AO.SWITCH, 1));
-			autoCommand[2] = (new LeftAuton(AO.SWITCH, 1));
-			autoCommand[3] = (new LeftAuton(AO.SCALE, 1));
-			autoCommand[4] = (new RightAuton(AO.SWITCH, 1));
-			autoCommand[5] = (new RightAuton(AO.SCALE, 1));
+			autoCommand[1] = (new MiddleAuton(AO.SWITCH, AV.CURRENT));
+			autoCommand[2] = (new LeftAuton(AO.SWITCH, AV.CURRENT));
+			autoCommand[3] = (new LeftAuton(AO.SCALE, AV.CURRENT));
+			autoCommand[4] = (new RightAuton(AO.SWITCH, AV.CURRENT));
+			autoCommand[5] = (new RightAuton(AO.SCALE, AV.CURRENT));
 
-			autoCommand[11] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, 1));
-			autoCommand[12] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, 1));
-			autoCommand[13] = (new LeftAuton(AO.SWITCH_ONLY, 1));
-			autoCommand[14] = (new LeftAuton(AO.SCALE_ONLY, 1));
+			autoCommand[11] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT));
+			autoCommand[12] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT));
+			autoCommand[13] = (new LeftAuton(AO.SWITCH_ONLY, AV.CURRENT));
+			autoCommand[14] = (new LeftAuton(AO.SCALE_ONLY, AV.CURRENT));
 
-			autoCommand[15] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, 1));
-			autoCommand[16] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, 1));
-			autoCommand[17] = (new RightAuton(AO.SWITCH_ONLY, 1));
-			autoCommand[18] = (new RightAuton(AO.SCALE_ONLY, 1));
+			autoCommand[15] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT));
+			autoCommand[16] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT));
+			autoCommand[17] = (new RightAuton(AO.SWITCH_ONLY, AV.CURRENT));
+			autoCommand[18] = (new RightAuton(AO.SCALE_ONLY, AV.CURRENT));
 
-			autoCommand[19] = (new LeftAuton(AO.DEFAULT, 1));
-			autoCommand[20] = (new RightAuton(AO.DEFAULT, 1));
+			autoCommand[19] = (new LeftAuton(AO.DEFAULT, AV.CURRENT));
+			autoCommand[20] = (new RightAuton(AO.DEFAULT, AV.CURRENT));
 
-			autoCommand[21] = (new MiddleAuton(AO.SWITCH, 3620));
-			autoCommand[22] = (new LeftAuton(AO.SWITCH, 3620));
-			autoCommand[23] = (new LeftAuton(AO.SCALE, 3620));
-			autoCommand[24] = (new RightAuton(AO.SWITCH, 3620));
-			autoCommand[25] = (new RightAuton(AO.SCALE, 3620));
+			autoCommand[21] = (new MiddleAuton(AO.SWITCH, AV.FOREST_HILLS));
+			autoCommand[22] = (new LeftAuton(AO.SWITCH, AV.FOREST_HILLS));
+			autoCommand[23] = (new LeftAuton(AO.SCALE, AV.FOREST_HILLS));
+			autoCommand[24] = (new RightAuton(AO.SWITCH, AV.FOREST_HILLS));
+			autoCommand[25] = (new RightAuton(AO.SCALE, AV.FOREST_HILLS));
 
-			autoCommand[26] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, 3620));
-			autoCommand[27] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, 3620));
-			autoCommand[28] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, 3620));
-			autoCommand[29] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, 3620));
+			autoCommand[26] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.FOREST_HILLS));
+			autoCommand[27] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.FOREST_HILLS));
+			autoCommand[28] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.FOREST_HILLS));
+			autoCommand[29] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.FOREST_HILLS));
 
 			if (Robot.autonSelector.controllerOverride) {
 				autonomousCommand = autoCommand[Robot.autonSelector.overrideValue];
@@ -208,7 +208,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		Scheduler.getInstance().run();
+		if (!wasTest)
+			Scheduler.getInstance().run();
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -32,7 +33,9 @@ public class Elevator extends Subsystem {
 		Elev_2.setInverted(Constants.ELEVATOR_2_INVERT);
 
 		// ENCODER
-		Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
+		Elev_2.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		Elev_1.configRemoteFeedbackFilter(Elev_2.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, 10);
+		//TODO REMOTE SENSOR^^^
 		Elev_1.setSelectedSensorPosition(0, 0, 10);
 		Elev_1.setSelectedSensorPosition(0, 0, 10);
 		Elev_1.setSensorPhase(Constants.ELEVATOR_ENC_INVERT);

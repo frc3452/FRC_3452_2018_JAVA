@@ -13,12 +13,13 @@ import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
+import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class RightAuton extends CommandGroup {
 
-	public RightAuton(AO option, int selector) {
+	public RightAuton(AO option, AV version) {
 		addSequential(new GyroReset());
 		addSequential(new EncoderReset());
 
@@ -29,29 +30,29 @@ public class RightAuton extends CommandGroup {
 			case SWITCH:
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
-					switchL(selector);
+					switchL(version);
 
 				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-					switchR(selector);
+					switchR(version);
 				}
 
 				break;
 			case SCALE:
 
 				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-					scaleL(3620);
+					scaleL(version);
 
 				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-					scaleR(3620);
+					scaleR(version);
 				}
 
 				break;
 			case SWITCH_PRIORITY_NO_CROSS:
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-					switchR(selector);
+					switchR(version);
 				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-					scaleR(3620);
+					scaleR(version);
 				} else {
 					defaultAuton();
 				}
@@ -60,9 +61,9 @@ public class RightAuton extends CommandGroup {
 			case SCALE_PRIORITY_NO_CROSS:
 
 				if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-					scaleR(3620);
+					scaleR(version);
 				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-					switchR(selector);
+					switchR(version);
 				} else {
 					defaultAuton();
 				}
@@ -71,7 +72,7 @@ public class RightAuton extends CommandGroup {
 			case SWITCH_ONLY:
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'R')
-					switchR(1);
+					switchR(version);
 				else
 					defaultAuton();
 
@@ -79,7 +80,7 @@ public class RightAuton extends CommandGroup {
 			case SCALE_ONLY:
 
 				if (Robot.autonSelector.gameMsg.charAt(1) == 'R')
-					switchR(1);
+					switchR(version);
 				else
 					defaultAuton();
 
@@ -103,9 +104,9 @@ public class RightAuton extends CommandGroup {
 		addSequential(new DriveTime(0, 0, 16));
 	}
 
-	private void switchL(int mode) {
-		switch (mode) {
-		case 1:
+	private void switchL(AV version) {
+		switch (version) {
+		case CURRENT:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
@@ -134,7 +135,7 @@ public class RightAuton extends CommandGroup {
 			addSequential(new ElevatorTime(-.15, 10));
 
 			break;
-		case 3620:
+		case FOREST_HILLS:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
@@ -161,10 +162,10 @@ public class RightAuton extends CommandGroup {
 		}
 	}
 
-	private void switchR(int mode) {
-		switch (mode) {
+	private void switchR(AV version) {
+		switch (version) {
 
-		case 1:
+		case CURRENT:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
@@ -184,7 +185,7 @@ public class RightAuton extends CommandGroup {
 			addParallel(new DriveTime(-.5, 0, .8));
 			addSequential(new ElevatorTime(-.1, 10));
 			break;
-		case 3620:
+		case FOREST_HILLS:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
@@ -204,12 +205,9 @@ public class RightAuton extends CommandGroup {
 		}
 	}
 
-	private void scaleL(int mode) {
-		switch (mode) {
-		case 1:
-			defaultAuton();
-			break;
-		case 3620:
+	private void scaleL(AV version) {
+		switch (version) {
+		case CURRENT:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
@@ -226,8 +224,7 @@ public class RightAuton extends CommandGroup {
 
 			addSequential(new ElevatorPosition(15)); //raise and turn to switch
 
-			
-			//TODO add
+			//TODO intake testing
 			//			addSequential(new CommandGroup() {
 			//				{
 			//					addParallel(new IntakeWhileDrive(.5, .9, 1));
@@ -239,18 +236,54 @@ public class RightAuton extends CommandGroup {
 			addSequential(new IntakeTime(.5, 1));
 
 			break;
+		case FOREST_HILLS:
+			addParallel(new DriveTime(.55, 0, .5));
+			addSequential(new ElevatorTime(.5, .1725));
+			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
+
+			addSequential(new EncoderGyro(11.5, 11.5, .6, .6, .65, 0, .017)); // drive to side of switch
+
+			addParallel(new ElevatorPosition(2)); //raise
+			addSequential(new EncoderFrom(-1.5, 0.75, .5, .5, .5)); // turn to switch 
+
+			addSequential(new EncoderReset());
+			addSequential(new EncoderGyro(10.6, 10.6, .5, .5, .5, -90, 0.011)); //drive front of scale
+
+			addSequential(new EncoderFrom(.75, -1.5, .5, .5, .5));
+
+			addSequential(new ElevatorPosition(15)); //raise and turn to switch
+
+			addSequential(new EncoderFrom(2.61, 2.41, .1, .1, .15));
+			addSequential(new IntakeTime(.5, 1));
+
+			break;
 		default:
 			defaultAuton();
 			break;
 		}
 	}
 
-	private void scaleR(int mode) {
-		switch (mode) {
-		case 1:
-			defaultAuton();
+	private void scaleR(AV version) {
+		switch (version) {
+		case CURRENT:
+			addParallel(new DriveTime(.55, 0, .5));
+			addSequential(new ElevatorTime(.5, .1725));
+			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
+
+			addParallel(new ElevatorPosition(1)); //lift for drive
+			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, .016)); // drive to far side of switch
+			addSequential(new EncoderFrom(-.4, .2, .4, .4, .5)); //turn to switch
+
+			addSequential(new ElevatorPosition(15)); //raise and forward
+			addSequential(new DriveTime(.4, 0, 1.9));
+
+			addSequential(new IntakeTime(.4, 1)); //shoot, back up down and spin
+			addSequential(new DriveTime(-.4, 0, 1.6));
+			addSequential(new ElevatorTime(-.4, 10));
+			addSequential(new GyroPos(225, .4, 1));
+			
 			break;
-		case 3620:
+		case FOREST_HILLS:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm

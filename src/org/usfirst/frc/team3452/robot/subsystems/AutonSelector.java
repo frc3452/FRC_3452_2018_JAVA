@@ -153,6 +153,9 @@ public class AutonSelector extends Subsystem {
 		//		setDefaultCommand(new LoggerUpdate());
 	}
 
+	public static enum AV {
+		FOREST_HILLS, CURRENT;
+	}
 	public static enum AO {
 		SWITCH, SCALE, SWITCH_PRIORITY_NO_CROSS, SCALE_PRIORITY_NO_CROSS, SWITCH_ONLY, SCALE_ONLY, DEFAULT;
 	}

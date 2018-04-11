@@ -13,12 +13,13 @@ import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
+import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class MiddleAuton extends CommandGroup {
 
-	public MiddleAuton(AO option, int selector) {
+	public MiddleAuton(AO option, AV version) {
 		addSequential(new EncoderReset());
 		addSequential(new GyroReset());
 
@@ -29,9 +30,9 @@ public class MiddleAuton extends CommandGroup {
 			case SWITCH:
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
-					switchL(selector);
+					switchL(version);
 				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-					switchR(selector);
+					switchR(version);
 				} else {
 					defaultAuton();
 				}
@@ -53,10 +54,9 @@ public class MiddleAuton extends CommandGroup {
 		addSequential(new DriveTime(0, 0, 16));
 	}
 
-	private void switchL(int mode) {
-		switch (mode) {
-		case 1:
-
+	private void switchL(AV version) {
+		switch (version) {
+		case CURRENT:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
@@ -124,9 +124,9 @@ public class MiddleAuton extends CommandGroup {
 
 	}
 
-	private void switchR(int mode) {
-		switch (mode) {
-		case 1:
+	private void switchR(AV version) {
+		switch (version) {
+		case CURRENT:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm

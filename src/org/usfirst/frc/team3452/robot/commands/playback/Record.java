@@ -23,7 +23,7 @@ public class Record extends Command {
 			Robot.drive.timer.stop();
 			Robot.drive.timer.reset();
 			Robot.drive.timer.start();
-			
+
 			System.out.println("Opening RECORD");
 			Robot.playback.createFile(m_name, false);
 			break;
@@ -41,8 +41,7 @@ public class Record extends Command {
 	}
 
 	protected void execute() {
-		switch(m_task)
-		{
+		switch (m_task) {
 		case RECORD:
 			Robot.playback.writeToFile();
 			break;
