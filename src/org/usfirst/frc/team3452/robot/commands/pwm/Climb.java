@@ -24,7 +24,7 @@ public class Climb extends Command {
 
 	protected void execute() {
 		if (timer.get() > .7)
-			Robot.climber.control(m_speed);
+			Robot.climber.control(m_speed * ((timer.get() - .7) * 1.5));
 	}
 
 	protected boolean isFinished() {
