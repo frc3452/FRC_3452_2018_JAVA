@@ -20,6 +20,7 @@ public class Climb extends Command {
 		timer.stop();
 		timer.reset();
 		timer.start();
+
 	}
 
 	protected void execute() {
