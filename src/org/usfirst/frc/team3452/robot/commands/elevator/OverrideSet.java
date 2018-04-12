@@ -1,26 +1,30 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Elevator.EO;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class OverrideSet extends InstantCommand {
 
-	private int m_override;
+	private EO m_override;
 
-	public OverrideSet(int override) {
+	public OverrideSet(EO override) {
 		super();
 		m_override = override;
 	}
 
 	protected void initialize() {
-		if (m_override == -1) {
-			Robot.elevator.m_overriden = !Robot.elevator.m_overriden;
-		} else if (m_override == 0) {
-			Robot.elevator.m_overriden = false;
-		} else if (m_override == 1) {
+		switch (m_override) {
+		case ON:
 			Robot.elevator.m_overriden = true;
+			break;
+		case OFF:
+			Robot.elevator.m_overriden = false;
+			break;
+		case TOGGLE:
+			Robot.elevator.m_overriden = !Robot.elevator.m_overriden;
+			break;
 		}
 	}
-
 }

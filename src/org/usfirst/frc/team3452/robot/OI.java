@@ -9,6 +9,8 @@ import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.CONTROLLER;
+import org.usfirst.frc.team3452.robot.subsystems.Elevator.EO;
+import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -17,6 +19,8 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 public class OI {
+
+	//Intake, Full output, slow output
 	public static Joystick driverJoy = new Joystick(0);
 	public static Joystick opJoy = new Joystick(1);
 
@@ -26,12 +30,14 @@ public class OI {
 	private static Button driverJoyA, driverJoyB, driverJoyX, driverJoyY, driverJoyLB, driverJoyRB, driverJoyBack,
 			driverJoyStart, driverJoyLClick, driverJoyRClick;
 
+	@SuppressWarnings("unused")
 	private static HIDPOVButton driverUp, driverDown, driverLeft, driverRight;
 
 	@SuppressWarnings("unused")
 	private static Button opJoyA, opJoyB, opJoyX, opJoyY, opJoyLB, opJoyRB, opJoyBack, opJoyStart, opJoyLClick,
 			opJoyRClick;
 
+	@SuppressWarnings("unused")
 	private static HIDPOVButton opUp, opDown, opLeft, opRight;
 
 	public static void init() {
@@ -40,8 +46,8 @@ public class OI {
 		// 				DRIVER JOY
 		driverJoyA.whenPressed(new SetModify(-1));
 
-		driverJoyX.whileHeld(new IntakeManual(-.8));
-		driverJoyB.whileHeld(new IntakeManual(.75));
+		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
+		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
 
 		driverJoyY.whileHeld(new Climb(1));
 
@@ -55,32 +61,29 @@ public class OI {
 
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
-		driverJoyBack.whenPressed(new OverrideSet(-1));
+		driverJoyBack.whenPressed(new OverrideSet(EO.TOGGLE));
 
 		//				DPAD
 		driverDown.whenPressed(new ElevatorPosition(-15));
-		driverUp.whenPressed(new ElevatorPosition(8.2));
+		driverUp.whileHeld(new IntakeManual(Intake.Speeds.SLOW));
 		driverRight.whenPressed(new ElevatorPosition(3.5));
-		driverLeft.whenPressed(new ElevatorPosition(.6));
 
 		// 				OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
-		opJoyX.whileHeld(new IntakeManual(-.8));
-		opJoyB.whileHeld(new IntakeManual(.75));
-		opJoyY.whileHeld(new IntakeManual(.3));
+		opJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
+		opJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
+		opJoyY.whileHeld(new IntakeManual(Intake.Speeds.SLOW));
 
 		opJoyBack.whileHeld(new IntakeSpin(.35, true));
 		opJoyStart.whileHeld(new IntakeSpin(.35, false));
 
 		//				DPAD
 		opDown.whenPressed(new ElevatorPosition(-15));
-		opUp.whenPressed(new ElevatorPosition(8.2));
 		opRight.whenPressed(new ElevatorPosition(3.5));
-		opLeft.whenPressed(new ElevatorPosition(.6));
 
 		//				TRIGGERS
-		driveSafteyOverriden.whenActive(new OverrideSet(1));
-		driveSafteyOverriden.whenInactive(new OverrideSet(0));
+		driveSafteyOverriden.whenActive(new OverrideSet(EO.ON));
+		driveSafteyOverriden.whenInactive(new OverrideSet(EO.OFF));
 	}
 
 	private static void buttonInit() {

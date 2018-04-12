@@ -224,14 +224,6 @@ public class RightAuton extends CommandGroup {
 
 			addSequential(new ElevatorPosition(15)); //raise and turn to switch
 
-			//TODO intake testing
-			//			addSequential(new CommandGroup() {
-			//				{
-			//					addParallel(new IntakeWhileDrive(.5, .9, 1));
-			//					addSequential(new EncoderFrom(2.61, 2.41, .1, .1, .15));
-			//				}
-			//			});
-
 			addSequential(new EncoderFrom(2.61, 2.41, .1, .1, .15));
 			addSequential(new IntakeTime(.5, 1));
 

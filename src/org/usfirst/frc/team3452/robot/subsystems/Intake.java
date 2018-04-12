@@ -30,6 +30,13 @@ public class Intake extends Subsystem {
 	public void initDefaultCommand() {
 	}
 
+	public static class Speeds 
+	{
+		public static final double INTAKE = -.8;
+		public static final double OUT = .75;
+		public static final double SLOW = .3;
+	}
+	
 	public static class Constants {
 		public static final int INTAKE_L = 0;
 		public static final int INTAKE_R = 1;
