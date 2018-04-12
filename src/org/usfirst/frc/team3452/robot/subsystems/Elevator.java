@@ -7,9 +7,8 @@ import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -22,6 +21,7 @@ public class Elevator extends Subsystem {
 	private WPI_TalonSRX Elev_2;
 
 	public void initHardware() {
+
 		Elev_1 = new WPI_TalonSRX(Constants.ELEVATOR_1);
 		Elev_2 = new WPI_TalonSRX(Constants.ELEVATOR_2);
 
@@ -32,14 +32,6 @@ public class Elevator extends Subsystem {
 		Elev_1.setInverted(Constants.ELEVATOR_1_INVERT);
 		Elev_2.setInverted(Constants.ELEVATOR_2_INVERT);
 
-		// ENCODER
-		Elev_2.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
-		Elev_1.configRemoteFeedbackFilter(Elev_2.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, 0, 10);
-		//TODO REMOTE SENSOR^^^
-		Elev_1.setSelectedSensorPosition(0, 0, 10);
-		Elev_1.setSelectedSensorPosition(0, 0, 10);
-		Elev_1.setSensorPhase(Constants.ELEVATOR_ENC_INVERT);
-
 		// PIDs
 		Elev_1.config_kF(0, 0, 10);
 		Elev_1.config_kP(0, 0.08, 10);
@@ -47,12 +39,20 @@ public class Elevator extends Subsystem {
 		Elev_1.config_kD(0, 2.5, 10);
 		// was 0, .09, .000075, 2.5
 
+		// ENCODER
+		Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		Elev_1.setSelectedSensorPosition(0, 0, 10);
+		Elev_1.setSelectedSensorPosition(0, 0, 10);
+		Elev_1.setSensorPhase(Constants.ELEVATOR_ENC_INVERT);
+
 		// RESET ENCODER ON LIMIT SWITCH DOWN
 		Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);
 
-		// LIMIT SWITCHES
-		Elev_1.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
-		Elev_1.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 10);
+		// REMOTE LIMIT SWITCHES
+		Elev_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen,
+				Elev_2.getDeviceID(), 10);
+		Elev_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen,
+				Elev_2.getDeviceID(), 10);
 
 		// BRAKE
 		Elev_1.setNeutralMode(NeutralMode.Brake);
@@ -128,6 +128,10 @@ public class Elevator extends Subsystem {
 
 	public void initDefaultCommand() {
 		setDefaultCommand(new ElevatorTime(0, 0));
+	}
+
+	public static enum EO {
+		TOGGLE, ON, OFF;
 	}
 
 	public static class Constants {
