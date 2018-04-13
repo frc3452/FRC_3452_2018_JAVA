@@ -210,16 +210,16 @@ public class AutonSelector extends Subsystem {
 //		public static final int AUTO_9 = 3673;
 //		public static final int AUTO_10 = 3734;
 
-		public static final int AUTO_1 = 2683;
-		public static final int AUTO_2 = 2994;
-		public static final int AUTO_3 = 3186;
-		public static final int AUTO_4 = 3320;
-		public static final int AUTO_5 = 3428;
-		public static final int AUTO_6 = 3506;
+		public static final int AUTO_1 = 2681;
+		public static final int AUTO_2 = 2991;
+		public static final int AUTO_3 = 3184;
+		public static final int AUTO_4 = 3321;
+		public static final int AUTO_5 = 3426;
+		public static final int AUTO_6 = 3507;
 		public static final int AUTO_7 = 3565;
-		public static final int AUTO_8 = 3659;
+		public static final int AUTO_8 = 3658;
 		public static final int AUTO_9 = 3721;
-		public static final int AUTO_10 = 3783;
+		public static final int AUTO_10 = 3781;
 
 		public static final int AUTO_1_L = AUTO_1 - AUTO_V;
 		public static final int AUTO_1_H = AUTO_1 + AUTO_V;
