@@ -24,8 +24,13 @@ public class Climb extends Command {
 	}
 
 	protected void execute() {
-		if (timer.get() > .7)
-			Robot.climber.control(m_speed * ((timer.get() - .7) * 1.5));
+		//WAIT ON FIRST TWO PRESSES
+		if (Robot.climber.climbCounter < 2) {
+			if (timer.get() > .7)
+				Robot.climber.control(m_speed * ((timer.get() - .7) * 1.5));
+		} else {
+			Robot.climber.control(m_speed);
+		}
 	}
 
 	protected boolean isFinished() {
@@ -35,6 +40,7 @@ public class Climb extends Command {
 	protected void end() {
 		timer.stop();
 		Robot.climber.control(0);
+		Robot.climber.climbCounter++;
 	}
 
 	protected void interrupted() {
