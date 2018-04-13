@@ -56,6 +56,9 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putString("Override String", Robot.autonSelector.overrideString);
 
 		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
+		
+		SmartDashboard.putNumber("PDP 8", Robot.drive.pdp.getCurrent(8));
+		SmartDashboard.putNumber("PDP 9", Robot.drive.pdp.getCurrent(9));
 
 		SmartDashboard.putNumber("Selector A", Robot.autonSelector.as_A.getValue());
 		SmartDashboard.putNumber("Selector B", Robot.autonSelector.as_B.getValue());
