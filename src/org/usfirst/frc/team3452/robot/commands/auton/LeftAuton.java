@@ -12,6 +12,7 @@ import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
+import org.usfirst.frc.team3452.robot.commands.pwm.IntakeWhileDrive;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
 
@@ -221,12 +222,12 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new ElevatorPosition(15)); //raise and forward
 			addSequential(new DriveTime(.4, 0, 1.7));
 
-			addSequential(new IntakeTime(.4, 1)); //shoot, back up down and spin
+			addSequential(new IntakeTime(.4, .6)); //shoot, back up down and spin
 			addSequential(new DriveTime(-.4, 0, 1.6));
 
-			addSequential(new ElevatorTime(-.4, 10));
+			addParallel(new ElevatorTime(-.65, 10));
 			addSequential(new GyroPos(135, .4, 1));
-			
+
 			break;
 		case FOREST_HILLS:
 			addParallel(new DriveTime(.55, 0, .5));
@@ -240,7 +241,7 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new ElevatorPosition(15)); //raise and forward
 			addSequential(new DriveTime(.4, 0, 1.7));
 
-			addSequential(new IntakeTime(.4, 1)); //shoot, back up down and spin
+			addSequential(new IntakeTime(.4, .5)); //shoot, back up down and spin
 			addSequential(new DriveTime(-.4, 0, 1.6));
 
 			addSequential(new ElevatorTime(-.4, 10));
@@ -272,9 +273,17 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new ElevatorPosition(15)); //raise and turn to switch
 
-			addSequential(new EncoderFrom(2.41, 2.61, .1, .1, .15));
+			addSequential(new CommandGroup() {
+				{
+					addParallel(new IntakeWhileDrive(.4, .92, .6));
+					addSequential(new EncoderFrom(2.41, 2.61, .1, .1, .15));
+				}
+			});
 
-			addSequential(new IntakeTime(.5, 1));
+			addSequential(new DriveTime(-.4, 0, 1.6));
+
+			addParallel(new ElevatorTime(-.65, 10));
+			addSequential(new GyroPos(225, .4, 1));
 
 			break;
 		case FOREST_HILLS:

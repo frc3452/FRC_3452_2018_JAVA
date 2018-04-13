@@ -1,6 +1,8 @@
 
 package org.usfirst.frc.team3452.robot;
 
+import org.usfirst.frc.team3452.robot.commands.drive.DriveToCube;
+import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
 import org.usfirst.frc.team3452.robot.commands.drive.SetModify;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
@@ -8,6 +10,7 @@ import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
 import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
+import org.usfirst.frc.team3452.robot.commands.pwm.IntakeWhileDrive;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.CONTROLLER;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator.EO;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
@@ -17,10 +20,9 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class OI {
-
-	//Intake, Full output, slow output
 	public static Joystick driverJoy = new Joystick(0);
 	public static Joystick opJoy = new Joystick(1);
 
@@ -51,13 +53,12 @@ public class OI {
 
 		driverJoyY.whileHeld(new Climb(1));
 
-		//TODO TEST
-		//		driverJoyLB.whenPressed(new CommandGroup() {
-		//			{
-		//				addParallel(new IntakeWhileDrive(1, .6, 1));
-		//				addSequential(new EncoderFrom(10, 20, .2, .2, .5));
-		//			}
-		//		});
+//		driverJoyLB.whenPressed(new CommandGroup() {
+//			{
+//				addParallel(new IntakeWhileDrive(.5,.8,.5));
+//				addSequential(new EncoderFrom(10, 10, .5, .5, .6));
+//			}
+//		});
 
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 

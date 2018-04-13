@@ -12,6 +12,7 @@ import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
+import org.usfirst.frc.team3452.robot.commands.pwm.IntakeWhileDrive;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
 
@@ -224,8 +225,17 @@ public class RightAuton extends CommandGroup {
 
 			addSequential(new ElevatorPosition(15)); //raise and turn to switch
 
-			addSequential(new EncoderFrom(2.61, 2.41, .1, .1, .15));
-			addSequential(new IntakeTime(.5, 1));
+			addSequential(new CommandGroup() {
+				{
+					addParallel(new IntakeWhileDrive(.4, .92, .6));
+					addSequential(new EncoderFrom(2.61, 2.41, .1, .1, .15));
+				}
+			});
+
+			addSequential(new DriveTime(-.4, 0, 1.6));
+
+			addParallel(new ElevatorTime(-.65, 10));
+			addSequential(new GyroPos(135, .4, 1));
 
 			break;
 		case FOREST_HILLS:
@@ -264,16 +274,18 @@ public class RightAuton extends CommandGroup {
 
 			addParallel(new ElevatorPosition(1)); //lift for drive
 			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, .016)); // drive to far side of switch
-			addSequential(new EncoderFrom(-.4, .2, .4, .4, .5)); //turn to switch
+			addSequential(new EncoderFrom(-.4, .35, .4, .4, .5)); //turn to switch
 
 			addSequential(new ElevatorPosition(15)); //raise and forward
 			addSequential(new DriveTime(.4, 0, 1.9));
 
-			addSequential(new IntakeTime(.4, 1)); //shoot, back up down and spin
+			addSequential(new IntakeTime(.4, .6)); //shoot, back up down and spin
+
 			addSequential(new DriveTime(-.4, 0, 1.6));
-			addSequential(new ElevatorTime(-.4, 10));
+			addSequential(new ElevatorTime(-.7, 10));
+
 			addSequential(new GyroPos(225, .4, 1));
-			
+
 			break;
 		case FOREST_HILLS:
 			addParallel(new DriveTime(.55, 0, .5));
