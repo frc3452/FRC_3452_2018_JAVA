@@ -27,11 +27,7 @@ public class IntakeWhileDrive extends Command {
 	}
 
 	protected void execute() {
-		System.out.println(Robot.drive.p_pos + "\t\t" + m_percent);
-
 		if (Robot.drive.p_pos > m_percent) {
-
-			System.out.println("greater value");
 			Robot.intake.manual(m_value);
 
 			if (timeoutSet == false) {
@@ -40,6 +36,8 @@ public class IntakeWhileDrive extends Command {
 				timeoutSet = true;
 			}
 
+		} else {
+			Robot.intake.manual(0);
 		}
 	}
 
