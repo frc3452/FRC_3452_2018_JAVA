@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Climber extends Subsystem {
 	private Spark climber;
+	public int climbCounter = 0;
 
 	public void control(double speed) {
 		climber.set(Math.abs(speed));
