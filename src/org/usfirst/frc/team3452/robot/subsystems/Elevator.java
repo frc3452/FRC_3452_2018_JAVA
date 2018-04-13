@@ -18,7 +18,7 @@ public class Elevator extends Subsystem {
 	public boolean m_overriden = false;
 
 	public WPI_TalonSRX Elev_1;
-	private WPI_TalonSRX Elev_2;
+	public WPI_TalonSRX Elev_2;
 
 	public void initHardware() {
 
