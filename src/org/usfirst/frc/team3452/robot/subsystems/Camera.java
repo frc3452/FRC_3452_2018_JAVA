@@ -11,7 +11,7 @@ public class Camera extends Subsystem {
 	public void initHardware() {
 		mCamera0 = CameraServer.getInstance().startAutomaticCapture(0);
 		mCamera0.setResolution(640, 480);
-		mCamera0.setFPS(30);
+		mCamera0.setFPS(15);
 		mCamera0.setExposureManual(40);
 
 //		mCamera1 = CameraServer.getInstance().startAutomaticCapture(1);
