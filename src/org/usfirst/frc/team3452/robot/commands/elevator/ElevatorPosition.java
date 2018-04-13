@@ -23,12 +23,12 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected boolean isFinished() {
-		if(Robot.elevator.Elev_1.getSensorCollection().isRevLimitSwitchClosed() && m_value > 10)
+		if (Robot.elevator.Elev_2.getSensorCollection().isRevLimitSwitchClosed() && m_value > 0)
 			return true;
-		
-		if (Robot.elevator.Elev_1.getSensorCollection().isFwdLimitSwitchClosed() && m_value < 0)
-			return true;
-		
+
+		if (Robot.elevator.Elev_2.getSensorCollection().isFwdLimitSwitchClosed() && m_value < 0)
+			return true; 
+
 		return Robot.elevator.isDone(3.5) || isTimedOut();
 	}
 

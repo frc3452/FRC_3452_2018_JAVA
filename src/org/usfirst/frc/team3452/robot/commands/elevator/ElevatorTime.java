@@ -26,10 +26,10 @@ public class ElevatorTime extends Command {
 	}
 
 	protected boolean isFinished() {
-		if (Robot.elevator.Elev_1.getSensorCollection().isRevLimitSwitchClosed() && m_speed > 0)
+		if (Robot.elevator.Elev_2.getSensorCollection().isRevLimitSwitchClosed() && m_speed > 0)
 			return true;
 
-		if (Robot.elevator.Elev_1.getSensorCollection().isFwdLimitSwitchClosed() && m_speed < 0)
+		if (Robot.elevator.Elev_2.getSensorCollection().isFwdLimitSwitchClosed() && m_speed < 0)
 			return true;
 
 		return isTimedOut();
