@@ -7,7 +7,6 @@ import org.usfirst.frc.team3452.robot.commands.drive.DriveToStop;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderDrive;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
-import org.usfirst.frc.team3452.robot.commands.drive.GyroPos;
 import org.usfirst.frc.team3452.robot.commands.drive.GyroReset;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
@@ -73,7 +72,7 @@ public class MiddleAuton extends CommandGroup {
 
 			//hit switch
 			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.38));
+			addSequential(new DriveToStop(.45));
 
 			addSequential(new IntakeTime(.5, .5)); //first place
 
@@ -89,15 +88,15 @@ public class MiddleAuton extends CommandGroup {
 				}
 			});
 
-			//lower and reset encoders
 			addSequential(new EncoderReset());
 
 			//TURN AND GRAB CUBE
 			addSequential(new CommandGroup() {
 				{
-					addSequential(new GyroPos(35, .42, 1));
+					addSequential(new EncoderDrive(.45, -.4, .5, .5, .6)); //turn to switch
+//					addSequential(new GyroPos(35, .42, 1));
 					addSequential(new DriveToCube(.45, 5));
-					addParallel(new IntakeTime(-.2, 1.5));
+					addParallel(new IntakeTime(-.2, .75));
 					addSequential(new EncoderDrive(0, 0, .6, .6, .65));
 				}
 			});
@@ -112,7 +111,7 @@ public class MiddleAuton extends CommandGroup {
 
 			//hit switch
 			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.38));
+			addSequential(new DriveToStop(.45));
 
 			addSequential(new IntakeTime(.5, .5)); //second place
 
@@ -140,12 +139,12 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new CommandGroup() {
 				{
 					addParallel(new ElevatorWhileDrive(3.5, .3));
-					addSequential(new EncoderFrom(3.3 + .15, 4.2 + .38, .6, .6, .7));
+					addSequential(new EncoderFrom(3.3 /*+ .15*/, 4.2 + .38, .6, .6, .7));
 				}
 			});
 
 			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.38));
+			addSequential(new DriveToStop(.45));
 
 			addSequential(new IntakeTime(.5, .5)); //PLACE 1
 
@@ -157,7 +156,7 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new CommandGroup() {
 				{
 					addParallel(new ElevatorWhileDrive(-15, .75));
-					addSequential(new EncoderFrom(-3.8, -3.8, .45, .45, .6));
+					addSequential(new EncoderFrom(-3.8, -3.8, .6, .6, .6));
 				}
 			});
 
@@ -167,9 +166,10 @@ public class MiddleAuton extends CommandGroup {
 			//TURN AND GRAB CUBE
 			addSequential(new CommandGroup() {
 				{
-					addSequential(new GyroPos(35, .42, 1));
+					addSequential(new EncoderFrom(-.4, .35, .5, .5, .6)); //turn to switch
+//					addSequential(new GyroPos(325, .42, 1));
 					addSequential(new DriveToCube(.45, 5));
-					addParallel(new IntakeTime(-.5, 1.5));
+					addParallel(new IntakeTime(-.5, .75));
 					addSequential(new EncoderDrive(0, 0, .6, .6, .65));
 				}
 			});
@@ -178,13 +178,13 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new CommandGroup() {
 				{
 					addSequential(new ElevatorWhileDrive(3.5, .6));
-					addSequential(new EncoderFrom(3, 3, .45, .45, .6));
+					addSequential(new EncoderFrom(3, 3, .5, .5, .6));
 				}
 			});
 
 			//hit switch
 			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.38));
+			addSequential(new DriveToStop(.45));
 
 			addSequential(new IntakeTime(.5, 1.5)); //second place
 

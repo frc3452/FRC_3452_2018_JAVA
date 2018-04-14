@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveToCube extends Command {
 
-	private double m_speed, m_rotation, i_lpos, i_rpos, m_centerX;
+	private double m_speed, m_rotation, i_lpos, i_rpos;
 	private boolean m_complete, flag_1, flag_2, timeoutSet;
 	private Timer timer = new Timer();
 

@@ -20,7 +20,6 @@ public class Climb extends Command {
 		timer.stop();
 		timer.reset();
 		timer.start();
-
 	}
 
 	protected void execute() {
@@ -28,8 +27,8 @@ public class Climb extends Command {
 		if (Robot.climber.climbCounter < 2) {
 			if (timer.get() > .7)
 				Robot.climber.control(m_speed * ((timer.get() - .7) * 1.5));
-		} else {
-			Robot.climber.control(m_speed);
+		} else {   
+			Robot.climber.control(m_speed /* * (timer.get() * 1.5)*/);
 		}
 	}
 

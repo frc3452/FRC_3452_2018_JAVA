@@ -248,7 +248,7 @@ public class Robot extends TimedRobot {
 						Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 100));
 
 					} else {
-						Robot.lights.hsv(Robot.lights.m_hue, 1, 1);
+						Robot.lights.hsv(Robot.lights.m_hue, 1, .15);
 						Robot.lights.m_hue++;
 						if (Robot.lights.m_hue > 360)
 							Robot.lights.m_hue = 0;

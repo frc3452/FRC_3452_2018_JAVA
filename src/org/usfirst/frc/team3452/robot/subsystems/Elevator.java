@@ -21,7 +21,7 @@ public class Elevator extends Subsystem {
 	public WPI_TalonSRX Elev_2;
 
 	public void initHardware() {
-
+		
 		Elev_1 = new WPI_TalonSRX(Constants.ELEVATOR_1);
 		Elev_2 = new WPI_TalonSRX(Constants.ELEVATOR_2);
 
