@@ -13,6 +13,7 @@ import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeWhileDrive;
+import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
 
@@ -211,6 +212,25 @@ public class LeftAuton extends CommandGroup {
 	private void scaleL(AV version) {
 		switch (version) {
 		case CURRENT:
+			//TURN CHANGED 
+			addParallel(new DriveTime(.55, 0, .5));
+			addSequential(new ElevatorTime(.5, .1725));
+			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
+
+			//Drive to scale
+			addSequential(new EncoderGyro(15.27, 15.27, .5, .5, .6, 0, .017));
+			//TURN CHANGED FINALS 3
+			addSequential(new EncoderFrom(1.5, -1.15, .6, .6, .6)); //turn to switch
+
+			addSequential(new EncoderFrom(-.6, -.6, .7, .7, .6));
+			addSequential(new ElevatorPosition(15)); //raise and forward
+			addSequential(new EncoderFrom(.5, .5, .4, .4, .6));
+
+			addSequential(new IntakeTime(.5, 4)); //shoot, back up down and spin
+
+			break;
+		case FOREST_HILLS:
+
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
@@ -226,25 +246,6 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new DriveTime(-.4, 0, 1.6));
 
 			addParallel(new ElevatorTime(-.65, 10));
-			addSequential(new GyroPos(135, .4, 1));
-
-			break;
-		case FOREST_HILLS:
-			addParallel(new DriveTime(.55, 0, .5));
-			addSequential(new ElevatorTime(.5, .1725));
-			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
-
-			addSequential(new ElevatorTime(.75, .75));
-			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, .016)); // drive to far side of switch
-			addSequential(new EncoderFrom(.2, -.4, .4, .4, .5)); //turn to switch
-
-			addSequential(new ElevatorPosition(15)); //raise and forward
-			addSequential(new DriveTime(.4, 0, 1.7));
-
-			addSequential(new IntakeTime(.4, .5)); //shoot, back up down and spin
-			addSequential(new DriveTime(-.4, 0, 1.6));
-
-			addSequential(new ElevatorTime(-.4, 10));
 			addSequential(new GyroPos(135, .4, 1));
 
 			break;
@@ -275,11 +276,11 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new CommandGroup() {
 				{
-					addParallel(new IntakeWhileDrive(.4, .92, .6));
+					addParallel(new IntakeWhileDrive(Intake.Speeds.SLOW, .92, 3));
 					addSequential(new EncoderFrom(2.41, 2.61, .1, .1, .15));
 				}
+				
 			});
-
 			addSequential(new DriveTime(-.4, 0, 1.6));
 
 			addParallel(new ElevatorTime(-.65, 10));

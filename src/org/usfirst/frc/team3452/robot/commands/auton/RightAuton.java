@@ -268,6 +268,27 @@ public class RightAuton extends CommandGroup {
 	private void scaleR(AV version) {
 		switch (version) {
 		case CURRENT:
+		
+			//TURN CHANGED 
+			addParallel(new DriveTime(.55, 0, .5));
+			addSequential(new ElevatorTime(.5, .1725));
+			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
+
+			//Drive to scale
+			addSequential(new EncoderGyro(15.27, 15.27, .5, .5, .6, 0, .017));
+			//TURN CHANGED FINALS 3
+			addSequential(new EncoderFrom(-1.15, 1.5, .6, .6, .6)); //turn to switch
+
+			addSequential(new EncoderFrom(-.6, -.6, .7, .7, .6));
+			addSequential(new ElevatorPosition(15)); //raise and forward
+			addSequential(new EncoderFrom(.5, .5, .4, .4, .6));
+
+			addSequential(new IntakeTime(.5, 4)); //shoot, back up down and spin
+
+
+
+			break;
+		case FOREST_HILLS:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
@@ -284,24 +305,6 @@ public class RightAuton extends CommandGroup {
 			addSequential(new DriveTime(-.4, 0, 1.6));
 			addSequential(new ElevatorTime(-.7, 10));
 
-			addSequential(new GyroPos(225, .4, 1));
-
-			break;
-		case FOREST_HILLS:
-			addParallel(new DriveTime(.55, 0, .5));
-			addSequential(new ElevatorTime(.5, .1725));
-			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
-
-			addParallel(new ElevatorPosition(1)); //lift for drive
-			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, .016)); // drive to far side of switch
-			addSequential(new EncoderFrom(-.4, .2, .4, .4, .5)); //turn to switch
-
-			addSequential(new ElevatorPosition(15)); //raise and forward
-			addSequential(new DriveTime(.4, 0, 1.9));
-
-			addSequential(new IntakeTime(.4, 1)); //shoot, back up down and spin
-			addSequential(new DriveTime(-.4, 0, 1.6));
-			addSequential(new ElevatorTime(-.4, 10));
 			addSequential(new GyroPos(225, .4, 1));
 			break;
 		default:
