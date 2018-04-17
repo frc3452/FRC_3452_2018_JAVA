@@ -141,9 +141,12 @@ public class Lights extends Subsystem {
 	}
 
 	public void rgb(float r, float g, float b) {
-		canifier.setLEDOutput(r, CANifier.LEDChannel.LEDChannelA);
-		canifier.setLEDOutput(g, CANifier.LEDChannel.LEDChannelB);
-		canifier.setLEDOutput(b, CANifier.LEDChannel.LEDChannelC);
+		try {
+			canifier.setLEDOutput(r, CANifier.LEDChannel.LEDChannelA);
+			canifier.setLEDOutput(g, CANifier.LEDChannel.LEDChannelB);
+			canifier.setLEDOutput(b, CANifier.LEDChannel.LEDChannelC);
+		} catch (Exception e) {
+		}
 	}
 
 	public void pulse(int h, double s, double low, double high, double pulseIntensity) {
