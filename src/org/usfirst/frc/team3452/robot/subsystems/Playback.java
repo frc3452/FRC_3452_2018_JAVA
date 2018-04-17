@@ -38,6 +38,7 @@ public class Playback extends Subsystem {
 			//loop through each line
 			while ((st = br.readLine()) != null) {
 
+				
 				//populate time
 				RP1A[posInFile] = Double.parseDouble(st.substring(0, 8));
 
