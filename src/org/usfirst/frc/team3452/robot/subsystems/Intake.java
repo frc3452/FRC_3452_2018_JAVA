@@ -35,6 +35,7 @@ public class Intake extends Subsystem {
 		public static final double INTAKE = -.8;
 		public static final double OUT = .75;
 		public static final double SLOW = .3;
+		public static final double SPIN = 3.5;
 	}
 	
 	public static class Constants {
