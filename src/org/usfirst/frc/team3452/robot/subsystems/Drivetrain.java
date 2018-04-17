@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
@@ -22,9 +23,7 @@ public class Drivetrain extends Subsystem {
 	public PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 
 	// DRIVETRAIN
-	public WPI_TalonSRX L1, R1;
-
-	private WPI_TalonSRX L2, L3, L4, R2, R3, R4;
+	public WPI_TalonSRX L1, L2, L3, L4, R1, R2, R3, R4;
 
 	// ROBOT DRIVE OBJECT
 	private DifferentialDrive robotDrive;
@@ -56,12 +55,13 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putString("Override String", Robot.autonSelector.overrideString);
 
 		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
-		
+
 		SmartDashboard.putNumber("PDP 8", Robot.drive.pdp.getCurrent(8));
 		SmartDashboard.putNumber("PDP 9", Robot.drive.pdp.getCurrent(9));
 
 		SmartDashboard.putNumber("Selector A", Robot.autonSelector.as_A.getValue());
 		SmartDashboard.putNumber("Selector B", Robot.autonSelector.as_B.getValue());
+		
 	}
 
 	public void initHardware() {
@@ -233,6 +233,7 @@ public class Drivetrain extends Subsystem {
 
 	public void MotionMagic(double leftpos, double rightpos, double leftaccel, double rightaccel, double leftspeed,
 			double rightspeed) {
+
 		robotDrive.setSafetyEnabled(false);
 
 		l_pos = leftpos * 4096 * 1;
@@ -242,7 +243,7 @@ public class Drivetrain extends Subsystem {
 		double rp_pos = Math.abs((double) (R1.getSelectedSensorPosition(0) / (4096 * rightpos)));
 
 		p_pos = (lp_pos + rp_pos) / 2;
-		
+
 		L1.configMotionAcceleration((int) (4096 * leftaccel), 10);
 		R1.configMotionAcceleration((int) (4096 * rightaccel), 10);
 
