@@ -5,12 +5,13 @@ import org.usfirst.frc.team3452.robot.commands.drive.SetModify;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
-import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
+import org.usfirst.frc.team3452.robot.commands.playback.Record;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.CONTROLLER;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator.EO;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
+import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -47,8 +48,10 @@ public class OI {
 		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
 
-		driverJoyY.whileHeld(new Climb(1));
+		driverJoyLB.whileHeld(new Record("Log", TASK.LOG));
 
+//		driverJoyY.whileHeld(new Climb(1));
+//		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 //		driverJoyLB.whenPressed(new CommandGroup() {
 //			{
 //				addParallel(new IntakeWhileDrive(.5,.8,.5));
@@ -56,7 +59,6 @@ public class OI {
 //			}
 //		});
 
-		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
 		driverJoyBack.whenPressed(new OverrideSet(EO.TOGGLE));
 
@@ -71,8 +73,8 @@ public class OI {
 		opJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
 		opJoyY.whileHeld(new IntakeManual(Intake.Speeds.SLOW));
 
-		opJoyBack.whileHeld(new IntakeSpin(.35, true));
-		opJoyStart.whileHeld(new IntakeSpin(.35, false));
+		opJoyBack.whileHeld(new IntakeSpin(Intake.Speeds.SPIN, true));
+		opJoyStart.whileHeld(new IntakeSpin(Intake.Speeds.SPIN, false));
 
 		//				DPAD
 		opDown.whenPressed(new ElevatorPosition(-15));

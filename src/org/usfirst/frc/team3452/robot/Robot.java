@@ -55,8 +55,8 @@ public class Robot extends TimedRobot {
 		Robot.elevator.initHardware();
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
-		Robot.lights.initHardware();
-		Robot.camera.initHardware();
+//		Robot.lights.initHardware();
+//		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 		//		Robot.playback.initHardware();
 
@@ -243,7 +243,6 @@ public class Robot extends TimedRobot {
 
 					//IF FMS PULSE RED, IF NO FMS RGB FADE
 					if (DriverStation.getInstance().isFMSAttached()) {
-
 						//			increase pulsing speed while not connected
 						Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 100));
 

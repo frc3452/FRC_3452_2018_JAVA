@@ -56,6 +56,7 @@ public class MiddleAuton extends CommandGroup {
 	private void switchL(AV version) {
 		switch (version) {
 		case CURRENT:
+
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
@@ -65,7 +66,7 @@ public class MiddleAuton extends CommandGroup {
 			//drive to switch
 			addSequential(new CommandGroup() {
 				{
-					addParallel(new ElevatorWhileDrive(3.5, .2));
+					addParallel(new ElevatorWhileDrive(3.5, .2/*.8*/));
 					addSequential(new EncoderFrom(4.2, 3.6, .6, .6, .7));
 				}
 			});
