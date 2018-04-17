@@ -11,7 +11,6 @@ import java.io.IOException;
 import org.usfirst.frc.team3452.robot.Robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Playback extends Subsystem {
@@ -118,7 +117,7 @@ public class Playback extends Subsystem {
 						+ "," + Robot.drive.R2.getOutputCurrent() 
 						+ "," + Robot.drive.R3.getOutputCurrent() 
 						+ "," + Robot.drive.R4.getOutputCurrent() 
-						+ "," + DriverStation.getInstance().getBatteryVoltage() + ","));
+						+ "," + DriverStation.getInstance().getBatteryVoltage()));
 				bw.write("\r\n");
 			}
 
