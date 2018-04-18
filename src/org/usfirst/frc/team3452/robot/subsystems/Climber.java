@@ -4,19 +4,19 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Climber extends Subsystem {
-	private Spark climber;
+	public Spark climb1;
 	public int climbCounter = 0;
 
 	public void control(double speed) {
-		climber.set(Math.abs(speed));
+		climb1.set(Math.abs(speed));
 	}
 
 	public void initHardware() {
-		climber = new Spark(Constants.CLIMBER_1);
-		climber.setInverted(Constants.CLIMBER_1_INVERT);
+		climb1 = new Spark(Constants.CLIMBER_1);
+		climb1.setInverted(Constants.CLIMBER_1_INVERT);
 
-		climber.setSubsystem("Climber");
-		climber.setName("Climber Motor");
+		climb1.setSubsystem("Climber");
+		climb1.setName("Climber Motor");
 	}
 
 	public void initDefaultCommand() {

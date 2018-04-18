@@ -1,6 +1,7 @@
 
 package org.usfirst.frc.team3452.robot;
 
+import org.usfirst.frc.team3452.robot.commands.auton.AmperageTesting;
 import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
 import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
@@ -143,9 +144,10 @@ public class Robot extends TimedRobot {
 			toLog = true;
 		}
 
+		//timer start
+		Robot.drive.timer.stop();
 		Robot.drive.timer.reset();
 		Robot.drive.timer.start();
-		//timer start
 
 		//keep overriding while game data bad or controller override not set
 		do {
@@ -188,6 +190,8 @@ public class Robot extends TimedRobot {
 
 		} while ((Robot.autonSelector.gameMsg == "NOT" && Robot.drive.timer.get() < 3)
 				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
+		
+		
 
 		//SET COLOR ACCORDING TO ALLIANCE
 		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
@@ -195,6 +199,9 @@ public class Robot extends TimedRobot {
 		else
 			Robot.lights.hsv(120, 1, .5);
 
+		
+		
+		//BRAKE MODE DURING AUTO
 		Robot.drive.brake(NeutralMode.Brake);
 
 		autonChooser();
@@ -223,8 +230,11 @@ public class Robot extends TimedRobot {
 		if (autonomousCommand != null) {
 			autonomousCommand.cancel();
 		}
-
+		
 		wasTele = true;
+
+//		Command amp = new AmperageTesting(new double[]{.02,-1,1}, true, true, true, false);
+//		amp.start();
 	}
 
 	@Override

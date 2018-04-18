@@ -2,6 +2,7 @@ package org.usfirst.frc.team3452.robot.commands.drive;
 
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.PDP;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -39,27 +40,6 @@ public class DriveToCube extends Command {
 	}
 
 	protected void execute() {
-		//		if (Robot.lights.centerX(0) == 3452)
-		//			m_centerX = 320;
-		//		else
-		//			m_centerX = Robot.lights.centerX(0);
-		//
-		//		if (Robot.lights.visionLength() > 0) {
-		//
-		//			if (m_centerX < 335 && m_centerX > 325) {
-		//				Robot.drive.Arcade(m_speed, 0);
-		//
-		//			} else if (m_centerX > 335) {
-		//
-		//				Robot.drive.Arcade(m_speed, .125 * 2.1);
-		//
-		//			} else if (m_centerX < 325) {
-		//
-		//				Robot.drive.Arcade(m_speed, -.125 * 2.1);
-		//
-		//			}
-		//		} else {
-		//		}
 		Robot.drive.Arcade(m_speed, 0);
 
 		Robot.intake.manual(Intake.Speeds.INTAKE);
@@ -68,13 +48,13 @@ public class DriveToCube extends Command {
 				|| ((double) Robot.drive.R1.getSelectedSensorPosition(0) / 4096) - i_rpos > m_rotation)
 			m_complete = true;
 		
-		if (Robot.drive.pdp.getCurrent(9) > 12 || Robot.drive.pdp.getCurrent(8) > 12)
+		if (Robot.drive.pdp.getCurrent(PDP.INTAKE_L) > 12 || Robot.drive.pdp.getCurrent(PDP.INTAKE_R) > 12)
 			flag_1 = true;
 
-		if (flag_1 && (Robot.drive.pdp.getCurrent(9) < 7 || Robot.drive.pdp.getCurrent(8) < 7))
+		if (flag_1 && (Robot.drive.pdp.getCurrent(PDP.INTAKE_L) < 7 || Robot.drive.pdp.getCurrent(PDP.INTAKE_R) < 7))
 			flag_2 = true;
 
-		if (flag_2 && (Robot.drive.pdp.getCurrent(9) > 12 || Robot.drive.pdp.getCurrent(8) > 12)) {
+		if (flag_2 && (Robot.drive.pdp.getCurrent(PDP.INTAKE_L) > 12 || Robot.drive.pdp.getCurrent(PDP.INTAKE_R) > 12)) {
 
 			if (!timeoutSet) {
 				setTimeout(timer.get() + .4);

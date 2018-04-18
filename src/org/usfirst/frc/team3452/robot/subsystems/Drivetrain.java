@@ -55,9 +55,6 @@ public class Drivetrain extends Subsystem {
 
 		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
 
-		SmartDashboard.putNumber("PDP 8", Robot.drive.pdp.getCurrent(8));
-		SmartDashboard.putNumber("PDP 9", Robot.drive.pdp.getCurrent(9));
-		
 		SmartDashboard.putNumber("Selector A", Robot.autonSelector.as_A.getValue());
 		SmartDashboard.putNumber("Selector B", Robot.autonSelector.as_B.getValue());
 		
@@ -323,6 +320,20 @@ public class Drivetrain extends Subsystem {
 		R1.setSelectedSensorPosition(0, 0, 10);
 	}
 
+	public static class PDP {
+		public final static int DRIVE_L_1 = 0, DRIVE_L_2 = 1, DRIVE_L_3 = 5, DRIVE_L_4 = 4;
+		public final static int DRIVE_R_1 = 15, DRIVE_R_2 = 14, DRIVE_R_3 = 11, DRIVE_R_4 = 10;
+		
+		public final static int ELEVATOR_1 = 12;
+		public final static int ELEVATOR_2 = 13;
+		
+		public final static int INTAKE_L = 9;
+		public final static int INTAKE_R = 8;
+		
+		public final static int CLIMBER_1 = 3;
+		public final static int CLIMBER_2 = 2;
+	}
+	
 	public static class Constants {
 		public final static int DRIVE_L_1 = 1, DRIVE_L_2 = 2, DRIVE_L_3 = 3, DRIVE_L_4 = 4;
 		public final static int DRIVE_R_1 = 5, DRIVE_R_2 = 6, DRIVE_R_3 = 7, DRIVE_R_4 = 8;
@@ -332,7 +343,6 @@ public class Drivetrain extends Subsystem {
 		public final static int DRIVE_30_AMP_TRIGGER = 45, DRIVE_30_AMP_LIMIT = 25, DRIVE_30_AMP_TIME = 3000;
 
 		public final static double DRIVE_RAMP_TIME = 0.125;
-
 	}
 
 	public static enum CONTROLLER {

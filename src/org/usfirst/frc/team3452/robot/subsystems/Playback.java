@@ -9,26 +9,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.PDP;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Playback extends Subsystem {
 
-	File f;
-	BufferedWriter bw;
-	FileWriter fw;
+	private File f;
+	private BufferedWriter bw;
+	private FileWriter fw;
 
-	FileReader fr;
-	BufferedReader br;
+	private FileReader fr;
+	private BufferedReader br;
 
 	//	 TIME, LEFT VEL, RIGHT VEL
-	double RP1A[] = new double[2]; // = new double[900];
-	double RP1B[] = new double[2]; // = new double[900];
-	double RP1C[] = new double[2]; // = new double[900];
+	private double RP1A[] = new double[2]; // = new double[900];
+	private double RP1B[] = new double[2]; // = new double[900];
+	private double RP1C[] = new double[2]; // = new double[900];
 
-	String prevDateTime;
-	boolean hasPrintedLogError = false;
+	private String dateTime, timeString;
+	private double n_timeString, p_timeString;
+
+	private boolean hasPrintedLogFailed = false;
 
 	public void initHardware() {
 	}
@@ -41,7 +44,6 @@ public class Playback extends Subsystem {
 			//loop through each line
 			while ((st = br.readLine()) != null) {
 
-				
 				//populate time
 				RP1A[posInFile] = Double.parseDouble(st.substring(0, 8));
 
@@ -56,12 +58,11 @@ public class Playback extends Subsystem {
 					if (st.charAt(i) == ',')
 						comma1 = i;
 				}
-				
-				
+
 				RP1B[posInFile] = Double.parseDouble(st.substring(comma1 + 1, comma2 - 1));
 				RP1C[posInFile] = Double.parseDouble(st.substring(comma2 + 1, st.length()));
 				//fill variables
-				
+
 				comma1 = 1000;
 				comma2 = 1000;
 				posInFile++;
@@ -75,7 +76,7 @@ public class Playback extends Subsystem {
 		try {
 			for (int i = 0; i < RP1A.length; i++)
 				System.out.println("Time:" + RP1A[i] + "\t\tL: " + RP1B[i] + "\t\tR: " + RP1C[i]);
-			
+
 		} catch (Exception e) {
 			System.out.println("Printing failed!");
 		}
@@ -110,30 +111,80 @@ public class Playback extends Subsystem {
 	@SuppressWarnings("deprecation")
 	private void writeToLog(boolean startup) {
 		try {
+			
+			//ON STARTUP, PRINT NAMES
 			if (startup) {
-				bw.write(
-						"Time, L1-AMP, L2-AMP,L3-AMP,L4-AMP,R1-AMP,R2-AMP,R3-AMP,R4-AMP,ELEV_1-AMP,ELEV_2-AMP,INTAKE_L-AMP,INTAKE_R-AMP,BATTERY");
+				bw.write("Time," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP," + "L1-V,L2-V,L3-V,L4-V,"
+						+ "R1-AMP,R2-AMP,R3-AMP,R4-AMP," + "R1-V,R2-V,R3-V,R4-V," + "Elev_1-AMP,Elev_2-AMP,"
+						+ "Elev_1-V,Elev_2-V," + "Intake_L-AMP,Intake_R-AMP," + "Climber_1-AMP,Climber_2-AMP,"
+						+ "BATTERY");
 				bw.write("\r\n");
+				
 			} else {
-				String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 50));
+
+				//TIME VALUE (ROUNDED)
+				timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 20));
 				timeString = timeString.replace(' ', '0');
 
-				bw.write(timeString);
-				bw.write(",");
-				bw.write(String.valueOf(Robot.drive.L1.getOutputCurrent() + "," + Robot.drive.L2.getOutputCurrent()
-						+ "," + Robot.drive.L3.getOutputCurrent() + "," + Robot.drive.L4.getOutputCurrent() + ","
-						+ Robot.drive.R1.getOutputCurrent() + "," + Robot.drive.R2.getOutputCurrent() + ","
-						+ Robot.drive.R3.getOutputCurrent() + "," + Robot.drive.R4.getOutputCurrent() + ","
-						+ Robot.elevator.Elev_1.getOutputCurrent() + "," + Robot.elevator.Elev_2.getOutputCurrent()
-						+ "," + Robot.drive.pdp.getCurrent(8) + "," + Robot.drive.pdp.getCurrent(9) + ","
-						+ DriverStation.getInstance().getBatteryVoltage()));
-				bw.write("\r\n");
+				n_timeString = Double.valueOf(timeString);
+
+				//ONLY PRINT EVERY ROUNDING
+				if (n_timeString != p_timeString) {
+
+					//PRINT VALUES
+					bw.write(timeString + ",");
+					bw.write(String.valueOf(
+							//LEFT CURRENT
+							Robot.drive.L1.getOutputCurrent() + "," + Robot.drive.L2.getOutputCurrent() + ","
+									+ Robot.drive.L3.getOutputCurrent() + "," + Robot.drive.L4.getOutputCurrent() + ","
+
+									//LEFT VOLTAGE
+									+ Robot.drive.L1.getMotorOutputVoltage() + ","
+									+ Robot.drive.L2.getMotorOutputVoltage() + ","
+									+ Robot.drive.L3.getMotorOutputVoltage() + ","
+									+ Robot.drive.L4.getMotorOutputVoltage() + ","
+
+									//RIGHT CURRENT
+									+ Robot.drive.R1.getOutputCurrent() + "," + Robot.drive.R2.getOutputCurrent() + ","
+									+ Robot.drive.R3.getOutputCurrent() + "," + Robot.drive.R4.getOutputCurrent() + ","
+
+									//RIGHT VOLTAGE
+									+ Robot.drive.R1.getMotorOutputVoltage() + ","
+									+ Robot.drive.R2.getMotorOutputVoltage() + ","
+									+ Robot.drive.R3.getMotorOutputVoltage() + ","
+									+ Robot.drive.R4.getMotorOutputVoltage() + ","
+
+									//ELEVATOR CURRENT
+									+ Robot.elevator.Elev_1.getOutputCurrent() + ","
+									+ Robot.elevator.Elev_2.getOutputCurrent() + ","
+
+									//ELEVATOR VOLTAGE
+									+ Robot.elevator.Elev_1.getMotorOutputVoltage() + ","
+									+ Robot.elevator.Elev_2.getMotorOutputVoltage() + ","
+
+									//INTAKE PDP SLOTS
+									+ Robot.drive.pdp.getCurrent(PDP.INTAKE_L) + ","
+									+ Robot.drive.pdp.getCurrent(PDP.INTAKE_R) + ","
+
+									//CLIMBER PDP SLOTS
+									+ Robot.drive.pdp.getCurrent(PDP.CLIMBER_1) + ","
+									+ Robot.drive.pdp.getCurrent(PDP.CLIMBER_2) + ","
+
+									//BATTERY
+									+ DriverStation.getInstance().getBatteryVoltage()));
+
+					bw.write("\r\n");
+
+				} else {
+					//PREVENT DUPLICATE PRINTS
+				}
+				p_timeString = n_timeString;
 			}
 
 		} catch (Exception e) {
-			if (!hasPrintedLogError) {
+			if (!hasPrintedLogFailed) {
 				System.out.println("Log failed!");
-				hasPrintedLogError = true;
+				hasPrintedLogFailed = true;
 			}
 		}
 	}
@@ -194,7 +245,6 @@ public class Playback extends Subsystem {
 	}
 
 	public void control(String name, boolean usb, TASK task, STATE state) {
-
 		switch (state) {
 		case STARTUP:
 
@@ -221,9 +271,12 @@ public class Playback extends Subsystem {
 				Robot.drive.timer.reset();
 				Robot.drive.timer.start();
 
-				prevDateTime = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-				System.out.println("Opening LOG: " + prevDateTime + ".csv");
-				createFile((DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + prevDateTime, fileState.WRITE, usb);
+				dateTime = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+				System.out.println("Opening LOG: " + dateTime + ".csv");
+
+				createFile((DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + dateTime, fileState.WRITE,
+						usb);
+
 				writeToLog(true);
 
 				break;
@@ -261,7 +314,7 @@ public class Playback extends Subsystem {
 				closeFile(fileState.READ);
 				break;
 			case LOG:
-				System.out.println("Closing LOG: " + prevDateTime + ".csv");
+				System.out.println("Closing LOG: " + dateTime + ".csv");
 				closeFile(fileState.WRITE);
 				break;
 			case PLAY:
