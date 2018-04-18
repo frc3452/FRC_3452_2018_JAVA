@@ -3,10 +3,10 @@ package org.usfirst.frc.team3452.robot.subsystems;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.usfirst.frc.team3452.robot.Robot;
 
@@ -23,9 +23,12 @@ public class Playback extends Subsystem {
 	BufferedReader br;
 
 	//	 TIME, LEFT VEL, RIGHT VEL
-	double RP1A[] = new double[900]; // = new double[900];
-	double RP1B[] = new double[900]; // = new double[900];
-	double RP1C[] = new double[900]; // = new double[900];
+	double RP1A[] = new double[2]; // = new double[900];
+	double RP1B[] = new double[2]; // = new double[900];
+	double RP1C[] = new double[2]; // = new double[900];
+
+	String prevDateTime;
+	boolean hasPrintedLogError = false;
 
 	public void initHardware() {
 	}
@@ -59,16 +62,19 @@ public class Playback extends Subsystem {
 				comma2 = 1000;
 				posInFile++;
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			System.out.println("Parse failed!");
 		}
-
 	}
 
 	private void printTimes() {
-		for (int i = 0; i < RP1A.length; i++)
-			System.out.println("Time:" + RP1A[i] + "\t\tL: " + RP1B[i] + "\t\tR: " + RP1C[i]);
-
+		try {
+			for (int i = 0; i < RP1A.length; i++)
+				System.out.println("Time:" + RP1A[i] + "\t\tL: " + RP1B[i] + "\t\tR: " + RP1C[i]);
+			
+		} catch (Exception e) {
+			System.out.println("Printing failed!");
+		}
 	}
 
 	private void writeToFile() {
@@ -92,16 +98,17 @@ public class Playback extends Subsystem {
 			bw.write(String.valueOf(right));
 			bw.write("\r\n");
 
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			System.out.println("Mapping failed!");
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void writeToLog(boolean startup) {
 		try {
 			if (startup) {
 				bw.write(
-						"Time, L1-AMPERAGE, L2-AMPERAGE,L3-AMPERAGE,L4-AMPERAGE,R1-AMPERAGE,R2-AMPERAGE,R3-AMPERAGE,R4-AMPERAGE, BATTERY");
+						"Time, L1-AMP, L2-AMP,L3-AMP,L4-AMP,R1-AMP,R2-AMP,R3-AMP,R4-AMP,ELEV_1-AMP,ELEV_2-AMP,INTAKE_L-AMP,INTAKE_R-AMP,BATTERY");
 				bw.write("\r\n");
 			} else {
 				String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 50));
@@ -109,41 +116,45 @@ public class Playback extends Subsystem {
 
 				bw.write(timeString);
 				bw.write(",");
-				bw.write(String.valueOf(Robot.drive.L1.getOutputCurrent() 
-						+ "," + Robot.drive.L2.getOutputCurrent()
-						+ "," + Robot.drive.L3.getOutputCurrent() 
-						+ "," + Robot.drive.L4.getOutputCurrent() 
-						+ "," + Robot.drive.R1.getOutputCurrent() 
-						+ "," + Robot.drive.R2.getOutputCurrent() 
-						+ "," + Robot.drive.R3.getOutputCurrent() 
-						+ "," + Robot.drive.R4.getOutputCurrent() 
-						+ "," + DriverStation.getInstance().getBatteryVoltage()));
+				bw.write(String.valueOf(Robot.drive.L1.getOutputCurrent() + "," + Robot.drive.L2.getOutputCurrent()
+						+ "," + Robot.drive.L3.getOutputCurrent() + "," + Robot.drive.L4.getOutputCurrent() + ","
+						+ Robot.drive.R1.getOutputCurrent() + "," + Robot.drive.R2.getOutputCurrent() + ","
+						+ Robot.drive.R3.getOutputCurrent() + "," + Robot.drive.R4.getOutputCurrent() + ","
+						+ Robot.elevator.Elev_1.getOutputCurrent() + "," + Robot.elevator.Elev_2.getOutputCurrent()
+						+ "," + Robot.drive.pdp.getCurrent(8) + "," + Robot.drive.pdp.getCurrent(9) + ","
+						+ DriverStation.getInstance().getBatteryVoltage()));
 				bw.write("\r\n");
 			}
 
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			if (!hasPrintedLogError) {
+				System.out.println("Log failed!");
+				hasPrintedLogError = true;
+			}
 		}
 	}
 
-	private void createFile(String fileName, fileState readwrite) {
-		switch (readwrite) {
-		case READ:
-			//SET UP FILE READING
-			try {
-				f = new File("/home/lvuser/" + fileName + ".csv");
+	private void createFile(String fileName, fileState readwrite, boolean usb) {
+		try {
+			switch (readwrite) {
+			case READ:
+				//SET UP FILE READING
+				if (usb)
+					f = new File("/u/" + fileName + ".csv");
+				else
+					f = new File("/home/lvuser/" + fileName + ".csv");
+
 				fr = new FileReader(f);
 				br = new BufferedReader(fr);
 
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-			break;
-		case WRITE:
+				break;
+			case WRITE:
 
-			//SETUP FILE WRITING
-			try {
-				f = new File("/home/lvuser/" + fileName + ".csv");
+				//SETUP FILE WRITING
+				if (usb)
+					f = new File("/u/" + fileName + ".csv");
+				else
+					f = new File("/home/lvuser/" + fileName + ".csv");
 
 				//if it isn't there, create it
 				if (!f.exists()) {
@@ -152,36 +163,33 @@ public class Playback extends Subsystem {
 
 				//create file writing vars
 				fw = new FileWriter(f);
-			} catch (IOException e) {
-				e.printStackTrace();
+				bw = new BufferedWriter(fw);
 			}
-			bw = new BufferedWriter(fw);
+		} catch (Exception e) {
+			System.out.println("File " + readwrite + " from " + (usb ? "USB" : "RIO") + "failed!");
 		}
 	}
 
 	private void closeFile(fileState readwrite) {
-		switch (readwrite) {
-		case READ:
-			//CLOSE READING
-			try {
+		try {
+			switch (readwrite) {
+			case READ:
+				//CLOSE READING
 				br.close();
 				fr.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			break;
-		case WRITE:
-			//CLOSE WRITING
-			try {
+				break;
+			case WRITE:
+				//CLOSE WRITING
 				bw.close();
 				fw.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+				break;
 			}
+		} catch (Exception e) {
+			System.out.println("File closing failed!");
 		}
 	}
 
-	public void playbackControl(String name, TASK task, STATE state) {
+	public void control(String name, boolean usb, TASK task, STATE state) {
 
 		switch (state) {
 		case STARTUP:
@@ -194,12 +202,12 @@ public class Playback extends Subsystem {
 				Robot.drive.timer.start();
 
 				System.out.println("Opening RECORD: " + name + ".csv");
-				createFile(name, fileState.WRITE);
+				createFile(name, fileState.WRITE, usb);
 				break;
 
 			case PARSE:
 				System.out.println("Opening PARSE: " + name + ".csv");
-				createFile(name, fileState.READ);
+				createFile(name, fileState.READ, usb);
 
 				parseFile();
 				printTimes();
@@ -209,8 +217,9 @@ public class Playback extends Subsystem {
 				Robot.drive.timer.reset();
 				Robot.drive.timer.start();
 
-				System.out.println("Opening LOG: " + name + ".csv");
-				createFile(name, fileState.WRITE);
+				prevDateTime = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+				System.out.println("Opening LOG: " + prevDateTime + ".csv");
+				createFile((DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + prevDateTime, fileState.WRITE, usb);
 				writeToLog(true);
 
 				break;
@@ -248,7 +257,7 @@ public class Playback extends Subsystem {
 				closeFile(fileState.READ);
 				break;
 			case LOG:
-				System.out.println("Closing LOG: " + name + ".csv");
+				System.out.println("Closing LOG: " + prevDateTime + ".csv");
 				closeFile(fileState.WRITE);
 				break;
 			case PLAY:

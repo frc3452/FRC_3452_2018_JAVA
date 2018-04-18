@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
@@ -58,7 +57,7 @@ public class Drivetrain extends Subsystem {
 
 		SmartDashboard.putNumber("PDP 8", Robot.drive.pdp.getCurrent(8));
 		SmartDashboard.putNumber("PDP 9", Robot.drive.pdp.getCurrent(9));
-
+		
 		SmartDashboard.putNumber("Selector A", Robot.autonSelector.as_A.getValue());
 		SmartDashboard.putNumber("Selector B", Robot.autonSelector.as_B.getValue());
 		

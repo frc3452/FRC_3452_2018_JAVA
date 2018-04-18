@@ -16,6 +16,8 @@ import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
 import org.usfirst.frc.team3452.robot.subsystems.Playback;
+import org.usfirst.frc.team3452.robot.subsystems.Playback.STATE;
+import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -42,8 +44,9 @@ public class Robot extends TimedRobot {
 	Command autoCommand[] = new Command[41];
 	Command defaultCommand = null;
 
-	//flag for teleop 
+	//flags
 	boolean wasTele = false, readyForMatch = false, wasTest = false;
+	boolean toLog = false, logToUsb = true;
 
 	@Override
 	public void robotInit() {
@@ -55,8 +58,8 @@ public class Robot extends TimedRobot {
 		Robot.elevator.initHardware();
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
-//		Robot.lights.initHardware();
-//		Robot.camera.initHardware();
+		//		Robot.lights.initHardware();
+		//		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 		//		Robot.playback.initHardware();
 
@@ -102,11 +105,20 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic() {
 		handleLEDs();
 		Robot.drive.LoggerUpdate();
+
+		//LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
+		//LOOPED HERE
+		if (toLog)
+			Robot.playback.control("Log", logToUsb, TASK.LOG, STATE.RUNTIME);
 	}
 
 	@Override
 	public void disabledInit() {
-		//first time enabled set to coast, after tele brake
+		if (toLog) {
+			toLog = false;
+			Robot.playback.control("Log", logToUsb, TASK.LOG, STATE.FINISH);
+		}
+
 		Robot.drive.brake((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
 		//		Robot.drive.brake(NeutralMode.Coast);
 	}
@@ -126,6 +138,11 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
+		if (!toLog) {
+			Robot.playback.control("Log", logToUsb, TASK.LOG, STATE.STARTUP);
+			toLog = true;
+		}
+
 		Robot.drive.timer.reset();
 		Robot.drive.timer.start();
 		//timer start
@@ -194,6 +211,10 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
+		if (!toLog) {
+			Robot.playback.control("Log", logToUsb, TASK.LOG, STATE.STARTUP);
+			toLog = true;
+		}
 		//GREEN LOW BRIGHTNESS
 		Robot.lights.hsv(250, 1, .5);
 
@@ -214,6 +235,11 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testInit() {
+		if (!toLog) {
+			Robot.playback.control("Log", logToUsb, TASK.LOG, STATE.STARTUP);
+			toLog = true;
+		}
+
 		wasTest = true;
 	}
 

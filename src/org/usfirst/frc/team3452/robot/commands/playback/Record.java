@@ -10,18 +10,20 @@ public class Record extends Command {
 
 	private TASK m_task;
 	private String m_name;
+	private boolean m_usb;
 
-	public Record(String name, TASK task) {
+	public Record(String name, boolean usb, TASK task) {
 		m_task = task;
 		m_name = name;
+		m_usb = usb;
 	}
 
 	protected void initialize() {
-		Robot.playback.playbackControl(m_name, m_task, STATE.STARTUP);
+		Robot.playback.control(m_name, m_usb, m_task, STATE.STARTUP);
 	}
 
 	protected void execute() {
-		Robot.playback.playbackControl(m_name, m_task, STATE.RUNTIME);
+		Robot.playback.control(m_name, m_usb, m_task, STATE.RUNTIME);
 	}
 
 	protected boolean isFinished() {
@@ -29,7 +31,7 @@ public class Record extends Command {
 	}
 
 	protected void end() {
-		Robot.playback.playbackControl(m_name, m_task, STATE.FINISH);
+		Robot.playback.control(m_name, m_usb, m_task, STATE.FINISH);
 	}
 
 	protected void interrupted() {

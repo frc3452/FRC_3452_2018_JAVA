@@ -13,6 +13,7 @@ public class DriveTele extends Command {
 	}
 
 	protected void initialize() {
+		
 	}
 
 	protected void execute() {
@@ -22,6 +23,8 @@ public class DriveTele extends Command {
 			OI.rumble(CONTROLLER.DRIVER, .45);
 		else
 			OI.rumble(CONTROLLER.DRIVER, 0);
+		
+		
 	}
 
 	protected boolean isFinished() {
@@ -31,6 +34,7 @@ public class DriveTele extends Command {
 	protected void end() {
 		OI.rumble(CONTROLLER.DRIVER, 0);
 		Robot.drive.Arcade(0,0);
+		
 	}
 
 	protected void interrupted() {
