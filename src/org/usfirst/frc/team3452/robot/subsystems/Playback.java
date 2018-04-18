@@ -41,23 +41,27 @@ public class Playback extends Subsystem {
 			//loop through each line
 			while ((st = br.readLine()) != null) {
 
+				
 				//populate time
 				RP1A[posInFile] = Double.parseDouble(st.substring(0, 8));
 
-				//populate left velocity
+				//find commas
 				for (int i = 7; i < st.length(); i++) {
 					if (st.charAt(i) == ',')
 						comma2 = i;
 				}
 
+				//find commas
 				for (int i = comma2; i > 0; i--) {
 					if (st.charAt(i) == ',')
 						comma1 = i;
 				}
-
+				
+				
 				RP1B[posInFile] = Double.parseDouble(st.substring(comma1 + 1, comma2 - 1));
 				RP1C[posInFile] = Double.parseDouble(st.substring(comma2 + 1, st.length()));
-
+				//fill variables
+				
 				comma1 = 1000;
 				comma2 = 1000;
 				posInFile++;
