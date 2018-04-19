@@ -43,8 +43,8 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putNumber("L1", (double) L1.getSelectedSensorPosition(0) / 4096);
 		SmartDashboard.putNumber("R1", (double) -R1.getSelectedSensorPosition(0) / 4096);
 
-		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 1);
-		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 1);
+		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 4096);
+		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 4096);
 
 		SmartDashboard.putNumber("% Complete", p_pos);
 
@@ -99,16 +99,18 @@ public class Drivetrain extends Subsystem {
 		L1.setSensorPhase(true);
 		R1.setSensorPhase(true);
 
-		L1.config_kF(0, 0, 10); // @ 100%, 4240u/100ms = ((1 * 1023) / 4300) = .2379
+		L1.config_kF(0, 0, 10);
 		L1.config_kP(0, 0.425, 10);
-		L1.config_kI(0, 0.0000004, 10); //.0000005
+		L1.config_kI(0, 0.0000004, 10);
 		L1.config_kD(0, 4.25, 10);
 
 		R1.config_kF(0, 0, 10);
 		R1.config_kP(0, 0.8, 10); //.8
 		R1.config_kI(0, 0.0000004, 10);
 		R1.config_kD(0, 4.25, 10);
+//		L1.config_kP(0, 0.0025, 10); 
 
+		
 		// NOMINAL OUTPUT
 		L1.configNominalOutputForward(0, 10);
 		L1.configNominalOutputReverse(0, 10);
@@ -249,7 +251,7 @@ public class Drivetrain extends Subsystem {
 		L1.set(ControlMode.MotionMagic, l_pos);
 		R1.set(ControlMode.MotionMagic, r_pos);
 	}
-
+	
 	public void encoder(double leftpos, double rightpos, double leftspeed, double rightspeed) {
 		robotDrive.setSafetyEnabled(false);
 

@@ -4,9 +4,6 @@ import org.usfirst.frc.team3452.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- *
- */
 public class SmoothMooth extends Command {
 
 	private double m_left, m_right, m_accel, g_accel, m_speed, straight_percent, m_heading, k;
@@ -37,7 +34,7 @@ public class SmoothMooth extends Command {
 
 	protected void execute() {
 		c_p = Robot.drive.p_pos;
-		
+
 		//after half way through, adjust acceleration for side traveling farther to slow down quicker
 		if (c_p > .5) {
 			if (m_left > m_right) {
@@ -53,7 +50,7 @@ public class SmoothMooth extends Command {
 
 		//keep straight until turn at _ percent
 		if (c_p < straight_percent) {
-			
+
 			if (c_gyro < m_heading + .4 && c_gyro > m_heading - .4) {
 				l_adjust = 1;
 				r_adjust = 1;

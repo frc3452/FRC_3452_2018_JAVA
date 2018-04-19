@@ -190,8 +190,6 @@ public class Robot extends TimedRobot {
 
 		} while ((Robot.autonSelector.gameMsg == "NOT" && Robot.drive.timer.get() < 3)
 				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
-		
-		
 
 		//SET COLOR ACCORDING TO ALLIANCE
 		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
@@ -199,8 +197,6 @@ public class Robot extends TimedRobot {
 		else
 			Robot.lights.hsv(120, 1, .5);
 
-		
-		
 		//BRAKE MODE DURING AUTO
 		Robot.drive.brake(NeutralMode.Brake);
 
@@ -230,11 +226,11 @@ public class Robot extends TimedRobot {
 		if (autonomousCommand != null) {
 			autonomousCommand.cancel();
 		}
-		
+
 		wasTele = true;
 
-//		Command amp = new AmperageTesting(new double[]{.02,-1,1}, true, true, true, false);
-//		amp.start();
+		Command amp = new AmperageTesting(.04, true, true, true, false);
+		amp.start();
 	}
 
 	@Override

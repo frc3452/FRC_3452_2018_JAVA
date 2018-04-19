@@ -111,15 +111,15 @@ public class Playback extends Subsystem {
 	@SuppressWarnings("deprecation")
 	private void writeToLog(boolean startup) {
 		try {
-			
+
 			//ON STARTUP, PRINT NAMES
 			if (startup) {
-				bw.write("Time," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP," + "L1-V,L2-V,L3-V,L4-V,"
+				bw.write("Time," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP," + "L1-V,L2-V,L3-V,L4-V,"
 						+ "R1-AMP,R2-AMP,R3-AMP,R4-AMP," + "R1-V,R2-V,R3-V,R4-V," + "Elev_1-AMP,Elev_2-AMP,"
 						+ "Elev_1-V,Elev_2-V," + "Intake_L-AMP,Intake_R-AMP," + "Climber_1-AMP,Climber_2-AMP,"
 						+ "BATTERY");
 				bw.write("\r\n");
-				
+
 			} else {
 
 				//TIME VALUE (ROUNDED)
@@ -134,8 +134,13 @@ public class Playback extends Subsystem {
 					//PRINT VALUES
 					bw.write(timeString + ",");
 					bw.write(String.valueOf(
-							//LEFT CURRENT
-							Robot.drive.L1.getOutputCurrent() + "," + Robot.drive.L2.getOutputCurrent() + ","
+
+							//SPEED
+							((double) Robot.drive.L1.getSelectedSensorVelocity(0) / 4096) + ","
+									+ ((double) -Robot.drive.R1.getSelectedSensorVelocity(0) / 4096) + "," +
+
+									//LEFT CURRENT
+									Robot.drive.L1.getOutputCurrent() + "," + Robot.drive.L2.getOutputCurrent() + ","
 									+ Robot.drive.L3.getOutputCurrent() + "," + Robot.drive.L4.getOutputCurrent() + ","
 
 									//LEFT VOLTAGE
