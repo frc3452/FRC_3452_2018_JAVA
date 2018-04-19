@@ -112,11 +112,11 @@ public class Elevator extends Subsystem {
 
 			if (pos < 8500)
 				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_1;
-			else if (pos < 15000 && pos > 8500)
+			else if (pos < 12000 && pos > 8500)
 				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_2;
-			else if (pos < 15000 && pos > 19000)
+			else if (pos < 15000 && pos > 12000)
 				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_3;
-			else if (pos < 25000 && pos > 19000)
+			else if (pos < 25000 && pos > 15000)
 				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_4;
 			else if (pos > 25000)
 				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_5;
