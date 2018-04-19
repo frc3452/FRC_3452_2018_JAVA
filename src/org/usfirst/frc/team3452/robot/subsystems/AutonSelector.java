@@ -199,27 +199,27 @@ public class AutonSelector extends Subsystem {
 		public static final int AUTO_V = 15;
 
 		//TODO COMP|PRACTICE
-		public static final int AUTO_1 = 2661;
-		public static final int AUTO_2 = 2963;
-		public static final int AUTO_3 = 3150;
-		public static final int AUTO_4 = 3280;
-		public static final int AUTO_5 = 3885;
-		public static final int AUTO_6 = 3463;
-		public static final int AUTO_7 = 3521;
-		public static final int AUTO_8 = 3612;
-		public static final int AUTO_9 = 3673;
-		public static final int AUTO_10 = 3734;
+		//		public static final int AUTO_1 = 2661;
+		//		public static final int AUTO_2 = 2963;
+		//		public static final int AUTO_3 = 3150;
+		//		public static final int AUTO_4 = 3280;
+		//		public static final int AUTO_5 = 3885;
+		//		public static final int AUTO_6 = 3463;
+		//		public static final int AUTO_7 = 3521;
+		//		public static final int AUTO_8 = 3612;
+		//		public static final int AUTO_9 = 3673;
+		//		public static final int AUTO_10 = 3734;
 
-		//		public static final int AUTO_1 = 2681;
-		//		public static final int AUTO_2 = 2991;
-		//		public static final int AUTO_3 = 3184;
-		//		public static final int AUTO_4 = 3321;
-		//		public static final int AUTO_5 = 3426;
-		//		public static final int AUTO_6 = 3507;
-		//		public static final int AUTO_7 = 3565;
-		//		public static final int AUTO_8 = 3658;
-		//		public static final int AUTO_9 = 3721;
-		//		public static final int AUTO_10 = 3781;
+		public static final int AUTO_1 = 2681;
+		public static final int AUTO_2 = 2991;
+		public static final int AUTO_3 = 3184;
+		public static final int AUTO_4 = 3321;
+		public static final int AUTO_5 = 3426;
+		public static final int AUTO_6 = 3507;
+		public static final int AUTO_7 = 3565;
+		public static final int AUTO_8 = 3658;
+		public static final int AUTO_9 = 3721;
+		public static final int AUTO_10 = 3781;
 
 		public static final int AUTO_1_L = AUTO_1 - AUTO_V;
 		public static final int AUTO_1_H = AUTO_1 + AUTO_V;

@@ -73,7 +73,7 @@ public class MiddleAuton extends CommandGroup {
 
 			//hit switch
 			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.45));
+			addSequential(new DriveToStop(.55)); //was .45
 
 			addSequential(new IntakeTime(.5, .5)); //first place
 
@@ -95,8 +95,7 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new CommandGroup() {
 				{
 					addSequential(new EncoderDrive(.45, -.4, .5, .5, .6)); //turn to switch
-//					addSequential(new GyroPos(35, .42, 1));
-					addSequential(new DriveToCube(.45, 5));
+					addSequential(new DriveToCube(.58, 5)); //was .45
 					addParallel(new IntakeTime(-.2, .75));
 					addSequential(new EncoderDrive(0, 0, .6, .6, .65));
 				}
@@ -105,14 +104,14 @@ public class MiddleAuton extends CommandGroup {
 			//DRIVE TO SWITCH
 			addSequential(new CommandGroup() {
 				{
-					addSequential(new ElevatorWhileDrive(3.5, .6));
+					addParallel(new ElevatorWhileDrive(3.5, .6));
 					addSequential(new EncoderFrom(3, 3, .5, .5, .6));
 				}
 			});
 
 			//hit switch
 			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.45));
+			addSequential(new DriveToStop(.55)); //was .45
 
 			addSequential(new IntakeTime(.5, .5)); //second place
 
@@ -145,7 +144,7 @@ public class MiddleAuton extends CommandGroup {
 			});
 
 			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.45));
+			addSequential(new DriveToStop(.55));
 
 			addSequential(new IntakeTime(.5, .5)); //PLACE 1
 
@@ -168,8 +167,7 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new CommandGroup() {
 				{
 					addSequential(new EncoderFrom(-.4, .35, .5, .5, .6)); //turn to switch
-//					addSequential(new GyroPos(325, .42, 1));
-					addSequential(new DriveToCube(.45, 5));
+					addSequential(new DriveToCube(.58, 5));
 					addParallel(new IntakeTime(-.5, .75));
 					addSequential(new EncoderDrive(0, 0, .6, .6, .65));
 				}
@@ -185,7 +183,7 @@ public class MiddleAuton extends CommandGroup {
 
 			//hit switch
 			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.45));
+			addSequential(new DriveToStop(.55));
 
 			addSequential(new IntakeTime(.5, 1.5)); //second place
 

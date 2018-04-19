@@ -57,7 +57,7 @@ public class Drivetrain extends Subsystem {
 
 		SmartDashboard.putNumber("Selector A", Robot.autonSelector.as_A.getValue());
 		SmartDashboard.putNumber("Selector B", Robot.autonSelector.as_B.getValue());
-		
+
 	}
 
 	public void initHardware() {

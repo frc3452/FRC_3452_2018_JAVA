@@ -1,7 +1,6 @@
 
 package org.usfirst.frc.team3452.robot;
 
-import org.usfirst.frc.team3452.robot.commands.auton.AmperageTesting;
 import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
 import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
@@ -218,6 +217,7 @@ public class Robot extends TimedRobot {
 			Robot.playback.control("Log", logToUsb, TASK.LOG, STATE.STARTUP);
 			toLog = true;
 		}
+		
 		//GREEN LOW BRIGHTNESS
 		Robot.lights.hsv(250, 1, .5);
 
@@ -229,8 +229,8 @@ public class Robot extends TimedRobot {
 
 		wasTele = true;
 
-		Command amp = new AmperageTesting(.04, true, true, true, false);
-		amp.start();
+//		Command amp = new AmperageTesting(.04, true, true, true, false);
+//		amp.start();
 	}
 
 	@Override

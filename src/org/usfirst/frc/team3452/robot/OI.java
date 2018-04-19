@@ -4,7 +4,6 @@ import org.usfirst.frc.team3452.robot.commands.drive.SetModify;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
-import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.CONTROLLER;
@@ -46,16 +45,8 @@ public class OI {
 		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
 
-		driverJoyY.whileHeld(new Climb(1));
+//		driverJoyY.whileHeld(new Climb(1));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
-
-//		driverJoyLB.whenPressed(new CommandGroup() {
-//			{
-//								addParallel(new IntakeWhileDrive(.5,.8,.5));
-//				addSequential(new EncoderFrom(50, 50, .5, .5, 1.5));
-//				addSequential(new EncoderFrom(-50, -50, .5, .5, 1.5));
-//			}
-//		});
 
 		driverJoyBack.whenPressed(new OverrideSet(EO.TOGGLE));
 
@@ -117,7 +108,6 @@ public class OI {
 		opDown = new HIDPOVButton(opJoy, 180);
 		opLeft = new HIDPOVButton(opJoy, 270);
 		opRight = new HIDPOVButton(opJoy, 90);
-
 	}
 
 	public static void rumble(CONTROLLER joy, double intensity) {

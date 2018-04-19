@@ -19,7 +19,7 @@ public class Intake extends Subsystem {
 
 		Intake_L.setName("Intake L");
 		Intake_R.setName("Intake R");
-		
+
 	}
 
 	public void manual(double speed) {
@@ -30,14 +30,13 @@ public class Intake extends Subsystem {
 	public void initDefaultCommand() {
 	}
 
-	public static class Speeds 
-	{
+	public static class Speeds {
 		public static final double INTAKE = -.8;
 		public static final double OUT = .75;
 		public static final double SLOW = .3;
-		public static final double SPIN = 3.5;
+		public static final double SPIN = .35;
 	}
-	
+
 	public static class Constants {
 		public static final int INTAKE_L = 0;
 		public static final int INTAKE_R = 1;

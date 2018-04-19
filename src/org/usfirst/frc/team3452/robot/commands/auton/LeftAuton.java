@@ -121,13 +121,15 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch
 
-			addSequential(new DriveTime(.5, 0, .75)); //hit switch
-			addSequential(new DriveToStop(.4));
+			addSequential(new DriveTime(.5, 0, .5));
+			addSequential(new DriveToStop(.55)); //hit to switch
 
 			addSequential(new IntakeTime(1, .5)); //drop and back up
 			addParallel(new DriveTime(-.5, 0, .8));
 			addSequential(new ElevatorTime(-.15, 10));
+			
 			break;
+		
 		case FOREST_HILLS:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
@@ -169,8 +171,8 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new GyroPos(190, .45, 3));
 
-			addSequential(new DriveTime(.5, 0, .75)); //hit switch
-			addSequential(new DriveToStop(.4));
+			addSequential(new DriveTime(.5, 0, .5));
+			addSequential(new DriveToStop(.55)); //was .45
 
 			addSequential(new IntakeTime(.5, 1));
 
@@ -212,16 +214,17 @@ public class LeftAuton extends CommandGroup {
 	private void scaleL(AV version) {
 		switch (version) {
 		case CURRENT:
-			//TURN CHANGED 
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
 			//Drive to scale
+
 			addSequential(new EncoderGyro(15.27, 15.27, .5, .5, .6, 0, .017));
 			//TURN CHANGED FINALS 3
 			addSequential(new EncoderFrom(1.5, -1.15, .6, .6, .6)); //turn to switch
 
+			
 			addSequential(new EncoderFrom(-.6, -.6, .7, .7, .6));
 			addSequential(new ElevatorPosition(15)); //raise and forward
 			addSequential(new EncoderFrom(.5, .5, .4, .4, .6));
