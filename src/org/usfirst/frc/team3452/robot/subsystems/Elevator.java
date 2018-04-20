@@ -22,6 +22,7 @@ public class Elevator extends Subsystem {
 
 	//TODO COMP|PRACTICE
 	public boolean isRemoteSensor = false;
+	//TODO TEST ELEVATOR COMMAND
 
 	public void initHardware() {
 
