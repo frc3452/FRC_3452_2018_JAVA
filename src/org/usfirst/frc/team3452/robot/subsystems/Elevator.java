@@ -21,7 +21,7 @@ public class Elevator extends Subsystem {
 	public WPI_TalonSRX Elev_2;
 
 	//TODO COMP|PRACTICE
-	private boolean isRemoteSensor = false;
+	public boolean isRemoteSensor = false;
 
 	public void initHardware() {
 
@@ -57,6 +57,7 @@ public class Elevator extends Subsystem {
 			Elev_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 					LimitSwitchNormal.NormallyOpen, Elev_2.getDeviceID(), 10);
 		} else {
+			
 			// ENCODER
 			Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 			Elev_1.setSelectedSensorPosition(0, 0, 10);
@@ -71,12 +72,12 @@ public class Elevator extends Subsystem {
 					10);
 			Elev_1.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen,
 					10);
-			
+
 			Elev_2.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 					LimitSwitchNormal.NormallyOpen, Elev_1.getDeviceID(), 10);
 			Elev_2.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 					LimitSwitchNormal.NormallyOpen, Elev_1.getDeviceID(), 10);
-			
+
 		}
 		// BRAKE
 		Elev_1.setNeutralMode(NeutralMode.Brake);

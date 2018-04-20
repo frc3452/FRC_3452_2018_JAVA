@@ -45,7 +45,7 @@ public class OI {
 		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
 
-//		driverJoyY.whileHeld(new Climb(1));
+		//		driverJoyY.whileHeld(new Climb(1));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 
 		driverJoyBack.whenPressed(new OverrideSet(EO.TOGGLE));
@@ -57,6 +57,8 @@ public class OI {
 
 		// 				OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
+//		opJoyRB.whenPressed(new JustGonnaSendIt());
+
 		opJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		opJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
 		opJoyY.whileHeld(new IntakeManual(Intake.Speeds.SLOW));

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ElevatorTime extends Command {
 
 	private double m_speed, m_time;
+	private boolean l_rev = false, l_fwd = false;
 
 	public ElevatorTime(double speed, double time) {
 		requires(Robot.elevator);
@@ -23,13 +24,21 @@ public class ElevatorTime extends Command {
 
 	protected void execute() {
 		Robot.elevator.Elev_1.set(-m_speed);
+
+		if (Robot.elevator.isRemoteSensor) {
+			l_rev = Robot.elevator.Elev_2.getSensorCollection().isRevLimitSwitchClosed();
+			l_fwd = Robot.elevator.Elev_2.getSensorCollection().isFwdLimitSwitchClosed();
+		} else {
+			l_rev = Robot.elevator.Elev_1.getSensorCollection().isRevLimitSwitchClosed();
+			l_fwd = Robot.elevator.Elev_1.getSensorCollection().isFwdLimitSwitchClosed();
+		}
 	}
 
 	protected boolean isFinished() {
-		if (Robot.elevator.Elev_2.getSensorCollection().isRevLimitSwitchClosed() && m_speed > 0)
+		if (l_rev && m_speed > 0)
 			return true;
 
-		if (Robot.elevator.Elev_2.getSensorCollection().isFwdLimitSwitchClosed() && m_speed < 0)
+		if (l_fwd && m_speed < 0)
 			return true;
 
 		return isTimedOut();

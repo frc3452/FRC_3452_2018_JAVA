@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ElevatorWhileDrive extends Command {
 
 	private double m_value, m_percent;
+	private boolean l_rev = false, l_fwd = false;
 
 	public ElevatorWhileDrive(double value, double atPercent) {
 		requires(Robot.elevator);
@@ -23,15 +24,23 @@ public class ElevatorWhileDrive extends Command {
 	protected void execute() {
 		if (Robot.drive.p_pos > m_percent)
 			Robot.elevator.Encoder(m_value);
+		
+		if (Robot.elevator.isRemoteSensor) {
+			l_rev = Robot.elevator.Elev_2.getSensorCollection().isRevLimitSwitchClosed();
+			l_fwd = Robot.elevator.Elev_2.getSensorCollection().isFwdLimitSwitchClosed();
+		} else {
+			l_rev = Robot.elevator.Elev_1.getSensorCollection().isRevLimitSwitchClosed();
+			l_fwd = Robot.elevator.Elev_1.getSensorCollection().isFwdLimitSwitchClosed();
+		}
 	}
 
 	protected boolean isFinished() {
-		if (Robot.elevator.Elev_2.getSensorCollection().isRevLimitSwitchClosed() && m_value > 0)
+		if (l_rev && m_value > 0)
 			return true;
 
-		if (Robot.elevator.Elev_2.getSensorCollection().isFwdLimitSwitchClosed() && m_value < 0)
+		if (l_fwd && m_value < 0)
 			return true;
-
+		
 		return Robot.elevator.isDone(3.5) || isTimedOut();
 	}
 
