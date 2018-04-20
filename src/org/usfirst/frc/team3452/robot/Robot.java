@@ -46,7 +46,7 @@ public class Robot extends TimedRobot {
 
 	//flags
 	boolean wasTele = false, readyForMatch = false, wasTest = false;
-	boolean toLog = false, logToUsb = true;
+	boolean logging = true, toLog = false, logToUsb = true;
 
 	@Override
 	public void robotInit() {
@@ -61,7 +61,7 @@ public class Robot extends TimedRobot {
 		//		Robot.lights.initHardware();
 		//		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
-		//		Robot.playback.initHardware();
+		Robot.playback.initHardware();
 
 		_oi = new OI();
 		OI.init();
@@ -108,13 +108,13 @@ public class Robot extends TimedRobot {
 
 		//LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
 		//LOOPED HERE
-		if (toLog)
+		if (toLog && logging)
 			Robot.playback.control("Log", logToUsb, TASK.LOG, STATE.RUNTIME);
 	}
 
 	@Override
 	public void disabledInit() {
-		if (toLog) {
+		if (toLog && logging) {
 			toLog = false;
 			Robot.playback.control("Log", logToUsb, TASK.LOG, STATE.FINISH);
 		}
@@ -213,11 +213,11 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-		if (!toLog) {
+		if (!toLog && logging) {
 			Robot.playback.control("Log", logToUsb, TASK.LOG, STATE.STARTUP);
 			toLog = true;
 		}
-		
+
 		//GREEN LOW BRIGHTNESS
 		Robot.lights.hsv(250, 1, .5);
 
@@ -229,8 +229,8 @@ public class Robot extends TimedRobot {
 
 		wasTele = true;
 
-//		Command amp = new AmperageTesting(.04, true, true, true, false);
-//		amp.start();
+		//		Command amp = new AmperageTesting(.04, true, true, true, false);
+		//		amp.start();
 	}
 
 	@Override
@@ -241,7 +241,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testInit() {
-		if (!toLog) {
+		if (!toLog && logging) {
 			Robot.playback.control("Log", logToUsb, TASK.LOG, STATE.STARTUP);
 			toLog = true;
 		}

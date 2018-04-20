@@ -114,7 +114,7 @@ public class Playback extends Subsystem {
 
 			//ON STARTUP, PRINT NAMES
 			if (startup) {
-				bw.write("Time," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP," + "L1-V,L2-V,L3-V,L4-V,"
+				bw.write(dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP," + "L1-V,L2-V,L3-V,L4-V,"
 						+ "R1-AMP,R2-AMP,R3-AMP,R4-AMP," + "R1-V,R2-V,R3-V,R4-V," + "Elev_1-AMP,Elev_2-AMP,"
 						+ "Elev_1-V,Elev_2-V," + "Intake_L-AMP,Intake_R-AMP," + "Climber_1-AMP,Climber_2-AMP,"
 						+ "BATTERY");
@@ -171,9 +171,9 @@ public class Playback extends Subsystem {
 									+ Robot.drive.pdp.getCurrent(PDP.INTAKE_L) + ","
 									+ Robot.drive.pdp.getCurrent(PDP.INTAKE_R) + ","
 
+									//TODO COMP|PRACTICE NO CLIMBER
 									//CLIMBER PDP SLOTS
-									+ Robot.drive.pdp.getCurrent(PDP.CLIMBER_1) + ","
-									+ Robot.drive.pdp.getCurrent(PDP.CLIMBER_2) + ","
+									+ Robot.drive.pdp.getCurrent(0) + "," + Robot.drive.pdp.getCurrent(0) + ","
 
 									//BATTERY
 									+ DriverStation.getInstance().getBatteryVoltage()));
@@ -276,12 +276,10 @@ public class Playback extends Subsystem {
 				Robot.drive.timer.reset();
 				Robot.drive.timer.start();
 
-				dateTime = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+				dateTime = dateTime(true);
 				System.out.println("Opening LOG: " + dateTime + ".csv");
-
 				createFile((DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + dateTime, fileState.WRITE,
 						usb);
-
 				writeToLog(true);
 
 				break;
@@ -321,6 +319,7 @@ public class Playback extends Subsystem {
 			case LOG:
 				System.out.println("Closing LOG: " + dateTime + ".csv");
 				closeFile(fileState.WRITE);
+				
 				break;
 			case PLAY:
 				break;
@@ -335,6 +334,15 @@ public class Playback extends Subsystem {
 
 	public void initDefaultCommand() {
 		//		setDefaultCommand(new Record("LOG", TASK.LOG));
+	}
+
+	public String dateTime(boolean full) {
+		String temp;
+		if (full)
+			temp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+		else
+			temp = new SimpleDateFormat("MM.dd.HH.mm").format(new Date());
+		return temp;
 	}
 
 	public enum fileState {
