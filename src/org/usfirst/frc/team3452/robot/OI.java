@@ -3,6 +3,7 @@ package org.usfirst.frc.team3452.robot;
 import org.usfirst.frc.team3452.robot.commands.drive.SetModify;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
+import org.usfirst.frc.team3452.robot.commands.elevator.JustGonnaSendIt;
 import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
@@ -57,7 +58,14 @@ public class OI {
 
 		// 				OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
-//		opJoyRB.whenPressed(new JustGonnaSendIt());
+		opJoyRB.whenPressed(new JustGonnaSendIt());
+
+		//		driverJoyLB.whenPressed(new CommandGroup() {
+		//			{
+		//				addSequential(new EncoderFrom(50, 50, .5, .5, 1.5));
+		//				addSequential(new EncoderFrom(-50, -50, .5, .5, 1.5));
+		//			}
+		//		});
 
 		opJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		opJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
