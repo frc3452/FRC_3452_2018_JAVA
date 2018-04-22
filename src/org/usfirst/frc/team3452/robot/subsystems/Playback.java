@@ -15,8 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
- * <b>Playback subsystem</b>
- * Also used for file writing, logging, etc.
+ * <b>Playback subsystem</b> Also used for file writing, logging, etc.
  * 
  * @author max
  * @since 4-18-2018
@@ -153,10 +152,10 @@ public class Playback extends Subsystem {
 
 			//ON STARTUP, PRINT NAMES
 			if (startup) {
-				bw.write(dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP," + "L1-V,L2-V,L3-V,L4-V,"
-						+ "R1-AMP,R2-AMP,R3-AMP,R4-AMP," + "R1-V,R2-V,R3-V,R4-V," + "Elev_1-AMP,Elev_2-AMP,"
-						+ "Elev_1-V,Elev_2-V," + "Intake_L-AMP,Intake_R-AMP," + "Climber_1-AMP,Climber_2-AMP,"
-						+ "BATTERY");
+				bw.write(dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP,"
+						+ "L1-V,L2-V,L3-V,L4-V," + "R1-AMP,R2-AMP,R3-AMP,R4-AMP," + "R1-V,R2-V,R3-V,R4-V,"
+						+ "Elev_1-AMP,Elev_2-AMP," + "Elev_1-V,Elev_2-V," + "Intake_L-AMP,Intake_R-AMP,"
+						+ "Climber_1-AMP,Climber_2-AMP," + "BATTERY");
 				bw.write("\r\n");
 
 			} else {
@@ -304,8 +303,10 @@ public class Playback extends Subsystem {
 	 * Used to control file writing.
 	 * 
 	 * @author max
-	 * @param name file name
-	 * @param usb true|false for writing to usb
+	 * @param name
+	 *            file name
+	 * @param usb
+	 *            true|false for writing to usb
 	 * @param task
 	 * @param state
 	 * @see TASK
@@ -382,7 +383,7 @@ public class Playback extends Subsystem {
 			case LOG:
 				System.out.println("Closing LOG: " + dateTime + ".csv");
 				closeFile(fileState.WRITE);
-				
+
 				break;
 			case PLAY:
 				break;
@@ -393,34 +394,43 @@ public class Playback extends Subsystem {
 
 	/**
 	 * <p>
-	 * <b>Example</b> 
+	 * <b>Example</b>
 	 * </p>
 	 * <p>
-	 * toRound = 2.342, wanting to round to nearest .05
-	 * 1/<b>20</b> is .05
+	 * toRound = 2.342, wanting to round to nearest .05 1/<b>20</b> is .05
 	 * roundToFraction(2.342,20)
 	 * 
 	 * </p>
+	 * 
 	 * @author max
-	 * @param value 
+	 * @param value
 	 * @param demoninator
 	 * @return double
 	 * @since
 	 */
 	public static double roundToFraction(double value, double demoninator) {
-		return (double) (Math.round(value * demoninator) / demoninator);
+		return Math.round(value * demoninator) / demoninator;
 	}
 
+	@Override
 	public void initDefaultCommand() {
 		//		setDefaultCommand(new Record("LOG", TASK.LOG));
 	}
 
 	/**
 	 * 
-	 * <p>Returns current date in format</p>
-	 * <p><b>yyyy.MM.dd.HH.mm.ss</b></p>
-	 * <p>or</p>
-	 * <p><b>MM.dd.HH.mm</b></p>
+	 * <p>
+	 * Returns current date in format
+	 * </p>
+	 * <p>
+	 * <b>yyyy.MM.dd.HH.mm.ss</b>
+	 * </p>
+	 * <p>
+	 * or
+	 * </p>
+	 * <p>
+	 * <b>MM.dd.HH.mm</b>
+	 * </p>
 	 * 
 	 * @author max
 	 * @param full
@@ -463,12 +473,11 @@ public class Playback extends Subsystem {
 	public enum TASK {
 		RECORD, LOG, PARSE, PLAY;
 	}
-	
+
 	/**
 	 * @author max
 	 *
 	 */
-	public class Constants
-	{
+	public class Constants {
 	}
 }
