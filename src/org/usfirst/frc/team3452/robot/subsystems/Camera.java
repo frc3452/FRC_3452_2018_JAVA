@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import edu.wpi.cscore.*;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 

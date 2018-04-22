@@ -13,6 +13,13 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+/**
+ * <b>Elevator subsystem</b>
+ * Handles elevator open + closed loop & speed control for drivetrain
+ * 
+ * @author max
+ *
+ */
 public class Elevator extends Subsystem {
 	public double m_pos = 0;
 	public boolean m_overriden = false;
