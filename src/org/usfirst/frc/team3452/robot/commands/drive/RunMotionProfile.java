@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj.command.Command;
  * @author max
  * @since 4-22-2018
  */
-public class MotionProfile extends Command {
+public class RunMotionProfile extends Command {
 
 	private MotionProfileStatus R_status = new MotionProfileStatus();
 	private MotionProfileStatus L_status = new MotionProfileStatus();
 
-	public MotionProfile() {
+	public RunMotionProfile() {
 		requires(Robot.drive);
 	}
 
@@ -28,13 +28,11 @@ public class MotionProfile extends Command {
 
 	@Override
 	protected void execute() {
-		for (int i = 0; i < 5; i++) {
-			Robot.drive.L1.processMotionProfileBuffer();
-			Robot.drive.R1.processMotionProfileBuffer();
-		}
-		
-		Robot.drive.L1.set(ControlMode.MotionProfile, 2);
-		Robot.drive.R1.set(ControlMode.MotionProfile, 2);
+		Robot.drive.L1.processMotionProfileBuffer();
+		Robot.drive.R1.processMotionProfileBuffer();
+
+		Robot.drive.L1.set(ControlMode.MotionProfile, 1);
+		Robot.drive.R1.set(ControlMode.MotionProfile, 1);
 
 		Robot.drive.L1.getMotionProfileStatus(L_status);
 		Robot.drive.R1.getMotionProfileStatus(R_status);

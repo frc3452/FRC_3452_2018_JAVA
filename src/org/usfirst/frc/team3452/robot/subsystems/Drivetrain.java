@@ -54,7 +54,6 @@ public class Drivetrain extends Subsystem {
 	 * @since
 	 */
 	public void LoggerUpdate() {
-
 		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
 
 		SmartDashboard.putNumber("L1", (double) L1.getSelectedSensorPosition(0) / 4096);
@@ -132,13 +131,20 @@ public class Drivetrain extends Subsystem {
 		L1.setSensorPhase(true);
 		R1.setSensorPhase(true);
 
+		//MOTION PROFILE
+		L1.configMotionProfileTrajectoryPeriod(10, 10);
+		L1.changeMotionControlFramePeriod(5);
+		
+		R1.configMotionProfileTrajectoryPeriod(10, 10);
+		R1.changeMotionControlFramePeriod(5);
+
 		L1.config_kF(0, 0, 10);
-		L1.config_kP(0, 0.025, 10);
+		L1.config_kP(0, 0.08, 10);
 		L1.config_kI(0, 0, 10);
 		L1.config_kD(0, 0, 10);
 
 		R1.config_kF(0, 0, 10);
-		R1.config_kP(0, 0.025, 10); //.8
+		R1.config_kP(0, 0.08, 10); //.8
 		R1.config_kI(0, 0, 10);
 		R1.config_kD(0, 0, 10);
 
@@ -303,8 +309,8 @@ public class Drivetrain extends Subsystem {
 	 * @since 4-22-2018
 	 */
 	public void motionprofile() {
-		TrajectoryPoint leftPoint = new TrajectoryPoint();
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
+		TrajectoryPoint leftPoint = new TrajectoryPoint();
 
 		L1.clearMotionProfileTrajectories();
 		R1.clearMotionProfileTrajectories();
@@ -346,6 +352,9 @@ public class Drivetrain extends Subsystem {
 
 			L1.pushMotionProfileTrajectory(leftPoint);
 			R1.pushMotionProfileTrajectory(rightPoint);
+			
+			System.out.println("Pushing: " + i);
+			
 		}
 	}
 
@@ -353,7 +362,7 @@ public class Drivetrain extends Subsystem {
 		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
 
 		retval = retval.valueOf(durationMs);
-
+		
 		if (retval.value != durationMs)
 			DriverStation.reportError("Trajectory duration not supported", false);
 

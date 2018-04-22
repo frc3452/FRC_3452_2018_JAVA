@@ -1,7 +1,7 @@
 package org.usfirst.frc.team3452.robot;
 
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
-import org.usfirst.frc.team3452.robot.commands.drive.MotionProfile;
+import org.usfirst.frc.team3452.robot.commands.drive.RunMotionProfile;
 import org.usfirst.frc.team3452.robot.commands.drive.SpeedModifier;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
@@ -57,7 +57,7 @@ public class OI {
 			{
 				addSequential(new EncoderReset());
 				addSequential(new Record("MP2", false, TASK.Parse));
-				addSequential(new MotionProfile());
+				addSequential(new RunMotionProfile());
 			}
 		});
 				

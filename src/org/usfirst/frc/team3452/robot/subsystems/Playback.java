@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
@@ -32,11 +31,11 @@ public class Playback extends Subsystem {
 	private Scanner br;
 
 	//POSITION, VEL, DURATION
-	public double mpLR[] = new double[500]; // = new double[900];
-	public double mpLS[] = new double[500]; // = new double[900];
-	public double mpRR[] = new double[500];
-	public double mpRS[] = new double[500];
-	public int mpDur; // = new double[900];
+	public double mpLR[] = new double[300];
+	public double mpLS[] = new double[300];
+	public double mpRR[] = new double[300];
+	public double mpRS[] = new double[300];
+	public int mpDur;
 
 	private String dateTime, timeString;
 	private double n_timeString = 0, p_timeString = 0;
@@ -72,10 +71,10 @@ public class Playback extends Subsystem {
 				while ((st = br.nextLine()) != null) {
 					String[] ar = st.split(",");
 
-					mpLR[posInFile] = Double.parseDouble(ar[0]);
-					mpLS[posInFile] = Double.parseDouble(ar[1]);
-					mpRR[posInFile] = Double.parseDouble(ar[2]);
-					mpRS[posInFile] = Double.parseDouble(ar[3]);
+					mpLR[posInFile] = Double.parseDouble(ar[1]);
+					mpLS[posInFile] = Double.parseDouble(ar[2]);
+					mpRR[posInFile] = Double.parseDouble(ar[3]);
+					mpRS[posInFile] = Double.parseDouble(ar[4]);
 
 					posInFile++;
 				}
@@ -109,18 +108,19 @@ public class Playback extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	private void writeToProfile(boolean startup) throws IOException {
+	private void writeToProfile(boolean startup) {
 		try {
-			n_timeString = Double.valueOf(timeString);
-			String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 10));
+
+			String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 1000));
 			timeString = timeString.replace(' ', '0');
+			n_timeString = Double.valueOf(timeString);
 
 			//ONLY PRINT EVERY ROUNDING
 			if (n_timeString != p_timeString) {
 				if (!startup) {
 
-					double leftPos = Robot.drive.L1.getSelectedSensorPosition(0) * -1;
-					double leftSpeed = Robot.drive.L1.getSelectedSensorVelocity(0) * -1;
+					double leftPos = Robot.drive.L1.getSelectedSensorPosition(0);
+					double leftSpeed = Robot.drive.L1.getSelectedSensorVelocity(0);
 
 					double rightPos = Robot.drive.R1.getSelectedSensorPosition(0);
 					double rightSpeed = Robot.drive.R1.getSelectedSensorVelocity(0);
@@ -131,10 +131,11 @@ public class Playback extends Subsystem {
 					bw.write(String.valueOf(rightPos + ","));
 					bw.write(String.valueOf(rightSpeed + ","));
 					bw.write("\r\n");
+
 				} else {
 					bw.write("Time,leftPos,leftSpeed,rightPos,rightSpeed");
 					bw.write("\r\n");
-					bw.write("100,0,0,0,0");
+					bw.write("10,0,0,0,0");
 					bw.write("\r\n");
 				}
 			} else {
@@ -144,7 +145,8 @@ public class Playback extends Subsystem {
 			p_timeString = n_timeString;
 
 		} catch (Exception e) {
-			System.out.println("Mapping failed!");
+			e.printStackTrace();
+//			System.out.println("Mapping failed!");
 		}
 	}
 
@@ -343,7 +345,7 @@ public class Playback extends Subsystem {
 				createFile(name, fileState.READ, usb);
 
 				parseFile();
-				//				printTimes();
+				printTimes();
 
 				break;
 			case Log:
