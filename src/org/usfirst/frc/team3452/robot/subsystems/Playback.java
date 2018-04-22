@@ -1,12 +1,13 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Scanner;
 
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.PDP;
@@ -28,15 +29,17 @@ public class Playback extends Subsystem {
 	private FileWriter fw;
 
 	private FileReader fr;
-	private BufferedReader br;
+	private Scanner br;
 
-	//	 TIME, LEFT VEL, RIGHT VEL
-	private double RP1A[] = new double[2]; // = new double[900];
-	private double RP1B[] = new double[2]; // = new double[900];
-	private double RP1C[] = new double[2]; // = new double[900];
+	//POSITION, VEL, DURATION
+	public double mpLR[] = new double[500]; // = new double[900];
+	public double mpLS[] = new double[500]; // = new double[900];
+	public double mpRR[] = new double[500];
+	public double mpRS[] = new double[500];
+	public int mpDur; // = new double[900];
 
 	private String dateTime, timeString;
-	private double n_timeString, p_timeString;
+	private double n_timeString = 0, p_timeString = 0;
 
 	private boolean hasPrintedLogFailed = false;
 
@@ -56,35 +59,28 @@ public class Playback extends Subsystem {
 	 * @since
 	 */
 	private void parseFile() {
-		int posInFile = 0, comma1 = 0, comma2 = 0;
+		int posInFile = 0;
 
 		String st;
 		try {
-			//loop through each line
-			while ((st = br.readLine()) != null) {
+			//take time var
+			br.nextLine(); //Skip first line of text
+			mpDur = Integer.parseInt(br.nextLine().split(",")[0]);
 
-				//populate time
-				RP1A[posInFile] = Double.parseDouble(st.substring(0, 8));
+			try {
+				//loop through each line
+				while ((st = br.nextLine()) != null) {
+					String[] ar = st.split(",");
 
-				//find commas
-				for (int i = 7; i < st.length(); i++) {
-					if (st.charAt(i) == ',')
-						comma2 = i;
+					mpLR[posInFile] = Double.parseDouble(ar[0]);
+					mpLS[posInFile] = Double.parseDouble(ar[1]);
+					mpRR[posInFile] = Double.parseDouble(ar[2]);
+					mpRS[posInFile] = Double.parseDouble(ar[3]);
+
+					posInFile++;
 				}
-
-				//find commas
-				for (int i = comma2; i > 0; i--) {
-					if (st.charAt(i) == ',')
-						comma1 = i;
-				}
-
-				RP1B[posInFile] = Double.parseDouble(st.substring(comma1 + 1, comma2 - 1));
-				RP1C[posInFile] = Double.parseDouble(st.substring(comma2 + 1, st.length()));
-				//fill variables
-
-				comma1 = 1000;
-				comma2 = 1000;
-				posInFile++;
+			} catch (java.util.NoSuchElementException e) {
+				//Do nothing as we know we're going to go over a line anyway
 			}
 		} catch (Exception e) {
 			System.out.println("Parse failed!");
@@ -99,8 +95,8 @@ public class Playback extends Subsystem {
 	 */
 	private void printTimes() {
 		try {
-			for (int i = 0; i < RP1A.length; i++)
-				System.out.println("Time:" + RP1A[i] + "\t\tL: " + RP1B[i] + "\t\tR: " + RP1C[i]);
+			for (int i = 0; i < mpLR.length; i++)
+				System.out.println(mpLR[i] + "\t" + mpLS[i] + "\t" + mpRR[i] + "\t" + mpRS[i] + "\t" + mpDur);
 
 		} catch (Exception e) {
 			System.out.println("Printing failed!");
@@ -113,26 +109,39 @@ public class Playback extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	private void writeToFile() {
+	private void writeToProfile(boolean startup) throws IOException {
 		try {
-			String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 50));
+			n_timeString = Double.valueOf(timeString);
+			String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 10));
 			timeString = timeString.replace(' ', '0');
 
-			double left = (double) Robot.drive.L1.getSelectedSensorVelocity(0) / 4096;
-			double right = (double) Robot.drive.R1.getSelectedSensorVelocity(0) * -1 / 4096;
+			//ONLY PRINT EVERY ROUNDING
+			if (n_timeString != p_timeString) {
+				if (!startup) {
 
-			if (left < 0.01 && left > -0.01)
-				left = 0;
+					double leftPos = Robot.drive.L1.getSelectedSensorPosition(0) * -1;
+					double leftSpeed = Robot.drive.L1.getSelectedSensorVelocity(0) * -1;
 
-			if (right < 0.01 && right > -0.01)
-				right = 0;
+					double rightPos = Robot.drive.R1.getSelectedSensorPosition(0);
+					double rightSpeed = Robot.drive.R1.getSelectedSensorVelocity(0);
 
-			bw.write(timeString);
-			bw.write(",");
-			bw.write(String.valueOf(left));
-			bw.write(",");
-			bw.write(String.valueOf(right));
-			bw.write("\r\n");
+					bw.write(timeString + ",");
+					bw.write(String.valueOf(leftPos + ","));
+					bw.write(String.valueOf(leftSpeed + ","));
+					bw.write(String.valueOf(rightPos + ","));
+					bw.write(String.valueOf(rightSpeed + ","));
+					bw.write("\r\n");
+				} else {
+					bw.write("Time,leftPos,leftSpeed,rightPos,rightSpeed");
+					bw.write("\r\n");
+					bw.write("100,0,0,0,0");
+					bw.write("\r\n");
+				}
+			} else {
+			}
+
+			//Prevent duplicates
+			p_timeString = n_timeString;
 
 		} catch (Exception e) {
 			System.out.println("Mapping failed!");
@@ -250,7 +259,7 @@ public class Playback extends Subsystem {
 					f = new File("/home/lvuser/" + fileName + ".csv");
 
 				fr = new FileReader(f);
-				br = new BufferedReader(fr);
+				br = new Scanner(fr);
 
 				break;
 			case WRITE:
@@ -316,76 +325,76 @@ public class Playback extends Subsystem {
 	public void control(String name, boolean usb, TASK task, STATE state) {
 		switch (state) {
 		case STARTUP:
-
 			switch (task) {
-			case RECORD:
+			case Record:
 
 				Robot.drive.timer.stop();
 				Robot.drive.timer.reset();
 				Robot.drive.timer.start();
 
-				System.out.println("Opening RECORD: " + name + ".csv");
+				System.out.println("Opening Record: " + name + ".csv");
 				createFile(name, fileState.WRITE, usb);
+				writeToProfile(true);
+
 				break;
 
-			case PARSE:
-				System.out.println("Opening PARSE: " + name + ".csv");
+			case Parse:
+				System.out.println("Opening Parse: " + name + ".csv");
 				createFile(name, fileState.READ, usb);
 
 				parseFile();
-				printTimes();
+				//				printTimes();
+
 				break;
-			case LOG:
+			case Log:
 				Robot.drive.timer.stop();
 				Robot.drive.timer.reset();
 				Robot.drive.timer.start();
 
 				dateTime = dateTime(true);
-				System.out.println("Opening LOG: " + dateTime + ".csv");
+				System.out.println("Opening Log: " + dateTime + ".csv");
 				createFile((DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + dateTime, fileState.WRITE,
 						usb);
 				writeToLog(true);
 
 				break;
-			case PLAY:
+			case Play:
 				break;
 			}
 			break;
 		case RUNTIME:
 			switch (task) {
 
-			case RECORD:
-				writeToFile();
+			case Record:
+				writeToProfile(false);
 
 				break;
-			case PARSE:
+			case Parse:
 
 				break;
-			case LOG:
+			case Log:
 				writeToLog(false);
 
 				break;
-			case PLAY:
+			case Play:
 
 				break;
 			}
 			break;
 		case FINISH:
+			System.out.println("Closing " + task + ": " + name + ".csv");
+
 			switch (task) {
-			case RECORD:
-				System.out.println("Closing RECORD: " + name + ".csv");
+			case Record:
 				closeFile(fileState.WRITE);
 				break;
-			case PARSE:
-				System.out.println("Closing PARSE: " + name + ".csv");
+			case Parse:
 				closeFile(fileState.READ);
 				break;
-			case LOG:
-				System.out.println("Closing LOG: " + dateTime + ".csv");
+			case Log:
 				closeFile(fileState.WRITE);
-
 				break;
-			case PLAY:
+			case Play:
 				break;
 			}
 			break;
@@ -471,7 +480,7 @@ public class Playback extends Subsystem {
 	 * @author max
 	 */
 	public enum TASK {
-		RECORD, LOG, PARSE, PLAY;
+		Record, Log, Parse, Play;
 	}
 
 	/**

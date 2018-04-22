@@ -3,12 +3,15 @@ package org.usfirst.frc.team3452.robot.subsystems;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
 
+import com.ctre.phoenix.motion.TrajectoryPoint;
+import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
@@ -18,8 +21,9 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * <h1>Drivetrain subsystem</h1>
- * Handles drive train, smartdashboard updating, PDP slots
+ * <h1>Drivetrain subsystem</h1> Handles drive train, smartdashboard updating,
+ * PDP slots
+ * 
  * @author max
  *
  */
@@ -50,8 +54,7 @@ public class Drivetrain extends Subsystem {
 	 * @since
 	 */
 	public void LoggerUpdate() {
-		
-		
+
 		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
 
 		SmartDashboard.putNumber("L1", (double) L1.getSelectedSensorPosition(0) / 4096);
@@ -94,17 +97,17 @@ public class Drivetrain extends Subsystem {
 		R2 = new WPI_TalonSRX(Constants.R_2);
 		R3 = new WPI_TalonSRX(Constants.R_3);
 		R4 = new WPI_TalonSRX(Constants.R_4);
-		
+
 		L1.setInverted(Constants.L_INVERT);
 		L2.setInverted(Constants.L_INVERT);
 		L3.setInverted(Constants.L_INVERT);
 		L4.setInverted(Constants.L_INVERT);
-		
+
 		R1.setInverted(Constants.R_INVERT);
 		R2.setInverted(Constants.R_INVERT);
 		R3.setInverted(Constants.R_INVERT);
 		R4.setInverted(Constants.R_INVERT);
-		
+
 		Gyro = new AHRS(SPI.Port.kMXP);
 
 		robotDrive = new DifferentialDrive(L1, R1);
@@ -130,17 +133,26 @@ public class Drivetrain extends Subsystem {
 		R1.setSensorPhase(true);
 
 		L1.config_kF(0, 0, 10);
-		L1.config_kP(0, 0.425, 10);
-		L1.config_kI(0, 0.0000004, 10);
-		L1.config_kD(0, 4.25, 10);
+		L1.config_kP(0, 0.025, 10);
+		L1.config_kI(0, 0, 10);
+		L1.config_kD(0, 0, 10);
 
 		R1.config_kF(0, 0, 10);
-		R1.config_kP(0, 0.8, 10); //.8
-		R1.config_kI(0, 0.0000004, 10);
-		R1.config_kD(0, 4.25, 10);
-//		L1.config_kP(0, 0.0025, 10); 
+		R1.config_kP(0, 0.025, 10); //.8
+		R1.config_kI(0, 0, 10);
+		R1.config_kD(0, 0, 10);
 
-		
+		//		L1.config_kF(0, 0, 10);
+		//		L1.config_kP(0, 0.425, 10);
+		//		L1.config_kI(0, 0.0000004, 10);
+		//		L1.config_kD(0, 4.25, 10);
+		//
+		//		R1.config_kF(0, 0, 10);
+		//		R1.config_kP(0, 0.8, 10); //.8
+		//		R1.config_kI(0, 0.0000004, 10);
+		//		R1.config_kD(0, 4.25, 10);
+		//		L1.config_kP(0, 0.0025, 10); 
+
 		// NOMINAL OUTPUT
 		L1.configNominalOutputForward(0, 10);
 		L1.configNominalOutputReverse(0, 10);
@@ -226,6 +238,7 @@ public class Drivetrain extends Subsystem {
 		Gyro.reset();
 	}
 
+	@Override
 	public void initDefaultCommand() {
 		setDefaultCommand(new DriveTele());
 	}
@@ -241,7 +254,6 @@ public class Drivetrain extends Subsystem {
 		Robot.elevator.setDriveLimit();
 	}
 
-	
 	/**
 	 * @author max
 	 * @param move
@@ -251,7 +263,7 @@ public class Drivetrain extends Subsystem {
 	public void Arcade(double move, double rotate) {
 		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .2));
 	}
-	
+
 	/**
 	 * @author max
 	 * @param left
@@ -288,12 +300,80 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param leftpos rotations 
-	 * @param rightpos rotations
-	 * @param leftaccel rotations per second (accel)
-	 * @param rightaccel rotations per second (accel)
-	 * @param leftspeed rotations per second (top speed)
-	 * @param rightspeed rotations per second (top speed)
+	 * @since 4-22-2018
+	 */
+	public void motionprofile() {
+		TrajectoryPoint leftPoint = new TrajectoryPoint();
+		TrajectoryPoint rightPoint = new TrajectoryPoint();
+
+		L1.clearMotionProfileTrajectories();
+		R1.clearMotionProfileTrajectories();
+
+		for (int i = 0; i < Robot.playback.mpLR.length; i++) {
+			leftPoint.position = Robot.playback.mpLR[i];
+			leftPoint.velocity = Robot.playback.mpLS[i];
+
+			rightPoint.position = Robot.playback.mpRR[i];
+			rightPoint.velocity = Robot.playback.mpRS[i];
+
+			leftPoint.headingDeg = 0;
+			rightPoint.headingDeg = 0;
+
+			leftPoint.profileSlotSelect0 = 0;
+			rightPoint.profileSlotSelect0 = 0;
+
+			leftPoint.profileSlotSelect1 = 0;
+			rightPoint.profileSlotSelect1 = 0;
+
+			leftPoint.timeDur = GetTrajectoryDuration(Robot.playback.mpDur);
+			rightPoint.timeDur = GetTrajectoryDuration(Robot.playback.mpDur);
+
+			leftPoint.zeroPos = false;
+			rightPoint.zeroPos = false;
+
+			if (i == 0) {
+				leftPoint.zeroPos = true;
+				rightPoint.zeroPos = true;
+			}
+
+			leftPoint.isLastPoint = false;
+			rightPoint.isLastPoint = false;
+
+			if ((i + 1) == Robot.playback.mpLR.length) {
+				leftPoint.isLastPoint = true;
+				rightPoint.isLastPoint = true;
+			}
+
+			L1.pushMotionProfileTrajectory(leftPoint);
+			R1.pushMotionProfileTrajectory(rightPoint);
+		}
+	}
+
+	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {
+		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
+
+		retval = retval.valueOf(durationMs);
+
+		if (retval.value != durationMs)
+			DriverStation.reportError("Trajectory duration not supported", false);
+
+		return retval;
+	}
+
+	/**
+	 * @author max
+	 * @param leftpos
+	 *            rotations
+	 * @param rightpos
+	 *            rotations
+	 * @param leftaccel
+	 *            rotations per second (accel)
+	 * @param rightaccel
+	 *            rotations per second (accel)
+	 * @param leftspeed
+	 *            rotations per second (top speed)
+	 * @param rightspeed
+	 *            rotations per second (top speed)
 	 * @since
 	 */
 	public void MotionMagic(double leftpos, double rightpos, double leftaccel, double rightaccel, double leftspeed,
@@ -304,8 +384,8 @@ public class Drivetrain extends Subsystem {
 		l_pos = leftpos * 4096 * 1;
 		r_pos = rightpos * 4096 * -1;
 
-		double lp_pos = Math.abs((double) (L1.getSelectedSensorPosition(0) / (4096 * leftpos)));
-		double rp_pos = Math.abs((double) (R1.getSelectedSensorPosition(0) / (4096 * rightpos)));
+		double lp_pos = Math.abs(L1.getSelectedSensorPosition(0) / (4096 * leftpos));
+		double rp_pos = Math.abs(R1.getSelectedSensorPosition(0) / (4096 * rightpos));
 
 		p_pos = (lp_pos + rp_pos) / 2;
 
@@ -318,16 +398,21 @@ public class Drivetrain extends Subsystem {
 		L1.set(ControlMode.MotionMagic, l_pos);
 		R1.set(ControlMode.MotionMagic, r_pos);
 	}
-	
+
 	/**
 	 * @author max
-	 * @param leftpos rotations
-	 * @param rightpos rotations
-	 * @param leftspeed speed (percentage)
-	 * @param rightspeed speed (percentage)
+	 * @param leftpos
+	 *            rotations
+	 * @param rightpos
+	 *            rotations
+	 * @param leftspeed
+	 *            speed (percentage)
+	 * @param rightspeed
+	 *            speed (percentage)
 	 * @since
 	 * @deprecated
 	 */
+	@Deprecated
 	public void encoder(double leftpos, double rightpos, double leftspeed, double rightspeed) {
 		robotDrive.setSafetyEnabled(false);
 
@@ -339,7 +424,7 @@ public class Drivetrain extends Subsystem {
 		l_pos = leftpos * 4096;
 		r_pos = -rightpos * 4096;
 
-		p_pos = Math.abs((double) ((L1.getSelectedSensorPosition(0) / (4096 * leftpos))
+		p_pos = Math.abs(((L1.getSelectedSensorPosition(0) / (4096 * leftpos))
 				+ (R1.getSelectedSensorPosition(0) / (4096 * rightpos))) / 2);
 
 		L1.set(ControlMode.Position, l_pos);
@@ -363,10 +448,9 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
-	 * Set drive train masters peak outputs to full.
-	 * Set control mode to PercentOutput.
-	 * Percentage trackers to default
-
+	 * Set drive train masters peak outputs to full. Set control mode to
+	 * PercentOutput. Percentage trackers to default
+	 * 
 	 * @author max
 	 * @since
 	 */
@@ -439,17 +523,17 @@ public class Drivetrain extends Subsystem {
 	public static class PDP {
 		public final static int DRIVE_L_1 = 0, DRIVE_L_2 = 1, DRIVE_L_3 = 5, DRIVE_L_4 = 4;
 		public final static int DRIVE_R_1 = 15, DRIVE_R_2 = 14, DRIVE_R_3 = 11, DRIVE_R_4 = 10;
-		
+
 		public final static int ELEVATOR_1 = 12;
 		public final static int ELEVATOR_2 = 13;
-		
+
 		public final static int INTAKE_L = 9;
 		public final static int INTAKE_R = 8;
-		
+
 		public final static int CLIMBER_1 = 3;
 		public final static int CLIMBER_2 = 2;
 	}
-	
+
 	/**
 	 * @author max
 	 *
@@ -457,7 +541,7 @@ public class Drivetrain extends Subsystem {
 	public static class Constants {
 		public final static int L_1 = 1, L_2 = 2, L_3 = 3, L_4 = 4;
 		public final static int R_1 = 5, R_2 = 6, R_3 = 7, R_4 = 8;
-		
+
 		//TODO COMP|PRACTICE
 		//FALSE ON REAL ROBOT
 		public final static boolean L_INVERT = false;

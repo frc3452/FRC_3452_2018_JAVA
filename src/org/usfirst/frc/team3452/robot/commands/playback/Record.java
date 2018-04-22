@@ -21,6 +21,7 @@ public class Record extends Command {
 	 * @param usb
 	 * @param task
 	 * @see Playback
+	 * @see TASK
 	 */
 	public Record(String name, boolean usb, TASK task) {
 		m_task = task;
@@ -28,22 +29,38 @@ public class Record extends Command {
 		m_usb = usb;
 	}
 
+	@Override
 	protected void initialize() {
 		Robot.playback.control(m_name, m_usb, m_task, STATE.STARTUP);
 	}
 
+	@Override
 	protected void execute() {
 		Robot.playback.control(m_name, m_usb, m_task, STATE.RUNTIME);
 	}
 
+	@Override
 	protected boolean isFinished() {
-		return false;
+		switch (m_task) {
+		case Log:
+			return false;
+		case Parse:
+			return true;
+		case Play:
+			return false;
+		case Record:
+			return false;
+		default:
+			return false;
+		}
 	}
 
+	@Override
 	protected void end() {
 		Robot.playback.control(m_name, m_usb, m_task, STATE.FINISH);
 	}
 
+	@Override
 	protected void interrupted() {
 		end();
 	}
