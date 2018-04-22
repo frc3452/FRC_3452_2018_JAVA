@@ -2,12 +2,18 @@ package org.usfirst.frc.team3452.robot.commands.drive;
 
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.CONTROLLER;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveTele extends Command {
 
+	/**
+	 * Drive during teleop
+	 * @author macco
+	 * @see Drivetrain
+	 */
 	public DriveTele() {
 		requires(Robot.drive);
 	}

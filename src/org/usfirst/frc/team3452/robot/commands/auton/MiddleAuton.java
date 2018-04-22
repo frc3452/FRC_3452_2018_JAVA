@@ -11,6 +11,7 @@ import org.usfirst.frc.team3452.robot.commands.drive.GyroReset;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
+import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
 
@@ -18,6 +19,11 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class MiddleAuton extends CommandGroup {
 
+	/**
+	 * @param option
+	 * @param version
+	 * @see AutonSelector
+	 */
 	public MiddleAuton(AO option, AV version) {
 		addSequential(new EncoderReset());
 		addSequential(new GyroReset());

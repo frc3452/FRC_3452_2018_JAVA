@@ -4,10 +4,15 @@ import org.usfirst.frc.team3452.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
-public class SetModify extends InstantCommand {
+public class SpeedModifier extends InstantCommand {
 	private double m_modify;
 
-	public SetModify(double value) {
+	/**
+	 * <h1>Drivetrain speed modifier</h1>
+	 * @param value -1 = toggle from full to 60%, else is set
+	 * @see Drivetrain
+	 */
+	public SpeedModifier(double value) {
 		super();
 		m_modify = value;
 	}

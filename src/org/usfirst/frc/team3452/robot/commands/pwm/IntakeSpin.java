@@ -9,6 +9,12 @@ public class IntakeSpin extends Command {
 	private double m_speed;
 	private boolean m_clockwise;
 
+	/**
+	 * @author macco
+	 * @param speed
+	 * @param clockwise
+	 * @see Intake
+	 */
 	public IntakeSpin(double speed, boolean clockwise) {
 		requires(Robot.intake);
 

@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -9,6 +10,13 @@ public class ElevatorPosition extends Command {
 	private double m_value;
 	private boolean l_rev = false, l_fwd = false;
 
+	/**
+	 * Encoder movement of elevator
+	 * 
+	 * @author macco
+	 * @param value
+	 * @see Elevator
+	 */
 	public ElevatorPosition(double value) {
 		requires(Robot.elevator);
 
@@ -43,7 +51,6 @@ public class ElevatorPosition extends Command {
 
 	protected void end() {
 		Robot.elevator.EncoderDone();
-		System.out.println("Elevator position completed: " + Robot.drive.timer.get());
 	}
 
 	protected void interrupted() {

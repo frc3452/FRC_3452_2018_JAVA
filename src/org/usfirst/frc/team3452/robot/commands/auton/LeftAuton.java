@@ -13,6 +13,7 @@ import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeWhileDrive;
+import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
@@ -21,6 +22,11 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class LeftAuton extends CommandGroup {
 
+	/**
+	 * @param option
+	 * @param version
+	 * @see AutonSelector
+	 */
 	public LeftAuton(AO option, AV version) {
 		addSequential(new EncoderReset());
 		addSequential(new GyroReset());

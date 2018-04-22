@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.pwm;
 
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -12,6 +13,13 @@ public class IntakeWhileDrive extends Command {
 
 	public Timer timer = new Timer();
 
+	/**
+	 * @author macco
+	 * @param value
+	 * @param atPercent
+	 * @param timeout
+	 * @see Intake
+	 */
 	public IntakeWhileDrive(double value, double atPercent, double timeout) {
 		requires(Robot.intake);
 

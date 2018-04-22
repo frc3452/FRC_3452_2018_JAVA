@@ -25,6 +25,12 @@ public class Lights extends Subsystem {
 
 	private double tempArray[] = new double[10];
 
+	/**
+	 * hardware initialization
+	 * 
+	 * @author max
+	 * @since
+	 */
 	public void initHardware() {
 		for (int i = 0; i < 10; i++)
 			tempArray[i] = 3452;
@@ -43,6 +49,12 @@ public class Lights extends Subsystem {
 
 	}
 
+	/**
+	 * @author max
+	 * @param cube
+	 * @return double centerX reported from GRIP
+	 * @since
+	 */
 	public double centerX(int cube) {
 		if (visionLength() > 0)
 			return centerX.getDoubleArray(tempArray)[cube];
@@ -50,10 +62,22 @@ public class Lights extends Subsystem {
 			return 3452;
 	}
 
+	/**
+	 * @author max
+	 * @return int vision array length
+	 * @since
+	 */
 	public int visionLength() {
 		return centerX.getDoubleArray(tempArray).length;
 	}
 
+	/**
+	 * @author max
+	 * @param hDegrees
+	 * @param S
+	 * @param V
+	 * @since
+	 */
 	public void hsv(double hDegrees, double S, double V) {
 		double R, G, B;
 		double H = hDegrees;
@@ -140,6 +164,13 @@ public class Lights extends Subsystem {
 		rgb((float) R, (float) G, (float) B);
 	}
 
+	/**
+	 * @author max
+	 * @param r
+	 * @param g
+	 * @param b
+	 * @since
+	 */
 	public void rgb(float r, float g, float b) {
 		try {
 			canifier.setLEDOutput(r, CANifier.LEDChannel.LEDChannelA);
@@ -149,6 +180,15 @@ public class Lights extends Subsystem {
 		}
 	}
 
+	/**
+	 * @author max
+	 * @param h
+	 * @param s
+	 * @param low
+	 * @param high
+	 * @param pulseIntensity
+	 * @since
+	 */
 	public void pulse(int h, double s, double low, double high, double pulseIntensity) {
 		if (pulseIntensity > high / 15)
 			pulseIntensity = high / 15;
@@ -171,6 +211,11 @@ public class Lights extends Subsystem {
 		Robot.lights.m_hue = h;
 	}
 
+	/**
+	 * @author max
+	 * @return game specific message or "NOT"
+	 * @since
+	 */
 	public String gsm() {
 		String f;
 		f = edu.wpi.first.wpilibj.DriverStation.getInstance().getGameSpecificMessage();
@@ -185,6 +230,10 @@ public class Lights extends Subsystem {
 		//		setDefaultCommand(new LightsCycle());
 	}
 
+	/**
+	 * @author max
+	 *
+	 */
 	private static class Constants {
 		public static final int CANIFIER_ID = 0;
 	}

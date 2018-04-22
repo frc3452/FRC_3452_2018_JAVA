@@ -11,6 +11,12 @@ public class ElevatorTime extends Command {
 	private double m_speed, m_time;
 	private boolean l_rev = false, l_fwd = false;
 
+	/**
+	 * @author macco
+	 * @param speed positive = up
+	 * @param time
+	 * @see Elevator
+	 */
 	public ElevatorTime(double speed, double time) {
 		requires(Robot.elevator);
 

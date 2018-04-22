@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.pwm;
 
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -8,6 +9,12 @@ public class IntakeTime extends Command {
 
 	private double m_speed, m_timeout;
 
+	/**
+	 * @author macco
+	 * @param speed
+	 * @param timeout
+	 * @see Intake
+	 */
 	public IntakeTime(double speed, double timeout) {
 		requires(Robot.intake);
 

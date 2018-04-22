@@ -4,6 +4,13 @@ package org.usfirst.frc.team3452.robot.subsystems;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+/**
+ * <h1>AutonSelector Subsystem</h1>
+ * Handles autonomous selector case statements and printing.
+ * 
+ * @author max
+ *
+ */
 public class AutonSelector extends Subsystem {
 
 	public AnalogInput as_A;
@@ -21,10 +28,16 @@ public class AutonSelector extends Subsystem {
 	public String overrideString = "", autonString = "";
 	public String gameMsg = "NOT";
 
+	/**
+	 * hardware initialization
+	 * 
+	 * @author max
+	 * @since
+	 */
 	public void initHardware() {
 		as_A = new AnalogInput(Constants.AUTO_SELECTOR_1);
 		as_B = new AnalogInput(Constants.AUTO_SELECTOR_2);
-
+		
 		as_A.setSubsystem("AutonSelector");
 		as_B.setSubsystem("AutonSelector");
 		as_A.setName("Selector A");
@@ -35,6 +48,10 @@ public class AutonSelector extends Subsystem {
 		}
 	}
 
+	/**
+	 * @author max
+	 * @since
+	 */
 	public void printSelected() {
 		m_asA = as_A.getValue();
 		m_asB = as_B.getValue();
@@ -69,6 +86,11 @@ public class AutonSelector extends Subsystem {
 		overrideStringPrevious = overrideString;
 	}
 
+	/**
+	 * @author max
+	 * @return int <b>1 - 40</b> or 3452 as error
+	 * @since
+	 */
 	public int uglyAnalog() {
 		if (m_asA < Constants.AUTO_1 + Constants.AUTO_V && m_asA > Constants.AUTO_1 - Constants.AUTO_V) {
 			if (m_asB > Constants.AUTO_1_L && m_asB < Constants.AUTO_1_H) {
@@ -184,14 +206,29 @@ public class AutonSelector extends Subsystem {
 	public void initDefaultCommand() {
 	}
 
+	/**
+	 * Autonomous versions enum
+	 * @author max
+	 *
+	 */
 	public static enum AV {
 		FOREST_HILLS, CURRENT;
 	}
 
+	/**
+	 * Autonomous options enum
+	 * 
+	 * @author max
+	 *
+	 */
 	public static enum AO {
 		SWITCH, SCALE, SWITCH_PRIORITY_NO_CROSS, SCALE_PRIORITY_NO_CROSS, SWITCH_ONLY, SCALE_ONLY, DEFAULT;
 	}
 
+	/**
+	 * @author max
+	 *
+	 */
 	public static class Constants {
 		public static final int AUTO_SELECTOR_1 = 2; //1
 		public static final int AUTO_SELECTOR_2 = 3; //0
@@ -199,6 +236,8 @@ public class AutonSelector extends Subsystem {
 		public static final int AUTO_V = 15;
 
 		//TODO COMP|PRACTICE
+		
+		//COMP
 		//		public static final int AUTO_1 = 2661;
 		//		public static final int AUTO_2 = 2963;
 		//		public static final int AUTO_3 = 3150;
@@ -210,6 +249,7 @@ public class AutonSelector extends Subsystem {
 		//		public static final int AUTO_9 = 3673;
 		//		public static final int AUTO_10 = 3734;
 
+		//PRACTICE
 		public static final int AUTO_1 = 2681;
 		public static final int AUTO_2 = 2991;
 		public static final int AUTO_3 = 3184;

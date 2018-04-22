@@ -69,7 +69,6 @@ public class Robot extends TimedRobot {
 		defaultCommand = (new DefaultAutonomous());
 
 		//naming for commands 
-
 		Robot.autonSelector.autoCommandName[1] = "Middle - Switch";
 		Robot.autonSelector.autoCommandName[2] = "Left - Switch";
 		Robot.autonSelector.autoCommandName[3] = "Left - Scale";
@@ -229,8 +228,8 @@ public class Robot extends TimedRobot {
 
 		wasTele = true;
 
-		//		Command amp = new AmperageTesting(.04, true, true, true, false);
-		//		amp.start();
+//		Command amp = new AmperageTesting(.02, true, false, false, false);
+//		amp.start();
 	}
 
 	@Override

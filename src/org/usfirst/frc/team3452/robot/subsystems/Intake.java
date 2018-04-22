@@ -7,6 +7,12 @@ public class Intake extends Subsystem {
 
 	public Spark Intake_L, Intake_R;
 
+	/**
+	 * hardware initialization
+	 * 
+	 * @author max
+	 * @since
+	 */
 	public void initHardware() {
 		Intake_L = new Spark(Constants.INTAKE_L);
 		Intake_R = new Spark(Constants.INTAKE_R);
@@ -22,6 +28,11 @@ public class Intake extends Subsystem {
 
 	}
 
+	/**
+	 * @author max
+	 * @param speed
+	 * @since
+	 */
 	public void manual(double speed) {
 		Intake_L.set(speed);
 		Intake_R.set(speed);
@@ -30,6 +41,12 @@ public class Intake extends Subsystem {
 	public void initDefaultCommand() {
 	}
 
+	/**
+	 * Intake speed constants
+	 * 
+	 * @author max
+	 *
+	 */
 	public static class Speeds {
 		public static final double INTAKE = -.8;
 		public static final double OUT = .75;
@@ -37,6 +54,10 @@ public class Intake extends Subsystem {
 		public static final double SPIN = .35;
 	}
 
+	/**
+	 * @author max
+	 *
+	 */
 	public static class Constants {
 		public static final int INTAKE_L = 0;
 		public static final int INTAKE_R = 1;

@@ -9,6 +9,11 @@ public class LightsWait extends Command {
 
 	private double m_timeout;
 
+	/**
+	 * @author macco
+	 * @param timeout
+	 * @see Lights
+	 */
 	public LightsWait(double timeout) {
 		requires(Robot.lights);
 

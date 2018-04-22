@@ -6,6 +6,11 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class EncoderReset extends InstantCommand {
 
+    /**
+     * Encoder reset
+     * @author macco
+     * @see Drivetrain
+     */
     public EncoderReset() {
         super();
         requires(Robot.drive);

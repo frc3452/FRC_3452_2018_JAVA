@@ -17,6 +17,12 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/**
+ * <h1>Drivetrain subsystem</h1>
+ * Handles drive train, smartdashboard updating, PDP slots
+ * @author max
+ *
+ */
 public class Drivetrain extends Subsystem {
 	// PDP
 	public PowerDistributionPanel pdp = new PowerDistributionPanel(0);
@@ -37,7 +43,15 @@ public class Drivetrain extends Subsystem {
 	//init timer
 	public Timer timer = new Timer();
 
+	/**
+	 * Smartdashboard logging
+	 * 
+	 * @author max
+	 * @since
+	 */
 	public void LoggerUpdate() {
+		
+		
 		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
 
 		SmartDashboard.putNumber("L1", (double) L1.getSelectedSensorPosition(0) / 4096);
@@ -60,26 +74,42 @@ public class Drivetrain extends Subsystem {
 
 	}
 
+	/**
+	 * hardware initialization
+	 * 
+	 * @author max
+	 * @since
+	 */
 	public void initHardware() {
 		timer.stop();
 		timer.reset();
 		timer.start();
 
-		L1 = new WPI_TalonSRX(Constants.DRIVE_L_1);
-		L2 = new WPI_TalonSRX(Constants.DRIVE_L_2);
-		L3 = new WPI_TalonSRX(Constants.DRIVE_L_3);
-		L4 = new WPI_TalonSRX(Constants.DRIVE_L_4);
+		L1 = new WPI_TalonSRX(Constants.L_1);
+		L2 = new WPI_TalonSRX(Constants.L_2);
+		L3 = new WPI_TalonSRX(Constants.L_3);
+		L4 = new WPI_TalonSRX(Constants.L_4);
 
-		R1 = new WPI_TalonSRX(Constants.DRIVE_R_1);
-		R2 = new WPI_TalonSRX(Constants.DRIVE_R_2);
-		R3 = new WPI_TalonSRX(Constants.DRIVE_R_3);
-		R4 = new WPI_TalonSRX(Constants.DRIVE_R_4);
-
+		R1 = new WPI_TalonSRX(Constants.R_1);
+		R2 = new WPI_TalonSRX(Constants.R_2);
+		R3 = new WPI_TalonSRX(Constants.R_3);
+		R4 = new WPI_TalonSRX(Constants.R_4);
+		
+		L1.setInverted(Constants.L_INVERT);
+		L2.setInverted(Constants.L_INVERT);
+		L3.setInverted(Constants.L_INVERT);
+		L4.setInverted(Constants.L_INVERT);
+		
+		R1.setInverted(Constants.R_INVERT);
+		R2.setInverted(Constants.R_INVERT);
+		R3.setInverted(Constants.R_INVERT);
+		R4.setInverted(Constants.R_INVERT);
+		
 		Gyro = new AHRS(SPI.Port.kMXP);
 
 		robotDrive = new DifferentialDrive(L1, R1);
 
-		robotDrive.setDeadband(0.08);
+		robotDrive.setDeadband(0.045); //.08
 		robotDrive.setSafetyEnabled(true);
 
 		// follower mode
@@ -119,45 +149,45 @@ public class Drivetrain extends Subsystem {
 
 		// AMP LIMIT
 		// OUTER TALONS IN BLOCK = 40amp, INNER TALONS IN BLOCK = 30amp
-		L1.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
-		L1.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, 10);
-		L1.configPeakCurrentDuration(Constants.DRIVE_40_AMP_TIME, 10);
-		L1.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, 10);
+		L1.configContinuousCurrentLimit(Constants.AMP_40_LIMIT, 10);
+		L1.configPeakCurrentLimit(Constants.AMP_40_TRIGGER, 10);
+		L1.configPeakCurrentDuration(Constants.AMP_40_TIME, 10);
+		L1.configOpenloopRamp(Constants.RAMP_TIME, 10);
 
-		L2.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
-		L2.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, 10);
-		L2.configPeakCurrentDuration(Constants.DRIVE_40_AMP_TIME, 10);
-		L2.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, 10);
+		L2.configContinuousCurrentLimit(Constants.AMP_40_LIMIT, 10);
+		L2.configPeakCurrentLimit(Constants.AMP_40_TRIGGER, 10);
+		L2.configPeakCurrentDuration(Constants.AMP_40_TIME, 10);
+		L2.configOpenloopRamp(Constants.RAMP_TIME, 10);
 
-		R1.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
-		R1.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, 10);
-		R1.configPeakCurrentDuration(Constants.DRIVE_40_AMP_TIME, 10);
-		R1.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, 10);
+		R1.configContinuousCurrentLimit(Constants.AMP_40_LIMIT, 10);
+		R1.configPeakCurrentLimit(Constants.AMP_40_TRIGGER, 10);
+		R1.configPeakCurrentDuration(Constants.AMP_40_TIME, 10);
+		R1.configOpenloopRamp(Constants.RAMP_TIME, 10);
 
-		R2.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
-		R2.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, 10);
-		R2.configPeakCurrentDuration(Constants.DRIVE_40_AMP_TIME, 10);
-		R2.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, 10);
+		R2.configContinuousCurrentLimit(Constants.AMP_40_LIMIT, 10);
+		R2.configPeakCurrentLimit(Constants.AMP_40_TRIGGER, 10);
+		R2.configPeakCurrentDuration(Constants.AMP_40_TIME, 10);
+		R2.configOpenloopRamp(Constants.RAMP_TIME, 10);
 
-		L3.configContinuousCurrentLimit(Constants.DRIVE_30_AMP_LIMIT, 10);
-		L3.configPeakCurrentLimit(Constants.DRIVE_30_AMP_TRIGGER, 10);
-		L3.configPeakCurrentDuration(Constants.DRIVE_30_AMP_TIME, 10);
-		L3.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, 10);
+		L3.configContinuousCurrentLimit(Constants.AMP_30_LIMIT, 10);
+		L3.configPeakCurrentLimit(Constants.AMP_30_TRIGGER, 10);
+		L3.configPeakCurrentDuration(Constants.AMP_30_TIME, 10);
+		L3.configOpenloopRamp(Constants.RAMP_TIME, 10);
 
-		L4.configContinuousCurrentLimit(Constants.DRIVE_30_AMP_LIMIT, 10);
-		L4.configPeakCurrentLimit(Constants.DRIVE_30_AMP_TRIGGER, 10);
-		L4.configPeakCurrentDuration(Constants.DRIVE_30_AMP_TIME, 10);
-		L4.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, 10);
+		L4.configContinuousCurrentLimit(Constants.AMP_30_LIMIT, 10);
+		L4.configPeakCurrentLimit(Constants.AMP_30_TRIGGER, 10);
+		L4.configPeakCurrentDuration(Constants.AMP_30_TIME, 10);
+		L4.configOpenloopRamp(Constants.RAMP_TIME, 10);
 
-		R3.configContinuousCurrentLimit(Constants.DRIVE_30_AMP_LIMIT, 10);
-		R3.configPeakCurrentLimit(Constants.DRIVE_30_AMP_TRIGGER, 10);
-		R3.configPeakCurrentDuration(Constants.DRIVE_30_AMP_TIME, 10);
-		R3.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, 10);
+		R3.configContinuousCurrentLimit(Constants.AMP_30_LIMIT, 10);
+		R3.configPeakCurrentLimit(Constants.AMP_30_TRIGGER, 10);
+		R3.configPeakCurrentDuration(Constants.AMP_30_TIME, 10);
+		R3.configOpenloopRamp(Constants.RAMP_TIME, 10);
 
-		R4.configContinuousCurrentLimit(Constants.DRIVE_30_AMP_LIMIT, 10);
-		R4.configPeakCurrentLimit(Constants.DRIVE_30_AMP_TRIGGER, 10);
-		R4.configPeakCurrentDuration(Constants.DRIVE_30_AMP_TIME, 10);
-		R4.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, 10);
+		R4.configContinuousCurrentLimit(Constants.AMP_30_LIMIT, 10);
+		R4.configPeakCurrentLimit(Constants.AMP_30_TRIGGER, 10);
+		R4.configPeakCurrentDuration(Constants.AMP_30_TIME, 10);
+		R4.configOpenloopRamp(Constants.RAMP_TIME, 10);
 
 		L1.enableCurrentLimit(true);
 		L2.enableCurrentLimit(true);
@@ -200,24 +230,51 @@ public class Drivetrain extends Subsystem {
 		setDefaultCommand(new DriveTele());
 	}
 
+	/**
+	 * @author max
+	 * @param joy
+	 * @since
+	 */
 	public void Arcade(Joystick joy) {
 		//		Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify), joy.getRawAxis(4) * m_modify);
 		Arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .635 * m_modify));
 		Robot.elevator.setDriveLimit();
 	}
 
+	
+	/**
+	 * @author max
+	 * @param move
+	 * @param rotate
+	 * @since
+	 */
 	public void Arcade(double move, double rotate) {
 		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .2));
 	}
-
+	
+	/**
+	 * @author max
+	 * @param left
+	 * @param right
+	 * @since
+	 */
 	public void Tank(double left, double right) {
 		robotDrive.tankDrive(left * m_elev_modify, right * m_elev_modify);
 	}
 
+	/**
+	 * @author max
+	 * @param joy
+	 * @since
+	 */
 	public void Tank(Joystick joy) {
 		robotDrive.tankDrive(-joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
 	}
 
+	/**
+	 * @author max
+	 * @param mode
+	 */
 	public void brake(NeutralMode mode) {
 		L1.setNeutralMode(mode);
 		L2.setNeutralMode(mode);
@@ -229,6 +286,16 @@ public class Drivetrain extends Subsystem {
 		R4.setNeutralMode(mode);
 	}
 
+	/**
+	 * @author max
+	 * @param leftpos rotations 
+	 * @param rightpos rotations
+	 * @param leftaccel rotations per second (accel)
+	 * @param rightaccel rotations per second (accel)
+	 * @param leftspeed rotations per second (top speed)
+	 * @param rightspeed rotations per second (top speed)
+	 * @since
+	 */
 	public void MotionMagic(double leftpos, double rightpos, double leftaccel, double rightaccel, double leftspeed,
 			double rightspeed) {
 
@@ -252,6 +319,15 @@ public class Drivetrain extends Subsystem {
 		R1.set(ControlMode.MotionMagic, r_pos);
 	}
 	
+	/**
+	 * @author max
+	 * @param leftpos rotations
+	 * @param rightpos rotations
+	 * @param leftspeed speed (percentage)
+	 * @param rightspeed speed (percentage)
+	 * @since
+	 * @deprecated
+	 */
 	public void encoder(double leftpos, double rightpos, double leftspeed, double rightspeed) {
 		robotDrive.setSafetyEnabled(false);
 
@@ -270,6 +346,12 @@ public class Drivetrain extends Subsystem {
 		R1.set(ControlMode.Position, r_pos);
 	}
 
+	/**
+	 * @author max
+	 * @param value
+	 * @return
+	 * @since boolean
+	 */
 	public boolean encoderSpeedIsUnder(double value) {
 		double l = L1.getSelectedSensorVelocity(0);
 		double r = R1.getSelectedSensorVelocity(0);
@@ -280,6 +362,14 @@ public class Drivetrain extends Subsystem {
 			return false;
 	}
 
+	/**
+	 * Set drive train masters peak outputs to full.
+	 * Set control mode to PercentOutput.
+	 * Percentage trackers to default
+
+	 * @author max
+	 * @since
+	 */
 	public void encoderDone() {
 		R1.configPeakOutputForward(1, 0);
 		R1.configPeakOutputReverse(-1, 0);
@@ -297,6 +387,14 @@ public class Drivetrain extends Subsystem {
 		robotDrive.setSafetyEnabled(true);
 	}
 
+	/**
+	 * If L & R are within 102*multiplier of target positions, return true
+	 * 
+	 * @author max
+	 * @param multiplier
+	 * @return boolean
+	 * @since
+	 */
 	public boolean encoderIsDone(double multiplier) {
 		if ((L1.getSelectedSensorPosition(0) < (l_pos + (102 * multiplier))
 				&& L1.getSelectedSensorPosition(0) > (l_pos - (102 * multiplier)))
@@ -307,6 +405,14 @@ public class Drivetrain extends Subsystem {
 			return false;
 	}
 
+	/**
+	 * If L or R are within 102*multiplier of target positions, return true
+	 * 
+	 * @author max
+	 * @param multiplier
+	 * @return
+	 * @since
+	 */
 	public boolean encoderIsDoneEither(double multiplier) {
 		if (((L1.getSelectedSensorPosition(0) < (l_pos + (102 * multiplier))
 				&& L1.getSelectedSensorPosition(0) > (l_pos - (102 * multiplier))))
@@ -317,11 +423,19 @@ public class Drivetrain extends Subsystem {
 			return false;
 	}
 
+	/**
+	 * @author max
+	 * @since
+	 */
 	public void encoderReset() {
 		L1.setSelectedSensorPosition(0, 0, 10);
 		R1.setSelectedSensorPosition(0, 0, 10);
 	}
 
+	/**
+	 * @author max
+	 *
+	 */
 	public static class PDP {
 		public final static int DRIVE_L_1 = 0, DRIVE_L_2 = 1, DRIVE_L_3 = 5, DRIVE_L_4 = 4;
 		public final static int DRIVE_R_1 = 15, DRIVE_R_2 = 14, DRIVE_R_3 = 11, DRIVE_R_4 = 10;
@@ -336,17 +450,30 @@ public class Drivetrain extends Subsystem {
 		public final static int CLIMBER_2 = 2;
 	}
 	
+	/**
+	 * @author max
+	 *
+	 */
 	public static class Constants {
-		public final static int DRIVE_L_1 = 1, DRIVE_L_2 = 2, DRIVE_L_3 = 3, DRIVE_L_4 = 4;
-		public final static int DRIVE_R_1 = 5, DRIVE_R_2 = 6, DRIVE_R_3 = 7, DRIVE_R_4 = 8;
+		public final static int L_1 = 1, L_2 = 2, L_3 = 3, L_4 = 4;
+		public final static int R_1 = 5, R_2 = 6, R_3 = 7, R_4 = 8;
+		
+		//TODO COMP|PRACTICE
+		//FALSE ON REAL ROBOT
+		public final static boolean L_INVERT = false;
+		public final static boolean R_INVERT = false;
 
-		public final static int DRIVE_40_AMP_TRIGGER = 60, DRIVE_40_AMP_LIMIT = 30, DRIVE_40_AMP_TIME = 4000;
+		public final static int AMP_40_TRIGGER = 60, AMP_40_LIMIT = 30, AMP_40_TIME = 4000;
 
-		public final static int DRIVE_30_AMP_TRIGGER = 45, DRIVE_30_AMP_LIMIT = 25, DRIVE_30_AMP_TIME = 3000;
+		public final static int AMP_30_TRIGGER = 45, AMP_30_LIMIT = 25, AMP_30_TIME = 3000;
 
-		public final static double DRIVE_RAMP_TIME = 0.125;
+		public final static double RAMP_TIME = 0.125;
 	}
 
+	/**
+	 * @author max
+	 *
+	 */
 	public static enum CONTROLLER {
 		DRIVER, OPERATOR, BOTH;
 	}

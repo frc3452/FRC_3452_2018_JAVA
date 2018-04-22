@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -10,6 +11,20 @@ public class SmoothMooth extends Command {
 
 	private double c_p, l_adjust, r_adjust, c_gyro;
 
+	/**
+	 * Command for integrating encoderDrive with smoother arcs
+	 * 
+	 * @author macco
+	 * @param left
+	 * @param right
+	 * @param accel
+	 * @param lessaccel
+	 * @param speed
+	 * @param percentForStraight
+	 * @param heading
+	 * @param constant
+	 * @see Drivetrain
+	 */
 	public SmoothMooth(double left, double right, double accel, double lessaccel, double speed,
 			double percentForStraight, double heading, double constant) {
 		requires(Robot.drive);

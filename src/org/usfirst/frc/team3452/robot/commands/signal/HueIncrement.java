@@ -6,6 +6,10 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class HueIncrement extends InstantCommand {
 
+	/**
+	 * @author macco
+	 * @see Lights
+	 */
 	public HueIncrement() {
 		super();
 		requires(Robot.lights);

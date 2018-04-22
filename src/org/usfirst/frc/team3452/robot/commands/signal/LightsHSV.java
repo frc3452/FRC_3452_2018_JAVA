@@ -9,6 +9,14 @@ public class LightsHSV extends Command {
 	private double m_h, m_s, m_v;
 	private String m_mode;
 
+	/**
+	 * @author macco
+	 * @param h
+	 * @param s
+	 * @param v
+	 * @param mode
+	 * @see Lights
+	 */
 	public LightsHSV(double h, double s, double v, String mode) {
 		requires(Robot.lights);
 		m_h = h;

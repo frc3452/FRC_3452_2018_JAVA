@@ -24,17 +24,23 @@ public class Elevator extends Subsystem {
 	public boolean isRemoteSensor = false;
 	//TODO TEST ELEVATOR COMMAND
 
+	/**
+	 * hardware initialization
+	 * 
+	 * @author max
+	 * @since
+	 */
 	public void initHardware() {
 
-		Elev_1 = new WPI_TalonSRX(Constants.ELEVATOR_1);
-		Elev_2 = new WPI_TalonSRX(Constants.ELEVATOR_2);
+		Elev_1 = new WPI_TalonSRX(Constants.E_1);
+		Elev_2 = new WPI_TalonSRX(Constants.E_2);
 
 		// FOLLOWER
 		Elev_2.follow(Elev_1);
 
 		// INVERT
-		Elev_1.setInverted(Constants.ELEVATOR_1_INVERT);
-		Elev_2.setInverted(Constants.ELEVATOR_2_INVERT);
+		Elev_1.setInverted(Constants.E_1_INVERT);
+		Elev_2.setInverted(Constants.E_2_INVERT);
 
 		// PIDs
 		Elev_1.config_kF(0, 0, 10);
@@ -47,7 +53,7 @@ public class Elevator extends Subsystem {
 			// ENCODER
 			Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 			Elev_1.setSelectedSensorPosition(0, 0, 10);
-			Elev_1.setSensorPhase(Constants.ELEVATOR_ENC_INVERT);
+			Elev_1.setSensorPhase(Constants.E_ENC_INVERT);
 
 			//		 RESET ENCODER ON LIMIT SWITCH DOWN
 			Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);
@@ -63,7 +69,7 @@ public class Elevator extends Subsystem {
 			Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 			Elev_1.setSelectedSensorPosition(0, 0, 10);
 			Elev_1.setSelectedSensorPosition(0, 0, 10);
-			Elev_1.setSensorPhase(Constants.ELEVATOR_ENC_INVERT);
+			Elev_1.setSensorPhase(Constants.E_ENC_INVERT);
 
 			// RESET ENCODER ON LIMIT SWITCH DOWN
 			Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);
@@ -85,19 +91,19 @@ public class Elevator extends Subsystem {
 		Elev_2.setNeutralMode(NeutralMode.Brake);
 
 		//CURRENT LIMITING
-		Elev_1.configContinuousCurrentLimit(Constants.ELEVATOR_AMP_LIMIT, 10);
-		Elev_1.configPeakCurrentLimit(Constants.ELEVATOR_AMP_TRIGGER, 10);
-		Elev_1.configPeakCurrentDuration(Constants.ELEVATOR_AMP_TIME, 10);
+		Elev_1.configContinuousCurrentLimit(Constants.AMP_LIMIT, 10);
+		Elev_1.configPeakCurrentLimit(Constants.AMP_TRIGGER, 10);
+		Elev_1.configPeakCurrentDuration(Constants.AMP_TIME, 10);
 
-		Elev_2.configContinuousCurrentLimit(Constants.ELEVATOR_AMP_LIMIT, 10);
-		Elev_2.configPeakCurrentLimit(Constants.ELEVATOR_AMP_TRIGGER, 10);
-		Elev_2.configPeakCurrentDuration(Constants.ELEVATOR_AMP_TIME, 10);
+		Elev_2.configContinuousCurrentLimit(Constants.AMP_LIMIT, 10);
+		Elev_2.configPeakCurrentLimit(Constants.AMP_TRIGGER, 10);
+		Elev_2.configPeakCurrentDuration(Constants.AMP_TIME, 10);
 
 		Elev_1.enableCurrentLimit(true);
 		Elev_2.enableCurrentLimit(true);
 
-		Elev_1.configOpenloopRamp(Constants.ELEVATOR_OPEN_RAMP_TIME, 10);
-		Elev_1.configClosedloopRamp(Constants.ELEVATOR_CLOSED_RAMP_TIME, 10);
+		Elev_1.configOpenloopRamp(Constants.E_OPEN_RAMP_TIME, 10);
+		Elev_1.configClosedloopRamp(Constants.E_CLOSED_RAMP_TIME, 10);
 
 		//SHUFFLEBOARD
 		Elev_1.setSubsystem("Elevator");
@@ -107,21 +113,27 @@ public class Elevator extends Subsystem {
 		Elev_2.setName("Elev 2");
 	}
 
+	/**
+	 * update elevator modifier
+	 * 
+	 * @author max
+	 * @since
+	 */
 	public void setDriveLimit() {
 		double pos = -Elev_1.getSelectedSensorPosition(0);
 
 		if (m_overriden == false) {
 
 			if (pos < 8500)
-				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_1;
+				Robot.drive.m_elev_modify = Constants.SPEED_1;
 			else if (pos < 12000 && pos > 8500)
-				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_2;
+				Robot.drive.m_elev_modify = Constants.SPEED_2;
 			else if (pos < 15000 && pos > 12000)
-				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_3;
+				Robot.drive.m_elev_modify = Constants.SPEED_3;
 			else if (pos < 25000 && pos > 15000)
-				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_4;
+				Robot.drive.m_elev_modify = Constants.SPEED_4;
 			else if (pos > 25000)
-				Robot.drive.m_elev_modify = Constants.ELEVATOR_SPEED_5;
+				Robot.drive.m_elev_modify = Constants.SPEED_5;
 
 		} else {
 			Robot.drive.m_elev_modify = 1;
@@ -129,6 +141,13 @@ public class Elevator extends Subsystem {
 
 	}
 
+	/**
+	 * run to position
+	 * 
+	 * @author max
+	 * @param position
+	 * @since
+	 */
 	public void Encoder(double position) {
 		Elev_1.configPeakOutputForward(.45, 10);
 		Elev_1.configPeakOutputReverse(-.8, 10);
@@ -136,6 +155,12 @@ public class Elevator extends Subsystem {
 		Elev_1.set(ControlMode.Position, m_pos);
 	}
 
+	/**
+	 * @author max
+	 * @param multiplier
+	 * @return boolean
+	 * @since
+	 */
 	public boolean isDone(double multiplier) {
 		if ((Elev_1.getSelectedSensorPosition(0) < (m_pos + (102 * multiplier))
 				&& Elev_1.getSelectedSensorPosition(0) > (m_pos - (102 * multiplier)))) {
@@ -145,6 +170,13 @@ public class Elevator extends Subsystem {
 		}
 	}
 
+	/**
+	 * set output to default
+	 * set position target default
+	 * 
+	 * @author max
+	 * @since
+	 */
 	public void EncoderDone() {
 		Elev_1.set(ControlMode.PercentOutput, 0);
 		Elev_1.configPeakOutputForward(1, 10);
@@ -155,31 +187,41 @@ public class Elevator extends Subsystem {
 	public void initDefaultCommand() {
 	}
 
+	/**
+	 * Elevator speed limiting override
+	 * 
+	 * @author max
+	 *
+	 */
 	public static enum EO {
 		TOGGLE, ON, OFF;
 	}
 
+	/**
+	 * @author max
+	 *
+	 */
 	public static class Constants {
-		public static final int ELEVATOR_1 = 9;
-		public static final int ELEVATOR_2 = 10;
+		public static final int E_1 = 9;
+		public static final int E_2 = 10;
 
-		public static final boolean ELEVATOR_1_INVERT = false;
-		public static final boolean ELEVATOR_2_INVERT = false;
+		public static final boolean E_1_INVERT = false;
+		public static final boolean E_2_INVERT = false;
 
-		public static final boolean ELEVATOR_ENC_INVERT = true;
+		public static final boolean E_ENC_INVERT = true;
 
-		public static final double ELEVATOR_OPEN_RAMP_TIME = .5;
-		public static final double ELEVATOR_CLOSED_RAMP_TIME = .25;
+		public static final double E_OPEN_RAMP_TIME = .5;
+		public static final double E_CLOSED_RAMP_TIME = .25;
 
-		public static final double ELEVATOR_SPEED_1 = 1;
-		public static final double ELEVATOR_SPEED_2 = .9;
-		public static final double ELEVATOR_SPEED_3 = .65;
-		public static final double ELEVATOR_SPEED_4 = .55;
-		public static final double ELEVATOR_SPEED_5 = .48; //.45
+		public static final double SPEED_1 = 1;
+		public static final double SPEED_2 = .9;
+		public static final double SPEED_3 = .65;
+		public static final double SPEED_4 = .55;
+		public static final double SPEED_5 = .48; //.45
 
-		public static int ELEVATOR_AMP_TRIGGER = 50;
-		public static int ELEVATOR_AMP_LIMIT = 40;
-		public static int ELEVATOR_AMP_TIME = 1000;
+		public static int AMP_TRIGGER = 50;
+		public static int AMP_LIMIT = 40;
+		public static int AMP_TIME = 1000;
 	}
 
 }

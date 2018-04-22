@@ -1,6 +1,10 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Climber;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
+import org.usfirst.frc.team3452.robot.subsystems.Elevator;
+import org.usfirst.frc.team3452.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -14,6 +18,19 @@ public class AmperageTesting extends Command {
 
 	Timer timer = new Timer();
 
+	/**
+	 * <b>WARNING</b> Remove from teleop init 
+	 * 
+	 * @param increment
+	 * @param drivetrain
+	 * @param elevator
+	 * @param intake
+	 * @param climber
+	 * @see Drivetrain
+	 * @see Intake
+	 * @see Elevator
+	 * @see Climber
+	 */
 	public AmperageTesting(double increment, boolean drivetrain, boolean elevator, boolean intake, boolean climber) {
 		requires(Robot.elevator);
 		m_drive = drivetrain;
@@ -55,9 +72,9 @@ public class AmperageTesting extends Command {
 			Robot.climber.climb1.set(0);
 		}
 
-		if (percentage >= 2)
+		if (percentage >= 1)
 			direction = false;
-		if (percentage <= -2)
+		if (percentage <= -1)
 			direction = true;
 
 		if (direction)

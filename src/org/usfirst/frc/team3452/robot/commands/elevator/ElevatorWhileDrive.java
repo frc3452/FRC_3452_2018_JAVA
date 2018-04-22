@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -9,6 +10,12 @@ public class ElevatorWhileDrive extends Command {
 	private double m_value, m_percent;
 	private boolean l_rev = false, l_fwd = false;
 
+	/**
+	 * @author macco
+	 * @param value
+	 * @param atPercent
+	 * @see Elevator
+	 */
 	public ElevatorWhileDrive(double value, double atPercent) {
 		requires(Robot.elevator);
 

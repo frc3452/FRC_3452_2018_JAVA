@@ -1,6 +1,6 @@
 package org.usfirst.frc.team3452.robot;
 
-import org.usfirst.frc.team3452.robot.commands.drive.SetModify;
+import org.usfirst.frc.team3452.robot.commands.drive.SpeedModifier;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.JustGonnaSendIt;
@@ -27,7 +27,7 @@ public class OI {
 	private static Button driverJoyA, driverJoyB, driverJoyX, driverJoyY, driverJoyLB, driverJoyRB, driverJoyBack,
 			driverJoyStart, driverJoyLClick, driverJoyRClick;
 
-	@SuppressWarnings("unused")
+//	@SuppressWarnings("unused")
 	private static HIDPOVButton driverUp, driverDown, driverLeft, driverRight;
 
 	@SuppressWarnings("unused")
@@ -41,31 +41,25 @@ public class OI {
 		buttonInit();
 
 		// 				DRIVER JOY
-		driverJoyA.whenPressed(new SetModify(-1));
+		driverJoyA.whenPressed(new SpeedModifier(-1));
 
 		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
-
+		
 		//		driverJoyY.whileHeld(new Climb(1));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
-
+		
 		driverJoyBack.whenPressed(new OverrideSet(EO.TOGGLE));
-
+		
 		//				DPAD
 		driverDown.whenPressed(new ElevatorPosition(-15));
 		driverUp.whileHeld(new IntakeManual(Intake.Speeds.SLOW));
+		driverLeft.whenPressed(new ElevatorPosition(6.8));
 		driverRight.whenPressed(new ElevatorPosition(3.5));
 
 		// 				OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
 		opJoyRB.whenPressed(new JustGonnaSendIt());
-
-		//		driverJoyLB.whenPressed(new CommandGroup() {
-		//			{
-		//				addSequential(new EncoderFrom(50, 50, .5, .5, 1.5));
-		//				addSequential(new EncoderFrom(-50, -50, .5, .5, 1.5));
-		//			}
-		//		});
 
 		opJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		opJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));

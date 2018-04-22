@@ -7,6 +7,11 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class DefaultAutonomous extends CommandGroup {
 
+	/**
+	 * Lift elevator and drivetime
+	 * 
+	 * @author macco
+	 */
 	public DefaultAutonomous() {
 		addSequential(new ElevatorTime(.5, .15));
 

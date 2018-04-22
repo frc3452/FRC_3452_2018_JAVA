@@ -6,6 +6,11 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class GyroReset extends Command {
 
+	/**
+	 * Gyro reset
+	 * @author macco
+	 * @see Drivetrain
+	 */
 	public GyroReset() {
 		requires(Robot.drive);
 	}

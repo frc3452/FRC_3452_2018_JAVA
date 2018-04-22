@@ -1,8 +1,9 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Intake;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.PDP;
+import org.usfirst.frc.team3452.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -13,6 +14,12 @@ public class DriveToCube extends Command {
 	private boolean m_complete, flag_1, flag_2, timeoutSet;
 	private Timer timer = new Timer();
 
+	/**
+	 * @author macco
+	 * @param speed
+	 * @param rotationLimit
+	 * @see Drivetrain
+	 */
 	public DriveToCube(double speed, double rotationLimit) {
 		requires(Robot.drive);
 

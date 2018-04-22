@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.pwm;
 
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Climber;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -10,6 +11,11 @@ public class Climb extends Command {
 
 	private Timer timer = new Timer();
 
+	/**
+	 * @author macco
+	 * @param speed
+	 * @see Climber
+	 */
 	public Climb(double speed) {
 		requires(Robot.climber);
 

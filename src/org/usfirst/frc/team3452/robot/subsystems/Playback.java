@@ -14,6 +14,14 @@ import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.PDP;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+/**
+ * <b>Playback subsystem</b>
+ * Also used for file writing, logging, etc.
+ * 
+ * @author max
+ * @since 4-18-2018
+ *
+ */
 public class Playback extends Subsystem {
 
 	private File f;
@@ -33,9 +41,21 @@ public class Playback extends Subsystem {
 
 	private boolean hasPrintedLogFailed = false;
 
+	/**
+	 * hardware initialization
+	 * 
+	 * @author max
+	 * @since
+	 */
 	public void initHardware() {
 	}
 
+	/**
+	 * parse file and convert to array
+	 * 
+	 * @author max
+	 * @since
+	 */
 	private void parseFile() {
 		int posInFile = 0, comma1 = 0, comma2 = 0;
 
@@ -72,6 +92,12 @@ public class Playback extends Subsystem {
 		}
 	}
 
+	/**
+	 * print array
+	 * 
+	 * @author max
+	 * @since
+	 */
 	private void printTimes() {
 		try {
 			for (int i = 0; i < RP1A.length; i++)
@@ -82,6 +108,12 @@ public class Playback extends Subsystem {
 		}
 	}
 
+	/**
+	 * write time + L&R drivetrain speeds to file
+	 * 
+	 * @author max
+	 * @since
+	 */
 	private void writeToFile() {
 		try {
 			String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 50));
@@ -108,6 +140,13 @@ public class Playback extends Subsystem {
 		}
 	}
 
+	/**
+	 * logging system
+	 * 
+	 * @author max
+	 * @param startup
+	 * @since
+	 */
 	@SuppressWarnings("deprecation")
 	private void writeToLog(boolean startup) {
 		try {
@@ -194,6 +233,13 @@ public class Playback extends Subsystem {
 		}
 	}
 
+	/**
+	 * @author max
+	 * @param fileName
+	 * @param readwrite
+	 * @param usb
+	 * @since
+	 */
 	private void createFile(String fileName, fileState readwrite, boolean usb) {
 		try {
 			switch (readwrite) {
@@ -230,6 +276,11 @@ public class Playback extends Subsystem {
 		}
 	}
 
+	/**
+	 * @author max
+	 * @param readwrite
+	 * @since
+	 */
 	private void closeFile(fileState readwrite) {
 		try {
 			switch (readwrite) {
@@ -249,6 +300,18 @@ public class Playback extends Subsystem {
 		}
 	}
 
+	/**
+	 * Used to control file writing.
+	 * 
+	 * @author max
+	 * @param name file name
+	 * @param usb true|false for writing to usb
+	 * @param task
+	 * @param state
+	 * @see TASK
+	 * @see STATE
+	 * @since
+	 */
 	public void control(String name, boolean usb, TASK task, STATE state) {
 		switch (state) {
 		case STARTUP:
@@ -328,14 +391,42 @@ public class Playback extends Subsystem {
 		}
 	}
 
-	public static double roundToFraction(double x, double demoninator) {
-		return (double) (Math.round(x * demoninator) / demoninator);
+	/**
+	 * <p>
+	 * <b>Example</b> 
+	 * </p>
+	 * <p>
+	 * toRound = 2.342, wanting to round to nearest .05
+	 * 1/<b>20</b> is .05
+	 * roundToFraction(2.342,20)
+	 * 
+	 * </p>
+	 * @author max
+	 * @param value 
+	 * @param demoninator
+	 * @return double
+	 * @since
+	 */
+	public static double roundToFraction(double value, double demoninator) {
+		return (double) (Math.round(value * demoninator) / demoninator);
 	}
 
 	public void initDefaultCommand() {
 		//		setDefaultCommand(new Record("LOG", TASK.LOG));
 	}
 
+	/**
+	 * 
+	 * <p>Returns current date in format</p>
+	 * <p><b>yyyy.MM.dd.HH.mm.ss</b></p>
+	 * <p>or</p>
+	 * <p><b>MM.dd.HH.mm</b></p>
+	 * 
+	 * @author max
+	 * @param full
+	 * @return string
+	 * @since
+	 */
 	public String dateTime(boolean full) {
 		String temp;
 		if (full)
@@ -345,15 +436,39 @@ public class Playback extends Subsystem {
 		return temp;
 	}
 
+	/**
+	 * reading or writing
+	 * 
+	 * @author max
+	 * 
+	 */
 	public enum fileState {
 		READ, WRITE;
 	}
 
+	/**
+	 * startup, runtime, finish
+	 * 
+	 * @author max
+	 */
 	public enum STATE {
 		STARTUP, RUNTIME, FINISH;
 	}
 
+	/**
+	 * record, log, parse, play
+	 * 
+	 * @author max
+	 */
 	public enum TASK {
 		RECORD, LOG, PARSE, PLAY;
+	}
+	
+	/**
+	 * @author max
+	 *
+	 */
+	public class Constants
+	{
 	}
 }

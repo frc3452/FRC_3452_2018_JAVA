@@ -2,6 +2,7 @@ package org.usfirst.frc.team3452.robot.commands.elevator;
 
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -13,6 +14,13 @@ public class ElevatorManual extends Command {
 	private int m_controller_axis;
 	private Joystick m_joy;
 
+	/**
+	 * Operator control of elevator
+	 * 
+	 * @author macco
+	 * @param joy
+	 * @see Elevator
+	 */
 	public ElevatorManual(Joystick joy) {
 		requires(Robot.elevator);
 

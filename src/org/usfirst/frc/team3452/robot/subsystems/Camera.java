@@ -4,10 +4,22 @@ import edu.wpi.cscore.*;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+/**
+ * <h1>Camera subsystem</h1>
+ * Handles camera exposure change and server switching
+ * @author max
+ *
+ */
 public class Camera extends Subsystem {
 	private UsbCamera mCamera0, mCamera1;
 	private VideoSink server;
 
+	/**
+	 * hardware initialization
+	 * 
+	 * @author max
+	 * @since
+	 */
 	public void initHardware() {
 		mCamera0 = CameraServer.getInstance().startAutomaticCapture(0);
 		mCamera0.setResolution(640, 480);
@@ -23,6 +35,11 @@ public class Camera extends Subsystem {
 		server.setSource(mCamera0);
 	}
 
+	/**
+	 * @author max
+	 * @param cameraswitch
+	 * @since
+	 */
 	public void camSwitch(int cameraswitch) {
 		switch (cameraswitch) {
 		case 0:
@@ -37,6 +54,12 @@ public class Camera extends Subsystem {
 		}
 	}
 
+	/**
+	 * @author max
+	 * @param camera
+	 * @param exposure
+	 * @since
+	 */
 	public void camExposure(int camera, int exposure) {
 		switch (camera) {
 		case 0:

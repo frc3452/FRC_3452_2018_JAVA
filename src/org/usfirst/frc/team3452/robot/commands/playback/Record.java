@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.playback;
 
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Playback;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.STATE;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
 
@@ -12,6 +13,15 @@ public class Record extends Command {
 	private String m_name;
 	private boolean m_usb;
 
+	/**
+	 * Command version of playback control
+	 * 
+	 * @author macco
+	 * @param name
+	 * @param usb
+	 * @param task
+	 * @see Playback
+	 */
 	public Record(String name, boolean usb, TASK task) {
 		m_task = task;
 		m_name = name;
