@@ -122,6 +122,12 @@ public class Drivetrain extends Subsystem {
 		R2.follow(R1);
 		R3.follow(R1);
 		R4.follow(R1);
+		
+		//MOTION PROFILING
+		L1.configMotionProfileTrajectoryPeriod(20, 10);
+		L1.changeMotionControlFramePeriod(10);
+		R1.configMotionProfileTrajectoryPeriod(20, 10);
+		R1.changeMotionControlFramePeriod(10);
 
 		// encoder init
 		L1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
@@ -131,20 +137,13 @@ public class Drivetrain extends Subsystem {
 		L1.setSensorPhase(true);
 		R1.setSensorPhase(true);
 
-		//MOTION PROFILE
-		L1.configMotionProfileTrajectoryPeriod(10, 10);
-		L1.changeMotionControlFramePeriod(5);
-		
-		R1.configMotionProfileTrajectoryPeriod(10, 10);
-		R1.changeMotionControlFramePeriod(5);
-
 		L1.config_kF(0, 0, 10);
-		L1.config_kP(0, 0.08, 10);
+		L1.config_kP(0, 0.045, 10);
 		L1.config_kI(0, 0, 10);
 		L1.config_kD(0, 0, 10);
 
 		R1.config_kF(0, 0, 10);
-		R1.config_kP(0, 0.08, 10); //.8
+		R1.config_kP(0, 0.045, 10); //.8
 		R1.config_kI(0, 0, 10);
 		R1.config_kD(0, 0, 10);
 
@@ -315,12 +314,13 @@ public class Drivetrain extends Subsystem {
 		L1.clearMotionProfileTrajectories();
 		R1.clearMotionProfileTrajectories();
 
-		for (int i = 0; i < Robot.playback.mpLR.length; i++) {
-			leftPoint.position = Robot.playback.mpLR[i];
-			leftPoint.velocity = Robot.playback.mpLS[i];
+		//MOTION PROFILE
+		for (int i = 0; i < Robot.playback.mpLR.size(); i++) {
+			leftPoint.position = Robot.playback.mpLR.get(i);
+			leftPoint.velocity = Robot.playback.mpLS.get(i);
 
-			rightPoint.position = Robot.playback.mpRR[i];
-			rightPoint.velocity = Robot.playback.mpRS[i];
+			rightPoint.position = Robot.playback.mpRR.get(i);
+			rightPoint.velocity = Robot.playback.mpRS.get(i);
 
 			leftPoint.headingDeg = 0;
 			rightPoint.headingDeg = 0;
@@ -345,24 +345,23 @@ public class Drivetrain extends Subsystem {
 			leftPoint.isLastPoint = false;
 			rightPoint.isLastPoint = false;
 
-			if ((i + 1) == Robot.playback.mpLR.length) {
+			if ((i + 1) == Robot.playback.mpLR.size()) {
 				leftPoint.isLastPoint = true;
 				rightPoint.isLastPoint = true;
 			}
 
 			L1.pushMotionProfileTrajectory(leftPoint);
 			R1.pushMotionProfileTrajectory(rightPoint);
-			
-			System.out.println("Pushing: " + i);
-			
 		}
+		System.out.println("Motion profile pushed to Talons");
+		
 	}
 
 	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {
 		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
 
 		retval = retval.valueOf(durationMs);
-		
+
 		if (retval.value != durationMs)
 			DriverStation.reportError("Trajectory duration not supported", false);
 

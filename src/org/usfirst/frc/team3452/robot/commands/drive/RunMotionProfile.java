@@ -23,7 +23,7 @@ public class RunMotionProfile extends Command {
 	@Override
 	protected void initialize() {
 		Robot.drive.motionprofile();
-		setTimeout(4);
+		setTimeout(12);
 	}
 
 	@Override
@@ -34,8 +34,8 @@ public class RunMotionProfile extends Command {
 		Robot.drive.L1.set(ControlMode.MotionProfile, 1);
 		Robot.drive.R1.set(ControlMode.MotionProfile, 1);
 
-		Robot.drive.L1.getMotionProfileStatus(L_status);
-		Robot.drive.R1.getMotionProfileStatus(R_status);
+//		Robot.drive.L1.getMotionProfileStatus(L_status);
+//		Robot.drive.R1.getMotionProfileStatus(R_status);
 	}
 
 	@Override

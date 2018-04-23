@@ -51,19 +51,18 @@ public class OI {
 		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
 
-		driverJoyRB.whileHeld(new Record("MP2", false, TASK.Record));
+		driverJoyRB.whileHeld(new Record("MP1", false, TASK.Record));
 		
 		driverJoyLB.whenPressed(new CommandGroup() {
 			{
 				addSequential(new EncoderReset());
-				addSequential(new Record("MP2", false, TASK.Parse));
+				addSequential(new Record("MP1", false, TASK.Parse));
 				addSequential(new RunMotionProfile());
 			}
 		});
 				
 		//		driverJoyY.whileHeld(new Climb(1));
-//		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
-
+		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 		driverJoyBack.whenPressed(new OverrideSet(EO.TOGGLE));
 
 		//				DPAD

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -31,10 +32,11 @@ public class Playback extends Subsystem {
 	private Scanner br;
 
 	//POSITION, VEL, DURATION
-	public double mpLR[] = new double[300];
-	public double mpLS[] = new double[300];
-	public double mpRR[] = new double[300];
-	public double mpRS[] = new double[300];
+	public ArrayList<Double> mpLR = new ArrayList<Double>();
+	public ArrayList<Double> mpLS = new ArrayList<Double>();
+	public ArrayList<Double> mpRR = new ArrayList<Double>();
+	public ArrayList<Double> mpRS = new ArrayList<Double>();
+
 	public int mpDur;
 
 	private String dateTime, timeString;
@@ -58,30 +60,26 @@ public class Playback extends Subsystem {
 	 * @since
 	 */
 	private void parseFile() {
-		int posInFile = 0;
-
 		String st;
 		try {
+			//Skip first line of text
+			br.nextLine();
 			//take time var
-			br.nextLine(); //Skip first line of text
 			mpDur = Integer.parseInt(br.nextLine().split(",")[0]);
 
-			try {
-				//loop through each line
-				while ((st = br.nextLine()) != null) {
-					String[] ar = st.split(",");
+			//loop through each line
+			while (br.hasNextLine()) {
+				st = br.nextLine();
 
-					mpLR[posInFile] = Double.parseDouble(ar[1]);
-					mpLS[posInFile] = Double.parseDouble(ar[2]);
-					mpRR[posInFile] = Double.parseDouble(ar[3]);
-					mpRS[posInFile] = Double.parseDouble(ar[4]);
+				String[] ar = st.split(",");
 
-					posInFile++;
-				}
-			} catch (java.util.NoSuchElementException e) {
-				//Do nothing as we know we're going to go over a line anyway
+				mpLR.add(Double.parseDouble(ar[1]));
+				mpLS.add(Double.parseDouble(ar[2]));
+				mpRR.add(Double.parseDouble(ar[3]));
+				mpRS.add(Double.parseDouble(ar[4]));
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Parse failed!");
 		}
 	}
@@ -92,10 +90,12 @@ public class Playback extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	private void printTimes() {
+	private void printValues() {
 		try {
-			for (int i = 0; i < mpLR.length; i++)
-				System.out.println(mpLR[i] + "\t" + mpLS[i] + "\t" + mpRR[i] + "\t" + mpRS[i] + "\t" + mpDur);
+
+			for (int i = 0; i < mpLR.size(); i++)
+				System.out.println(
+						mpLR.get(i) + "\t" + mpLS.get(i) + "\t" + mpRR.get(i) + "\t" + mpRS.get(i) + "\t" + mpDur);
 
 		} catch (Exception e) {
 			System.out.println("Printing failed!");
@@ -111,7 +111,7 @@ public class Playback extends Subsystem {
 	private void writeToProfile(boolean startup) {
 		try {
 
-			String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 1000));
+			String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 50));
 			timeString = timeString.replace(' ', '0');
 			n_timeString = Double.valueOf(timeString);
 
@@ -135,7 +135,7 @@ public class Playback extends Subsystem {
 				} else {
 					bw.write("Time,leftPos,leftSpeed,rightPos,rightSpeed");
 					bw.write("\r\n");
-					bw.write("10,0,0,0,0");
+					bw.write("20,0,0,0,0");
 					bw.write("\r\n");
 				}
 			} else {
@@ -145,8 +145,8 @@ public class Playback extends Subsystem {
 			p_timeString = n_timeString;
 
 		} catch (Exception e) {
-			e.printStackTrace();
-//			System.out.println("Mapping failed!");
+			//			e.printStackTrace();
+			System.out.println("Mapping failed!");
 		}
 	}
 
@@ -343,10 +343,9 @@ public class Playback extends Subsystem {
 			case Parse:
 				System.out.println("Opening Parse: " + name + ".csv");
 				createFile(name, fileState.READ, usb);
-
 				parseFile();
-				printTimes();
-
+//				printValues();
+				
 				break;
 			case Log:
 				Robot.drive.timer.stop();
