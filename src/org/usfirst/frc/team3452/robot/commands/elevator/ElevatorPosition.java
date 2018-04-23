@@ -28,7 +28,7 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected void execute() {
-		Robot.elevator.Encoder(m_value);
+		Robot.elevator.encoder(m_value);
 
 		if (Robot.elevator.isRemoteSensor) {
 			l_rev = Robot.elevator.Elev_2.getSensorCollection().isRevLimitSwitchClosed();
@@ -50,7 +50,7 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected void end() {
-		Robot.elevator.EncoderDone();
+		Robot.elevator.encoderDone();
 	}
 
 	protected void interrupted() {

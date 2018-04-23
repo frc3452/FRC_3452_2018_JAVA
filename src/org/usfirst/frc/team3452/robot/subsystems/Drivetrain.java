@@ -53,7 +53,7 @@ public class Drivetrain extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	public void LoggerUpdate() {
+	public void loggerUpdate() {
 		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
 
 		SmartDashboard.putNumber("L1", (double) L1.getSelectedSensorPosition(0) / 4096);
@@ -253,9 +253,9 @@ public class Drivetrain extends Subsystem {
 	 * @param joy
 	 * @since
 	 */
-	public void Arcade(Joystick joy) {
+	public void arcade(Joystick joy) {
 		//		Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify), joy.getRawAxis(4) * m_modify);
-		Arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .635 * m_modify));
+		arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .635 * m_modify));
 		Robot.elevator.setDriveLimit();
 	}
 
@@ -265,7 +265,7 @@ public class Drivetrain extends Subsystem {
 	 * @param rotate
 	 * @since
 	 */
-	public void Arcade(double move, double rotate) {
+	public void arcade(double move, double rotate) {
 		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .2));
 	}
 
@@ -275,7 +275,7 @@ public class Drivetrain extends Subsystem {
 	 * @param right
 	 * @since
 	 */
-	public void Tank(double left, double right) {
+	public void tank(double left, double right) {
 		robotDrive.tankDrive(left * m_elev_modify, right * m_elev_modify);
 	}
 
@@ -284,7 +284,7 @@ public class Drivetrain extends Subsystem {
 	 * @param joy
 	 * @since
 	 */
-	public void Tank(Joystick joy) {
+	public void tank(Joystick joy) {
 		robotDrive.tankDrive(-joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
 	}
 
@@ -384,7 +384,7 @@ public class Drivetrain extends Subsystem {
 	 *            rotations per second (top speed)
 	 * @since
 	 */
-	public void MotionMagic(double leftpos, double rightpos, double leftaccel, double rightaccel, double leftspeed,
+	public void motionMagic(double leftpos, double rightpos, double leftaccel, double rightaccel, double leftspeed,
 			double rightspeed) {
 
 		robotDrive.setSafetyEnabled(false);

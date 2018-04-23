@@ -34,17 +34,17 @@ public class GyroPos extends Command {
 
 		if (m_gyro < 360 && m_gyro > 180) {
 			if ((m_gyro < (m_target + 180)) && (m_gyro > m_target)) {
-				Robot.drive.Arcade(0, -m_speed);
+				Robot.drive.arcade(0, -m_speed);
 			} else {
-				Robot.drive.Arcade(0, m_speed);
+				Robot.drive.arcade(0, m_speed);
 			}
 		}
 
 		if (m_gyro > 0 && m_gyro < 180) {
 			if ((m_gyro > (m_target - 180)) && (m_gyro < m_target)) {
-				Robot.drive.Arcade(0, m_speed);
+				Robot.drive.arcade(0, m_speed);
 			} else {
-				Robot.drive.Arcade(0, -m_speed);
+				Robot.drive.arcade(0, -m_speed);
 			}
 		}
 
@@ -55,7 +55,7 @@ public class GyroPos extends Command {
 	}
 
 	protected void end() {
-		Robot.drive.Arcade(0, 0);
+		Robot.drive.arcade(0, 0);
 	}
 
 	protected void interrupted() {

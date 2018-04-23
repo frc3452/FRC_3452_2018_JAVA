@@ -155,7 +155,7 @@ public class Elevator extends Subsystem {
 	 * @param position
 	 * @since
 	 */
-	public void Encoder(double position) {
+	public void encoder(double position) {
 		Elev_1.configPeakOutputForward(.45, 10);
 		Elev_1.configPeakOutputReverse(-.8, 10);
 		m_pos = -position * 4096;
@@ -184,7 +184,7 @@ public class Elevator extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	public void EncoderDone() {
+	public void encoderDone() {
 		Elev_1.set(ControlMode.PercentOutput, 0);
 		Elev_1.configPeakOutputForward(1, 10);
 		Elev_1.configPeakOutputReverse(-1, 10);

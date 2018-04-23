@@ -104,7 +104,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotPeriodic() {
 		handleLEDs();
-		Robot.drive.LoggerUpdate();
+		Robot.drive.loggerUpdate();
 
 		//LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
 		//LOOPED HERE

@@ -44,14 +44,14 @@ public class EncoderGyro extends Command {
 		c_gyro = Robot.drive.Gyro.getAngle();
 
 		if (c_gyro < t_gyro + .4 && c_gyro > t_gyro - .4)
-			Robot.drive.MotionMagic(l_pos, r_pos, l_accel, r_accel, m_speed, m_speed);
+			Robot.drive.motionMagic(l_pos, r_pos, l_accel, r_accel, m_speed, m_speed);
 
 		else if (c_gyro > t_gyro)
-			Robot.drive.MotionMagic(l_pos, r_pos, l_accel, r_accel, m_speed * (1 - (k * Math.abs(c_gyro - t_gyro))),
+			Robot.drive.motionMagic(l_pos, r_pos, l_accel, r_accel, m_speed * (1 - (k * Math.abs(c_gyro - t_gyro))),
 					m_speed);
 
 		else if (c_gyro < t_gyro)
-			Robot.drive.MotionMagic(l_pos, r_pos, l_accel, r_accel, m_speed,
+			Robot.drive.motionMagic(l_pos, r_pos, l_accel, r_accel, m_speed,
 					m_speed * (1 - (k * Math.abs(c_gyro - t_gyro))));
 	}
 

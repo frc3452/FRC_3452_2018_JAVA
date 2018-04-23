@@ -47,7 +47,7 @@ public class DriveToCube extends Command {
 	}
 
 	protected void execute() {
-		Robot.drive.Arcade(m_speed, 0);
+		Robot.drive.arcade(m_speed, 0);
 
 		Robot.intake.manual(Intake.Speeds.INTAKE);
 
@@ -75,7 +75,7 @@ public class DriveToCube extends Command {
 	}
 
 	protected void end() {
-		Robot.drive.Arcade(0, 0);
+		Robot.drive.arcade(0, 0);
 		Robot.intake.manual(0);
 	}
 

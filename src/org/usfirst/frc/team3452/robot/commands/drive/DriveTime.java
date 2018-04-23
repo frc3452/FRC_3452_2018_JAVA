@@ -26,13 +26,13 @@ public class DriveTime extends Command {
 	}
 
 	protected void execute() {
-		Robot.drive.Arcade(m_speed, m_rotate);
+		Robot.drive.arcade(m_speed, m_rotate);
 	}
 	protected boolean isFinished() {
 		return isTimedOut();
 	}
 	protected void end() {
-		Robot.drive.Arcade(0,0);
+		Robot.drive.arcade(0,0);
 	}
 	protected void interrupted() {
 		end();

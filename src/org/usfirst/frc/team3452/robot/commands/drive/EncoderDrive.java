@@ -33,7 +33,7 @@ public class EncoderDrive extends Command {
 	}
 
 	protected void execute() {
-		Robot.drive.MotionMagic(m_left, m_right, m_laccel, m_raccel, m_topspeed, m_topspeed);
+		Robot.drive.motionMagic(m_left, m_right, m_laccel, m_raccel, m_topspeed, m_topspeed);
 	}
 
 	protected boolean isFinished() {

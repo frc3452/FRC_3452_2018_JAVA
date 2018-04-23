@@ -23,7 +23,7 @@ public class DriveTele extends Command {
 	}
 
 	protected void execute() {
-		Robot.drive.Arcade(OI.driverJoy);
+		Robot.drive.arcade(OI.driverJoy);
 //		Robot.drive.Tank(OI.driverJoy);
 		if (Robot.elevator.m_overriden)
 			OI.rumble(CONTROLLER.DRIVER, .45);
@@ -39,7 +39,7 @@ public class DriveTele extends Command {
 
 	protected void end() {
 		OI.rumble(CONTROLLER.DRIVER, 0);
-		Robot.drive.Arcade(0,0);
+		Robot.drive.arcade(0,0);
 		
 	}
 

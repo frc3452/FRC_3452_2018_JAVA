@@ -38,6 +38,7 @@ public class Intake extends Subsystem {
 		Intake_R.set(speed);
 	}
 
+	@Override
 	public void initDefaultCommand() {
 	}
 

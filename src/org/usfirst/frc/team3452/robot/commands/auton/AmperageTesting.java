@@ -50,15 +50,15 @@ public class AmperageTesting extends Command {
 
 	protected void execute() {
 		if (m_drive) {
-			Robot.drive.Arcade(percentage, 0);
+			Robot.drive.arcade(percentage, 0);
 		} else {
-			Robot.drive.Arcade(0, 0);
+			Robot.drive.arcade(0, 0);
 		}
 
 		if (m_elev) {
-			Robot.elevator.Encoder((percentage > 0) ? 3.5 : 0);
+			Robot.elevator.encoder((percentage > 0) ? 3.5 : 0);
 		} else {
-			Robot.elevator.EncoderDone();
+			Robot.elevator.encoderDone();
 			Robot.elevator.Elev_1.set(0);
 		}
 		if (m_inke) {
@@ -88,8 +88,8 @@ public class AmperageTesting extends Command {
 	}
 
 	protected void end() {
-		Robot.drive.Arcade(0, 0);
-		Robot.elevator.EncoderDone();
+		Robot.drive.arcade(0, 0);
+		Robot.elevator.encoderDone();
 		Robot.intake.manual(0);
 		Robot.climber.climb1.set(0);
 	}

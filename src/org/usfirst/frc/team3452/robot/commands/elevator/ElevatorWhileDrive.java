@@ -30,7 +30,7 @@ public class ElevatorWhileDrive extends Command {
 
 	protected void execute() {
 		if (Robot.drive.p_pos > m_percent)
-			Robot.elevator.Encoder(m_value);
+			Robot.elevator.encoder(m_value);
 		
 		if (Robot.elevator.isRemoteSensor) {
 			l_rev = Robot.elevator.Elev_2.getSensorCollection().isRevLimitSwitchClosed();
@@ -52,7 +52,7 @@ public class ElevatorWhileDrive extends Command {
 	}
 
 	protected void end() {
-		Robot.elevator.EncoderDone();
+		Robot.elevator.encoderDone();
 		System.out.println("Elevator position completed.");
 	}
 

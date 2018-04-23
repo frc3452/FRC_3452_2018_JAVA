@@ -24,7 +24,7 @@ public class DriveToStop extends Command {
 	}
 
 	protected void execute() {
-		Robot.drive.Arcade(m_speed, 0);
+		Robot.drive.arcade(m_speed, 0);
 	}
 
 	protected boolean isFinished() {
@@ -32,7 +32,7 @@ public class DriveToStop extends Command {
 	}
 
 	protected void end() {
-		Robot.drive.Arcade(0, 0);
+		Robot.drive.arcade(0, 0);
 	}
 
 	protected void interrupted() {

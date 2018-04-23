@@ -53,14 +53,14 @@ public class SmoothMooth extends Command {
 		//after half way through, adjust acceleration for side traveling farther to slow down quicker
 		if (c_p > .5) {
 			if (m_left > m_right) {
-				Robot.drive.MotionMagic(m_left, m_right, g_accel, m_accel, m_speed * l_adjust, m_speed * r_adjust);
+				Robot.drive.motionMagic(m_left, m_right, g_accel, m_accel, m_speed * l_adjust, m_speed * r_adjust);
 			} else if (m_right > m_left) {
-				Robot.drive.MotionMagic(m_left, m_right, m_accel, g_accel, m_speed * l_adjust, m_speed * r_adjust);
+				Robot.drive.motionMagic(m_left, m_right, m_accel, g_accel, m_speed * l_adjust, m_speed * r_adjust);
 			} else if (m_right == m_left) {
-				Robot.drive.MotionMagic(m_left, m_right, g_accel, g_accel, m_speed * l_adjust, m_speed * r_adjust);
+				Robot.drive.motionMagic(m_left, m_right, g_accel, g_accel, m_speed * l_adjust, m_speed * r_adjust);
 			}
 		} else {
-			Robot.drive.MotionMagic(m_left, m_right, m_accel, m_accel, m_speed * l_adjust, m_speed * r_adjust);
+			Robot.drive.motionMagic(m_left, m_right, m_accel, m_accel, m_speed * l_adjust, m_speed * r_adjust);
 		}
 
 		//keep straight until turn at _ percent
