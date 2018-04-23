@@ -39,8 +39,8 @@ public class Playback extends Subsystem {
 
 	public int mpDur;
 
-	private String dateTime, timeString;
 	private double n_timeString = 0, p_timeString = 0;
+	private String prevDateTimeString = "";
 
 	private boolean hasPrintedLogFailed = false;
 
@@ -171,7 +171,7 @@ public class Playback extends Subsystem {
 			} else {
 
 				//TIME VALUE (ROUNDED)
-				timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 20));
+				String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 20));
 				timeString = timeString.replace(' ', '0');
 
 				n_timeString = Double.valueOf(timeString);
@@ -249,32 +249,26 @@ public class Playback extends Subsystem {
 	 * @param usb
 	 * @since
 	 */
-	private void createFile(String fileName, fileState readwrite, boolean usb) {
+	private void createFile(String fileName, String folder, fileState readwrite, boolean usb) {
 		try {
 			switch (readwrite) {
 			case READ:
 				//SET UP FILE READING
-				if (usb)
-					f = new File("/u/" + fileName + ".csv");
-				else
-					f = new File("/home/lvuser/" + fileName + ".csv");
+				f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
 
 				fr = new FileReader(f);
 				br = new Scanner(fr);
 
 				break;
 			case WRITE:
+				new File(((usb) ? "/u/" : "/home/lvuser") + folder).mkdirs();
 
 				//SETUP FILE WRITING
-				if (usb)
-					f = new File("/u/" + fileName + ".csv");
-				else
-					f = new File("/home/lvuser/" + fileName + ".csv");
+				f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
 
 				//if it isn't there, create it
-				if (!f.exists()) {
+				if (!f.exists())
 					f.createNewFile();
-				}
 
 				//create file writing vars
 				fw = new FileWriter(f);
@@ -323,7 +317,7 @@ public class Playback extends Subsystem {
 	 * @see STATE
 	 * @since
 	 */
-	public void control(String name, boolean usb, TASK task, STATE state) {
+	public void control(String name, String folder, boolean usb, TASK task, STATE state) {
 		switch (state) {
 		case STARTUP:
 			switch (task) {
@@ -334,27 +328,25 @@ public class Playback extends Subsystem {
 				Robot.drive.timer.start();
 
 				System.out.println("Opening Record: " + name + ".csv");
-				createFile(name, fileState.WRITE, usb);
+				createFile(name, folder, fileState.WRITE, usb);
 				writeToProfile(true);
 
 				break;
 
 			case Parse:
 				System.out.println("Opening Parse: " + name + ".csv");
-				createFile(name, fileState.READ, usb);
+				createFile(name, folder, fileState.READ, usb);
 				parseFile();
-//				printValues();
-				
+				//				printValues();
+
 				break;
 			case Log:
 				Robot.drive.timer.stop();
 				Robot.drive.timer.reset();
 				Robot.drive.timer.start();
 
-				dateTime = dateTime(true);
-				System.out.println("Opening Log: " + dateTime + ".csv");
-				createFile((DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + dateTime, fileState.WRITE,
-						usb);
+				System.out.println("Opening Log: " + loggingName(name, true) + ".csv");
+				createFile(loggingName(name, false), folder, fileState.WRITE, usb);
 				writeToLog(true);
 
 				break;
@@ -382,22 +374,35 @@ public class Playback extends Subsystem {
 			}
 			break;
 		case FINISH:
-			System.out.println("Closing " + task + ": " + name + ".csv");
-
 			switch (task) {
 			case Record:
+				System.out.println("Closing " + task + ": " + name + ".csv");
 				closeFile(fileState.WRITE);
 				break;
 			case Parse:
+				System.out.println("Closing " + task + ": " + name + ".csv");
 				closeFile(fileState.READ);
 				break;
 			case Log:
+				System.out.println("Closing " + task + ": " + loggingName("", false) + ".csv");
 				closeFile(fileState.WRITE);
 				break;
 			case Play:
+				System.out.println("Closing " + task + ": " + name + ".csv");
 				break;
 			}
 			break;
+		}
+	}
+
+	public String loggingName(String name, boolean returnCurrent) {
+		if (returnCurrent) {
+			String retval = "";
+			retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + dateTime(true);
+			prevDateTimeString = retval;
+			return retval;
+		} else {
+			return prevDateTimeString;
 		}
 	}
 

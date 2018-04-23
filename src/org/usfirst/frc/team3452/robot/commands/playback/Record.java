@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class Record extends Command {
 
 	private TASK m_task;
-	private String m_name;
+	private String m_name, m_folder;
 	private boolean m_usb;
 
 	/**
@@ -23,20 +23,21 @@ public class Record extends Command {
 	 * @see Playback
 	 * @see TASK
 	 */
-	public Record(String name, boolean usb, TASK task) {
+	public Record(String name, String folder, boolean usb, TASK task) {
 		m_task = task;
 		m_name = name;
+		m_folder = folder;
 		m_usb = usb;
 	}
 
 	@Override
 	protected void initialize() {
-		Robot.playback.control(m_name, m_usb, m_task, STATE.STARTUP);
+		Robot.playback.control(m_name, m_folder, m_usb, m_task, STATE.STARTUP);
 	}
 
 	@Override
 	protected void execute() {
-		Robot.playback.control(m_name, m_usb, m_task, STATE.RUNTIME);
+		Robot.playback.control(m_name, m_folder, m_usb, m_task, STATE.RUNTIME);
 	}
 
 	@Override
@@ -57,7 +58,7 @@ public class Record extends Command {
 
 	@Override
 	protected void end() {
-		Robot.playback.control(m_name, m_usb, m_task, STATE.FINISH);
+		Robot.playback.control(m_name, m_folder, m_usb, m_task, STATE.FINISH);
 	}
 
 	@Override

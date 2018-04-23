@@ -112,7 +112,7 @@ public class Drivetrain extends Subsystem {
 		robotDrive = new DifferentialDrive(L1, R1);
 
 		robotDrive.setDeadband(0.045); //.08
-		robotDrive.setSafetyEnabled(true);
+		robotDrive.setSafetyEnabled(false);
 
 		// follower mode
 		L2.follow(L1);
@@ -122,7 +122,7 @@ public class Drivetrain extends Subsystem {
 		R2.follow(R1);
 		R3.follow(R1);
 		R4.follow(R1);
-		
+
 		//MOTION PROFILING
 		L1.configMotionProfileTrajectoryPeriod(20, 10);
 		L1.changeMotionControlFramePeriod(10);
@@ -138,25 +138,14 @@ public class Drivetrain extends Subsystem {
 		R1.setSensorPhase(true);
 
 		L1.config_kF(0, 0, 10);
-		L1.config_kP(0, 0.045, 10);
-		L1.config_kI(0, 0, 10);
-		L1.config_kD(0, 0, 10);
+		L1.config_kP(0, 0.425, 10);
+		L1.config_kI(0, 0.0000004, 10);
+		L1.config_kD(0, 4.25, 10);
 
 		R1.config_kF(0, 0, 10);
-		R1.config_kP(0, 0.045, 10); //.8
-		R1.config_kI(0, 0, 10);
-		R1.config_kD(0, 0, 10);
-
-		//		L1.config_kF(0, 0, 10);
-		//		L1.config_kP(0, 0.425, 10);
-		//		L1.config_kI(0, 0.0000004, 10);
-		//		L1.config_kD(0, 4.25, 10);
-		//
-		//		R1.config_kF(0, 0, 10);
-		//		R1.config_kP(0, 0.8, 10); //.8
-		//		R1.config_kI(0, 0.0000004, 10);
-		//		R1.config_kD(0, 4.25, 10);
-		//		L1.config_kP(0, 0.0025, 10); 
+		R1.config_kP(0, 0.8, 10); //.8
+		R1.config_kI(0, 0.0000004, 10);
+		R1.config_kD(0, 4.25, 10);
 
 		// NOMINAL OUTPUT
 		L1.configNominalOutputForward(0, 10);
@@ -354,7 +343,7 @@ public class Drivetrain extends Subsystem {
 			R1.pushMotionProfileTrajectory(rightPoint);
 		}
 		System.out.println("Motion profile pushed to Talons");
-		
+
 	}
 
 	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {
@@ -422,8 +411,6 @@ public class Drivetrain extends Subsystem {
 	 */
 	@Deprecated
 	public void encoder(double leftpos, double rightpos, double leftspeed, double rightspeed) {
-		robotDrive.setSafetyEnabled(false);
-
 		L1.configPeakOutputForward(leftspeed, 10);
 		L1.configPeakOutputReverse(-leftspeed, 10);
 		R1.configPeakOutputForward(rightspeed, 10);
@@ -476,7 +463,6 @@ public class Drivetrain extends Subsystem {
 
 		p_pos = 3452;
 
-		robotDrive.setSafetyEnabled(true);
 	}
 
 	/**

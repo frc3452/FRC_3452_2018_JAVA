@@ -45,8 +45,11 @@ public class Robot extends TimedRobot {
 	Command defaultCommand = null;
 
 	//flags
-	boolean wasTele = false, readyForMatch = false, wasTest = false;
-	boolean logging = false, logToUsb = true, toLog = false;
+	boolean wasTele = false, readyForMatch = false, wasTest = false, toLog = false;
+
+	//LOGGING CONTROL
+	boolean logging = false, logToUsb = true;
+	String loggingLocation = "Logging";
 
 	@Override
 	public void robotInit() {
@@ -109,14 +112,14 @@ public class Robot extends TimedRobot {
 		//LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
 		//LOOPED HERE
 		if (toLog && logging)
-			Robot.playback.control("Log", logToUsb, TASK.Log, STATE.RUNTIME);
+			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.RUNTIME);
 	}
 
 	@Override
 	public void disabledInit() {
 		if (toLog && logging) {
 			toLog = false;
-			Robot.playback.control("Log", logToUsb, TASK.Log, STATE.FINISH);
+			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.FINISH);
 		}
 
 		Robot.drive.brake((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
@@ -139,7 +142,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		if (!toLog) {
-			Robot.playback.control("Log", logToUsb, TASK.Log, STATE.STARTUP);
+			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
 			toLog = true;
 		}
 
@@ -214,7 +217,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		if (!toLog && logging) {
-			Robot.playback.control("Log", logToUsb, TASK.Log, STATE.STARTUP);
+			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
 			toLog = true;
 		}
 
@@ -242,7 +245,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testInit() {
 		if (!toLog && logging) {
-			Robot.playback.control("Log", logToUsb, TASK.Log, STATE.STARTUP);
+			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
 			toLog = true;
 		}
 

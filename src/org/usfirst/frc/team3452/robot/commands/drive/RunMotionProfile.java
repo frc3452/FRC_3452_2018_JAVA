@@ -33,19 +33,21 @@ public class RunMotionProfile extends Command {
 
 		Robot.drive.L1.set(ControlMode.MotionProfile, 1);
 		Robot.drive.R1.set(ControlMode.MotionProfile, 1);
+		
 
-//		Robot.drive.L1.getMotionProfileStatus(L_status);
-//		Robot.drive.R1.getMotionProfileStatus(R_status);
+		Robot.drive.L1.getMotionProfileStatus(L_status);
+		Robot.drive.R1.getMotionProfileStatus(R_status);
 	}
 
 	@Override
 	protected boolean isFinished() {
 		return isTimedOut();
-		//		return L_status.isLast && R_status.isLast;
+//		return L_status.isLast || R_status.isLast || isTimedOut();
 	}
 
 	@Override
 	protected void end() {
+		System.out.println("Motion Profile Complete");
 		Robot.drive.encoderDone();
 	}
 
