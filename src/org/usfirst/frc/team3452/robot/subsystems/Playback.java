@@ -132,9 +132,9 @@ public class Playback extends Subsystem {
 					bw.write("\r\n");
 
 				} else {
-					bw.write("leftPos,leftSpeed,rightPos,rightSpeed");
+					bw.write("leftPos,leftSpeed,rightPos,rightSpeed,");
 					bw.write("\r\n");
-					bw.write("20,0,0,0");
+					bw.write("20,0,0,0,");
 					bw.write("\r\n");
 				}
 			} else {
