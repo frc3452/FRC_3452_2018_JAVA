@@ -73,10 +73,10 @@ public class Playback extends Subsystem {
 
 				String[] ar = st.split(",");
 
-				mpLR.add(Double.parseDouble(ar[1]));
-				mpLS.add(Double.parseDouble(ar[2]));
-				mpRR.add(Double.parseDouble(ar[3]));
-				mpRS.add(Double.parseDouble(ar[4]));
+				mpLR.add(Double.parseDouble(ar[0]));
+				mpLS.add(Double.parseDouble(ar[1]));
+				mpRR.add(Double.parseDouble(ar[2]));
+				mpRS.add(Double.parseDouble(ar[3]));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -125,7 +125,6 @@ public class Playback extends Subsystem {
 					double rightPos = Robot.drive.R1.getSelectedSensorPosition(0);
 					double rightSpeed = Robot.drive.R1.getSelectedSensorVelocity(0);
 
-					bw.write(timeString + ",");
 					bw.write(String.valueOf(leftPos + ","));
 					bw.write(String.valueOf(leftSpeed + ","));
 					bw.write(String.valueOf(rightPos + ","));
@@ -133,7 +132,7 @@ public class Playback extends Subsystem {
 					bw.write("\r\n");
 
 				} else {
-					bw.write("Time,leftPos,leftSpeed,rightPos,rightSpeed");
+					bw.write("leftPos,leftSpeed,rightPos,rightSpeed");
 					bw.write("\r\n");
 					bw.write("20,0,0,0,0");
 					bw.write("\r\n");
