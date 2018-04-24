@@ -1,26 +1,22 @@
 package org.usfirst.frc.team3452.robot;
 
-import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
-import org.usfirst.frc.team3452.robot.commands.drive.RunMotionProfile;
 import org.usfirst.frc.team3452.robot.commands.drive.SpeedModifier;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.JustGonnaSendIt;
 import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
-import org.usfirst.frc.team3452.robot.commands.playback.Record;
+import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.CONTROLLER;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator.EO;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
-import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class OI {
 	public static Joystick driverJoy = new Joystick(0);
@@ -51,18 +47,8 @@ public class OI {
 		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
 
-
-		driverJoyRB.whileHeld(new Record("MP1", "Motion_Profiles", true, TASK.Record));
-		driverJoyLB.whenPressed(new CommandGroup() {
-			{
-				addSequential(new EncoderReset());
-				addSequential(new Record("MP1", "Motion_Profiles", true, TASK.Parse));
-				addSequential(new RunMotionProfile());
-			}
-		});
-
-		//		driverJoyY.whileHeld(new Climb(1));
-//		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
+		driverJoyY.whileHeld(new Climb(1));
+		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 		driverJoyBack.whenPressed(new OverrideSet(EO.TOGGLE));
 
 		//				DPAD

@@ -130,7 +130,7 @@ public class Elevator extends Subsystem {
 		double pos = -Elev_1.getSelectedSensorPosition(0);
 
 		if (m_overriden == false) {
-
+			
 			if (pos < 8500)
 				Robot.drive.m_elev_modify = Constants.SPEED_1;
 			else if (pos < 12000 && pos > 8500)
@@ -191,6 +191,7 @@ public class Elevator extends Subsystem {
 		m_pos = 0;
 	}
 
+	@Override
 	public void initDefaultCommand() {
 	}
 

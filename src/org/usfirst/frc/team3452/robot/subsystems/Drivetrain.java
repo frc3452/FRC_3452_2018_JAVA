@@ -65,7 +65,8 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putNumber("% Complete", p_pos);
 
 		SmartDashboard.putNumber("Elevator Enc", -Robot.elevator.Elev_1.getSelectedSensorPosition(0));
-
+		SmartDashboard.putNumber("Elev Velocity", Robot.elevator.Elev_1.getSelectedSensorVelocity(0));
+		
 		SmartDashboard.putString("Selected auton", Robot.autonSelector.autonString);
 		SmartDashboard.putString("Override String", Robot.autonSelector.overrideString);
 
@@ -73,6 +74,7 @@ public class Drivetrain extends Subsystem {
 
 		SmartDashboard.putNumber("Selector A", Robot.autonSelector.as_A.getValue());
 		SmartDashboard.putNumber("Selector B", Robot.autonSelector.as_B.getValue());
+		
 
 	}
 
@@ -384,6 +386,7 @@ public class Drivetrain extends Subsystem {
 		double lp_pos = Math.abs(L1.getSelectedSensorPosition(0) / (4096 * leftpos));
 		double rp_pos = Math.abs(R1.getSelectedSensorPosition(0) / (4096 * rightpos));
 
+		
 		p_pos = (lp_pos + rp_pos) / 2;
 
 		L1.configMotionAcceleration((int) (4096 * leftaccel), 10);
@@ -536,8 +539,6 @@ public class Drivetrain extends Subsystem {
 		public final static int L_1 = 1, L_2 = 2, L_3 = 3, L_4 = 4;
 		public final static int R_1 = 5, R_2 = 6, R_3 = 7, R_4 = 8;
 
-		//TODO COMP|PRACTICE
-		//FALSE ON REAL ROBOT
 		public final static boolean L_INVERT = false;
 		public final static boolean R_INVERT = false;
 

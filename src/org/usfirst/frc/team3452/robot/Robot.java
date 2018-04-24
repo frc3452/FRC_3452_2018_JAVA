@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
 	boolean wasTele = false, readyForMatch = false, wasTest = false, toLog = false;
 
 	//LOGGING CONTROL
-	boolean logging = false, logToUsb = true;
+	boolean logging = true, logToUsb = true;
 	String loggingLocation = "Logging";
 
 	@Override

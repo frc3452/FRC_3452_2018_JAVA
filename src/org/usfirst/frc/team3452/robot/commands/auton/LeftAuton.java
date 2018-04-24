@@ -2,6 +2,7 @@ package org.usfirst.frc.team3452.robot.commands.auton;
 
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
+import org.usfirst.frc.team3452.robot.commands.drive.DriveToCube;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveToStop;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderGyro;
@@ -133,9 +134,9 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new IntakeTime(1, .5)); //drop and back up
 			addParallel(new DriveTime(-.5, 0, .8));
 			addSequential(new ElevatorTime(-.15, 10));
-			
+
 			break;
-		
+
 		case FOREST_HILLS:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
@@ -161,29 +162,41 @@ public class LeftAuton extends CommandGroup {
 		case CURRENT:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
+			addParallel(new IntakeTime(-.2, 15));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
-			addSequential(new EncoderGyro(11.3, 11.3, .4, .4, .5, 0, .017)); // drive to side of switch
+			addSequential(new EncoderGyro(11.6, 11.6, .5, .5, .6, 0, .017)); // drive to side of switch
 
-			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
+			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .6)); // turn to switch 
 
 			addSequential(new EncoderReset());
 			addSequential(new CommandGroup() {
 				{
 					addParallel(new ElevatorWhileDrive(3.5, .6));
-					addSequential(new EncoderGyro(10.5, 10.5, .5, .5, .6, 90, 0.021)); //drive back of switch
+					addSequential(new EncoderGyro(11.25, 11.25, .5, .5, .6, 90, 0.021)); //drive back of switch
 				}
 			});
 
-			addSequential(new GyroPos(190, .45, 3));
+			addSequential(new EncoderFrom(1.6,-1.2,.5,.5,.6));
 
 			addSequential(new DriveTime(.5, 0, .5));
 			addSequential(new DriveToStop(.55)); //was .45
 
-			addSequential(new IntakeTime(.5, 1));
+			addSequential(new IntakeTime(.75, .25));
 
-			addParallel(new DriveTime(-.5, 0, .8));
-			addSequential(new ElevatorTime(-.15, 10));
+			addParallel(new ElevatorWhileDrive(-15, .9));
+			addSequential(new EncoderFrom(-.85, -.75, .5, .5, .6));
+			
+			addSequential(new DriveToCube(.58, 5)); //was .45
+			addSequential(new EncoderFrom(-.5, -.5,.5, .5, .6));
+			
+			addSequential(new ElevatorTime(1, .6));
+			
+			//hit switch
+			addSequential(new DriveTime(.5, 0, .5));
+			addSequential(new DriveToStop(.55)); //was .45
+			
+			addSequential(new IntakeTime(-1, 1));
 
 			break;
 		case FOREST_HILLS:
@@ -230,7 +243,6 @@ public class LeftAuton extends CommandGroup {
 			//TURN CHANGED FINALS 3
 			addSequential(new EncoderFrom(1.5, -1.15, .6, .6, .6)); //turn to switch
 
-			
 			addSequential(new EncoderFrom(-.6, -.6, .7, .7, .6));
 			addSequential(new ElevatorPosition(15)); //raise and forward
 			addSequential(new EncoderFrom(.5, .5, .4, .4, .6));
@@ -288,7 +300,7 @@ public class LeftAuton extends CommandGroup {
 					addParallel(new IntakeWhileDrive(Intake.Speeds.SLOW, .92, 3));
 					addSequential(new EncoderFrom(2.41, 2.61, .1, .1, .15));
 				}
-				
+
 			});
 			addSequential(new DriveTime(-.4, 0, 1.6));
 

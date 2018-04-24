@@ -11,8 +11,10 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevatorManual extends Command {
 
-	private int m_controller_axis;
+	private int m_axis;
 	private Joystick m_joy;
+
+	double speedmodifier = 0;
 
 	/**
 	 * Operator control of elevator
@@ -25,27 +27,33 @@ public class ElevatorManual extends Command {
 		requires(Robot.elevator);
 
 		m_joy = joy;
-		m_controller_axis = 1;
+		m_axis = 1;
 		// operator = left analog y, driver = right analog y
 	}
 
+	@Override
 	protected void initialize() {
-		m_controller_axis = ((m_joy == OI.opJoy) ? 1 : 5);
+		m_axis = ((m_joy == OI.opJoy) ? 1 : 5);
 	}
 
+	@Override
 	protected void execute() {
-		Robot.elevator.Elev_1.set(ControlMode.PercentOutput,
-				(m_joy.getRawAxis(m_controller_axis) * ((m_joy.getRawAxis(m_controller_axis) > 0) ? .6 : .9))); // .6 down .9 up
+		speedmodifier = m_joy.getRawAxis(m_axis) * (m_joy.getRawAxis(m_axis) > 0 ? .6 : .9);
+
+		Robot.elevator.Elev_1.set(ControlMode.PercentOutput, speedmodifier);
 	}
 
+	@Override
 	protected boolean isFinished() {
 		return false;
 	}
 
+	@Override
 	protected void end() {
 		Robot.elevator.Elev_1.set(ControlMode.PercentOutput, 0);
 	}
 
+	@Override
 	protected void interrupted() {
 		end();
 	}
