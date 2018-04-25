@@ -11,7 +11,6 @@ public class JustGonnaSendIt extends CommandGroup {
      */
     public JustGonnaSendIt() {
     	addSequential(new ElevatorTime(1, 10));
-//		addSequential(new IntakeTime(0, .0495));
 		addSequential(new IntakeTime(1, .5));
     }
 }

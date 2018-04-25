@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
 
 	//LOGGING CONTROL
 	boolean logging = true, logToUsb = true;
-	String loggingLocation = "Logging";
+	String loggingLocation = "Logging/Champs/Day_1";
 
 	@Override
 	public void robotInit() {
