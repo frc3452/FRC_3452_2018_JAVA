@@ -219,9 +219,9 @@ public class Playback extends Subsystem {
 									+ Robot.drive.pdp.getCurrent(PDP.INTAKE_L) + ","
 									+ Robot.drive.pdp.getCurrent(PDP.INTAKE_R) + ","
 
-									//TODO COMP|PRACTICE NO CLIMBER
+									//TODO COMP|PRACTICE {~}
 									//CLIMBER PDP SLOTS
-									+ Robot.drive.pdp.getCurrent(0) + "," + Robot.drive.pdp.getCurrent(0) + ","
+									+ Robot.drive.pdp.getCurrent(PDP.CLIMBER_1) + "," + Robot.drive.pdp.getCurrent(PDP.CLIMBER_2) + ","
 
 									//BATTERY
 									+ DriverStation.getInstance().getBatteryVoltage()));

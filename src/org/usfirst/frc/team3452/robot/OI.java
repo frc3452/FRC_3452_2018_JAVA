@@ -5,7 +5,6 @@ import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.JustGonnaSendIt;
 import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
-import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.CONTROLLER;
@@ -45,9 +44,9 @@ public class OI {
 		driverJoyA.whenPressed(new SpeedModifier(-1));
 
 		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
-		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
+		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.SHOOT));
 
-		driverJoyY.whileHeld(new Climb(1));
+//		driverJoyY.whileHeld(new Climb(1));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 		driverJoyBack.whenPressed(new OverrideSet(EO.TOGGLE));
 
@@ -61,8 +60,9 @@ public class OI {
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
 		opJoyRB.whenPressed(new JustGonnaSendIt());
 
+		opJoyA.whileHeld(new IntakeManual(Intake.Speeds.PLACE));
 		opJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
-		opJoyB.whileHeld(new IntakeManual(Intake.Speeds.OUT));
+		opJoyB.whileHeld(new IntakeManual(Intake.Speeds.SHOOT));
 		opJoyY.whileHeld(new IntakeManual(Intake.Speeds.SLOW));
 
 		opJoyBack.whileHeld(new IntakeSpin(Intake.Speeds.SPIN, true));

@@ -25,7 +25,6 @@ public class Intake extends Subsystem {
 
 		Intake_L.setName("Intake L");
 		Intake_R.setName("Intake R");
-
 	}
 
 	/**
@@ -50,8 +49,9 @@ public class Intake extends Subsystem {
 	 */
 	public static class Speeds {
 		public static final double INTAKE = -.8;
-		public static final double OUT = .75;
+		public static final double SHOOT = .75;
 		public static final double SLOW = .3;
+		public static final double PLACE = .2;
 		public static final double SPIN = .35;
 	}
 
