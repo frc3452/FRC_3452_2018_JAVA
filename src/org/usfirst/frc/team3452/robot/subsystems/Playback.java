@@ -90,6 +90,7 @@ public class Playback extends Subsystem {
 	 * @author max
 	 * @since
 	 */
+	@SuppressWarnings("unused")
 	private void printValues() {
 		try {
 
