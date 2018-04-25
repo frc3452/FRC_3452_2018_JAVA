@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  * <b>Elevator subsystem</b>
- * Handles elevator open + closed loop & speed control for drivetrain
+ * Handles elevator open + closed loop and speed control for drivetrain
  * 
  * @author max
  *
@@ -38,7 +38,6 @@ public class Elevator extends Subsystem {
 	 * @since
 	 */
 	public void initHardware() {
-
 		Elev_1 = new WPI_TalonSRX(Constants.E_1);
 		Elev_2 = new WPI_TalonSRX(Constants.E_2);
 

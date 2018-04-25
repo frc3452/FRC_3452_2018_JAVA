@@ -306,11 +306,11 @@ public class Drivetrain extends Subsystem {
 		R1.clearMotionProfileTrajectories();
 
 		//MOTION PROFILE
-		for (int i = 0; i < Robot.playback.mpLR.size(); i++) {
-			leftPoint.position = Robot.playback.mpLR.get(i);
+		for (int i = 0; i < Robot.playback.mpLP.size(); i++) {
+			leftPoint.position = Robot.playback.mpLP.get(i);
 			leftPoint.velocity = Robot.playback.mpLS.get(i);
 
-			rightPoint.position = Robot.playback.mpRR.get(i);
+			rightPoint.position = Robot.playback.mpRP.get(i);
 			rightPoint.velocity = Robot.playback.mpRS.get(i);
 
 			leftPoint.headingDeg = 0;
@@ -336,7 +336,7 @@ public class Drivetrain extends Subsystem {
 			leftPoint.isLastPoint = false;
 			rightPoint.isLastPoint = false;
 
-			if ((i + 1) == Robot.playback.mpLR.size()) {
+			if ((i + 1) == Robot.playback.mpLP.size()) {
 				leftPoint.isLastPoint = true;
 				rightPoint.isLastPoint = true;
 			}
@@ -469,7 +469,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
-	 * If L & R are within 102*multiplier of target positions, return true
+	 * If L and R are within 102*multiplier of target positions, return true
 	 * 
 	 * @author max
 	 * @param multiplier

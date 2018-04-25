@@ -27,18 +27,35 @@ public class Playback extends Subsystem {
 	private File f;
 	private BufferedWriter bw;
 	private FileWriter fw;
-
+	
 	private FileReader fr;
 	private Scanner br;
 
 	//POSITION, VEL, DURATION
-	public ArrayList<Double> mpLR = new ArrayList<Double>();
+	/**
+	 * variable for storing left position for motion profile
+	 */
+	public ArrayList<Double> mpLP = new ArrayList<Double>();
+	/**
+	 * variable for storing left speed for motion profile
+	 */
 	public ArrayList<Double> mpLS = new ArrayList<Double>();
-	public ArrayList<Double> mpRR = new ArrayList<Double>();
+	
+	/**
+	 * variable for storing right position for motion profile
+	 */
+	public ArrayList<Double> mpRP = new ArrayList<Double>();
+	
+	/**
+	 * variable for storing right speed for motion profile
+	 */
 	public ArrayList<Double> mpRS = new ArrayList<Double>();
 
 	public int mpDur;
 
+	/**
+	 * Time string converted to numbers for parsing
+	 */
 	private double n_timeString = 0, p_timeString = 0;
 	private String prevDateTimeString = "";
 
@@ -73,13 +90,12 @@ public class Playback extends Subsystem {
 
 				String[] ar = st.split(",");
 
-				mpLR.add(Double.parseDouble(ar[0]));
+				mpLP.add(Double.parseDouble(ar[0]));
 				mpLS.add(Double.parseDouble(ar[1]));
-				mpRR.add(Double.parseDouble(ar[2]));
+				mpRP.add(Double.parseDouble(ar[2]));
 				mpRS.add(Double.parseDouble(ar[3]));
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception e) { e.printStackTrace();
 			System.out.println("Parse failed!");
 		}
 	}
@@ -94,9 +110,9 @@ public class Playback extends Subsystem {
 	private void printValues() {
 		try {
 
-			for (int i = 0; i < mpLR.size(); i++)
+			for (int i = 0; i < mpLP.size(); i++)
 				System.out.println(
-						mpLR.get(i) + "\t" + mpLS.get(i) + "\t" + mpRR.get(i) + "\t" + mpRS.get(i) + "\t" + mpDur);
+						mpLP.get(i) + "\t" + mpLS.get(i) + "\t" + mpRP.get(i) + "\t" + mpRS.get(i) + "\t" + mpDur);
 
 		} catch (Exception e) {
 			System.out.println("Printing failed!");
@@ -107,6 +123,7 @@ public class Playback extends Subsystem {
 	 * write time + L&R drivetrain speeds to file
 	 * 
 	 * @author max
+	 * @param boolean startup
 	 * @since
 	 */
 	private void writeToProfile(boolean startup) {
@@ -408,14 +425,8 @@ public class Playback extends Subsystem {
 	}
 
 	/**
-	 * <p>
-	 * <b>Example</b>
-	 * </p>
-	 * <p>
 	 * toRound = 2.342, wanting to round to nearest .05 1/<b>20</b> is .05
 	 * roundToFraction(2.342,20)
-	 * 
-	 * </p>
 	 * 
 	 * @author max
 	 * @param value

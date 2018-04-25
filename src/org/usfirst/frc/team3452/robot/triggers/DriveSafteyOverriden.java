@@ -6,12 +6,13 @@ import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 
 /**
+ * returns boolean Robot.elevator.m_overriden
  * @author max
- * @return Robot.elevator.m_overriden
  * @see Elevator
  */
 public class DriveSafteyOverriden extends Trigger {
 
+	@Override
 	public boolean get() {
 		return Robot.elevator.m_overriden;
 	}
