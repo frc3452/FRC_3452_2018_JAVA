@@ -27,8 +27,8 @@ public class Elevator extends Subsystem {
 	public WPI_TalonSRX Elev_1;
 	public WPI_TalonSRX Elev_2;
 
-	//TODO COMP|PRACTICE
-	public boolean isRemoteSensor = false;
+	//TODO COMP|PRACTICE {}
+	public boolean isRemoteSensor = true;
 	//TODO TEST ELEVATOR COMMAND
 
 	/**
@@ -56,37 +56,26 @@ public class Elevator extends Subsystem {
 		Elev_1.config_kD(0, 2.5, 10);
 		// was 0, .09, .000075, 2.5
 
+		// ENCODER
+		Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		Elev_1.setSelectedSensorPosition(0, 0, 10);
+		Elev_1.setSensorPhase(Constants.E_ENC_INVERT);
+
+		//		 RESET ENCODER ON LIMIT SWITCH DOWN
+		Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);
+		
 		if (isRemoteSensor) {
-			// ENCODER
-			Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
-			Elev_1.setSelectedSensorPosition(0, 0, 10);
-			Elev_1.setSensorPhase(Constants.E_ENC_INVERT);
-
-			//		 RESET ENCODER ON LIMIT SWITCH DOWN
-			Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);
-
 			//		 REMOTE LIMIT SWITCHES
 			Elev_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 					LimitSwitchNormal.NormallyOpen, Elev_2.getDeviceID(), 10);
 			Elev_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 					LimitSwitchNormal.NormallyOpen, Elev_2.getDeviceID(), 10);
 		} else {
-			
-			// ENCODER
-			Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
-			Elev_1.setSelectedSensorPosition(0, 0, 10);
-			Elev_1.setSelectedSensorPosition(0, 0, 10);
-			Elev_1.setSensorPhase(Constants.E_ENC_INVERT);
-
-			// RESET ENCODER ON LIMIT SWITCH DOWN
-			Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);
-
 			// PRACTICE LIMIT SWITCHES
 			Elev_1.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen,
 					10);
 			Elev_1.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen,
 					10);
-
 			Elev_2.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 					LimitSwitchNormal.NormallyOpen, Elev_1.getDeviceID(), 10);
 			Elev_2.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
