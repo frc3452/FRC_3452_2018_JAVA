@@ -63,7 +63,7 @@ public class Intake extends Subsystem {
 		public static final int INTAKE_L = 0;
 		public static final int INTAKE_R = 1;
 
-		public static final boolean INTAKE_L_INVERT = true;
-		public static final boolean INTAKE_R_INVERT = false;
+		public static final boolean INTAKE_L_INVERT = false;
+		public static final boolean INTAKE_R_INVERT = true;
 	}
 }

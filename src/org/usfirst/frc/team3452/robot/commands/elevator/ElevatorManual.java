@@ -38,7 +38,7 @@ public class ElevatorManual extends Command {
 
 	@Override
 	protected void execute() {
-		speedmodifier = m_joy.getRawAxis(m_axis) * (m_joy.getRawAxis(m_axis) > 0 ? .6 : .9);
+		speedmodifier = m_joy.getRawAxis(m_axis) * (m_joy.getRawAxis(m_axis) > 0 ? .6 : 1);
 
 		Robot.elevator.Elev_1.set(ControlMode.PercentOutput, speedmodifier);
 	}

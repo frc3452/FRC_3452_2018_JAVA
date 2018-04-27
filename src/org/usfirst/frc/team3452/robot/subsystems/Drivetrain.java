@@ -75,7 +75,6 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putNumber("Selector A", Robot.autonSelector.as_A.getValue());
 		SmartDashboard.putNumber("Selector B", Robot.autonSelector.as_B.getValue());
 		
-
 	}
 
 	/**
@@ -518,7 +517,6 @@ public class Drivetrain extends Subsystem {
 	 *
 	 */
 	public static class PDP {
-		//TODO COMP|PRACTICE {}
 		public final static int DRIVE_L_1 = 0, DRIVE_L_2 = 1, DRIVE_L_3 = 5, DRIVE_L_4 = 4;
 		public final static int DRIVE_R_1 = 15, DRIVE_R_2 = 14, DRIVE_R_3 = 11, DRIVE_R_4 = 10;
 

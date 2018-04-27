@@ -10,7 +10,7 @@ public class JustGonnaSendIt extends CommandGroup {
      * <b>Just Gonna Send it</b>
      */
     public JustGonnaSendIt() {
-    	addSequential(new ElevatorTime(1, 10));
+    	addSequential(new ElevatorTime(1,10));
 		addSequential(new IntakeTime(1, .5));
     }
 }

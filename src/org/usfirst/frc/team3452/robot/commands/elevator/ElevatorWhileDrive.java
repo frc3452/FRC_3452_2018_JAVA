@@ -36,8 +36,8 @@ public class ElevatorWhileDrive extends Command {
 		if (Robot.drive.p_pos > m_percent)
 			Robot.elevator.encoder(m_value);
 		else
-			Robot.elevator.Elev_1.set(ControlMode.PercentOutput,0);
-		
+			Robot.elevator.Elev_1.set(ControlMode.PercentOutput, 0);
+
 		if (Robot.elevator.isRemoteSensor) {
 			l_rev = Robot.elevator.Elev_2.getSensorCollection().isRevLimitSwitchClosed();
 			l_fwd = Robot.elevator.Elev_2.getSensorCollection().isFwdLimitSwitchClosed();
@@ -54,7 +54,7 @@ public class ElevatorWhileDrive extends Command {
 
 		if (l_fwd && m_value < 0)
 			return true;
-		
+
 		return Robot.elevator.isDone(3.5) || isTimedOut();
 	}
 

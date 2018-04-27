@@ -27,10 +27,7 @@ public class Elevator extends Subsystem {
 	public WPI_TalonSRX Elev_1;
 	public WPI_TalonSRX Elev_2;
 
-	//TODO COMP|PRACTICE {}
 	public boolean isRemoteSensor = true;
-	//TODO TEST ELEVATOR COMMAND
-
 	/**
 	 * hardware initialization
 	 * 

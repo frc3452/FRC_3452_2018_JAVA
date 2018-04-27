@@ -239,7 +239,7 @@ public class LeftAuton extends CommandGroup {
 
 			//Drive to scale
 
-			addSequential(new EncoderGyro(15.27, 15.27, .5, .5, .6, 0, .017));
+			addSequential(new EncoderGyro(15.27, 15.27, .6, .6, .7, 0, .017));
 			//TURN CHANGED FINALS 3
 			addSequential(new EncoderFrom(1.5, -1.15, .6, .6, .6)); //turn to switch
 
@@ -247,7 +247,7 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new ElevatorPosition(15)); //raise and forward
 			addSequential(new EncoderFrom(.5, .5, .4, .4, .6));
 
-			addSequential(new IntakeTime(.5, 4)); //shoot, back up down and spin
+			addSequential(new IntakeTime(.35, 4)); //shoot, back up down and spin
 
 			break;
 		case FOREST_HILLS:

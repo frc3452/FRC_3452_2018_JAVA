@@ -1,3 +1,4 @@
+
 package org.usfirst.frc.team3452.robot;
 
 import org.usfirst.frc.team3452.robot.commands.drive.SpeedModifier;
@@ -59,7 +60,7 @@ public class OI {
 		// 				OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
 //		opJoyRB.whenPressed(new JustGonnaSendIt());
-
+		
 		opJoyA.whileHeld(new IntakeManual(Intake.Speeds.PLACE));
 		opJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		opJoyB.whileHeld(new IntakeManual(Intake.Speeds.SHOOT));

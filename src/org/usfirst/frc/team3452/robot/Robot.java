@@ -1,4 +1,3 @@
-
 package org.usfirst.frc.team3452.robot;
 
 import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
@@ -36,7 +35,6 @@ public class Robot extends TimedRobot {
 	public static final Camera camera = new Camera();
 	public static final Lights lights = new Lights();
 	public static final Playback playback = new Playback();
-
 	public static OI _oi;
 
 	//auto selector init
@@ -49,7 +47,7 @@ public class Robot extends TimedRobot {
 
 	//LOGGING CONTROL
 	boolean logging = true, logToUsb = true;
-	String loggingLocation = "Logging/Champs/Day_1";
+	String loggingLocation = "Logging/Worlds/Day_3";
 
 	@Override
 	public void robotInit() {
@@ -61,8 +59,8 @@ public class Robot extends TimedRobot {
 		Robot.elevator.initHardware();
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
-		//		Robot.lights.initHardware();
-		//		Robot.camera.initHardware();
+		Robot.lights.initHardware();
+		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 		Robot.playback.initHardware();
 
@@ -141,6 +139,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
+		System.out.println("Entering auto");
+
 		if (!toLog) {
 			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
 			toLog = true;
@@ -216,6 +216,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
+		System.out.println("Entering teleop");
+
 		if (!toLog && logging) {
 			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
 			toLog = true;
@@ -244,6 +246,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testInit() {
+		System.out.println("Entering test mode");
+
 		if (!toLog && logging) {
 			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
 			toLog = true;
