@@ -435,8 +435,9 @@ public class Drivetrain extends Subsystem {
 	 * @since boolean
 	 */
 	public boolean encoderSpeedIsUnder(double value) {
-		double l = L1.getSelectedSensorVelocity(0);
-		double r = R1.getSelectedSensorVelocity(0);
+		
+		double l = Math.abs(L1.getSelectedSensorVelocity(0));
+		double r = Math.abs(R1.getSelectedSensorVelocity(0));
 
 		if (l < value && r < value)
 			return true;

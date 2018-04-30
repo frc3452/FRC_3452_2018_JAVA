@@ -284,7 +284,10 @@ public class RightAuton extends CommandGroup {
 			//TURN CHANGED FINALS 3
 			addSequential(new EncoderFrom(-1.15, 1.5, .6, .6, .6)); //turn to switch
 
-			addSequential(new EncoderFrom(-.6, -.6, .7, .7, .6));
+
+			addSequential(new DriveTime(-.5, 0, .5));
+			addSequential(new DriveToStop(-.55)); //was .45
+			
 			addSequential(new ElevatorPosition(15)); //raise and forward
 			addSequential(new EncoderFrom(.5, .5, .4, .4, .6));
 

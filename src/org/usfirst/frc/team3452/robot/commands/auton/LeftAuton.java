@@ -48,7 +48,7 @@ public class LeftAuton extends CommandGroup {
 				break;
 			case SCALE:
 				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-					scaleL(version);
+					scaleL(/* version */AV.FOREST_HILLS);
 
 				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
 					scaleR(version);
@@ -177,7 +177,7 @@ public class LeftAuton extends CommandGroup {
 				}
 			});
 
-			addSequential(new EncoderFrom(1.6,-1.2,.5,.5,.6));
+			addSequential(new EncoderFrom(1.6, -1.2, .5, .5, .6));
 
 			addSequential(new DriveTime(.5, 0, .5));
 			addSequential(new DriveToStop(.55)); //was .45
@@ -186,16 +186,16 @@ public class LeftAuton extends CommandGroup {
 
 			addParallel(new ElevatorWhileDrive(-15, .9));
 			addSequential(new EncoderFrom(-.85, -.75, .5, .5, .6));
-			
+
 			addSequential(new DriveToCube(.58, 5)); //was .45
-			addSequential(new EncoderFrom(-.5, -.5,.5, .5, .6));
-			
+			addSequential(new EncoderFrom(-.5, -.5, .5, .5, .6));
+
 			addSequential(new ElevatorTime(1, .6));
-			
+
 			//hit switch
 			addSequential(new DriveTime(.5, 0, .5));
 			addSequential(new DriveToStop(.55)); //was .45
-			
+
 			addSequential(new IntakeTime(-1, 1));
 
 			break;
@@ -238,16 +238,17 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
 			//Drive to scale
-
 			addSequential(new EncoderGyro(15.27, 15.27, .6, .6, .7, 0, .017));
 			//TURN CHANGED FINALS 3
 			addSequential(new EncoderFrom(1.5, -1.15, .6, .6, .6)); //turn to switch
 
-			addSequential(new EncoderFrom(-.6, -.6, .7, .7, .6));
+			addSequential(new DriveTime(-.5, 0, .5));
+			addSequential(new DriveToStop(-.55)); //was .45
+			
 			addSequential(new ElevatorPosition(15)); //raise and forward
 			addSequential(new EncoderFrom(.5, .5, .4, .4, .6));
 
-			addSequential(new IntakeTime(.35, 4)); //shoot, back up down and spin
+			addSequential(new IntakeTime(.8, 4)); //shoot, back up down and spin
 
 			break;
 		case FOREST_HILLS:
@@ -258,9 +259,10 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new ElevatorTime(.75, .25));
 			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, .016)); // drive to far side of switch
-			addSequential(new EncoderFrom(.2, -.4, .4, .4, .5)); //turn to switch
 
+			addSequential(new EncoderFrom(.2, -.4, .4, .4, .5)); //turn to switch
 			addSequential(new ElevatorPosition(15)); //raise and forward
+
 			addSequential(new DriveTime(.4, 0, 1.7));
 
 			addSequential(new IntakeTime(.4, .6)); //shoot, back up down and spin
@@ -274,6 +276,7 @@ public class LeftAuton extends CommandGroup {
 			defaultAuton();
 			break;
 		}
+
 	}
 
 	private void scaleR(AV version) {
