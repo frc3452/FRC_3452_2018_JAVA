@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
 		Robot.lights.initHardware();
-		Robot.camera.initHardware();
+//		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 		Robot.playback.initHardware();
 

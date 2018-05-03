@@ -15,7 +15,7 @@ public class RunMotionProfile extends Command {
 
 	private MotionProfileStatus R_status = new MotionProfileStatus();
 	private MotionProfileStatus L_status = new MotionProfileStatus();
-
+	
 	public RunMotionProfile() {
 		requires(Robot.drive);
 	}
@@ -36,8 +36,6 @@ public class RunMotionProfile extends Command {
 
 		Robot.drive.L1.getMotionProfileStatus(L_status);
 		Robot.drive.R1.getMotionProfileStatus(R_status);
-
-		
 		System.out.println(L_status.timeDurMs + "\t\t" + R_status.isLast);
 	}
 
