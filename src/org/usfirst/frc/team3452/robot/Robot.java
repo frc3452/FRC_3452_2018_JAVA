@@ -46,8 +46,8 @@ public class Robot extends TimedRobot {
 	boolean wasTele = false, readyForMatch = false, wasTest = false, toLog = false;
 
 	//LOGGING CONTROL
-	boolean logging = true, logToUsb = true;
-	String loggingLocation = "Logging/Worlds/Day_3";
+	boolean logging = false, logToUsb = true;
+	String loggingLocation = "Logging/Offseason";
 
 	@Override
 	public void robotInit() {
@@ -261,11 +261,15 @@ public class Robot extends TimedRobot {
 	}
 
 	public void handleLEDs() {
-
 		if (OI.driverJoy.getRawButton(2) && OI.driverJoy.getRawButton(7) && OI.driverJoy.getRawButton(8))
 			readyForMatch = true;
 
-		if (wasTest) {
+		Robot.lights.hsv(Robot.lights.m_hue, 1, .15);
+		Robot.lights.m_hue++;
+		if (Robot.lights.m_hue > 360)
+			Robot.lights.m_hue = 0;
+		
+		/*if (wasTest) {
 			Robot.lights.pulse(55, 1, .2, .8, .1);
 		} else {
 
@@ -293,7 +297,7 @@ public class Robot extends TimedRobot {
 					}
 				}
 			}
-		}
+		}*/
 	}
 
 	public void controllerChooser() {

@@ -33,16 +33,18 @@ public class RunMotionProfile extends Command {
 
 		Robot.drive.L1.set(ControlMode.MotionProfile, 1);
 		Robot.drive.R1.set(ControlMode.MotionProfile, 1);
-		
 
 		Robot.drive.L1.getMotionProfileStatus(L_status);
 		Robot.drive.R1.getMotionProfileStatus(R_status);
+
+		
+		System.out.println(L_status.timeDurMs + "\t\t" + R_status.isLast);
 	}
 
 	@Override
 	protected boolean isFinished() {
 		return isTimedOut();
-//		return L_status.isLast || R_status.isLast || isTimedOut();
+		//		return L_status.isLast || R_status.isLast || isTimedOut();
 	}
 
 	@Override

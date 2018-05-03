@@ -27,7 +27,7 @@ public class Playback extends Subsystem {
 	private File f;
 	private BufferedWriter bw;
 	private FileWriter fw;
-	
+
 	private FileReader fr;
 	private Scanner br;
 
@@ -40,12 +40,12 @@ public class Playback extends Subsystem {
 	 * variable for storing left speed for motion profile
 	 */
 	public ArrayList<Double> mpLS = new ArrayList<Double>();
-	
+
 	/**
 	 * variable for storing right position for motion profile
 	 */
 	public ArrayList<Double> mpRP = new ArrayList<Double>();
-	
+
 	/**
 	 * variable for storing right speed for motion profile
 	 */
@@ -56,8 +56,8 @@ public class Playback extends Subsystem {
 	/**
 	 * Time string converted to numbers for parsing
 	 */
-	private double n_timeString = 0, p_timeString = 0;
-	private String prevDateTimeString = "";
+	private double n_timeString = 0, p_timeString = -1;
+	private String prevDateTimeString = "Empty";
 
 	private boolean hasPrintedLogFailed = false;
 
@@ -95,7 +95,8 @@ public class Playback extends Subsystem {
 				mpRP.add(Double.parseDouble(ar[2]));
 				mpRS.add(Double.parseDouble(ar[3]));
 			}
-		} catch (Exception e) { e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Parse failed!");
 		}
 	}
@@ -123,7 +124,8 @@ public class Playback extends Subsystem {
 	 * write time + L&R drivetrain speeds to file
 	 * 
 	 * @author max
-	 * @param boolean startup
+	 * @param boolean
+	 *            startup
 	 * @since
 	 */
 	private void writeToProfile(boolean startup) {
@@ -238,7 +240,8 @@ public class Playback extends Subsystem {
 									+ Robot.drive.pdp.getCurrent(PDP.INTAKE_R) + ","
 
 									//CLIMBER PDP SLOTS
-									+ Robot.drive.pdp.getCurrent(PDP.CLIMBER_1) + "," + Robot.drive.pdp.getCurrent(PDP.CLIMBER_2) + ","
+									+ Robot.drive.pdp.getCurrent(PDP.CLIMBER_1) + ","
+									+ Robot.drive.pdp.getCurrent(PDP.CLIMBER_2) + ","
 
 									//BATTERY
 									+ DriverStation.getInstance().getBatteryVoltage()));
@@ -281,6 +284,8 @@ public class Playback extends Subsystem {
 				new File(((usb) ? "/u/" : "/home/lvuser") + folder).mkdirs();
 
 				//SETUP FILE WRITING
+				f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder);
+				f.mkdirs();
 				f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
 
 				//if it isn't there, create it
@@ -291,7 +296,9 @@ public class Playback extends Subsystem {
 				fw = new FileWriter(f);
 				bw = new BufferedWriter(fw);
 			}
+
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			System.out.println("File " + readwrite + " from " + (usb ? "USB" : "RIO") + "failed!");
 		}
 	}
@@ -354,7 +361,7 @@ public class Playback extends Subsystem {
 				System.out.println("Opening Parse: " + name + ".csv");
 				createFile(name, folder, fileState.READ, usb);
 				parseFile();
-				//				printValues();
+				printValues();
 
 				break;
 			case Log:
@@ -373,7 +380,6 @@ public class Playback extends Subsystem {
 			break;
 		case RUNTIME:
 			switch (task) {
-
 			case Record:
 				writeToProfile(false);
 

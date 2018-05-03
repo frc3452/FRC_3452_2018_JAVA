@@ -47,6 +47,14 @@ public class OI {
 		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.SHOOT));
 
+		//		driverJoyY.whileHeld(new Record("MP1", "Motion_Profiles", false, TASK.Record));
+		//		driverJoyRB.whenPressed(new CommandGroup() {
+		//			{
+		//				addSequential(new Record("MP1", "Motion_Profiles",false,TASK.Parse));
+		//				addSequential(new RunMotionProfile());
+		//			}
+		//		});
+
 		driverJoyY.whileHeld(new Climb(1));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 		driverJoyBack.whenPressed(new OverrideSet(EO.TOGGLE));
@@ -59,8 +67,8 @@ public class OI {
 
 		// 				OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
-//		opJoyRB.whenPressed(new JustGonnaSendIt());
-		
+		//		opJoyRB.whenPressed(new JustGonnaSendIt());
+
 		opJoyA.whileHeld(new IntakeManual(Intake.Speeds.PLACE));
 		opJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		opJoyB.whileHeld(new IntakeManual(Intake.Speeds.SHOOT));

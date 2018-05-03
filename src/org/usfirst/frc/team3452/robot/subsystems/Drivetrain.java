@@ -66,7 +66,7 @@ public class Drivetrain extends Subsystem {
 
 		SmartDashboard.putNumber("Elevator Enc", -Robot.elevator.Elev_1.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Elev Velocity", Robot.elevator.Elev_1.getSelectedSensorVelocity(0));
-		
+
 		SmartDashboard.putString("Selected auton", Robot.autonSelector.autonString);
 		SmartDashboard.putString("Override String", Robot.autonSelector.overrideString);
 
@@ -74,7 +74,7 @@ public class Drivetrain extends Subsystem {
 
 		SmartDashboard.putNumber("Selector A", Robot.autonSelector.as_A.getValue());
 		SmartDashboard.putNumber("Selector B", Robot.autonSelector.as_B.getValue());
-		
+
 	}
 
 	/**
@@ -125,9 +125,9 @@ public class Drivetrain extends Subsystem {
 		R4.follow(R1);
 
 		//MOTION PROFILING
-		L1.configMotionProfileTrajectoryPeriod(20, 10);
+		L1.configMotionProfileTrajectoryPeriod(10, 10);
 		L1.changeMotionControlFramePeriod(10);
-		R1.configMotionProfileTrajectoryPeriod(20, 10);
+		R1.configMotionProfileTrajectoryPeriod(10, 10);
 		R1.changeMotionControlFramePeriod(10);
 
 		// encoder init
@@ -147,6 +147,18 @@ public class Drivetrain extends Subsystem {
 		R1.config_kP(0, 0.8, 10); //.8
 		R1.config_kI(0, 0.0000004, 10);
 		R1.config_kD(0, 4.25, 10);
+
+		L1.config_kP(0, 0.03, 10);
+		R1.config_kP(0, 0.03, 10);
+
+		L1.config_kI(0, 0.00001, 10);
+		R1.config_kI(0, 0.00001, 10);
+
+		L1.config_kD(0, 0.03 * 5, 10);
+		R1.config_kD(0, 0.03 * 5, 10);
+
+		L1.config_kD(0, 0, 10);
+		R1.config_kD(0, 0, 10);
 
 		// NOMINAL OUTPUT
 		L1.configNominalOutputForward(0, 10);
@@ -304,8 +316,12 @@ public class Drivetrain extends Subsystem {
 		L1.clearMotionProfileTrajectories();
 		R1.clearMotionProfileTrajectories();
 
+		L1.configMotionProfileTrajectoryPeriod(10, 10);
+		R1.configMotionProfileTrajectoryPeriod(10, 10);
+
 		//MOTION PROFILE
 		for (int i = 0; i < Robot.playback.mpLP.size(); i++) {
+			
 			leftPoint.position = Robot.playback.mpLP.get(i);
 			leftPoint.velocity = Robot.playback.mpLS.get(i);
 
@@ -335,7 +351,10 @@ public class Drivetrain extends Subsystem {
 			leftPoint.isLastPoint = false;
 			rightPoint.isLastPoint = false;
 
+			System.out.println(i);
+			
 			if ((i + 1) == Robot.playback.mpLP.size()) {
+				System.out.println("true");
 				leftPoint.isLastPoint = true;
 				rightPoint.isLastPoint = true;
 			}
@@ -343,8 +362,9 @@ public class Drivetrain extends Subsystem {
 			L1.pushMotionProfileTrajectory(leftPoint);
 			R1.pushMotionProfileTrajectory(rightPoint);
 		}
+		
 		System.out.println("Motion profile pushed to Talons");
-
+	
 	}
 
 	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {
@@ -385,7 +405,6 @@ public class Drivetrain extends Subsystem {
 		double lp_pos = Math.abs(L1.getSelectedSensorPosition(0) / (4096 * leftpos));
 		double rp_pos = Math.abs(R1.getSelectedSensorPosition(0) / (4096 * rightpos));
 
-		
 		p_pos = (lp_pos + rp_pos) / 2;
 
 		L1.configMotionAcceleration((int) (4096 * leftaccel), 10);
@@ -435,7 +454,7 @@ public class Drivetrain extends Subsystem {
 	 * @since boolean
 	 */
 	public boolean encoderSpeedIsUnder(double value) {
-		
+
 		double l = Math.abs(L1.getSelectedSensorVelocity(0));
 		double r = Math.abs(R1.getSelectedSensorVelocity(0));
 

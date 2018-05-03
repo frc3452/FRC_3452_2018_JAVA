@@ -136,6 +136,7 @@ public class MiddleAuton extends CommandGroup {
 	private void switchR(AV version) {
 		switch (version) {
 		case CURRENT:
+			
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
