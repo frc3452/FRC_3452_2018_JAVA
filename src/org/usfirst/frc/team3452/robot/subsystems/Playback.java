@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.PDP;
 
@@ -165,7 +166,7 @@ public class Playback extends Subsystem {
 
 		} catch (Exception e) {
 			//			e.printStackTrace();
-			System.out.println("Mapping failed!");
+			System.out.println("Writing to profile failed!");
 		}
 	}
 
@@ -236,12 +237,12 @@ public class Playback extends Subsystem {
 									+ Robot.elevator.Elev_2.getMotorOutputVoltage() + ","
 
 									//INTAKE PDP SLOTS
-									+ Robot.drive.pdp.getCurrent(PDP.INTAKE_L) + ","
-									+ Robot.drive.pdp.getCurrent(PDP.INTAKE_R) + ","
+									+ Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_L) + ","
+									+ Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_R) + ","
 
 									//CLIMBER PDP SLOTS
-									+ Robot.drive.pdp.getCurrent(PDP.CLIMBER_1) + ","
-									+ Robot.drive.pdp.getCurrent(PDP.CLIMBER_2) + ","
+									+ Robot.drive.pdp.getCurrent(Constants.PDP.CLIMBER_1) + ","
+									+ Robot.drive.pdp.getCurrent(Constants.PDP.CLIMBER_2) + ","
 
 									//BATTERY
 									+ DriverStation.getInstance().getBatteryVoltage()));

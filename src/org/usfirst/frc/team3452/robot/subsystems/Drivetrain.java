@@ -538,24 +538,6 @@ public class Drivetrain extends Subsystem {
 	 * @author max
 	 *
 	 */
-	public static class PDP {
-		public final static int DRIVE_L_1 = 0, DRIVE_L_2 = 1, DRIVE_L_3 = 5, DRIVE_L_4 = 4;
-		public final static int DRIVE_R_1 = 15, DRIVE_R_2 = 14, DRIVE_R_3 = 11, DRIVE_R_4 = 10;
-
-		public final static int ELEVATOR_1 = 12;
-		public final static int ELEVATOR_2 = 13;
-
-		public final static int INTAKE_L = 9;
-		public final static int INTAKE_R = 8;
-
-		public final static int CLIMBER_1 = 3;
-		public final static int CLIMBER_2 = 2;
-	}
-
-	/**
-	 * @author max
-	 *
-	 */
 	public static enum CONTROLLER {
 		DRIVER, OPERATOR, BOTH;
 	}

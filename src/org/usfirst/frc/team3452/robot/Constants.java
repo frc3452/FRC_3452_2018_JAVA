@@ -1,5 +1,12 @@
 package org.usfirst.frc.team3452.robot;
 
+/**
+ * Robot subsystem constants
+ * 
+ * @since 5/4/18
+ * @author Max
+ */
+
 public class Constants {
 	public class AutonSelector {
 		public static final int AUTO_SELECTOR_1 = 2; //1
@@ -70,6 +77,20 @@ public class Constants {
 		public final static int AMP_30_TRIGGER = 45, AMP_30_LIMIT = 25, AMP_30_TIME = 3000;
 
 		public final static double RAMP_TIME = 0.125;
+	}
+	
+	public class PDP {
+		public final static int DRIVE_L_1 = 0, DRIVE_L_2 = 1, DRIVE_L_3 = 5, DRIVE_L_4 = 4;
+		public final static int DRIVE_R_1 = 15, DRIVE_R_2 = 14, DRIVE_R_3 = 11, DRIVE_R_4 = 10;
+
+		public final static int ELEVATOR_1 = 12;
+		public final static int ELEVATOR_2 = 13;
+
+		public final static int INTAKE_L = 9;
+		public final static int INTAKE_R = 8;
+
+		public final static int CLIMBER_1 = 3;
+		public final static int CLIMBER_2 = 2;
 	}
 
 	public class Elevator {
