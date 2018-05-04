@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
 		for (int i = 0; i < 41; i++) {
 			autoCommand[i] = null;
 		}
-
+		
 		Robot.drive.initHardware();
 		Robot.elevator.initHardware();
 		Robot.intake.initHardware();

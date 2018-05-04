@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 
 import com.ctre.phoenix.ParamEnum;
@@ -35,15 +36,15 @@ public class Elevator extends Subsystem {
 	 * @since
 	 */
 	public void initHardware() {
-		Elev_1 = new WPI_TalonSRX(Constants.E_1);
-		Elev_2 = new WPI_TalonSRX(Constants.E_2);
+		Elev_1 = new WPI_TalonSRX(Constants.Elevator.E_1);
+		Elev_2 = new WPI_TalonSRX(Constants.Elevator.E_2);
 
 		// FOLLOWER
 		Elev_2.follow(Elev_1);
 
 		// INVERT
-		Elev_1.setInverted(Constants.E_1_INVERT);
-		Elev_2.setInverted(Constants.E_2_INVERT);
+		Elev_1.setInverted(Constants.Elevator.E_1_INVERT);
+		Elev_2.setInverted(Constants.Elevator.E_2_INVERT);
 
 		// PIDs
 		Elev_1.config_kF(0, 0, 10);
@@ -55,7 +56,7 @@ public class Elevator extends Subsystem {
 		// ENCODER
 		Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		Elev_1.setSelectedSensorPosition(0, 0, 10);
-		Elev_1.setSensorPhase(Constants.E_ENC_INVERT);
+		Elev_1.setSensorPhase(Constants.Elevator.E_ENC_INVERT);
 
 		//		 RESET ENCODER ON LIMIT SWITCH DOWN
 		Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);
@@ -83,19 +84,19 @@ public class Elevator extends Subsystem {
 		Elev_2.setNeutralMode(NeutralMode.Brake);
 
 		//CURRENT LIMITING
-		Elev_1.configContinuousCurrentLimit(Constants.AMP_LIMIT, 10);
-		Elev_1.configPeakCurrentLimit(Constants.AMP_TRIGGER, 10);
-		Elev_1.configPeakCurrentDuration(Constants.AMP_TIME, 10);
+		Elev_1.configContinuousCurrentLimit(Constants.Elevator.AMP_LIMIT, 10);
+		Elev_1.configPeakCurrentLimit(Constants.Elevator.AMP_TRIGGER, 10);
+		Elev_1.configPeakCurrentDuration(Constants.Elevator.AMP_TIME, 10);
 
-		Elev_2.configContinuousCurrentLimit(Constants.AMP_LIMIT, 10);
-		Elev_2.configPeakCurrentLimit(Constants.AMP_TRIGGER, 10);
-		Elev_2.configPeakCurrentDuration(Constants.AMP_TIME, 10);
+		Elev_2.configContinuousCurrentLimit(Constants.Elevator.AMP_LIMIT, 10);
+		Elev_2.configPeakCurrentLimit(Constants.Elevator.AMP_TRIGGER, 10);
+		Elev_2.configPeakCurrentDuration(Constants.Elevator.AMP_TIME, 10);
 
 		Elev_1.enableCurrentLimit(true);
 		Elev_2.enableCurrentLimit(true);
 
-		Elev_1.configOpenloopRamp(Constants.E_OPEN_RAMP_TIME, 10);
-		Elev_1.configClosedloopRamp(Constants.E_CLOSED_RAMP_TIME, 10);
+		Elev_1.configOpenloopRamp(Constants.Elevator.E_OPEN_RAMP_TIME, 10);
+		Elev_1.configClosedloopRamp(Constants.Elevator.E_CLOSED_RAMP_TIME, 10);
 
 		//SHUFFLEBOARD
 		Elev_1.setSubsystem("Elevator");
@@ -117,15 +118,15 @@ public class Elevator extends Subsystem {
 		if (m_overriden == false) {
 			
 			if (pos < 8500)
-				Robot.drive.m_elev_modify = Constants.SPEED_1;
+				Robot.drive.m_elev_modify = Constants.Elevator.SPEED_1;
 			else if (pos < 12000 && pos > 8500)
-				Robot.drive.m_elev_modify = Constants.SPEED_2;
+				Robot.drive.m_elev_modify = Constants.Elevator.SPEED_2;
 			else if (pos < 15000 && pos > 12000)
-				Robot.drive.m_elev_modify = Constants.SPEED_3;
+				Robot.drive.m_elev_modify = Constants.Elevator.SPEED_3;
 			else if (pos < 25000 && pos > 15000)
-				Robot.drive.m_elev_modify = Constants.SPEED_4;
+				Robot.drive.m_elev_modify = Constants.Elevator.SPEED_4;
 			else if (pos > 25000)
-				Robot.drive.m_elev_modify = Constants.SPEED_5;
+				Robot.drive.m_elev_modify = Constants.Elevator.SPEED_5;
 
 		} else {
 			Robot.drive.m_elev_modify = 1;
@@ -189,32 +190,4 @@ public class Elevator extends Subsystem {
 	public static enum EO {
 		TOGGLE, ON, OFF;
 	}
-
-	/**
-	 * @author max
-	 *
-	 */
-	public static class Constants {
-		public static final int E_1 = 9;
-		public static final int E_2 = 10;
-
-		public static final boolean E_1_INVERT = false;
-		public static final boolean E_2_INVERT = false;
-
-		public static final boolean E_ENC_INVERT = true;
-
-		public static final double E_OPEN_RAMP_TIME = .5;
-		public static final double E_CLOSED_RAMP_TIME = .25;
-
-		public static final double SPEED_1 = 1;
-		public static final double SPEED_2 = .9;
-		public static final double SPEED_3 = .65;
-		public static final double SPEED_4 = .55;
-		public static final double SPEED_5 = .48; //.45
-
-		public static int AMP_TRIGGER = 50;
-		public static int AMP_LIMIT = 40;
-		public static int AMP_TIME = 1000;
-	}
-
 }

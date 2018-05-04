@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.Constants;
+
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -32,8 +34,8 @@ public class Climber extends Subsystem {
 	 * @since
 	 */
 	public void initHardware() {
-		climb1 = new Spark(Constants.CLIMBER_1);
-		climb1.setInverted(Constants.CLIMBER_1_INVERT);
+		climb1 = new Spark(Constants.Climber.CLIMBER_1);
+		climb1.setInverted(Constants.Climber.CLIMBER_1_INVERT);
 
 		climb1.setSubsystem("Climber");
 		climb1.setName("Climber Motor");
@@ -42,12 +44,4 @@ public class Climber extends Subsystem {
 	public void initDefaultCommand() {
 	}
 
-	/**
-	 * @author max
-	 *
-	 */
-	public static class Constants {
-		public static final int CLIMBER_1 = 2;
-		public static final boolean CLIMBER_1_INVERT = false;
-	}
 }

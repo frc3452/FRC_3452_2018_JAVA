@@ -504,11 +504,4 @@ public class Playback extends Subsystem {
 	public enum TASK {
 		Record, Log, Parse, Play;
 	}
-
-	/**
-	 * @author max
-	 *
-	 */
-	public class Constants {
-	}
 }

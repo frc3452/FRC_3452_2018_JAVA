@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 
 import com.ctre.phoenix.CANifier;
@@ -35,7 +36,7 @@ public class Lights extends Subsystem {
 		for (int i = 0; i < 10; i++)
 			tempArray[i] = 3452;
 
-		canifier = new CANifier(Constants.CANIFIER_ID);
+		canifier = new CANifier(Constants.Lights.CANIFIER_ID);
 
 		lightTimer.stop();
 		lightTimer.reset();
@@ -230,11 +231,4 @@ public class Lights extends Subsystem {
 		//		setDefaultCommand(new LightsCycle());
 	}
 
-	/**
-	 * @author max
-	 *
-	 */
-	private static class Constants {
-		public static final int CANIFIER_ID = 0;
-	}
 }

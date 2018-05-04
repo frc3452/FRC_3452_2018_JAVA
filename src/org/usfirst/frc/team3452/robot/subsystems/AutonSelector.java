@@ -1,6 +1,8 @@
 
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.Constants;
+
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -35,8 +37,8 @@ public class AutonSelector extends Subsystem {
 	 * @since
 	 */
 	public void initHardware() {
-		as_A = new AnalogInput(Constants.AUTO_SELECTOR_1);
-		as_B = new AnalogInput(Constants.AUTO_SELECTOR_2);
+		as_A = new AnalogInput(Constants.AutonSelector.AUTO_SELECTOR_1);
+		as_B = new AnalogInput(Constants.AutonSelector.AUTO_SELECTOR_2);
 
 		as_A.setSubsystem("AutonSelector");
 		as_B.setSubsystem("AutonSelector");
@@ -92,101 +94,101 @@ public class AutonSelector extends Subsystem {
 	 * @since
 	 */
 	public int uglyAnalog() {
-		if (m_asA < Constants.AUTO_1 + Constants.AUTO_V && m_asA > Constants.AUTO_1 - Constants.AUTO_V) {
-			if (m_asB > Constants.AUTO_1_L && m_asB < Constants.AUTO_1_H) {
+		if (m_asA < Constants.AutonSelector.AUTO_1 + Constants.AutonSelector.AUTO_V && m_asA > Constants.AutonSelector.AUTO_1 - Constants.AutonSelector.AUTO_V) {
+			if (m_asB > Constants.AutonSelector.AUTO_1_L && m_asB < Constants.AutonSelector.AUTO_1_H) {
 				return 1;
-			} else if (m_asB > Constants.AUTO_2_L && m_asB < Constants.AUTO_2_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_2_L && m_asB < Constants.AutonSelector.AUTO_2_H) {
 				return 2;
-			} else if (m_asB > Constants.AUTO_3_L && m_asB < Constants.AUTO_3_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_3_L && m_asB < Constants.AutonSelector.AUTO_3_H) {
 				return 3;
-			} else if (m_asB > Constants.AUTO_4_L && m_asB < Constants.AUTO_4_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_4_L && m_asB < Constants.AutonSelector.AUTO_4_H) {
 				return 4;
-			} else if (m_asB > Constants.AUTO_5_L && m_asB < Constants.AUTO_5_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_5_L && m_asB < Constants.AutonSelector.AUTO_5_H) {
 				return 5;
-			} else if (m_asB > Constants.AUTO_6_L && m_asB < Constants.AUTO_6_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_6_L && m_asB < Constants.AutonSelector.AUTO_6_H) {
 				return 6;
-			} else if (m_asB > Constants.AUTO_7_L && m_asB < Constants.AUTO_7_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_7_L && m_asB < Constants.AutonSelector.AUTO_7_H) {
 				return 7;
-			} else if (m_asB > Constants.AUTO_8_L && m_asB < Constants.AUTO_8_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_8_L && m_asB < Constants.AutonSelector.AUTO_8_H) {
 				return 8;
-			} else if (m_asB > Constants.AUTO_9_L && m_asB < Constants.AUTO_9_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_9_L && m_asB < Constants.AutonSelector.AUTO_9_H) {
 				return 9;
-			} else if (m_asB > Constants.AUTO_10_L && m_asB < Constants.AUTO_10_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_10_L && m_asB < Constants.AutonSelector.AUTO_10_H) {
 				return 10;
 			} else {
 				// ERROR
 				return 3452;
 			}
-		} else if (m_asA < Constants.AUTO_2 + Constants.AUTO_V && m_asA > Constants.AUTO_2 - Constants.AUTO_V) {
-			if (m_asB > Constants.AUTO_1_L && m_asB < Constants.AUTO_1_H) {
+		} else if (m_asA < Constants.AutonSelector.AUTO_2 + Constants.AutonSelector.AUTO_V && m_asA > Constants.AutonSelector.AUTO_2 - Constants.AutonSelector.AUTO_V) {
+			if (m_asB > Constants.AutonSelector.AUTO_1_L && m_asB < Constants.AutonSelector.AUTO_1_H) {
 				return 11;
-			} else if (m_asB > Constants.AUTO_2_L && m_asB < Constants.AUTO_2_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_2_L && m_asB < Constants.AutonSelector.AUTO_2_H) {
 				return 12;
-			} else if (m_asB > Constants.AUTO_3_L && m_asB < Constants.AUTO_3_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_3_L && m_asB < Constants.AutonSelector.AUTO_3_H) {
 				return 13;
-			} else if (m_asB > Constants.AUTO_4_L && m_asB < Constants.AUTO_4_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_4_L && m_asB < Constants.AutonSelector.AUTO_4_H) {
 				return 14;
-			} else if (m_asB > Constants.AUTO_5_L && m_asB < Constants.AUTO_5_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_5_L && m_asB < Constants.AutonSelector.AUTO_5_H) {
 				return 15;
-			} else if (m_asB > Constants.AUTO_6_L && m_asB < Constants.AUTO_6_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_6_L && m_asB < Constants.AutonSelector.AUTO_6_H) {
 				return 16;
-			} else if (m_asB > Constants.AUTO_7_L && m_asB < Constants.AUTO_7_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_7_L && m_asB < Constants.AutonSelector.AUTO_7_H) {
 				return 17;
-			} else if (m_asB > Constants.AUTO_8_L && m_asB < Constants.AUTO_8_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_8_L && m_asB < Constants.AutonSelector.AUTO_8_H) {
 				return 18;
-			} else if (m_asB > Constants.AUTO_9_L && m_asB < Constants.AUTO_9_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_9_L && m_asB < Constants.AutonSelector.AUTO_9_H) {
 				return 19;
-			} else if (m_asB > Constants.AUTO_10_L && m_asB < Constants.AUTO_10_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_10_L && m_asB < Constants.AutonSelector.AUTO_10_H) {
 				return 20;
 			} else {
 				// ERROR
 				return 3452;
 			}
-		} else if (m_asA < Constants.AUTO_3 + Constants.AUTO_V && m_asA > Constants.AUTO_3 - Constants.AUTO_V) {
-			if (m_asB > Constants.AUTO_1_L && m_asB < Constants.AUTO_1_H) {
+		} else if (m_asA < Constants.AutonSelector.AUTO_3 + Constants.AutonSelector.AUTO_V && m_asA > Constants.AutonSelector.AUTO_3 - Constants.AutonSelector.AUTO_V) {
+			if (m_asB > Constants.AutonSelector.AUTO_1_L && m_asB < Constants.AutonSelector.AUTO_1_H) {
 				return 21;
-			} else if (m_asB > Constants.AUTO_2_L && m_asB < Constants.AUTO_2_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_2_L && m_asB < Constants.AutonSelector.AUTO_2_H) {
 				return 22;
-			} else if (m_asB > Constants.AUTO_3_L && m_asB < Constants.AUTO_3_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_3_L && m_asB < Constants.AutonSelector.AUTO_3_H) {
 				return 23;
-			} else if (m_asB > Constants.AUTO_4_L && m_asB < Constants.AUTO_4_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_4_L && m_asB < Constants.AutonSelector.AUTO_4_H) {
 				return 24;
-			} else if (m_asB > Constants.AUTO_5_L && m_asB < Constants.AUTO_5_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_5_L && m_asB < Constants.AutonSelector.AUTO_5_H) {
 				return 25;
-			} else if (m_asB > Constants.AUTO_6_L && m_asB < Constants.AUTO_6_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_6_L && m_asB < Constants.AutonSelector.AUTO_6_H) {
 				return 26;
-			} else if (m_asB > Constants.AUTO_7_L && m_asB < Constants.AUTO_7_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_7_L && m_asB < Constants.AutonSelector.AUTO_7_H) {
 				return 27;
-			} else if (m_asB > Constants.AUTO_8_L && m_asB < Constants.AUTO_8_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_8_L && m_asB < Constants.AutonSelector.AUTO_8_H) {
 				return 28;
-			} else if (m_asB > Constants.AUTO_9_L && m_asB < Constants.AUTO_9_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_9_L && m_asB < Constants.AutonSelector.AUTO_9_H) {
 				return 29;
-			} else if (m_asB > Constants.AUTO_10_L && m_asB < Constants.AUTO_10_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_10_L && m_asB < Constants.AutonSelector.AUTO_10_H) {
 				return 30;
 			} else {
 				// ERROR
 				return 3452;
 			}
-		} else if ((m_asA < Constants.AUTO_4 + Constants.AUTO_V && m_asA > Constants.AUTO_4 - Constants.AUTO_V)) {
-			if (m_asB > Constants.AUTO_1_L && m_asB < Constants.AUTO_1_H) {
+		} else if ((m_asA < Constants.AutonSelector.AUTO_4 + Constants.AutonSelector.AUTO_V && m_asA > Constants.AutonSelector.AUTO_4 - Constants.AutonSelector.AUTO_V)) {
+			if (m_asB > Constants.AutonSelector.AUTO_1_L && m_asB < Constants.AutonSelector.AUTO_1_H) {
 				return 31;
-			} else if (m_asB > Constants.AUTO_2_L && m_asB < Constants.AUTO_2_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_2_L && m_asB < Constants.AutonSelector.AUTO_2_H) {
 				return 32;
-			} else if (m_asB > Constants.AUTO_3_L && m_asB < Constants.AUTO_3_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_3_L && m_asB < Constants.AutonSelector.AUTO_3_H) {
 				return 33;
-			} else if (m_asB > Constants.AUTO_4_L && m_asB < Constants.AUTO_4_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_4_L && m_asB < Constants.AutonSelector.AUTO_4_H) {
 				return 34;
-			} else if (m_asB > Constants.AUTO_5_L && m_asB < Constants.AUTO_5_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_5_L && m_asB < Constants.AutonSelector.AUTO_5_H) {
 				return 35;
-			} else if (m_asB > Constants.AUTO_6_L && m_asB < Constants.AUTO_6_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_6_L && m_asB < Constants.AutonSelector.AUTO_6_H) {
 				return 36;
-			} else if (m_asB > Constants.AUTO_7_L && m_asB < Constants.AUTO_7_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_7_L && m_asB < Constants.AutonSelector.AUTO_7_H) {
 				return 37;
-			} else if (m_asB > Constants.AUTO_8_L && m_asB < Constants.AUTO_8_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_8_L && m_asB < Constants.AutonSelector.AUTO_8_H) {
 				return 38;
-			} else if (m_asB > Constants.AUTO_9_L && m_asB < Constants.AUTO_9_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_9_L && m_asB < Constants.AutonSelector.AUTO_9_H) {
 				return 39;
-			} else if (m_asB > Constants.AUTO_10_L && m_asB < Constants.AUTO_10_H) {
+			} else if (m_asB > Constants.AutonSelector.AUTO_10_L && m_asB < Constants.AutonSelector.AUTO_10_H) {
 				return 40;
 			} else {
 				// ERROR
@@ -227,57 +229,4 @@ public class AutonSelector extends Subsystem {
 		SWITCH, SCALE, SWITCH_PRIORITY_NO_CROSS, SCALE_PRIORITY_NO_CROSS, SWITCH_ONLY, SCALE_ONLY, DEFAULT;
 	}
 
-	/**
-	 * @author max
-	 *
-	 */
-	public static class Constants {
-		public static final int AUTO_SELECTOR_1 = 2; //1
-		public static final int AUTO_SELECTOR_2 = 3; //0
-
-		public static final int AUTO_V = 15;
-
-		//COMP
-		public static final int AUTO_1 = 2683;
-		public static final int AUTO_2 = 2992;
-		public static final int AUTO_3 = 3185;
-		public static final int AUTO_4 = 3321;
-		public static final int AUTO_5 = 3427;
-		public static final int AUTO_6 = 3507;
-		public static final int AUTO_7 = 3565;
-		public static final int AUTO_8 = 3658;
-		public static final int AUTO_9 = 3721;
-		public static final int AUTO_10 = 3781;
-
-		public static final int AUTO_1_L = AUTO_1 - AUTO_V;
-		public static final int AUTO_1_H = AUTO_1 + AUTO_V;
-
-		public static final int AUTO_2_L = AUTO_2 - AUTO_V;
-		public static final int AUTO_2_H = AUTO_2 + AUTO_V;
-
-		public static final int AUTO_3_L = AUTO_3 - AUTO_V;
-		public static final int AUTO_3_H = AUTO_3 + AUTO_V;
-
-		public static final int AUTO_4_L = AUTO_4 - AUTO_V;
-		public static final int AUTO_4_H = AUTO_4 + AUTO_V;
-
-		public static final int AUTO_5_L = AUTO_5 - AUTO_V;
-		public static final int AUTO_5_H = AUTO_5 + AUTO_V;
-
-		public static final int AUTO_6_L = AUTO_6 - AUTO_V;
-		public static final int AUTO_6_H = AUTO_6 + AUTO_V;
-
-		public static final int AUTO_7_L = AUTO_7 - AUTO_V;
-		public static final int AUTO_7_H = AUTO_7 + AUTO_V;
-
-		public static final int AUTO_8_L = AUTO_8 - AUTO_V;
-		public static final int AUTO_8_H = AUTO_8 + AUTO_V;
-
-		public static final int AUTO_9_L = AUTO_9 - AUTO_V;
-		public static final int AUTO_9_H = AUTO_9 + AUTO_V;
-
-		public static final int AUTO_10_L = AUTO_10 - AUTO_V;
-		public static final int AUTO_10_H = AUTO_10 + AUTO_V;
-
-	}
 }

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
 
@@ -87,25 +88,25 @@ public class Drivetrain extends Subsystem {
 		timer.reset();
 		timer.start();
 
-		L1 = new WPI_TalonSRX(Constants.L_1);
-		L2 = new WPI_TalonSRX(Constants.L_2);
-		L3 = new WPI_TalonSRX(Constants.L_3);
-		L4 = new WPI_TalonSRX(Constants.L_4);
+		L1 = new WPI_TalonSRX(Constants.Drivetrain.L_1);
+		L2 = new WPI_TalonSRX(Constants.Drivetrain.L_2);
+		L3 = new WPI_TalonSRX(Constants.Drivetrain.L_3);
+		L4 = new WPI_TalonSRX(Constants.Drivetrain.L_4);
 
-		R1 = new WPI_TalonSRX(Constants.R_1);
-		R2 = new WPI_TalonSRX(Constants.R_2);
-		R3 = new WPI_TalonSRX(Constants.R_3);
-		R4 = new WPI_TalonSRX(Constants.R_4);
+		R1 = new WPI_TalonSRX(Constants.Drivetrain.R_1);
+		R2 = new WPI_TalonSRX(Constants.Drivetrain.R_2);
+		R3 = new WPI_TalonSRX(Constants.Drivetrain.R_3);
+		R4 = new WPI_TalonSRX(Constants.Drivetrain.R_4);
 
-		L1.setInverted(Constants.L_INVERT);
-		L2.setInverted(Constants.L_INVERT);
-		L3.setInverted(Constants.L_INVERT);
-		L4.setInverted(Constants.L_INVERT);
+		L1.setInverted(Constants.Drivetrain.L_INVERT);
+		L2.setInverted(Constants.Drivetrain.L_INVERT);
+		L3.setInverted(Constants.Drivetrain.L_INVERT);
+		L4.setInverted(Constants.Drivetrain.L_INVERT);
 
-		R1.setInverted(Constants.R_INVERT);
-		R2.setInverted(Constants.R_INVERT);
-		R3.setInverted(Constants.R_INVERT);
-		R4.setInverted(Constants.R_INVERT);
+		R1.setInverted(Constants.Drivetrain.R_INVERT);
+		R2.setInverted(Constants.Drivetrain.R_INVERT);
+		R3.setInverted(Constants.Drivetrain.R_INVERT);
+		R4.setInverted(Constants.Drivetrain.R_INVERT);
 
 		Gyro = new AHRS(SPI.Port.kMXP);
 
@@ -167,45 +168,45 @@ public class Drivetrain extends Subsystem {
 
 		// AMP LIMIT
 		// OUTER TALONS IN BLOCK = 40amp, INNER TALONS IN BLOCK = 30amp
-		L1.configContinuousCurrentLimit(Constants.AMP_40_LIMIT, 10);
-		L1.configPeakCurrentLimit(Constants.AMP_40_TRIGGER, 10);
-		L1.configPeakCurrentDuration(Constants.AMP_40_TIME, 10);
-		L1.configOpenloopRamp(Constants.RAMP_TIME, 10);
+		L1.configContinuousCurrentLimit(Constants.Drivetrain.AMP_40_LIMIT, 10);
+		L1.configPeakCurrentLimit(Constants.Drivetrain.AMP_40_TRIGGER, 10);
+		L1.configPeakCurrentDuration(Constants.Drivetrain.AMP_40_TIME, 10);
+		L1.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
 
-		L2.configContinuousCurrentLimit(Constants.AMP_40_LIMIT, 10);
-		L2.configPeakCurrentLimit(Constants.AMP_40_TRIGGER, 10);
-		L2.configPeakCurrentDuration(Constants.AMP_40_TIME, 10);
-		L2.configOpenloopRamp(Constants.RAMP_TIME, 10);
+		L2.configContinuousCurrentLimit(Constants.Drivetrain.AMP_40_LIMIT, 10);
+		L2.configPeakCurrentLimit(Constants.Drivetrain.AMP_40_TRIGGER, 10);
+		L2.configPeakCurrentDuration(Constants.Drivetrain.AMP_40_TIME, 10);
+		L2.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
 
-		R1.configContinuousCurrentLimit(Constants.AMP_40_LIMIT, 10);
-		R1.configPeakCurrentLimit(Constants.AMP_40_TRIGGER, 10);
-		R1.configPeakCurrentDuration(Constants.AMP_40_TIME, 10);
-		R1.configOpenloopRamp(Constants.RAMP_TIME, 10);
+		R1.configContinuousCurrentLimit(Constants.Drivetrain.AMP_40_LIMIT, 10);
+		R1.configPeakCurrentLimit(Constants.Drivetrain.AMP_40_TRIGGER, 10);
+		R1.configPeakCurrentDuration(Constants.Drivetrain.AMP_40_TIME, 10);
+		R1.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
 
-		R2.configContinuousCurrentLimit(Constants.AMP_40_LIMIT, 10);
-		R2.configPeakCurrentLimit(Constants.AMP_40_TRIGGER, 10);
-		R2.configPeakCurrentDuration(Constants.AMP_40_TIME, 10);
-		R2.configOpenloopRamp(Constants.RAMP_TIME, 10);
+		R2.configContinuousCurrentLimit(Constants.Drivetrain.AMP_40_LIMIT, 10);
+		R2.configPeakCurrentLimit(Constants.Drivetrain.AMP_40_TRIGGER, 10);
+		R2.configPeakCurrentDuration(Constants.Drivetrain.AMP_40_TIME, 10);
+		R2.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
 
-		L3.configContinuousCurrentLimit(Constants.AMP_30_LIMIT, 10);
-		L3.configPeakCurrentLimit(Constants.AMP_30_TRIGGER, 10);
-		L3.configPeakCurrentDuration(Constants.AMP_30_TIME, 10);
-		L3.configOpenloopRamp(Constants.RAMP_TIME, 10);
+		L3.configContinuousCurrentLimit(Constants.Drivetrain.AMP_30_LIMIT, 10);
+		L3.configPeakCurrentLimit(Constants.Drivetrain.AMP_30_TRIGGER, 10);
+		L3.configPeakCurrentDuration(Constants.Drivetrain.AMP_30_TIME, 10);
+		L3.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
 
-		L4.configContinuousCurrentLimit(Constants.AMP_30_LIMIT, 10);
-		L4.configPeakCurrentLimit(Constants.AMP_30_TRIGGER, 10);
-		L4.configPeakCurrentDuration(Constants.AMP_30_TIME, 10);
-		L4.configOpenloopRamp(Constants.RAMP_TIME, 10);
+		L4.configContinuousCurrentLimit(Constants.Drivetrain.AMP_30_LIMIT, 10);
+		L4.configPeakCurrentLimit(Constants.Drivetrain.AMP_30_TRIGGER, 10);
+		L4.configPeakCurrentDuration(Constants.Drivetrain.AMP_30_TIME, 10);
+		L4.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
 
-		R3.configContinuousCurrentLimit(Constants.AMP_30_LIMIT, 10);
-		R3.configPeakCurrentLimit(Constants.AMP_30_TRIGGER, 10);
-		R3.configPeakCurrentDuration(Constants.AMP_30_TIME, 10);
-		R3.configOpenloopRamp(Constants.RAMP_TIME, 10);
+		R3.configContinuousCurrentLimit(Constants.Drivetrain.AMP_30_LIMIT, 10);
+		R3.configPeakCurrentLimit(Constants.Drivetrain.AMP_30_TRIGGER, 10);
+		R3.configPeakCurrentDuration(Constants.Drivetrain.AMP_30_TIME, 10);
+		R3.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
 
-		R4.configContinuousCurrentLimit(Constants.AMP_30_LIMIT, 10);
-		R4.configPeakCurrentLimit(Constants.AMP_30_TRIGGER, 10);
-		R4.configPeakCurrentDuration(Constants.AMP_30_TIME, 10);
-		R4.configOpenloopRamp(Constants.RAMP_TIME, 10);
+		R4.configContinuousCurrentLimit(Constants.Drivetrain.AMP_30_LIMIT, 10);
+		R4.configPeakCurrentLimit(Constants.Drivetrain.AMP_30_TRIGGER, 10);
+		R4.configPeakCurrentDuration(Constants.Drivetrain.AMP_30_TIME, 10);
+		R4.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
 
 		L1.enableCurrentLimit(true);
 		L2.enableCurrentLimit(true);
@@ -305,6 +306,8 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
+	 * Used to process and push motion profiles to drivetrain talons
+	 * 
 	 * @author max
 	 * @since 4-22-2018
 	 */
@@ -547,24 +550,6 @@ public class Drivetrain extends Subsystem {
 
 		public final static int CLIMBER_1 = 3;
 		public final static int CLIMBER_2 = 2;
-	}
-
-	/**
-	 * @author max
-	 *
-	 */
-	public static class Constants {
-		public final static int L_1 = 1, L_2 = 2, L_3 = 3, L_4 = 4;
-		public final static int R_1 = 5, R_2 = 6, R_3 = 7, R_4 = 8;
-
-		public final static boolean L_INVERT = false;
-		public final static boolean R_INVERT = false;
-
-		public final static int AMP_40_TRIGGER = 60, AMP_40_LIMIT = 30, AMP_40_TIME = 4000;
-
-		public final static int AMP_30_TRIGGER = 45, AMP_30_LIMIT = 25, AMP_30_TIME = 3000;
-
-		public final static double RAMP_TIME = 0.125;
 	}
 
 	/**
