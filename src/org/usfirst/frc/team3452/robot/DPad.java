@@ -3,9 +3,10 @@ package org.usfirst.frc.team3452.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.buttons.Button;
 
+//COPIED FROM
 //https://github.com/Aztechs157/FRC-2017/blob/master/src/org/usfirst/frc157/ProtoBot2017/HIDPOVButton.java
 
-public class HIDPOVButton extends Button {
+public class DPad extends Button {
 
 	private GenericHID stick;
 	private int povAngle;
@@ -20,7 +21,7 @@ public class HIDPOVButton extends Button {
 	 *            etc...)
 	 **/
 
-	HIDPOVButton(GenericHID stick, int povAngle) {
+	DPad(GenericHID stick, int povAngle) {
 		this.stick = stick;
 		this.povAngle = povAngle;
 	}

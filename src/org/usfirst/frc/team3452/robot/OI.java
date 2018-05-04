@@ -29,14 +29,14 @@ public class OI {
 			driverJoyStart, driverJoyLClick, driverJoyRClick;
 
 	//	@SuppressWarnings("unused")
-	private static HIDPOVButton driverUp, driverDown, driverLeft, driverRight;
+	private static DPad driverUp, driverDown, driverLeft, driverRight;
 
 	@SuppressWarnings("unused")
 	private static Button opJoyA, opJoyB, opJoyX, opJoyY, opJoyLB, opJoyRB, opJoyBack, opJoyStart, opJoyLClick,
 			opJoyRClick;
 
 	@SuppressWarnings("unused")
-	private static HIDPOVButton opUp, opDown, opLeft, opRight;
+	private static DPad opUp, opDown, opLeft, opRight;
 
 	public static void init() {
 		buttonInit();
@@ -100,10 +100,10 @@ public class OI {
 		driverJoyLClick = new JoystickButton(driverJoy, 9);
 		driverJoyRClick = new JoystickButton(driverJoy, 10);
 
-		driverUp = new HIDPOVButton(driverJoy, 0);
-		driverDown = new HIDPOVButton(driverJoy, 180);
-		driverLeft = new HIDPOVButton(driverJoy, 270);
-		driverRight = new HIDPOVButton(driverJoy, 90);
+		driverUp = new DPad(driverJoy, 0);
+		driverDown = new DPad(driverJoy, 180);
+		driverLeft = new DPad(driverJoy, 270);
+		driverRight = new DPad(driverJoy, 90);
 
 		opJoy = new Joystick(1);
 		opJoyA = new JoystickButton(opJoy, 1);
@@ -117,10 +117,10 @@ public class OI {
 		opJoyLClick = new JoystickButton(opJoy, 9);
 		opJoyRClick = new JoystickButton(opJoy, 10);
 
-		opUp = new HIDPOVButton(opJoy, 0);
-		opDown = new HIDPOVButton(opJoy, 180);
-		opLeft = new HIDPOVButton(opJoy, 270);
-		opRight = new HIDPOVButton(opJoy, 90);
+		opUp = new DPad(opJoy, 0);
+		opDown = new DPad(opJoy, 180);
+		opLeft = new DPad(opJoy, 270);
+		opRight = new DPad(opJoy, 90);
 	}
 
 	public static void rumble(CONTROLLER joy, double intensity) {
