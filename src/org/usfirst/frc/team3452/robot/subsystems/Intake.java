@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.Constants;
+
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -14,11 +16,11 @@ public class Intake extends Subsystem {
 	 * @since
 	 */
 	public void initHardware() {
-		Intake_L = new Spark(Constants.INTAKE_L);
-		Intake_R = new Spark(Constants.INTAKE_R);
+		Intake_L = new Spark(Constants.Intake.INTAKE_L);
+		Intake_R = new Spark(Constants.Intake.INTAKE_R);
 
-		Intake_L.setInverted(Constants.INTAKE_L_INVERT);
-		Intake_R.setInverted(Constants.INTAKE_R_INVERT);
+		Intake_L.setInverted(Constants.Intake.INTAKE_L_INVERT);
+		Intake_R.setInverted(Constants.Intake.INTAKE_R_INVERT);
 
 		Intake_L.setSubsystem("Intake");
 		Intake_R.setSubsystem("Intake");

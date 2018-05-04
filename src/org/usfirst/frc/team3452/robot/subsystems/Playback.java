@@ -11,7 +11,6 @@ import java.util.Scanner;
 
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.PDP;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -32,7 +31,6 @@ public class Playback extends Subsystem {
 	private FileReader fr;
 	private Scanner br;
 
-	//POSITION, VEL, DURATION
 	/**
 	 * variable for storing left position for motion profile
 	 */
@@ -41,12 +39,10 @@ public class Playback extends Subsystem {
 	 * variable for storing left speed for motion profile
 	 */
 	public ArrayList<Double> mpLS = new ArrayList<Double>();
-
 	/**
 	 * variable for storing right position for motion profile
 	 */
 	public ArrayList<Double> mpRP = new ArrayList<Double>();
-
 	/**
 	 * variable for storing right speed for motion profile
 	 */
@@ -362,7 +358,7 @@ public class Playback extends Subsystem {
 				System.out.println("Opening Parse: " + name + ".csv");
 				createFile(name, folder, fileState.READ, usb);
 				parseFile();
-				printValues();
+//				printValues();
 
 				break;
 			case Log:

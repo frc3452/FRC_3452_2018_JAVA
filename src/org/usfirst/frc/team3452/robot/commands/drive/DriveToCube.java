@@ -1,8 +1,8 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
+import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.PDP;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -27,6 +27,7 @@ public class DriveToCube extends Command {
 		m_rotation = rotationLimit;
 	}
 
+	@Override
 	protected void initialize() {
 		setTimeout(10);
 
@@ -46,6 +47,7 @@ public class DriveToCube extends Command {
 		timer.start();
 	}
 
+	@Override
 	protected void execute() {
 		Robot.drive.arcade(m_speed, 0);
 
@@ -55,13 +57,13 @@ public class DriveToCube extends Command {
 				|| ((double) Robot.drive.R1.getSelectedSensorPosition(0) / 4096) - i_rpos > m_rotation)
 			m_complete = true;
 		
-		if (Robot.drive.pdp.getCurrent(PDP.INTAKE_L) > 12 || Robot.drive.pdp.getCurrent(PDP.INTAKE_R) > 12)
+		if (Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_L) > 12 || Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_R) > 12)
 			flag_1 = true;
 
-		if (flag_1 && (Robot.drive.pdp.getCurrent(PDP.INTAKE_L) < 7 || Robot.drive.pdp.getCurrent(PDP.INTAKE_R) < 7))
+		if (flag_1 && (Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_L) < 7 || Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_R) < 7))
 			flag_2 = true;
 
-		if (flag_2 && (Robot.drive.pdp.getCurrent(PDP.INTAKE_L) > 12 || Robot.drive.pdp.getCurrent(PDP.INTAKE_R) > 12)) {
+		if (flag_2 && (Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_L) > 12 || Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_R) > 12)) {
 
 			if (!timeoutSet) {
 				setTimeout(timer.get() + .4);
@@ -70,15 +72,18 @@ public class DriveToCube extends Command {
 		}
 	}
 
+	@Override
 	protected boolean isFinished() {
 		return isTimedOut() || m_complete;
 	}
 
+	@Override
 	protected void end() {
 		Robot.drive.arcade(0, 0);
 		Robot.intake.manual(0);
 	}
 
+	@Override
 	protected void interrupted() {
 		end();
 	}

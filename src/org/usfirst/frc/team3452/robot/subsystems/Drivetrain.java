@@ -9,6 +9,7 @@ import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -126,9 +127,10 @@ public class Drivetrain extends Subsystem {
 
 		//MOTION PROFILING
 		L1.configMotionProfileTrajectoryPeriod(10, 10);
-		L1.changeMotionControlFramePeriod(10);
 		R1.configMotionProfileTrajectoryPeriod(10, 10);
-		R1.changeMotionControlFramePeriod(10);
+
+		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10);
+		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10);
 
 		// encoder init
 		L1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
@@ -148,14 +150,11 @@ public class Drivetrain extends Subsystem {
 		R1.config_kI(0, 0.0000004, 10);
 		R1.config_kD(0, 4.25, 10);
 
-		L1.config_kP(0, 0.03, 10);
-		R1.config_kP(0, 0.03, 10);
+		L1.config_kP(0, 0.06, 10);
+		R1.config_kP(0, 0.06, 10);
 
-		L1.config_kI(0, 0.00001, 10);
-		R1.config_kI(0, 0.00001, 10);
-
-		L1.config_kD(0, 0.03 * 5, 10);
-		R1.config_kD(0, 0.03 * 5, 10);
+		L1.config_kI(0, 0, 10);
+		R1.config_kI(0, 0, 10);
 
 		L1.config_kD(0, 0, 10);
 		R1.config_kD(0, 0, 10);
@@ -311,7 +310,7 @@ public class Drivetrain extends Subsystem {
 	 * @author max
 	 * @since 4-22-2018
 	 */
-	public void motionprofile() {
+	public void parsedFileToTalons() {
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
 
@@ -323,7 +322,7 @@ public class Drivetrain extends Subsystem {
 
 		//MOTION PROFILE
 		for (int i = 0; i < Robot.playback.mpLP.size(); i++) {
-			
+
 			leftPoint.position = Robot.playback.mpLP.get(i);
 			leftPoint.velocity = Robot.playback.mpLS.get(i);
 
@@ -353,20 +352,20 @@ public class Drivetrain extends Subsystem {
 			leftPoint.isLastPoint = false;
 			rightPoint.isLastPoint = false;
 
-			System.out.println(i);
-			
 			if ((i + 1) == Robot.playback.mpLP.size()) {
-				System.out.println("true");
 				leftPoint.isLastPoint = true;
 				rightPoint.isLastPoint = true;
 			}
 
+			System.out.println(leftPoint.position + "\t\t" + leftPoint.velocity + "\t\t" + rightPoint.position + "\t\t"
+					+ rightPoint.velocity);
+
 			L1.pushMotionProfileTrajectory(leftPoint);
 			R1.pushMotionProfileTrajectory(rightPoint);
 		}
-		
+
 		System.out.println("Motion profile pushed to Talons");
-	
+
 	}
 
 	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {

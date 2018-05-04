@@ -3,6 +3,7 @@ package org.usfirst.frc.team3452.robot.commands.drive;
 import org.usfirst.frc.team3452.robot.Robot;
 
 import com.ctre.phoenix.motion.MotionProfileStatus;
+import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -13,36 +14,41 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class RunMotionProfile extends Command {
 
-	private MotionProfileStatus R_status = new MotionProfileStatus();
-	private MotionProfileStatus L_status = new MotionProfileStatus();
-	
+	private MotionProfileStatus rStat = new MotionProfileStatus();
+	private MotionProfileStatus lStat = new MotionProfileStatus();
+
+	private SetValueMotionProfile set = SetValueMotionProfile.Disable;
+
 	public RunMotionProfile() {
 		requires(Robot.drive);
 	}
 
 	@Override
 	protected void initialize() {
-		Robot.drive.motionprofile();
+		Robot.drive.parsedFileToTalons();
 		setTimeout(12);
 	}
 
 	@Override
 	protected void execute() {
-		Robot.drive.L1.processMotionProfileBuffer();
-		Robot.drive.R1.processMotionProfileBuffer();
+		if (lStat.activePointValid && lStat.isLast && rStat.activePointValid && rStat.isLast)
+			set = SetValueMotionProfile.Hold;
+		else
+			set = SetValueMotionProfile.Enable;
 
-		Robot.drive.L1.set(ControlMode.MotionProfile, 1);
-		Robot.drive.R1.set(ControlMode.MotionProfile, 1);
-
-		Robot.drive.L1.getMotionProfileStatus(L_status);
-		Robot.drive.R1.getMotionProfileStatus(R_status);
-		System.out.println(L_status.timeDurMs + "\t\t" + R_status.isLast);
+		Robot.drive.L1.set(ControlMode.MotionProfile, set.value);
+		Robot.drive.R1.set(ControlMode.MotionProfile, set.value);
+		
+		Robot.drive.L1.getMotionProfileStatus(lStat);
+		Robot.drive.R1.getMotionProfileStatus(rStat);
+		
+		System.out.println(rStat.timeDurMs + "\t\t" + rStat.isLast);
 	}
 
 	@Override
 	protected boolean isFinished() {
-		return isTimedOut();
-		//		return L_status.isLast || R_status.isLast || isTimedOut();
+//		return isTimedOut();
+				return lStat.isLast || rStat.isLast || isTimedOut();
 	}
 
 	@Override
