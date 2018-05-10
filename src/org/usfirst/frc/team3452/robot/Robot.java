@@ -54,13 +54,13 @@ public class Robot extends TimedRobot {
 		for (int i = 0; i < 41; i++) {
 			autoCommand[i] = null;
 		}
-		
+
 		Robot.drive.initHardware();
 		Robot.elevator.initHardware();
 		Robot.intake.initHardware();
 		Robot.climber.initHardware();
 		Robot.lights.initHardware();
-//		Robot.camera.initHardware();
+		//		Robot.camera.initHardware();
 		Robot.autonSelector.initHardware();
 		Robot.playback.initHardware();
 
@@ -268,36 +268,27 @@ public class Robot extends TimedRobot {
 		Robot.lights.m_hue++;
 		if (Robot.lights.m_hue > 360)
 			Robot.lights.m_hue = 0;
-		
-		/*if (wasTest) {
-			Robot.lights.pulse(55, 1, .2, .8, .1);
-		} else {
 
-			if (DriverStation.getInstance().isDisabled()) {
-				//IF CONNECTED LOW GREEN
-				if (DriverStation.getInstance().isDSAttached()) {
-
-					if (readyForMatch)
-						Robot.lights.pulse(258, 1, 0.1, .4, 0.025 / 3.5);
-					else
-						Robot.lights.pulse(330, 1, .1, .4, 0.025 / 3.5);
-
-				} else {
-
-					//IF FMS PULSE RED, IF NO FMS RGB FADE
-					if (DriverStation.getInstance().isFMSAttached()) {
-						//			increase pulsing speed while not connected
-						Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 100));
-
-					} else {
-						Robot.lights.hsv(Robot.lights.m_hue, 1, .15);
-						Robot.lights.m_hue++;
-						if (Robot.lights.m_hue > 360)
-							Robot.lights.m_hue = 0;
-					}
-				}
-			}
-		}*/
+		/*
+		 * if (wasTest) { Robot.lights.pulse(55, 1, .2, .8, .1); } else {
+		 * 
+		 * if (DriverStation.getInstance().isDisabled()) { //IF CONNECTED LOW
+		 * GREEN if (DriverStation.getInstance().isDSAttached()) {
+		 * 
+		 * if (readyForMatch) Robot.lights.pulse(258, 1, 0.1, .4, 0.025 / 3.5);
+		 * else Robot.lights.pulse(330, 1, .1, .4, 0.025 / 3.5);
+		 * 
+		 * } else {
+		 * 
+		 * //IF FMS PULSE RED, IF NO FMS RGB FADE if
+		 * (DriverStation.getInstance().isFMSAttached()) { // increase pulsing
+		 * speed while not connected Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10
+		 * * (Robot.drive.timer.get() / 100));
+		 * 
+		 * } else { Robot.lights.hsv(Robot.lights.m_hue, 1, .15);
+		 * Robot.lights.m_hue++; if (Robot.lights.m_hue > 360)
+		 * Robot.lights.m_hue = 0; } } } }
+		 */
 	}
 
 	public void controllerChooser() {

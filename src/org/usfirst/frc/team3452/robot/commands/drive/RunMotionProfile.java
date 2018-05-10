@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Playback.FILES;
 
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
@@ -18,37 +19,51 @@ public class RunMotionProfile extends Command {
 	private MotionProfileStatus lStat = new MotionProfileStatus();
 
 	private SetValueMotionProfile set = SetValueMotionProfile.Disable;
+	private int bufferLooper = 0;
 
-	public RunMotionProfile() {
+	private FILES m_file;
+	
+	public RunMotionProfile(FILES file) {
 		requires(Robot.drive);
+		
+		m_file = file;
+		
 	}
 
 	@Override
 	protected void initialize() {
-		Robot.drive.parsedFileToTalons();
-		setTimeout(12);
+		Robot.drive.L1.getMotionProfileStatus(lStat);
+		Robot.drive.R1.getMotionProfileStatus(rStat);
+
+		Robot.drive.selectMotionProfile(m_file);
+
+		while (bufferLooper < 50) {
+			if (lStat.btmBufferCnt > 10 && rStat.btmBufferCnt > 10) {
+				set = SetValueMotionProfile.Enable;
+				bufferLooper = 51;
+			} else {
+				set = SetValueMotionProfile.Disable;
+			}
+			bufferLooper++;
+
+			System.out.println("BUFFER BOY: " + bufferLooper);
+		}
+
 	}
 
 	@Override
 	protected void execute() {
-		if (lStat.activePointValid && lStat.isLast && rStat.activePointValid && rStat.isLast)
-			set = SetValueMotionProfile.Hold;
-		else
-			set = SetValueMotionProfile.Enable;
-
 		Robot.drive.L1.set(ControlMode.MotionProfile, set.value);
 		Robot.drive.R1.set(ControlMode.MotionProfile, set.value);
-		
+
 		Robot.drive.L1.getMotionProfileStatus(lStat);
 		Robot.drive.R1.getMotionProfileStatus(rStat);
-		
-		System.out.println(rStat.timeDurMs + "\t\t" + rStat.isLast);
 	}
 
 	@Override
 	protected boolean isFinished() {
-//		return isTimedOut();
-				return lStat.isLast || rStat.isLast || isTimedOut();
+		//		return isTimedOut();
+		return (lStat.activePointValid && lStat.isLast) || (rStat.activePointValid && rStat.isLast) || isTimedOut();
 	}
 
 	@Override

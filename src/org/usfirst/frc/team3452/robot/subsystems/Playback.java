@@ -32,23 +32,11 @@ public class Playback extends Subsystem {
 	private Scanner br;
 
 	/**
-	 * variable for storing left position for motion profile
+	 * variable for storing left values for motion profile
 	 */
-	public ArrayList<Double> mpLP = new ArrayList<Double>();
-	/**
-	 * variable for storing left speed for motion profile
-	 */
-	public ArrayList<Double> mpLS = new ArrayList<Double>();
-	/**
-	 * variable for storing right position for motion profile
-	 */
-	public ArrayList<Double> mpRP = new ArrayList<Double>();
-	/**
-	 * variable for storing right speed for motion profile
-	 */
-	public ArrayList<Double> mpRS = new ArrayList<Double>();
-
-	public int mpDur;
+	public ArrayList<ArrayList<Double>> mpL = new ArrayList<ArrayList<Double>>();
+	public ArrayList<ArrayList<Double>> mpR = new ArrayList<ArrayList<Double>>();
+	public ArrayList<Integer> mpDur = new ArrayList<Integer>();
 
 	/**
 	 * Time string converted to numbers for parsing
@@ -57,6 +45,10 @@ public class Playback extends Subsystem {
 	private String prevDateTimeString = "Empty";
 
 	private boolean hasPrintedLogFailed = false;
+
+	public enum FILES {
+		Parse,MotionProfileTest;
+	}
 
 	/**
 	 * hardware initialization
@@ -74,23 +66,24 @@ public class Playback extends Subsystem {
 	 * @since
 	 */
 	private void parseFile() {
+		int counter = 0;
 		String st;
 		try {
 			//Skip first line of text
 			br.nextLine();
-			//take time var
-			mpDur = Integer.parseInt(br.nextLine().split(",")[0]);
-
 			//loop through each line
 			while (br.hasNextLine()) {
 				st = br.nextLine();
 
 				String[] ar = st.split(",");
 
-				mpLP.add(Double.parseDouble(ar[0]));
-				mpLS.add(Double.parseDouble(ar[1]));
-				mpRP.add(Double.parseDouble(ar[2]));
-				mpRS.add(Double.parseDouble(ar[3]));
+				mpL.get(counter).add(Double.parseDouble(ar[0]));
+				mpL.get(counter).add(Double.parseDouble(ar[1]));
+				mpR.get(counter).add(Double.parseDouble(ar[0]));
+				mpR.get(counter).add(Double.parseDouble(ar[1]));
+				mpDur.add(Integer.parseInt(ar[4]));
+
+				counter++;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -107,10 +100,10 @@ public class Playback extends Subsystem {
 	@SuppressWarnings("unused")
 	private void printValues() {
 		try {
-
-			for (int i = 0; i < mpLP.size(); i++)
-				System.out.println(
-						mpLP.get(i) + "\t" + mpLS.get(i) + "\t" + mpRP.get(i) + "\t" + mpRS.get(i) + "\t" + mpDur);
+			for (int i = 0; i < mpL.size(); i++) {
+				System.out.println(mpL.get(i).get(0) + "\t" + mpL.get(i).get(1) + "\t" + mpR.get(i).get(0) + "\t"
+						+ mpR.get(i).get(1) + "\t" + mpDur.get(i));
+			}
 
 		} catch (Exception e) {
 			System.out.println("Printing failed!");
@@ -118,7 +111,7 @@ public class Playback extends Subsystem {
 	}
 
 	/**
-	 * write time + L&R drivetrain speeds to file
+	 * write time + L and R drivetrain speeds to file
 	 * 
 	 * @author max
 	 * @param boolean
@@ -127,7 +120,6 @@ public class Playback extends Subsystem {
 	 */
 	private void writeToProfile(boolean startup) {
 		try {
-
 			String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 50));
 			timeString = timeString.replace(' ', '0');
 			n_timeString = Double.valueOf(timeString);
@@ -135,7 +127,6 @@ public class Playback extends Subsystem {
 			//ONLY PRINT EVERY ROUNDING
 			if (n_timeString != p_timeString) {
 				if (!startup) {
-
 					double leftPos = Robot.drive.L1.getSelectedSensorPosition(0);
 					double leftSpeed = Robot.drive.L1.getSelectedSensorVelocity(0);
 
@@ -146,12 +137,11 @@ public class Playback extends Subsystem {
 					bw.write(String.valueOf(leftSpeed + ","));
 					bw.write(String.valueOf(rightPos + ","));
 					bw.write(String.valueOf(rightSpeed + ","));
+					bw.write(String.valueOf(20 + ","));
 					bw.write("\r\n");
 
 				} else {
-					bw.write("leftPos,leftSpeed,rightPos,rightSpeed,");
-					bw.write("\r\n");
-					bw.write("20,0,0,0,");
+					bw.write("leftPos,leftSpeed,rightPos,rightSpeed,timeMsDur");
 					bw.write("\r\n");
 				}
 			} else {
@@ -351,16 +341,15 @@ public class Playback extends Subsystem {
 				System.out.println("Opening Record: " + name + ".csv");
 				createFile(name, folder, fileState.WRITE, usb);
 				writeToProfile(true);
-
 				break;
 
 			case Parse:
 				System.out.println("Opening Parse: " + name + ".csv");
 				createFile(name, folder, fileState.READ, usb);
 				parseFile();
-//				printValues();
-
+				printValues();
 				break;
+
 			case Log:
 				Robot.drive.timer.stop();
 				Robot.drive.timer.reset();
@@ -440,13 +429,7 @@ public class Playback extends Subsystem {
 		return Math.round(value * demoninator) / demoninator;
 	}
 
-	@Override
-	public void initDefaultCommand() {
-		//		setDefaultCommand(new Record("LOG", TASK.LOG));
-	}
-
 	/**
-	 * 
 	 * <p>
 	 * Returns current date in format
 	 * </p>
@@ -500,5 +483,10 @@ public class Playback extends Subsystem {
 	 */
 	public enum TASK {
 		Record, Log, Parse, Play;
+	}
+
+	@Override
+	public void initDefaultCommand() {
+		//		setDefaultCommand(new Record("LOG", TASK.LOG));
 	}
 }

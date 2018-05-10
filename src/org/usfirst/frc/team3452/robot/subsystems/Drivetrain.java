@@ -3,6 +3,8 @@ package org.usfirst.frc.team3452.robot.subsystems;
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
+import org.usfirst.frc.team3452.robot.motionprofiles.MotionProfileTest;
+import org.usfirst.frc.team3452.robot.subsystems.Playback.FILES;
 
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
@@ -305,12 +307,35 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
+	 * Used to select which motion profile to send to talon
+	 * 
+	 * @author max
+	 * @param file
+	 * @since
+	 */
+	public void selectMotionProfile(FILES file) {
+		switch (file) {
+		case Parse:
+			motionProfileToTalons(Robot.playback.mpL.toArray(new double[Robot.playback.mpL.size()][2]),
+					Robot.playback.mpR.toArray(new double[Robot.playback.mpR.size()][2]),
+					Robot.playback.mpDur.toArray(new Integer[Robot.playback.mpDur.size()]));
+			break;
+		case MotionProfileTest:
+			motionProfileToTalons(MotionProfileTest.mpL, MotionProfileTest.mpR, MotionProfileTest.mpDur);
+			break;
+		default:
+//			Class f = ClassFinder.classFinder("MotionProfileTest");
+			break;
+		}
+	}
+
+	/**
 	 * Used to process and push motion profiles to drivetrain talons
 	 * 
 	 * @author max
 	 * @since 4-22-2018
 	 */
-	public void parsedFileToTalons() {
+	public void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer[] mpDur) {
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
 
@@ -321,13 +346,16 @@ public class Drivetrain extends Subsystem {
 		R1.configMotionProfileTrajectoryPeriod(10, 10);
 
 		//MOTION PROFILE
-		for (int i = 0; i < Robot.playback.mpLP.size(); i++) {
+		for (int i = 0; i < mpL.length; i++) {
 
-			leftPoint.position = Robot.playback.mpLP.get(i);
-			leftPoint.velocity = Robot.playback.mpLS.get(i);
+			leftPoint.position = mpL[i][0];
+			leftPoint.velocity = mpL[i][1];
 
-			rightPoint.position = Robot.playback.mpRP.get(i);
-			rightPoint.velocity = Robot.playback.mpRS.get(i);
+			rightPoint.position = mpL[i][0];
+			rightPoint.velocity = mpL[i][1];
+
+			leftPoint.timeDur = GetTrajectoryDuration(mpDur[i]);
+			rightPoint.timeDur = GetTrajectoryDuration(mpDur[i]);
 
 			leftPoint.headingDeg = 0;
 			rightPoint.headingDeg = 0;
@@ -337,9 +365,6 @@ public class Drivetrain extends Subsystem {
 
 			leftPoint.profileSlotSelect1 = 0;
 			rightPoint.profileSlotSelect1 = 0;
-
-			leftPoint.timeDur = GetTrajectoryDuration(Robot.playback.mpDur);
-			rightPoint.timeDur = GetTrajectoryDuration(Robot.playback.mpDur);
 
 			leftPoint.zeroPos = false;
 			rightPoint.zeroPos = false;
@@ -352,13 +377,10 @@ public class Drivetrain extends Subsystem {
 			leftPoint.isLastPoint = false;
 			rightPoint.isLastPoint = false;
 
-			if ((i + 1) == Robot.playback.mpLP.size()) {
+			if ((i + 1) == Robot.playback.mpL.size()) {
 				leftPoint.isLastPoint = true;
 				rightPoint.isLastPoint = true;
 			}
-
-			System.out.println(leftPoint.position + "\t\t" + leftPoint.velocity + "\t\t" + rightPoint.position + "\t\t"
-					+ rightPoint.velocity);
 
 			L1.pushMotionProfileTrajectory(leftPoint);
 			R1.pushMotionProfileTrajectory(rightPoint);
@@ -540,4 +562,12 @@ public class Drivetrain extends Subsystem {
 	public static enum CONTROLLER {
 		DRIVER, OPERATOR, BOTH;
 	}
+
+	/**
+	 * Enum class for reading motion profiles from javafile
+	 */
+	public static enum MP {
+		TEST;
+	}
+
 }

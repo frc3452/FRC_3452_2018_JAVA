@@ -1,13 +1,12 @@
 package org.usfirst.frc.team3452.robot.commands.playback;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Playback;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.STATE;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class Record extends Command {
+public class Playback extends Command {
 
 	private TASK m_task;
 	private String m_name, m_folder;
@@ -23,7 +22,7 @@ public class Record extends Command {
 	 * @see Playback
 	 * @see TASK
 	 */
-	public Record(String name, String folder, boolean usb, TASK task) {
+	public Playback(String name, String folder, boolean usb, TASK task) {
 		m_task = task;
 		m_name = name;
 		m_folder = folder;
