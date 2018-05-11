@@ -52,6 +52,9 @@ public class RunMotionProfile extends Command {
 
 	@Override
 	protected void execute() {
+		Robot.drive.L1.processMotionProfileBuffer();
+		Robot.drive.R1.processMotionProfileBuffer();
+		
 		Robot.drive.L1.set(ControlMode.MotionProfile, set.value);
 		Robot.drive.R1.set(ControlMode.MotionProfile, set.value);
 

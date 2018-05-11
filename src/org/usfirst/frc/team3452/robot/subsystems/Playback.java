@@ -35,7 +35,7 @@ public class Playback extends Subsystem {
 	 */
 	public ArrayList<ArrayList<Double>> mpL = new ArrayList<ArrayList<Double>>();
 	public ArrayList<ArrayList<Double>> mpR = new ArrayList<ArrayList<Double>>();
-	public ArrayList<Integer> mpDur = new ArrayList<Integer>();
+	public int mpDur = 0;
 
 	/**
 	 * Time string converted to numbers for parsing
@@ -66,6 +66,10 @@ public class Playback extends Subsystem {
 		try {
 			//Skip first line of text
 			br.nextLine();
+
+			//take time var
+			mpDur = Integer.parseInt(br.nextLine().split(",")[0]);
+
 			//loop through each line
 			while (br.hasNextLine()) {
 				st = br.nextLine();
@@ -74,9 +78,8 @@ public class Playback extends Subsystem {
 
 				mpL.get(counter).add(Double.parseDouble(ar[0]));
 				mpL.get(counter).add(Double.parseDouble(ar[1]));
-				mpR.get(counter).add(Double.parseDouble(ar[0]));
-				mpR.get(counter).add(Double.parseDouble(ar[1]));
-				mpDur.add(Integer.parseInt(ar[4]));
+				mpR.get(counter).add(Double.parseDouble(ar[2]));
+				mpR.get(counter).add(Double.parseDouble(ar[3]));
 
 				counter++;
 			}
@@ -92,12 +95,11 @@ public class Playback extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	@SuppressWarnings("unused")
 	private void printValues() {
 		try {
 			for (int i = 0; i < mpL.size(); i++) {
 				System.out.println(mpL.get(i).get(0) + "\t" + mpL.get(i).get(1) + "\t" + mpR.get(i).get(0) + "\t"
-						+ mpR.get(i).get(1) + "\t" + mpDur.get(i));
+						+ mpR.get(i).get(1) + "\t" + mpDur);
 			}
 
 		} catch (Exception e) {
@@ -136,7 +138,9 @@ public class Playback extends Subsystem {
 					bw.write("\r\n");
 
 				} else {
-					bw.write("leftPos,leftSpeed,rightPos,rightSpeed,timeMsDur");
+					bw.write("leftPos,leftSpeed,rightPos,rightSpeed,");
+					bw.write("\r\n");
+					bw.write("20,0,0,0,");
 					bw.write("\r\n");
 				}
 			} else {

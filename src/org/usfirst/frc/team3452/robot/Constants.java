@@ -77,6 +77,9 @@ public class Constants {
 		public final static int AMP_30_TRIGGER = 45, AMP_30_LIMIT = 25, AMP_30_TIME = 3000;
 
 		public final static double RAMP_TIME = 0.125;
+		
+		public final static int MOTION_PROFILE_MS = 20;
+		
 	}
 	
 	public class PDP {

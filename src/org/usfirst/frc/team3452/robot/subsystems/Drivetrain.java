@@ -15,7 +15,6 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
@@ -128,11 +127,10 @@ public class Drivetrain extends Subsystem {
 		R4.follow(R1);
 
 		//MOTION PROFILING
-		L1.configMotionProfileTrajectoryPeriod(10, 10);
-		R1.configMotionProfileTrajectoryPeriod(10, 10);
-
-		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10);
-		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10);
+		L1.configMotionProfileTrajectoryPeriod(Constants.Drivetrain.MOTION_PROFILE_MS, 10);
+		R1.configMotionProfileTrajectoryPeriod(Constants.Drivetrain.MOTION_PROFILE_MS, 10);
+		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Constants.Drivetrain.MOTION_PROFILE_MS, 10);
+		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Constants.Drivetrain.MOTION_PROFILE_MS, 10);
 
 		// encoder init
 		L1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
@@ -318,7 +316,7 @@ public class Drivetrain extends Subsystem {
 		case Parse:
 			motionProfileToTalons(Robot.playback.mpL.toArray(new double[Robot.playback.mpL.size()][2]),
 					Robot.playback.mpR.toArray(new double[Robot.playback.mpR.size()][2]),
-					Robot.playback.mpDur.toArray(new Integer[Robot.playback.mpDur.size()]));
+					Robot.playback.mpDur);
 			break;
 		case MotionProfileTest:
 			motionProfileToTalons(MotionProfileTest.mpL, MotionProfileTest.mpR, MotionProfileTest.mpDur);
@@ -334,7 +332,7 @@ public class Drivetrain extends Subsystem {
 	 * @author max
 	 * @since 4-22-2018
 	 */
-	public void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer[] mpDur) {
+	public void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
 
@@ -353,8 +351,8 @@ public class Drivetrain extends Subsystem {
 			rightPoint.position = mpL[i][0];
 			rightPoint.velocity = mpL[i][1];
 
-			leftPoint.timeDur = GetTrajectoryDuration(mpDur[i]);
-			rightPoint.timeDur = GetTrajectoryDuration(mpDur[i]);
+			leftPoint.timeDur = GetTrajectoryDuration(mpDur);
+			rightPoint.timeDur = GetTrajectoryDuration(mpDur);
 
 			leftPoint.headingDeg = 0;
 			rightPoint.headingDeg = 0;
@@ -395,7 +393,7 @@ public class Drivetrain extends Subsystem {
 		retval = retval.valueOf(durationMs);
 
 		if (retval.value != durationMs)
-			DriverStation.reportError("Trajectory duration not supported", false);
+			System.out.println("ERROR Invalid trajectory duration: " + durationMs);
 
 		return retval;
 	}
