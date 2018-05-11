@@ -77,11 +77,8 @@ public class Constants {
 		public final static int AMP_30_TRIGGER = 45, AMP_30_LIMIT = 25, AMP_30_TIME = 3000;
 
 		public final static double RAMP_TIME = 0.125;
-		
-		public final static int MOTION_PROFILE_MS = 20;
-		
 	}
-	
+
 	public class PDP {
 		public final static int DRIVE_L_1 = 0, DRIVE_L_2 = 1, DRIVE_L_3 = 5, DRIVE_L_4 = 4;
 		public final static int DRIVE_R_1 = 15, DRIVE_R_2 = 14, DRIVE_R_3 = 11, DRIVE_R_4 = 10;
@@ -132,6 +129,7 @@ public class Constants {
 	}
 
 	public class Playback {
+		public final static int RECORDING_MOTION_PROFILE_MS = 20;
 	}
 
 }

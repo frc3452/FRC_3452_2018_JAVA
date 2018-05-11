@@ -61,7 +61,6 @@ public class Playback extends Subsystem {
 	 * @since
 	 */
 	private void parseFile() {
-		int counter = 0;
 		String st;
 		try {
 			//Skip first line of text
@@ -72,16 +71,21 @@ public class Playback extends Subsystem {
 
 			//loop through each line
 			while (br.hasNextLine()) {
+				ArrayList<Double> temp = new ArrayList<Double>();
+				
 				st = br.nextLine();
 
 				String[] ar = st.split(",");
 
-				mpL.get(counter).add(Double.parseDouble(ar[0]));
-				mpL.get(counter).add(Double.parseDouble(ar[1]));
-				mpR.get(counter).add(Double.parseDouble(ar[2]));
-				mpR.get(counter).add(Double.parseDouble(ar[3]));
+				temp.add(Double.parseDouble(ar[0]));
+				temp.add(Double.parseDouble(ar[1]));
+				mpL.add(temp);
 
-				counter++;
+				temp = new ArrayList<Double>();
+				
+				temp.add(Double.parseDouble(ar[2]));
+				temp.add(Double.parseDouble(ar[3]));
+				mpR.add(temp);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -117,7 +121,10 @@ public class Playback extends Subsystem {
 	 */
 	private void writeToProfile(boolean startup) {
 		try {
-			String timeString = String.format("%8s", Utilities.roundToFraction(Robot.drive.timer.get(), 50));
+			//write to the speed of the motion profile
+			String timeString = String.format("%8s", Utilities.roundToFraction(Robot.drive.timer.get(),
+					(1 / ((double) Constants.Playback.RECORDING_MOTION_PROFILE_MS / 1000))));
+
 			timeString = timeString.replace(' ', '0');
 			n_timeString = Double.valueOf(timeString);
 
@@ -134,13 +141,12 @@ public class Playback extends Subsystem {
 					bw.write(String.valueOf(leftSpeed + ","));
 					bw.write(String.valueOf(rightPos + ","));
 					bw.write(String.valueOf(rightSpeed + ","));
-					bw.write(String.valueOf(20 + ","));
 					bw.write("\r\n");
 
 				} else {
 					bw.write("leftPos,leftSpeed,rightPos,rightSpeed,");
 					bw.write("\r\n");
-					bw.write("20,0,0,0,");
+					bw.write(String.valueOf(Constants.Playback.RECORDING_MOTION_PROFILE_MS) + ",0,0,0,");
 					bw.write("\r\n");
 				}
 			} else {
@@ -150,8 +156,8 @@ public class Playback extends Subsystem {
 			p_timeString = n_timeString;
 
 		} catch (Exception e) {
-			//			e.printStackTrace();
-			System.out.println("Writing to profile failed!");
+			e.printStackTrace();
+			//			System.out.println("Writing to profile failed!");
 		}
 	}
 
@@ -346,7 +352,6 @@ public class Playback extends Subsystem {
 				System.out.println("Opening Parse: " + name + ".csv");
 				createFile(name, folder, fileState.READ, usb);
 				parseFile();
-				printValues();
 				break;
 
 			case Log:
@@ -358,8 +363,6 @@ public class Playback extends Subsystem {
 				createFile(loggingName(name, false), folder, fileState.WRITE, usb);
 				writeToLog(true);
 
-				break;
-			case Play:
 				break;
 			}
 			break;
@@ -374,9 +377,6 @@ public class Playback extends Subsystem {
 				break;
 			case Log:
 				writeToLog(false);
-
-				break;
-			case Play:
 
 				break;
 			}
@@ -394,9 +394,6 @@ public class Playback extends Subsystem {
 			case Log:
 				System.out.println("Closing " + task + ": " + loggingName("", false) + ".csv");
 				closeFile(fileState.WRITE);
-				break;
-			case Play:
-				System.out.println("Closing " + task + ": " + name + ".csv");
 				break;
 			}
 			break;
@@ -439,7 +436,7 @@ public class Playback extends Subsystem {
 	 * @author max
 	 */
 	public enum TASK {
-		Record, Log, Parse, Play;
+		Record, Log, Parse;
 	}
 
 	@Override

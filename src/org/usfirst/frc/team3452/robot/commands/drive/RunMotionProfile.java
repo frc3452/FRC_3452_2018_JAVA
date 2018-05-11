@@ -27,7 +27,6 @@ public class RunMotionProfile extends Command {
 		requires(Robot.drive);
 		
 		m_file = file;
-		
 	}
 
 	@Override
@@ -36,7 +35,10 @@ public class RunMotionProfile extends Command {
 		Robot.drive.R1.getMotionProfileStatus(rStat);
 
 		Robot.drive.selectMotionProfile(m_file);
+		
+		Robot.drive.processMotionProfileBuffer();
 
+		//50 loop check for buffercount
 		while (bufferLooper < 50) {
 			if (lStat.btmBufferCnt > 10 && rStat.btmBufferCnt > 10) {
 				set = SetValueMotionProfile.Enable;
@@ -45,15 +47,14 @@ public class RunMotionProfile extends Command {
 				set = SetValueMotionProfile.Disable;
 			}
 			bufferLooper++;
-
 			System.out.println("BUFFER BOY: " + bufferLooper);
 		}
+		
 	}
 
 	@Override
 	protected void execute() {
-		Robot.drive.L1.processMotionProfileBuffer();
-		Robot.drive.R1.processMotionProfileBuffer();
+		Robot.drive.processMotionProfileBuffer();
 		
 		Robot.drive.L1.set(ControlMode.MotionProfile, set.value);
 		Robot.drive.R1.set(ControlMode.MotionProfile, set.value);

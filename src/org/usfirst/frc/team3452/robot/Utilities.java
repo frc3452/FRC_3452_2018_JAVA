@@ -28,23 +28,6 @@ public class Utilities {
 	}
 
 	/**
-	 * 
-	 */
-	public static Class classFinder(String classname) {
-
-		Class act = null;
-		Object ob = null;
-
-		try {
-			Class temp = Class.forName(classname);
-			ob = temp.newInstance();
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-		}
-
-		return ob.getClass();
-	}
-
-	/**
 	 * <p>
 	 * Returns current date in format
 	 * </p>

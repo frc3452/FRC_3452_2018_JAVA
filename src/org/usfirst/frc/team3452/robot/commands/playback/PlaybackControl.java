@@ -6,7 +6,7 @@ import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class Playback extends Command {
+public class PlaybackControl extends Command {
 
 	private TASK m_task;
 	private String m_name, m_folder;
@@ -19,10 +19,10 @@ public class Playback extends Command {
 	 * @param name
 	 * @param usb
 	 * @param task
-	 * @see Playback
+	 * @see PlaybackControl
 	 * @see TASK
 	 */
-	public Playback(String name, String folder, boolean usb, TASK task) {
+	public PlaybackControl(String name, String folder, boolean usb, TASK task) {
 		m_task = task;
 		m_name = name;
 		m_folder = folder;
@@ -46,8 +46,6 @@ public class Playback extends Command {
 			return false;
 		case Parse:
 			return true;
-		case Play:
-			return false;
 		case Record:
 			return false;
 		default:
