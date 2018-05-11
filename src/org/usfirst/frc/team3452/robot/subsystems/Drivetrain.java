@@ -2,9 +2,9 @@ package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.Utilities.FILES;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
 import org.usfirst.frc.team3452.robot.motionprofiles.MotionProfileTest;
-import org.usfirst.frc.team3452.robot.subsystems.Playback.FILES;
 
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
@@ -324,7 +324,6 @@ public class Drivetrain extends Subsystem {
 			motionProfileToTalons(MotionProfileTest.mpL, MotionProfileTest.mpR, MotionProfileTest.mpDur);
 			break;
 		default:
-//			Class f = ClassFinder.classFinder("MotionProfileTest");
 			break;
 		}
 	}

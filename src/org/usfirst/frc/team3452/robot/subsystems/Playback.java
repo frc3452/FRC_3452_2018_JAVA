@@ -4,13 +4,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Scanner;
 
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.Utilities;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -45,10 +44,6 @@ public class Playback extends Subsystem {
 	private String prevDateTimeString = "Empty";
 
 	private boolean hasPrintedLogFailed = false;
-
-	public enum FILES {
-		Parse,MotionProfileTest;
-	}
 
 	/**
 	 * hardware initialization
@@ -120,7 +115,7 @@ public class Playback extends Subsystem {
 	 */
 	private void writeToProfile(boolean startup) {
 		try {
-			String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 50));
+			String timeString = String.format("%8s", Utilities.roundToFraction(Robot.drive.timer.get(), 50));
 			timeString = timeString.replace(' ', '0');
 			n_timeString = Double.valueOf(timeString);
 
@@ -169,7 +164,7 @@ public class Playback extends Subsystem {
 
 			//ON STARTUP, PRINT NAMES
 			if (startup) {
-				bw.write(dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP,"
+				bw.write(Utilities.dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP,"
 						+ "L1-V,L2-V,L3-V,L4-V," + "R1-AMP,R2-AMP,R3-AMP,R4-AMP," + "R1-V,R2-V,R3-V,R4-V,"
 						+ "Elev_1-AMP,Elev_2-AMP," + "Elev_1-V,Elev_2-V," + "Intake_L-AMP,Intake_R-AMP,"
 						+ "Climber_1-AMP,Climber_2-AMP," + "BATTERY");
@@ -178,7 +173,7 @@ public class Playback extends Subsystem {
 			} else {
 
 				//TIME VALUE (ROUNDED)
-				String timeString = String.format("%8s", roundToFraction(Robot.drive.timer.get(), 20));
+				String timeString = String.format("%8s", Utilities.roundToFraction(Robot.drive.timer.get(), 20));
 				timeString = timeString.replace(' ', '0');
 
 				n_timeString = Double.valueOf(timeString);
@@ -407,54 +402,12 @@ public class Playback extends Subsystem {
 	public String loggingName(String name, boolean returnCurrent) {
 		if (returnCurrent) {
 			String retval = "";
-			retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + dateTime(true);
+			retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Utilities.dateTime(true);
 			prevDateTimeString = retval;
 			return retval;
 		} else {
 			return prevDateTimeString;
 		}
-	}
-
-	/**
-	 * toRound = 2.342, wanting to round to nearest .05 1/<b>20</b> is .05
-	 * roundToFraction(2.342,20)
-	 * 
-	 * @author max
-	 * @param value
-	 * @param demoninator
-	 * @return double
-	 * @since
-	 */
-	public static double roundToFraction(double value, double demoninator) {
-		return Math.round(value * demoninator) / demoninator;
-	}
-
-	/**
-	 * <p>
-	 * Returns current date in format
-	 * </p>
-	 * <p>
-	 * <b>yyyy.MM.dd.HH.mm.ss</b>
-	 * </p>
-	 * <p>
-	 * or
-	 * </p>
-	 * <p>
-	 * <b>MM.dd.HH.mm</b>
-	 * </p>
-	 * 
-	 * @author max
-	 * @param full
-	 * @return string
-	 * @since
-	 */
-	public String dateTime(boolean full) {
-		String temp;
-		if (full)
-			temp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-		else
-			temp = new SimpleDateFormat("MM.dd.HH.mm").format(new Date());
-		return temp;
 	}
 
 	/**

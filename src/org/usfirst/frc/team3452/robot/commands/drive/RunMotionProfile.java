@@ -1,7 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Playback.FILES;
+import org.usfirst.frc.team3452.robot.Utilities.FILES;
 
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
@@ -48,7 +48,6 @@ public class RunMotionProfile extends Command {
 
 			System.out.println("BUFFER BOY: " + bufferLooper);
 		}
-
 	}
 
 	@Override
@@ -69,10 +68,15 @@ public class RunMotionProfile extends Command {
 	@Override
 	protected void end() {
 		System.out.println("Motion Profile Complete");
+
+		Robot.drive.L1.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
+		Robot.drive.R1.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
+		
 		Robot.drive.encoderDone();
 	}
 
 	@Override
 	protected void interrupted() {
+		end();
 	}
 }
