@@ -66,8 +66,8 @@ public class Constants {
 	}
 
 	public class Drivetrain {
-		public final static int L_1 = 1, L_2 = 2, L_3 = 3, L_4 = 4;
-		public final static int R_1 = 5, R_2 = 6, R_3 = 7, R_4 = 8;
+		public final static int L1 = 1, L2 = 2, L3 = 3, L4 = 4;
+		public final static int R1 = 5, R2 = 6, R3 = 7, R4 = 8;
 
 		public final static boolean L_INVERT = false;
 		public final static boolean R_INVERT = false;

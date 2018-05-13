@@ -32,7 +32,7 @@ public class Lights extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	public void initHardware() {
+	public Lights() {
 		for (int i = 0; i < 10; i++)
 			tempArray[i] = 3452;
 

@@ -1,12 +1,14 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.Utilities.FILES;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
 import org.usfirst.frc.team3452.robot.motionprofiles.MotionProfileTest;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.TALON;
 
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
@@ -87,145 +89,44 @@ public class Drivetrain extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	public void initHardware() {
+	public Drivetrain() {
 		timer.stop();
 		timer.reset();
 		timer.start();
 
-		L1 = new WPI_TalonSRX(Constants.Drivetrain.L_1);
-		L2 = new WPI_TalonSRX(Constants.Drivetrain.L_2);
-		L3 = new WPI_TalonSRX(Constants.Drivetrain.L_3);
-		L4 = new WPI_TalonSRX(Constants.Drivetrain.L_4);
-
-		R1 = new WPI_TalonSRX(Constants.Drivetrain.R_1);
-		R2 = new WPI_TalonSRX(Constants.Drivetrain.R_2);
-		R3 = new WPI_TalonSRX(Constants.Drivetrain.R_3);
-		R4 = new WPI_TalonSRX(Constants.Drivetrain.R_4);
-
-		L1.setInverted(Constants.Drivetrain.L_INVERT);
-		L2.setInverted(Constants.Drivetrain.L_INVERT);
-		L3.setInverted(Constants.Drivetrain.L_INVERT);
-		L4.setInverted(Constants.Drivetrain.L_INVERT);
-
-		R1.setInverted(Constants.Drivetrain.R_INVERT);
-		R2.setInverted(Constants.Drivetrain.R_INVERT);
-		R3.setInverted(Constants.Drivetrain.R_INVERT);
-		R4.setInverted(Constants.Drivetrain.R_INVERT);
+		//Talons
+		L1 = new WPI_TalonSRX(Constants.Drivetrain.L1);
+		L2 = new WPI_TalonSRX(Constants.Drivetrain.L2);
+		L3 = new WPI_TalonSRX(Constants.Drivetrain.L3);
+		L4 = new WPI_TalonSRX(Constants.Drivetrain.L4);
+		R1 = new WPI_TalonSRX(Constants.Drivetrain.R1);
+		R2 = new WPI_TalonSRX(Constants.Drivetrain.R2);
+		R3 = new WPI_TalonSRX(Constants.Drivetrain.R3);
+		R4 = new WPI_TalonSRX(Constants.Drivetrain.R4);
 
 		Gyro = new AHRS(SPI.Port.kMXP);
 
-		robotDrive = new DifferentialDrive(L1, R1);
+		
+		//Config
+		talonInit(L1);
+		talonInit(L2);
+		talonInit(L3);
+		talonInit(L4);
+		talonInit(R1);
+		talonInit(R2);
+		talonInit(R3);
+		talonInit(R4);
 
+		
+		//Drivetrain
+		robotDrive = new DifferentialDrive(L1, R1);
 		robotDrive.setDeadband(0.045); //.08
 		robotDrive.setSafetyEnabled(false);
 
-		// follower mode
-		L2.follow(L1);
-		L3.follow(L1);
-		L4.follow(L1);
-
-		R2.follow(R1);
-		R3.follow(R1);
-		R4.follow(R1);
-
-		// encoder init
-		L1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
-		R1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
-		L1.setSelectedSensorPosition(0, 0, 10);
-		R1.setSelectedSensorPosition(0, 0, 10);
-		L1.setSensorPhase(true);
-		R1.setSensorPhase(true);
-
-		L1.config_kF(0, 0, 10);
-		L1.config_kP(0, 0.425, 10);
-		L1.config_kI(0, 0.0000004, 10);
-		L1.config_kD(0, 4.25, 10);
-
-		R1.config_kF(0, 0, 10);
-		R1.config_kP(0, 0.8, 10); //.8
-		R1.config_kI(0, 0.0000004, 10);
-		R1.config_kD(0, 4.25, 10);
-
-		L1.config_kP(0, 0.06, 10);
-		R1.config_kP(0, 0.06, 10);
-
-		L1.config_kI(0, 0, 10);
-		R1.config_kI(0, 0, 10);
-
-		L1.config_kD(0, 0, 10);
-		R1.config_kD(0, 0, 10);
-
-		// NOMINAL OUTPUT
-		L1.configNominalOutputForward(0, 10);
-		L1.configNominalOutputReverse(0, 10);
-		R1.configNominalOutputForward(0, 10);
-		R1.configNominalOutputReverse(0, 10);
-
-		// AMP LIMIT
-		// OUTER TALONS IN BLOCK = 40amp, INNER TALONS IN BLOCK = 30amp
-		L1.configContinuousCurrentLimit(Constants.Drivetrain.AMP_40_LIMIT, 10);
-		L1.configPeakCurrentLimit(Constants.Drivetrain.AMP_40_TRIGGER, 10);
-		L1.configPeakCurrentDuration(Constants.Drivetrain.AMP_40_TIME, 10);
-		L1.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
-
-		L2.configContinuousCurrentLimit(Constants.Drivetrain.AMP_40_LIMIT, 10);
-		L2.configPeakCurrentLimit(Constants.Drivetrain.AMP_40_TRIGGER, 10);
-		L2.configPeakCurrentDuration(Constants.Drivetrain.AMP_40_TIME, 10);
-		L2.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
-
-		R1.configContinuousCurrentLimit(Constants.Drivetrain.AMP_40_LIMIT, 10);
-		R1.configPeakCurrentLimit(Constants.Drivetrain.AMP_40_TRIGGER, 10);
-		R1.configPeakCurrentDuration(Constants.Drivetrain.AMP_40_TIME, 10);
-		R1.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
-
-		R2.configContinuousCurrentLimit(Constants.Drivetrain.AMP_40_LIMIT, 10);
-		R2.configPeakCurrentLimit(Constants.Drivetrain.AMP_40_TRIGGER, 10);
-		R2.configPeakCurrentDuration(Constants.Drivetrain.AMP_40_TIME, 10);
-		R2.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
-
-		L3.configContinuousCurrentLimit(Constants.Drivetrain.AMP_30_LIMIT, 10);
-		L3.configPeakCurrentLimit(Constants.Drivetrain.AMP_30_TRIGGER, 10);
-		L3.configPeakCurrentDuration(Constants.Drivetrain.AMP_30_TIME, 10);
-		L3.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
-
-		L4.configContinuousCurrentLimit(Constants.Drivetrain.AMP_30_LIMIT, 10);
-		L4.configPeakCurrentLimit(Constants.Drivetrain.AMP_30_TRIGGER, 10);
-		L4.configPeakCurrentDuration(Constants.Drivetrain.AMP_30_TIME, 10);
-		L4.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
-
-		R3.configContinuousCurrentLimit(Constants.Drivetrain.AMP_30_LIMIT, 10);
-		R3.configPeakCurrentLimit(Constants.Drivetrain.AMP_30_TRIGGER, 10);
-		R3.configPeakCurrentDuration(Constants.Drivetrain.AMP_30_TIME, 10);
-		R3.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
-
-		R4.configContinuousCurrentLimit(Constants.Drivetrain.AMP_30_LIMIT, 10);
-		R4.configPeakCurrentLimit(Constants.Drivetrain.AMP_30_TRIGGER, 10);
-		R4.configPeakCurrentDuration(Constants.Drivetrain.AMP_30_TIME, 10);
-		R4.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
-
-		L1.enableCurrentLimit(true);
-		L2.enableCurrentLimit(true);
-		L3.enableCurrentLimit(true);
-		L4.enableCurrentLimit(true);
-		R1.enableCurrentLimit(true);
-		R2.enableCurrentLimit(true);
-		R3.enableCurrentLimit(true);
-		R4.enableCurrentLimit(true);
-
-		// COAST MODE
-		brake(NeutralMode.Coast);
-
 		robotDrive.setSubsystem("Drive train");
-		pdp.setSubsystem("Drive train");
 
-		L1.setSubsystem("Drive train");
-		L2.setSubsystem("Drive train");
-		L3.setSubsystem("Drive train");
-		L4.setSubsystem("Drive train");
-		R1.setSubsystem("Drive train");
-		R2.setSubsystem("Drive train");
-		R3.setSubsystem("Drive train");
-		R4.setSubsystem("Drive train");
+		brake(NeutralMode.Coast);
+		pdp.setSubsystem("Drive train");
 
 		L1.setName("L1");
 		L2.setName("L2");
@@ -236,8 +137,58 @@ public class Drivetrain extends Subsystem {
 		R3.setName("R3");
 		R4.setName("R4");
 
-		//MUST BE AT END
 		Gyro.reset();
+	}
+
+	/**
+	 * talon init
+	 */
+	public void talonInit(WPI_TalonSRX talon) {
+		//---All talons---\\
+
+		int id = talon.getDeviceID();
+
+		talon.setInverted(
+				(id == Constants.Drivetrain.L1) ? Constants.Drivetrain.L_INVERT : Constants.Drivetrain.R_INVERT);
+
+		talon.configNominalOutputForward(0, 10);
+
+		// AMP LIMIT
+		// OUTER TALONS IN BLOCK = 40amp, INNER TALONS IN BLOCK = 30amp
+		talon.configContinuousCurrentLimit(Constants.Drivetrain.AMP_40_LIMIT, 10);
+		talon.configPeakCurrentLimit(Constants.Drivetrain.AMP_40_TRIGGER, 10);
+		talon.configPeakCurrentDuration(Constants.Drivetrain.AMP_40_TIME, 10);
+		talon.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
+
+		talon.enableCurrentLimit(true);
+
+		talon.setSubsystem("Drive train");
+
+		//If Master
+		if (id == Constants.Drivetrain.L1 || id == Constants.Drivetrain.R1) {
+			talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
+			talon.setSelectedSensorPosition(0, 0, 10);
+			talon.setSensorPhase(true);
+
+			//If left master
+			if (talon.getDeviceID() == Constants.Drivetrain.L1) {
+				talon.config_kF(0, 0, 10);
+				talon.config_kP(0, 0.425, 10);
+				talon.config_kI(0, 0.0000004, 10);
+				talon.config_kD(0, 4.25, 10);
+			
+			//If right master
+			} else {
+				talon.config_kF(0, 0, 10);
+				talon.config_kP(0, 0.8, 10); //.8
+				talon.config_kI(0, 0.0000004, 10);
+				talon.config_kD(0, 4.25, 10);
+			}
+
+		} else {
+			//Follower
+			talon.follow((talon.getDeviceID() == Constants.Drivetrain.L1 ? L1 : R1));
+		}
 	}
 
 	@Override
@@ -335,9 +286,12 @@ public class Drivetrain extends Subsystem {
 	 * 
 	 * @author max
 	 * 
-	 * @param mpL (2-Dimensional double array)
-	 * @param mpR (2-Dimensional double array)
-	 * @param mpDur (Integer)
+	 * @param mpL
+	 *            (2-Dimensional double array)
+	 * @param mpR
+	 *            (2-Dimensional double array)
+	 * @param mpDur
+	 *            (Integer)
 	 * 
 	 * @since 4-22-2018
 	 */
@@ -401,7 +355,7 @@ public class Drivetrain extends Subsystem {
 		}
 
 		System.out.println("Motion profile pushed to Talons");
-		
+
 	}
 
 	/**
@@ -409,9 +363,12 @@ public class Drivetrain extends Subsystem {
 	 * 
 	 * @author max
 	 * 
-	 * @param mpL (2-Dimensional double arrayList)
-	 * @param mpR (2-Dimensional double arrayList)
-	 * @param mpDur (Integer)
+	 * @param mpL
+	 *            (2-Dimensional double arrayList)
+	 * @param mpR
+	 *            (2-Dimensional double arrayList)
+	 * @param mpDur
+	 *            (Integer)
 	 * 
 	 * @since 4-22-2018
 	 */

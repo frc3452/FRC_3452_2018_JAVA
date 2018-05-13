@@ -51,7 +51,7 @@ public class Playback extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	public void initHardware() {
+	public Playback() {
 	}
 
 	/**

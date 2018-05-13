@@ -15,7 +15,7 @@ public class Intake extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	public void initHardware() {
+	public Intake() {
 		Intake_L = new Spark(Constants.Intake.INTAKE_L);
 		Intake_R = new Spark(Constants.Intake.INTAKE_R);
 

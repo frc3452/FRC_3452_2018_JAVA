@@ -21,7 +21,7 @@ public class Camera extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	public void initHardware() {
+	public Camera {
 		mCamera0 = CameraServer.getInstance().startAutomaticCapture(0);
 		mCamera0.setResolution(640, 480);
 		mCamera0.setFPS(15);

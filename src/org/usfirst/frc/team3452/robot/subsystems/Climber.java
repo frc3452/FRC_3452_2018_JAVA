@@ -33,7 +33,7 @@ public class Climber extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	public void initHardware() {
+	public Climber() {
 		climb1 = new Spark(Constants.Climber.CLIMBER_1);
 		climb1.setInverted(Constants.Climber.CLIMBER_1_INVERT);
 
