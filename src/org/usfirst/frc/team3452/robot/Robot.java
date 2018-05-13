@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
 	Command defaultCommand = null;
 
 	//flags
-	boolean wasTele = false, readyForMatch = false, wasTest = false, toLog = false;
+	boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false, lightModeComp = true;
 
 	//LOGGING CONTROL
 	boolean logging = false, logToUsb = true;
@@ -55,19 +55,14 @@ public class Robot extends TimedRobot {
 			autoCommand[i] = null;
 		}
 
-		Robot.drive.initHardware();
-		Robot.elevator.initHardware();
-		Robot.intake.initHardware();
-		Robot.climber.initHardware();
-		Robot.lights.initHardware();
-		//		Robot.camera.initHardware();
-		Robot.autonSelector.initHardware();
-		Robot.playback.initHardware();
-
 		_oi = new OI();
 		OI.init();
 
-		defaultCommand = (new DefaultAutonomous());
+		//Light mode using auto selectors (Position 10-5)
+		if (Robot.autonSelector.uglyAnalog() == 95)
+			lightModeComp = false;
+
+		defaultCommand = new DefaultAutonomous();
 
 		//naming for commands 
 		Robot.autonSelector.autoCommandName[1] = "Middle - Switch";
@@ -99,7 +94,6 @@ public class Robot extends TimedRobot {
 		Robot.autonSelector.autoCommandName[27] = "(MIFOR) Left Only - Scale Priority";
 		Robot.autonSelector.autoCommandName[28] = "(MIFOR) Right Only - Switch Priority";
 		Robot.autonSelector.autoCommandName[29] = "(MIFOR) Right Only - Scale Priority";
-
 	}
 
 	@Override
@@ -109,14 +103,14 @@ public class Robot extends TimedRobot {
 
 		//LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
 		//LOOPED HERE
-		if (toLog && logging)
+		if (safeToLog && logging)
 			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.RUNTIME);
 	}
 
 	@Override
 	public void disabledInit() {
-		if (toLog && logging) {
-			toLog = false;
+		if (safeToLog && logging) {
+			safeToLog = false;
 			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.FINISH);
 		}
 
@@ -141,9 +135,9 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		System.out.println("Entering auto");
 
-		if (!toLog) {
+		if (!safeToLog) {
 			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
-			toLog = true;
+			safeToLog = true;
 		}
 
 		//timer start
@@ -218,9 +212,9 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		System.out.println("Entering teleop");
 
-		if (!toLog && logging) {
+		if (!safeToLog && logging) {
 			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
-			toLog = true;
+			safeToLog = true;
 		}
 
 		//GREEN LOW BRIGHTNESS
@@ -248,9 +242,9 @@ public class Robot extends TimedRobot {
 	public void testInit() {
 		System.out.println("Entering test mode");
 
-		if (!toLog && logging) {
+		if (!safeToLog && logging) {
 			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
-			toLog = true;
+			safeToLog = true;
 		}
 
 		wasTest = true;
@@ -264,31 +258,51 @@ public class Robot extends TimedRobot {
 		if (OI.driverJoy.getRawButton(2) && OI.driverJoy.getRawButton(7) && OI.driverJoy.getRawButton(8))
 			readyForMatch = true;
 
-		Robot.lights.hsv(Robot.lights.m_hue, 1, .15);
-		Robot.lights.m_hue++;
-		if (Robot.lights.m_hue > 360)
-			Robot.lights.m_hue = 0;
+		if (!lightModeComp) {
+			//Not competition
+			if (wasTest)
+				Robot.lights.pulse(55, 1, .2, .8, .1);
+			else {
+				Robot.lights.hsv(Robot.lights.m_hue, 1, .15);
+				Robot.lights.m_hue++;
+				if (Robot.lights.m_hue > 360)
+					Robot.lights.m_hue = 0;
+			}
 
-		/*
-		 * if (wasTest) { Robot.lights.pulse(55, 1, .2, .8, .1); } else {
-		 * 
-		 * if (DriverStation.getInstance().isDisabled()) { //IF CONNECTED LOW
-		 * GREEN if (DriverStation.getInstance().isDSAttached()) {
-		 * 
-		 * if (readyForMatch) Robot.lights.pulse(258, 1, 0.1, .4, 0.025 / 3.5);
-		 * else Robot.lights.pulse(330, 1, .1, .4, 0.025 / 3.5);
-		 * 
-		 * } else {
-		 * 
-		 * //IF FMS PULSE RED, IF NO FMS RGB FADE if
-		 * (DriverStation.getInstance().isFMSAttached()) { // increase pulsing
-		 * speed while not connected Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10
-		 * * (Robot.drive.timer.get() / 100));
-		 * 
-		 * } else { Robot.lights.hsv(Robot.lights.m_hue, 1, .15);
-		 * Robot.lights.m_hue++; if (Robot.lights.m_hue > 360)
-		 * Robot.lights.m_hue = 0; } } } }
-		 */
+		} else {
+			//Comp
+			
+			if (wasTest) {
+				Robot.lights.pulse(55, 1, .2, .8, .1);
+			} else {
+
+				if (DriverStation.getInstance().isDisabled()) {
+					//IF CONNECTED LOW GREEN
+					if (DriverStation.getInstance().isDSAttached()) {
+
+						if (readyForMatch)
+							Robot.lights.pulse(258, 1, 0.1, .4, 0.025 / 3.5);
+						else
+							Robot.lights.pulse(330, 1, .1, .4, 0.025 / 3.5);
+
+					} else {
+
+						//IF FMS PULSE RED, IF NO FMS RGB FADE
+						if (DriverStation.getInstance().isFMSAttached()) {
+							//			increase pulsing speed while not connected
+							Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 100));
+
+						} else {
+							Robot.lights.hsv(Robot.lights.m_hue, 1, .15);
+							Robot.lights.m_hue++;
+							if (Robot.lights.m_hue > 360)
+								Robot.lights.m_hue = 0;
+						}
+					}
+				}
+			}
+		}
+
 	}
 
 	public void controllerChooser() {
