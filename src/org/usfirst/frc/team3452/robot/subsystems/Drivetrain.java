@@ -88,6 +88,7 @@ public class Drivetrain extends Subsystem {
 	 * @since
 	 */
 	public Drivetrain() {
+		//TODO REMOVE
 		System.out.println("Initialize Drivetrain...");
 		
 		timer.stop();
@@ -175,6 +176,7 @@ public class Drivetrain extends Subsystem {
 				talon.config_kI(0, 0.0000004, 10);
 				talon.config_kD(0, 4.25, 10);
 				
+				//TODO REMOVE
 				talon.config_kI(0, 10, 10);
 
 				//If right master
@@ -184,6 +186,8 @@ public class Drivetrain extends Subsystem {
 				talon.config_kI(0, 0.0000004, 10);
 				talon.config_kD(0, 4.25, 10);
 				
+				
+				//TODO REMOVE
 				talon.config_kI(0, 12, 10);
 			}
 
