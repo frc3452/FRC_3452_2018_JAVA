@@ -99,6 +99,7 @@ public class Playback extends Subsystem {
 	 * @author max
 	 * @since
 	 */
+	@SuppressWarnings("unused")
 	private void printValues() {
 		try {
 			for (int i = 0; i < mpL.size(); i++) {

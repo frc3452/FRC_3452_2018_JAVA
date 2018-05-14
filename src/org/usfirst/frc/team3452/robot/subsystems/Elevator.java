@@ -2,7 +2,6 @@ package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.TALON;
 
 import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -185,7 +184,7 @@ public class Elevator extends Subsystem {
 	 * @author max
 	 *
 	 */
-	public static enum EO {
+	public static enum ESO {
 		TOGGLE, ON, OFF;
 	}
 }

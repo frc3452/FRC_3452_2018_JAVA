@@ -6,8 +6,8 @@ import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
- * <h1>Camera subsystem</h1>
- * Handles camera exposure change and server switching
+ * <h1>Camera subsystem</h1> Handles camera exposure change and server switching
+ * 
  * @author max
  *
  */
@@ -21,16 +21,16 @@ public class Camera extends Subsystem {
 	 * @author max
 	 * @since
 	 */
-	public Camera {
+	public Camera() {
 		mCamera0 = CameraServer.getInstance().startAutomaticCapture(0);
 		mCamera0.setResolution(640, 480);
 		mCamera0.setFPS(15);
 		mCamera0.setExposureManual(40);
 
-//		mCamera1 = CameraServer.getInstance().startAutomaticCapture(1);
-//		mCamera1.setResolution(180, 120);
-//		mCamera1.setFPS(30);
-//		mCamera1.setExposureAuto();
+		//		mCamera1 = CameraServer.getInstance().startAutomaticCapture(1);
+		//		mCamera1.setResolution(180, 120);
+		//		mCamera1.setFPS(30);
+		//		mCamera1.setExposureAuto();
 
 		server = CameraServer.getInstance().getServer();
 		server.setSource(mCamera0);
@@ -75,6 +75,7 @@ public class Camera extends Subsystem {
 		}
 	}
 
+	@Override
 	public void initDefaultCommand() {
 	}
 }

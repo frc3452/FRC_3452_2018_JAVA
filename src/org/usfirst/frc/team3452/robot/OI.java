@@ -8,8 +8,7 @@ import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
 import org.usfirst.frc.team3452.robot.commands.playback.PlaybackControl;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.CONTROLLER;
-import org.usfirst.frc.team3452.robot.subsystems.Elevator.EO;
+import org.usfirst.frc.team3452.robot.subsystems.Elevator.ESO;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
@@ -53,15 +52,15 @@ public class OI {
 		driverJoyRB.whenPressed(new CommandGroup() {
 			{
 				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
-//				addSequential(new RunMotionProfile(FILES.Parse));
+				//				addSequential(new RunMotionProfile(FILES.Parse));
 			}
 		});
-		
-//		driverJoyY.whenPressed(new DriveTime(1, 0, 30));
 
-//		driverJoyY.whileHeld(new Climb(1));
+		//		driverJoyY.whenPressed(new DriveTime(1, 0, 30));
+
+		//		driverJoyY.whileHeld(new Climb(1));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
-		driverJoyBack.whenPressed(new OverrideSet(EO.TOGGLE));
+		driverJoyBack.whenPressed(new OverrideSet(ESO.TOGGLE));
 
 		//				DPAD
 		driverDown.whenPressed(new ElevatorPosition(-15));
@@ -86,8 +85,8 @@ public class OI {
 		opRight.whenPressed(new ElevatorPosition(3.5));
 
 		//				TRIGGERS
-		driveSafteyOverriden.whenActive(new OverrideSet(EO.ON));
-		driveSafteyOverriden.whenInactive(new OverrideSet(EO.OFF));
+		driveSafteyOverriden.whenActive(new OverrideSet(ESO.ON));
+		driveSafteyOverriden.whenInactive(new OverrideSet(ESO.OFF));
 	}
 
 	private static void buttonInit() {
@@ -142,5 +141,9 @@ public class OI {
 			rumble(CONTROLLER.OPERATOR, intensity);
 			break;
 		}
+	}
+
+	public static enum CONTROLLER {
+		DRIVER, OPERATOR, BOTH;
 	}
 }

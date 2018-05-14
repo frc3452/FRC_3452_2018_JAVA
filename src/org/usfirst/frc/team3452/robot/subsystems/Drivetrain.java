@@ -1,14 +1,12 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.Utilities.FILES;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
 import org.usfirst.frc.team3452.robot.motionprofiles.MotionProfileTest;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.TALON;
 
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
@@ -106,7 +104,6 @@ public class Drivetrain extends Subsystem {
 
 		Gyro = new AHRS(SPI.Port.kMXP);
 
-		
 		//Config
 		talonInit(L1);
 		talonInit(L2);
@@ -117,7 +114,6 @@ public class Drivetrain extends Subsystem {
 		talonInit(R3);
 		talonInit(R4);
 
-		
 		//Drivetrain
 		robotDrive = new DifferentialDrive(L1, R1);
 		robotDrive.setDeadband(0.045); //.08
@@ -176,8 +172,8 @@ public class Drivetrain extends Subsystem {
 				talon.config_kP(0, 0.425, 10);
 				talon.config_kI(0, 0.0000004, 10);
 				talon.config_kD(0, 4.25, 10);
-			
-			//If right master
+
+				//If right master
 			} else {
 				talon.config_kF(0, 0, 10);
 				talon.config_kP(0, 0.8, 10); //.8
@@ -189,11 +185,6 @@ public class Drivetrain extends Subsystem {
 			//Follower
 			talon.follow((talon.getDeviceID() == Constants.Drivetrain.L1 ? L1 : R1));
 		}
-	}
-
-	@Override
-	public void initDefaultCommand() {
-		setDefaultCommand(new DriveTele());
 	}
 
 	/**
@@ -228,7 +219,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
-	 * 
+	 * run processMotionProfileBuffer 5 times on each talon
 	 */
 	public void processMotionProfileBuffer() {
 		for (int i = 0; i < 5; i++) {
@@ -436,6 +427,14 @@ public class Drivetrain extends Subsystem {
 
 	}
 
+	/**
+	 * Validate duration
+	 * 
+	 * @author max
+	 * @param durationMs
+	 * @return TrajectoryDuration
+	 * @since
+	 */
 	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {
 		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
 
@@ -601,19 +600,9 @@ public class Drivetrain extends Subsystem {
 		R1.setSelectedSensorPosition(0, 0, 10);
 	}
 
-	/**
-	 * @author max
-	 *
-	 */
-	public static enum CONTROLLER {
-		DRIVER, OPERATOR, BOTH;
-	}
-
-	/**
-	 * Enum class for reading motion profiles from javafile
-	 */
-	public static enum MP {
-		TEST;
+	@Override
+	public void initDefaultCommand() {
+		setDefaultCommand(new DriveTele());
 	}
 
 }
