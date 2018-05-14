@@ -88,6 +88,8 @@ public class Drivetrain extends Subsystem {
 	 * @since
 	 */
 	public Drivetrain() {
+		System.out.println("Initialize Drivetrain...");
+		
 		timer.stop();
 		timer.reset();
 		timer.start();
@@ -172,6 +174,8 @@ public class Drivetrain extends Subsystem {
 				talon.config_kP(0, 0.425, 10);
 				talon.config_kI(0, 0.0000004, 10);
 				talon.config_kD(0, 4.25, 10);
+				
+				talon.config_kI(0, 10, 10);
 
 				//If right master
 			} else {
@@ -179,10 +183,12 @@ public class Drivetrain extends Subsystem {
 				talon.config_kP(0, 0.8, 10); //.8
 				talon.config_kI(0, 0.0000004, 10);
 				talon.config_kD(0, 4.25, 10);
+				
+				talon.config_kI(0, 12, 10);
 			}
 
+		//If Follower
 		} else {
-			//Follower
 			talon.follow((talon.getDeviceID() == Constants.Drivetrain.L1 ? L1 : R1));
 		}
 	}

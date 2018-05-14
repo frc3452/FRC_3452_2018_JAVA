@@ -41,6 +41,7 @@ public class Climber extends Subsystem {
 		climb1.setName("Climber Motor");
 	}
 
+	@Override
 	public void initDefaultCommand() {
 	}
 
