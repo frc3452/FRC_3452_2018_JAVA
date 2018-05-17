@@ -28,7 +28,7 @@ public class Playback extends Subsystem {
 	private FileWriter fw;
 
 	private FileReader fr;
-	private Scanner br;
+	private Scanner scnr;
 
 	/**
 	 * variable for storing left values for motion profile
@@ -64,16 +64,16 @@ public class Playback extends Subsystem {
 		String st;
 		try {
 			//Skip first line of text
-			br.nextLine();
+			scnr.nextLine();
 
 			//take time var
-			mpDur = Integer.parseInt(br.nextLine().split(",")[0]);
+			mpDur = Integer.parseInt(scnr.nextLine().split(",")[0]);
 
 			//loop through each line
-			while (br.hasNextLine()) {
+			while (scnr.hasNextLine()) {
 				ArrayList<Double> temp = new ArrayList<Double>();
 				
-				st = br.nextLine();
+				st = scnr.nextLine();
 
 				String[] ar = st.split(",");
 
@@ -270,7 +270,7 @@ public class Playback extends Subsystem {
 				f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
 
 				fr = new FileReader(f);
-				br = new Scanner(fr);
+				scnr = new Scanner(fr);
 
 				break;
 			case WRITE:
@@ -306,7 +306,7 @@ public class Playback extends Subsystem {
 			switch (readwrite) {
 			case READ:
 				//CLOSE READING
-				br.close();
+				scnr.close();
 				fr.close();
 				break;
 			case WRITE:
