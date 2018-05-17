@@ -58,11 +58,6 @@ public class Robot extends TimedRobot {
 		_oi = new OI();
 		OI.init();
 
-		//Light mode using auto selectors (Position J-5)
-		if (Robot.autonSelector.uglyAnalog() == 95)
-			lightModeComp = false;
-		System.out.println(lightModeComp ? "LEDs set to competition mode. Set auton selectors to J5 for exhibition mode." : "LEDs set to exhibition mode.");
-
 		defaultCommand = new DefaultAutonomous();
 
 		//naming for commands 
@@ -102,6 +97,9 @@ public class Robot extends TimedRobot {
 		handleLEDs();
 		Robot.drive.loggerUpdate();
 
+		//Light mode using auto selectors (Position J-5)
+		lightModeComp = Robot.autonSelector.uglyAnalog() == 95 ? false : true;
+
 		//LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
 		//LOOPED HERE
 		if (safeToLog && logging)
@@ -110,10 +108,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
-		if (safeToLog && logging) {
-			safeToLog = false;
-			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.FINISH);
-		}
+		endLog();
 
 		Robot.drive.brake((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
 		//		Robot.drive.brake(NeutralMode.Coast);
@@ -136,10 +131,7 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		System.out.println("Entering auto");
 
-		if (!safeToLog) {
-			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
-			safeToLog = true;
-		}
+		startLog();
 
 		//timer start
 		Robot.drive.timer.stop();
@@ -212,11 +204,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		System.out.println("Entering teleop");
-
-		if (!safeToLog && logging) {
-			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
-			safeToLog = true;
-		}
+		startLog();
 
 		//GREEN LOW BRIGHTNESS
 		Robot.lights.hsv(250, 1, .5);
@@ -242,11 +230,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testInit() {
 		System.out.println("Entering test mode");
-
-		if (!safeToLog && logging) {
-			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
-			safeToLog = true;
-		}
+		startLog();
 
 		wasTest = true;
 	}
@@ -271,8 +255,8 @@ public class Robot extends TimedRobot {
 			}
 
 		} else {
-			//Comp
 
+			//Comp
 			if (wasTest) {
 				Robot.lights.pulse(55, 1, .2, .8, .1);
 			} else {
@@ -392,6 +376,20 @@ public class Robot extends TimedRobot {
 			} else {
 				autonomousCommand = defaultCommand;
 			}
+		}
+	}
+
+	public void startLog() {
+		if (!safeToLog && logging) {
+			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
+			safeToLog = true;
+		}
+	}
+
+	public void endLog() {
+		if (safeToLog && logging) {
+			safeToLog = false;
+			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.FINISH);
 		}
 	}
 }
