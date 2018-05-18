@@ -97,8 +97,8 @@ public class Robot extends TimedRobot {
 		handleLEDs();
 		Robot.drive.loggerUpdate();
 
-		//Light mode using auto selectors (Position J-5)
-		lightModeComp = Robot.autonSelector.uglyAnalog() == 95 ? false : true;
+		//Light mode using auto selectors (Position J-6)
+		lightModeComp = Robot.autonSelector.uglyAnalog() == 96 ? false : true;
 
 		//LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
 		//LOOPED HERE
@@ -143,34 +143,34 @@ public class Robot extends TimedRobot {
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
 
 			autoCommand[1] = (new MiddleAuton(AO.SWITCH, AV.CURRENT));
-			autoCommand[2] = (new LeftAuton(AO.SWITCH, AV.CURRENT));
-			autoCommand[3] = (new LeftAuton(AO.SCALE, AV.CURRENT));
-			autoCommand[4] = (new RightAuton(AO.SWITCH, AV.CURRENT));
-			autoCommand[5] = (new RightAuton(AO.SCALE, AV.CURRENT));
+			autoCommand[2] = (new LeftAuton(AO.SWITCH, AV.CURRENT, AV.CURRENT));
+			autoCommand[3] = (new LeftAuton(AO.SCALE, AV.CURRENT, AV.CURRENT));
+			autoCommand[4] = (new RightAuton(AO.SWITCH, AV.CURRENT, AV.CURRENT));
+			autoCommand[5] = (new RightAuton(AO.SCALE, AV.CURRENT, AV.CURRENT));
 
-			autoCommand[11] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT));
-			autoCommand[12] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT));
-			autoCommand[13] = (new LeftAuton(AO.SWITCH_ONLY, AV.CURRENT));
-			autoCommand[14] = (new LeftAuton(AO.SCALE_ONLY, AV.CURRENT));
+			autoCommand[11] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
+			autoCommand[12] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
+			autoCommand[13] = (new LeftAuton(AO.SWITCH_ONLY, AV.CURRENT, AV.CURRENT));
+			autoCommand[14] = (new LeftAuton(AO.SCALE_ONLY, AV.CURRENT, AV.CURRENT));
 
-			autoCommand[15] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT));
-			autoCommand[16] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT));
-			autoCommand[17] = (new RightAuton(AO.SWITCH_ONLY, AV.CURRENT));
-			autoCommand[18] = (new RightAuton(AO.SCALE_ONLY, AV.CURRENT));
+			autoCommand[15] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
+			autoCommand[16] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
+			autoCommand[17] = (new RightAuton(AO.SWITCH_ONLY, AV.CURRENT, AV.CURRENT));
+			autoCommand[18] = (new RightAuton(AO.SCALE_ONLY, AV.CURRENT, AV.CURRENT));
 
-			autoCommand[19] = (new LeftAuton(AO.DEFAULT, AV.CURRENT));
-			autoCommand[20] = (new RightAuton(AO.DEFAULT, AV.CURRENT));
+			autoCommand[19] = (new LeftAuton(AO.DEFAULT, AV.CURRENT, AV.CURRENT));
+			autoCommand[20] = (new RightAuton(AO.DEFAULT, AV.CURRENT, AV.CURRENT));
 
 			autoCommand[21] = (new MiddleAuton(AO.SWITCH, AV.FOREST_HILLS));
-			autoCommand[22] = (new LeftAuton(AO.SWITCH, AV.FOREST_HILLS));
-			autoCommand[23] = (new LeftAuton(AO.SCALE, AV.FOREST_HILLS));
-			autoCommand[24] = (new RightAuton(AO.SWITCH, AV.FOREST_HILLS));
-			autoCommand[25] = (new RightAuton(AO.SCALE, AV.FOREST_HILLS));
+			autoCommand[22] = (new LeftAuton(AO.SWITCH, AV.FOREST_HILLS, AV.CURRENT));
+			autoCommand[23] = (new LeftAuton(AO.SCALE, AV.FOREST_HILLS, AV.CURRENT));
+			autoCommand[24] = (new RightAuton(AO.SWITCH, AV.FOREST_HILLS, AV.CURRENT));
+			autoCommand[25] = (new RightAuton(AO.SCALE, AV.FOREST_HILLS, AV.CURRENT));
 
-			autoCommand[26] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.FOREST_HILLS));
-			autoCommand[27] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.FOREST_HILLS));
-			autoCommand[28] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.FOREST_HILLS));
-			autoCommand[29] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.FOREST_HILLS));
+			autoCommand[26] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.FOREST_HILLS, AV.CURRENT));
+			autoCommand[27] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.FOREST_HILLS, AV.CURRENT));
+			autoCommand[28] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.FOREST_HILLS, AV.CURRENT));
+			autoCommand[29] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.FOREST_HILLS, AV.CURRENT));
 
 			if (Robot.autonSelector.controllerOverride) {
 				autonomousCommand = autoCommand[Robot.autonSelector.overrideValue];

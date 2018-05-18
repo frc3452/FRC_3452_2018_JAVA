@@ -52,11 +52,9 @@ public class OI {
 		driverJoyRB.whenPressed(new CommandGroup() {
 			{
 				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
-				//				addSequential(new RunMotionProfile(FILES.Parse));
+//				addSequential(new RunMotionProfile(FILES.Parse));
 			}
 		});
-
-		//		driverJoyY.whenPressed(new DriveTime(1, 0, 30));
 
 		//		driverJoyY.whileHeld(new Climb(1));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
