@@ -21,10 +21,10 @@ public class MiddleAuton extends CommandGroup {
 
 	/**
 	 * @param option
-	 * @param version
+	 * @param switchVersion
 	 * @see AutonSelector
 	 */
-	public MiddleAuton(AO option, AV version) {
+	public MiddleAuton(AO option, AV switchVersion) {
 		addSequential(new EncoderReset());
 		addSequential(new GyroReset());
 
@@ -35,9 +35,9 @@ public class MiddleAuton extends CommandGroup {
 			case SWITCH:
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
-					switchL(version);
+					switchL(switchVersion);
 				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-					switchR(version);
+					switchR(switchVersion);
 				} else {
 					defaultAuton();
 				}

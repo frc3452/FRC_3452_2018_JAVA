@@ -26,7 +26,7 @@ public class RightAuton extends CommandGroup {
 	 * @param version
 	 * @see AutonSelector
 	 */
-	public RightAuton(AO option, AV version) {
+	public RightAuton(AO option, AV switchVersion, AV scaleVersion) {
 		addSequential(new GyroReset());
 		addSequential(new EncoderReset());
 
@@ -37,29 +37,29 @@ public class RightAuton extends CommandGroup {
 			case SWITCH:
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
-					switchL(version);
+					switchL(switchVersion);
 
 				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-					switchR(version);
+					switchR(scaleVersion);
 				}
 
 				break;
 			case SCALE:
 
 				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-					scaleL(version);
+					scaleL(scaleVersion);
 
 				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-					scaleR(version);
+					scaleR(scaleVersion);
 				}
 
 				break;
 			case SWITCH_PRIORITY_NO_CROSS:
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-					switchR(version);
+					switchR(switchVersion);
 				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-					scaleR(version);
+					scaleR(scaleVersion);
 				} else {
 					defaultAuton();
 				}
@@ -68,9 +68,9 @@ public class RightAuton extends CommandGroup {
 			case SCALE_PRIORITY_NO_CROSS:
 
 				if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-					scaleR(version);
+					scaleR(scaleVersion);
 				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-					switchR(version);
+					switchR(switchVersion);
 				} else {
 					defaultAuton();
 				}
@@ -79,7 +79,7 @@ public class RightAuton extends CommandGroup {
 			case SWITCH_ONLY:
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'R')
-					switchR(version);
+					switchR(switchVersion);
 				else
 					defaultAuton();
 
@@ -87,7 +87,7 @@ public class RightAuton extends CommandGroup {
 			case SCALE_ONLY:
 
 				if (Robot.autonSelector.gameMsg.charAt(1) == 'R')
-					switchR(version);
+					switchR(scaleVersion);
 				else
 					defaultAuton();
 

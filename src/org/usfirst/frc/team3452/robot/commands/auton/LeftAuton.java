@@ -28,7 +28,7 @@ public class LeftAuton extends CommandGroup {
 	 * @param version
 	 * @see AutonSelector
 	 */
-	public LeftAuton(AO option, AV version) {
+	public LeftAuton(AO option, AV switchVersion, AV scaleVersion) {
 		addSequential(new EncoderReset());
 		addSequential(new GyroReset());
 
@@ -39,27 +39,27 @@ public class LeftAuton extends CommandGroup {
 			case SWITCH:
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
-					switchL(version);
+					switchL(switchVersion);
 
 				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
-					switchR(version);
+					switchR(switchVersion);
 				}
 
 				break;
 			case SCALE:
 				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-					scaleL(/* version */AV.FOREST_HILLS);
+					scaleL(scaleVersion);
 
 				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
-					scaleR(version);
+					scaleR(scaleVersion);
 				}
 				break;
 			case SWITCH_PRIORITY_NO_CROSS:
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
-					switchL(version);
+					switchL(switchVersion);
 				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-					scaleL(version);
+					scaleL(scaleVersion);
 				} else {
 					defaultAuton();
 				}
@@ -68,9 +68,9 @@ public class LeftAuton extends CommandGroup {
 			case SCALE_PRIORITY_NO_CROSS:
 
 				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-					scaleL(version);
+					scaleL(scaleVersion);
 				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
-					switchL(version);
+					switchL(switchVersion);
 				} else {
 					defaultAuton();
 				}
@@ -79,7 +79,7 @@ public class LeftAuton extends CommandGroup {
 			case SCALE_ONLY:
 
 				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
-					scaleL(version);
+					scaleL(scaleVersion);
 				} else {
 					defaultAuton();
 				}
@@ -88,7 +88,7 @@ public class LeftAuton extends CommandGroup {
 			case SWITCH_ONLY:
 
 				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
-					switchL(version);
+					switchL(switchVersion);
 				} else {
 					defaultAuton();
 				}
@@ -240,7 +240,7 @@ public class LeftAuton extends CommandGroup {
 			//Drive to scale
 			addSequential(new EncoderGyro(15.27, 15.27, .6, .6, .7, 0, .017));
 			//TURN CHANGED FINALS 3
-			addSequential(new EncoderFrom(1.5, -1.15, .6, .6, .6)); //turn to switch
+			addSequential(new EncoderFrom(1.5, -1.15, .6, .6, .6)); 
 
 			addSequential(new DriveTime(-.5, 0, .5));
 			addSequential(new DriveToStop(-.55)); //was .45
