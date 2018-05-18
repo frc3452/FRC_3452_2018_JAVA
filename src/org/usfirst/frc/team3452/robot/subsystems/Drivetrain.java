@@ -1,3 +1,4 @@
+
 package org.usfirst.frc.team3452.robot.subsystems;
 
 import java.util.ArrayList;
@@ -64,8 +65,8 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putNumber("L1", (double) L1.getSelectedSensorPosition(0) / 4096);
 		SmartDashboard.putNumber("R1", (double) -R1.getSelectedSensorPosition(0) / 4096);
 
-		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 4096);
-		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 4096);
+		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 1);
+		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 1);
 
 		SmartDashboard.putNumber("% Complete", p_pos);
 
@@ -79,6 +80,8 @@ public class Drivetrain extends Subsystem {
 
 		SmartDashboard.putNumber("Selector A", Robot.autonSelector.as_A.getValue());
 		SmartDashboard.putNumber("Selector B", Robot.autonSelector.as_B.getValue());
+
+		SmartDashboard.putNumber("UglyAnalog", Robot.autonSelector.uglyAnalog());
 	}
 
 	/**
@@ -88,9 +91,6 @@ public class Drivetrain extends Subsystem {
 	 * @since
 	 */
 	public Drivetrain() {
-		//TODO REMOVE
-		System.out.println("Initialize Drivetrain...");
-		
 		timer.stop();
 		timer.reset();
 		timer.start();
@@ -146,9 +146,14 @@ public class Drivetrain extends Subsystem {
 		//---All talons---\\
 
 		int id = talon.getDeviceID();
+		boolean lOrR;
 
-		talon.setInverted(
-				(id == Constants.Drivetrain.L1) ? Constants.Drivetrain.L_INVERT : Constants.Drivetrain.R_INVERT);
+		if (id >= Constants.Drivetrain.L1 && id <= Constants.Drivetrain.L4)
+			lOrR = true;
+		else
+			lOrR = false;
+
+		talon.setInverted((lOrR) ? Constants.Drivetrain.L_INVERT : Constants.Drivetrain.R_INVERT);
 
 		talon.configNominalOutputForward(0, 10);
 
@@ -175,9 +180,6 @@ public class Drivetrain extends Subsystem {
 				talon.config_kP(0, 0.425, 10);
 				talon.config_kI(0, 0.0000004, 10);
 				talon.config_kD(0, 4.25, 10);
-				
-				//TODO REMOVE
-				talon.config_kI(0, 10, 10);
 
 				//If right master
 			} else {
@@ -185,13 +187,9 @@ public class Drivetrain extends Subsystem {
 				talon.config_kP(0, 0.8, 10); //.8
 				talon.config_kI(0, 0.0000004, 10);
 				talon.config_kD(0, 4.25, 10);
-				
-				
-				//TODO REMOVE
-				talon.config_kI(0, 12, 10);
 			}
 
-		//If Follower
+			//If Follower
 		} else {
 			talon.follow((talon.getDeviceID() == Constants.Drivetrain.L1 ? L1 : R1));
 		}
@@ -297,7 +295,8 @@ public class Drivetrain extends Subsystem {
 	 * @since 4-22-2018
 	 */
 	private void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
-		System.out.println("Lengths\t\t" + mpL.length + "\t\t" + mpR.length);
+		if (mpL.length != mpR.length)
+			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + mpL.length + "\t\t" + mpR.length);
 
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
@@ -315,7 +314,7 @@ public class Drivetrain extends Subsystem {
 		R1.configMotionProfileTrajectoryPeriod(10, 10);
 
 		//generate and push each mp point
-		for (int i = 0; i < mpL.length; i++) {
+		for (int i = 0; i < ((mpL.length <= mpR.length) ? mpL.length : mpR.length); i++) {
 
 			leftPoint.position = mpL[i][0];
 			leftPoint.velocity = mpL[i][1];
