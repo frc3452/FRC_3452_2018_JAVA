@@ -174,16 +174,16 @@ public class Drivetrain extends Subsystem {
 			talon.setSelectedSensorPosition(0, 0, 10);
 			talon.setSensorPhase(true);
 
+			talon.config_kF(0, .2379, 10);
+			
 			//If left master
 			if (talon.getDeviceID() == Constants.Drivetrain.L1) {
-				talon.config_kF(0, 0, 10);
 				talon.config_kP(0, 0.425, 10);
 				talon.config_kI(0, 0.0000004, 10);
 				talon.config_kD(0, 4.25, 10);
 
 				//If right master
 			} else {
-				talon.config_kF(0, 0, 10);
 				talon.config_kP(0, 0.8, 10); //.8
 				talon.config_kI(0, 0.0000004, 10);
 				talon.config_kD(0, 4.25, 10);
@@ -227,10 +227,11 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
-	 * run processMotionProfileBuffer 5 times on each talon
+	 * run processMotionProfileBuffer 2 times on each talon
+	 * @author macco
 	 */
 	public void processMotionProfileBuffer() {
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 2; i++) {
 			Robot.drive.L1.processMotionProfileBuffer();
 			Robot.drive.R1.processMotionProfileBuffer();
 		}
@@ -265,6 +266,7 @@ public class Drivetrain extends Subsystem {
 	 * 
 	 * @author max
 	 * @param file
+	 * @see FILES
 	 * @since
 	 */
 	public void selectMotionProfile(FILES file) {
@@ -281,7 +283,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
-	 * Used to process and push motion profiles to drivetrain talons
+	 * Used to process and push motion profiles to drive train talons
 	 * 
 	 * @author max
 	 * 
@@ -309,9 +311,6 @@ public class Drivetrain extends Subsystem {
 
 		L1.clearMotionProfileTrajectories();
 		R1.clearMotionProfileTrajectories();
-
-		L1.configMotionProfileTrajectoryPeriod(10, 10);
-		R1.configMotionProfileTrajectoryPeriod(10, 10);
 
 		//generate and push each mp point
 		for (int i = 0; i < ((mpL.length <= mpR.length) ? mpL.length : mpR.length); i++) {

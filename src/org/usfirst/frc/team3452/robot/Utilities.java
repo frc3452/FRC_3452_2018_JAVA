@@ -9,6 +9,11 @@ import java.util.Date;
  */
 public class Utilities {
 
+	/**
+	 * enum for motion profiling to select which path will be run
+	 * @author max
+	 *
+	 */
 	public enum FILES {
 		Parse, MotionProfileTest;
 	}
