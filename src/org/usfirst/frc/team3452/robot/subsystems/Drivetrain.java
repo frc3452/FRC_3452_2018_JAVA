@@ -179,13 +179,13 @@ public class Drivetrain extends Subsystem {
 			//If left master
 			if (talon.getDeviceID() == Constants.Drivetrain.L1) {
 				talon.config_kP(0, 0.425, 10);
-				talon.config_kI(0, 0.0000004, 10);
+				talon.config_kI(0, 0, 10);
 				talon.config_kD(0, 4.25, 10);
 
 				//If right master
 			} else {
 				talon.config_kP(0, 0.8, 10); //.8
-				talon.config_kI(0, 0.0000004, 10);
+				talon.config_kI(0, 0, 10);
 				talon.config_kD(0, 4.25, 10);
 			}
 

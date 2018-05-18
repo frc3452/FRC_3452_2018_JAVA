@@ -1,23 +1,20 @@
 
 package org.usfirst.frc.team3452.robot;
 
+import org.usfirst.frc.team3452.robot.Constants.Intake;
 import org.usfirst.frc.team3452.robot.commands.drive.SpeedModifier;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
-import org.usfirst.frc.team3452.robot.commands.playback.PlaybackControl;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator.ESO;
-import org.usfirst.frc.team3452.robot.subsystems.Intake;
-import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class OI {
 	public static Joystick driverJoy = new Joystick(0);
@@ -48,15 +45,15 @@ public class OI {
 		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.SHOOT));
 
-		driverJoyY.whileHeld(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Record));
-		driverJoyRB.whenPressed(new CommandGroup() {
-			{
-				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
-//				addSequential(new RunMotionProfile(FILES.Parse));
-			}
-		});
+//		driverJoyY.whileHeld(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Record));
+//		driverJoyRB.whenPressed(new CommandGroup() {
+//			{
+////				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
+//				addSequential(new RunMotionProfile(FILES.MotionProfileTest));
+//			}
+//		});
 
-		//		driverJoyY.whileHeld(new Climb(1));
+//				driverJoyY.whileHeld(new Climb(1));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 		driverJoyBack.whenPressed(new OverrideSet(ESO.TOGGLE));
 

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
+import org.usfirst.frc.team3452.robot.Constants.Intake;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveToCube;
@@ -17,7 +18,6 @@ import org.usfirst.frc.team3452.robot.commands.pwm.IntakeWhileDrive;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
-import org.usfirst.frc.team3452.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 

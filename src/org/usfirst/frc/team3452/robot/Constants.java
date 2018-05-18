@@ -122,6 +122,21 @@ public class Constants {
 
 		public static final boolean INTAKE_L_INVERT = false;
 		public static final boolean INTAKE_R_INVERT = true;
+
+		/**
+		 * Intake speed constants
+		 * 
+		 * @author max
+		 *
+		 */
+		public class Speeds {
+			public static final double INTAKE = -.8;
+			public static final double SHOOT = .75;
+			public static final double SLOW = .3;
+			public static final double PLACE = .2;
+			public static final double SPIN = .35;
+		}
+
 	}
 
 	public class Lights {

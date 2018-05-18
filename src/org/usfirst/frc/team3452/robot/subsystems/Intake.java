@@ -43,18 +43,5 @@ public class Intake extends Subsystem {
 	public void initDefaultCommand() {
 	}
 
-	/**
-	 * Intake speed constants
-	 * 
-	 * @author max
-	 *
-	 */
-	public static class Speeds {
-		public static final double INTAKE = -.8;
-		public static final double SHOOT = .75;
-		public static final double SLOW = .3;
-		public static final double PLACE = .2;
-		public static final double SPIN = .35;
-	}
-
+	
 }
