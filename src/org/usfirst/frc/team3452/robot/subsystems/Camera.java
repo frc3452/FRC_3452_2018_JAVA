@@ -19,7 +19,6 @@ public class Camera extends Subsystem {
 	 * hardware initialization
 	 * 
 	 * @author max
-	 * @since
 	 */
 	public Camera() {
 		mCamera0 = CameraServer.getInstance().startAutomaticCapture(0);
@@ -38,7 +37,7 @@ public class Camera extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param cameraswitch
+     * @param cameraswitch int
 	 * @since
 	 */
 	public void camSwitch(int cameraswitch) {
@@ -57,8 +56,8 @@ public class Camera extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param camera
-	 * @param exposure
+     * @param camera int
+     * @param exposure int
 	 * @since
 	 */
 	public void camExposure(int camera, int exposure) {

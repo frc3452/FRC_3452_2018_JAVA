@@ -1,6 +1,10 @@
 
 package org.usfirst.frc.team3452.robot;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.usfirst.frc.team3452.robot.Constants.Intake;
 import org.usfirst.frc.team3452.robot.commands.drive.SpeedModifier;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
@@ -10,11 +14,6 @@ import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator.ESO;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
-
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 public class OI {
 	public static Joystick driverJoy = new Joystick(0);
@@ -26,7 +25,6 @@ public class OI {
 	private static Button driverJoyA, driverJoyB, driverJoyX, driverJoyY, driverJoyLB, driverJoyRB, driverJoyBack,
 			driverJoyStart, driverJoyLClick, driverJoyRClick;
 
-	//	@SuppressWarnings("unused")
 	private static DPad driverUp, driverDown, driverLeft, driverRight;
 
 	@SuppressWarnings("unused")
@@ -36,7 +34,7 @@ public class OI {
 	@SuppressWarnings("unused")
 	private static DPad opUp, opDown, opLeft, opRight;
 
-	public static void init() {
+	public OI() {
 		buttonInit();
 
 		// 				DRIVER JOY
@@ -138,7 +136,7 @@ public class OI {
 		}
 	}
 
-	public static enum CONTROLLER {
-		DRIVER, OPERATOR, BOTH;
+	public enum CONTROLLER {
+		DRIVER, OPERATOR, BOTH
 	}
 }

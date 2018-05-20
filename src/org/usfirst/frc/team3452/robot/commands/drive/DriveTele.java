@@ -1,11 +1,10 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
+import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
-
-import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveTele extends Command {
 

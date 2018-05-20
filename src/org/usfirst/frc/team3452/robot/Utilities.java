@@ -10,26 +10,25 @@ import java.util.Date;
 public class Utilities {
 
 	/**
-	 * enum for motion profiling to select which path will be run
-	 * @author max
+	 * toRound = 2.342, wanting to round to nearest .05 1/<b>20</b> is .05
+	 * roundToFraction(2.342,20)
 	 *
+	 * @author max
+	 * @param value
+	 * @param denominator double
+	 * @return double
 	 */
-	public enum FILES {
-		Parse, MotionProfileTest;
+	public static double roundToFraction(double value, double denominator) {
+		return Math.round(value * denominator) / denominator;
 	}
 
 	/**
-	 * toRound = 2.342, wanting to round to nearest .05 1/<b>20</b> is .05
-	 * roundToFraction(2.342,20)
-	 * 
+	 * enum for motion profiling to select which path will be run
+	 *
 	 * @author max
-	 * @param value
-	 * @param demoninator
-	 * @return double
-	 * @since
 	 */
-	public static double roundToFraction(double value, double demoninator) {
-		return Math.round(value * demoninator) / demoninator;
+	public enum FILES {
+		Parse, MotionProfileTest
 	}
 
 	/**

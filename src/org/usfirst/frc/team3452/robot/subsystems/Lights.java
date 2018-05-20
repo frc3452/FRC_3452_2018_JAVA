@@ -1,28 +1,25 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import org.usfirst.frc.team3452.robot.Constants;
-import org.usfirst.frc.team3452.robot.Robot;
-
 import com.ctre.phoenix.CANifier;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.Robot;
 
 public class Lights extends Subsystem {
 	private static CANifier canifier;
 
 	public int m_hue = 225;
-	public double p_h = 0, p_s = 0, p_v = 0;
 	private double pulseBrightness = 0;
 	private boolean pulseDirection = true;
 
-	public Timer lightTimer = new Timer();
+    private Timer lightTimer = new Timer();
 
-	public NetworkTableEntry centerX;
-	public NetworkTableEntry centerY;
+    private NetworkTableEntry centerX;
+    private NetworkTableEntry centerY;
 
 	private double tempArray[] = new double[10];
 
@@ -30,7 +27,6 @@ public class Lights extends Subsystem {
 	 * hardware initialization
 	 * 
 	 * @author max
-	 * @since
 	 */
 	public Lights() {
 		for (int i = 0; i < 10; i++)
@@ -52,9 +48,8 @@ public class Lights extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param cube
+     * @param cube int
 	 * @return double centerX reported from GRIP
-	 * @since
 	 */
 	public double centerX(int cube) {
 		if (visionLength() > 0)
@@ -66,18 +61,16 @@ public class Lights extends Subsystem {
 	/**
 	 * @author max
 	 * @return int vision array length
-	 * @since
 	 */
-	public int visionLength() {
+    private int visionLength() {
 		return centerX.getDoubleArray(tempArray).length;
 	}
 
 	/**
 	 * @author max
-	 * @param hDegrees
-	 * @param S
-	 * @param V
-	 * @since
+     * @param hDegrees double
+     * @param S double
+     * @param V double
 	 */
 	public void hsv(double hDegrees, double S, double V) {
 		double R, G, B;
@@ -158,21 +151,16 @@ public class Lights extends Subsystem {
 				break;
 			}
 		}
-		p_h = H;
-		p_s = S;
-		p_v = V;
-
 		rgb((float) R, (float) G, (float) B);
 	}
 
 	/**
 	 * @author max
-	 * @param r
-	 * @param g
-	 * @param b
-	 * @since
+     * @param r float
+     * @param g float
+     * @param b float
 	 */
-	public void rgb(float r, float g, float b) {
+    private void rgb(float r, float g, float b) {
 		try {
 			canifier.setLEDOutput(r, CANifier.LEDChannel.LEDChannelA);
 			canifier.setLEDOutput(g, CANifier.LEDChannel.LEDChannelB);
@@ -183,12 +171,11 @@ public class Lights extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param h
-	 * @param s
-	 * @param low
-	 * @param high
-	 * @param pulseIntensity
-	 * @since
+     * @param h int
+     * @param s double
+     * @param low double
+     * @param high double
+     * @param pulseIntensity double
 	 */
 	public void pulse(int h, double s, double low, double high, double pulseIntensity) {
 		if (pulseIntensity > high / 15)
@@ -200,12 +187,9 @@ public class Lights extends Subsystem {
 			pulseBrightness -= pulseIntensity;
 		}
 
-		if (pulseBrightness >= high) {
-			pulseDirection = false;
-		}
-		if (pulseBrightness <= low) {
-			pulseDirection = true;
-		}
+        if (pulseBrightness >= high) pulseDirection = false;
+
+        if (pulseBrightness <= low) pulseDirection = true;
 
 		hsv(h, s, pulseBrightness);
 
@@ -215,7 +199,6 @@ public class Lights extends Subsystem {
 	/**
 	 * @author max
 	 * @return game specific message or "NOT"
-	 * @since
 	 */
 	public String gsm() {
 		String f;

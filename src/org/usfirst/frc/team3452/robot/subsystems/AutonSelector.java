@@ -1,10 +1,9 @@
 
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import org.usfirst.frc.team3452.robot.Constants;
-
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import org.usfirst.frc.team3452.robot.Constants;
 
 /**
  * <h1>AutonSelector Subsystem</h1> Handles autonomous selector case statements
@@ -34,7 +33,6 @@ public class AutonSelector extends Subsystem {
 	 * hardware initialization
 	 * 
 	 * @author max
-	 * @since
 	 */
 	public AutonSelector() {
 		as_A = new AnalogInput(Constants.AutonSelector.AUTO_SELECTOR_1);
@@ -52,7 +50,6 @@ public class AutonSelector extends Subsystem {
 
 	/**
 	 * @author max
-	 * @since
 	 */
 	public void printSelected() {
 		m_asA = as_A.getValue();
@@ -61,10 +58,10 @@ public class AutonSelector extends Subsystem {
 		//		System.out.println(as_A.getValue() + "\t\t\t" + as_B.getValue());
 
 		// If overriden, print overide
-		if (controllerOverride && (overrideString != overrideStringPrevious))
-			System.out.println(overrideString);
+        if (controllerOverride && (!overrideString.equals(overrideStringPrevious)))
+            System.out.println(overrideString);
 
-		if (((m_asA + 8 < m_prev_as1 || m_prev_as1 < m_asA - 8)
+        if (((m_asA + 8 < m_prev_as1 || m_prev_as1 < m_asA - 8)
 				|| (m_asB + 8 < m_prev_as2 || m_prev_as2 < m_asB - 8))) {
 
 			if ((uglyAnalog() >= 1) && (uglyAnalog() <= 10)) {
@@ -90,8 +87,7 @@ public class AutonSelector extends Subsystem {
 
 	/**
 	 * @author max
-	 * @return int <b>1 - 40</b> or 3452 as error
-	 * @since
+     * @return int <b>1 - 100</b> or 3452 as error
 	 */
 	public int uglyAnalog() {
 		if (m_asA < Constants.AutonSelector.AUTO_1 + Constants.AutonSelector.AUTO_V
@@ -181,8 +177,8 @@ public class AutonSelector extends Subsystem {
 	 * @author max
 	 *
 	 */
-	public static enum AV {
-		FOREST_HILLS, CURRENT;
+    public enum AV {
+        FOREST_HILLS, CURRENT
 	}
 
 	/**
@@ -191,8 +187,8 @@ public class AutonSelector extends Subsystem {
 	 * @author max
 	 *
 	 */
-	public static enum AO {
-		SWITCH, SCALE, SWITCH_PRIORITY_NO_CROSS, SCALE_PRIORITY_NO_CROSS, SWITCH_ONLY, SCALE_ONLY, DEFAULT;
+    public enum AO {
+        SWITCH, SCALE, SWITCH_PRIORITY_NO_CROSS, SCALE_PRIORITY_NO_CROSS, SWITCH_ONLY, SCALE_ONLY, DEFAULT
 	}
 
 }

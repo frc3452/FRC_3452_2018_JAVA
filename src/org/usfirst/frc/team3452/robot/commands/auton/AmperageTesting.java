@@ -1,13 +1,12 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
-
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
 
 public class AmperageTesting extends Command {
 

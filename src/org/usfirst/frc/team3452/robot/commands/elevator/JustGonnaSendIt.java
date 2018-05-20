@@ -1,8 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
-import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
-
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
 
 public class JustGonnaSendIt extends CommandGroup {
 

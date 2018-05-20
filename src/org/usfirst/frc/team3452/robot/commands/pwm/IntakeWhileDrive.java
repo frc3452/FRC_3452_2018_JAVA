@@ -1,10 +1,9 @@
 package org.usfirst.frc.team3452.robot.commands.pwm;
 
-import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Intake;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Intake;
 
 public class IntakeWhileDrive extends Command {
 

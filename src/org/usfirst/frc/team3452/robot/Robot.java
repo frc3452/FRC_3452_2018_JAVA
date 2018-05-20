@@ -1,30 +1,21 @@
 package org.usfirst.frc.team3452.robot;
 
-import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
-import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
-import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
-import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
-import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
-import org.usfirst.frc.team3452.robot.subsystems.Camera;
-import org.usfirst.frc.team3452.robot.subsystems.Climber;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
-import org.usfirst.frc.team3452.robot.subsystems.Elevator;
-import org.usfirst.frc.team3452.robot.subsystems.Intake;
-import org.usfirst.frc.team3452.robot.subsystems.Lights;
-import org.usfirst.frc.team3452.robot.subsystems.Playback;
-import org.usfirst.frc.team3452.robot.subsystems.Playback.STATE;
-import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
-
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
+import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
+import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
+import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
+import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
+import org.usfirst.frc.team3452.robot.subsystems.*;
+import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
+import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
+import org.usfirst.frc.team3452.robot.subsystems.Playback.STATE;
+import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
 
 public class Robot extends TimedRobot {
 	public static final Drivetrain drive = new Drivetrain();
@@ -35,19 +26,19 @@ public class Robot extends TimedRobot {
 	public static final Camera camera = new Camera();
 	public static final Lights lights = new Lights();
 	public static final Playback playback = new Playback();
-	public static OI _oi;
+	private static OI _oi;
 
 	//auto selector init
-	Command autonomousCommand = null;
-	Command autoCommand[] = new Command[41];
-	Command defaultCommand = null;
+	private Command autonomousCommand = null;
+	private Command autoCommand[] = new Command[41];
+	private Command defaultCommand = null;
 
 	//flags
-	boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false, lightModeComp = true;
+	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false, lightModeComp = true;
 
 	//LOGGING CONTROL
-	boolean logging = false, logToUsb = true;
-	String loggingLocation = "Logging/Offseason";
+	private boolean logging = false, logToUsb = true;
+	private String loggingLocation = "Logging/Offseason";
 
 	@Override
 	public void robotInit() {
@@ -56,7 +47,6 @@ public class Robot extends TimedRobot {
 		}
 
 		_oi = new OI();
-		OI.init();
 
 		defaultCommand = new DefaultAutonomous();
 
@@ -98,7 +88,7 @@ public class Robot extends TimedRobot {
 		Robot.drive.loggerUpdate();
 
 		//Light mode using auto selectors (Position J-6)
-		lightModeComp = Robot.autonSelector.uglyAnalog() == 96 ? false : true;
+		lightModeComp = Robot.autonSelector.uglyAnalog() != 96;
 
 		//LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
 		//LOOPED HERE
@@ -177,7 +167,7 @@ public class Robot extends TimedRobot {
 				Robot.autonSelector.confirmOverride = true;
 			}
 
-		} while ((Robot.autonSelector.gameMsg == "NOT" && Robot.drive.timer.get() < 3)
+		} while ((Robot.autonSelector.gameMsg.equals("NOT") && Robot.drive.timer.get() < 3)
 				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
 
 		//SET COLOR ACCORDING TO ALLIANCE
@@ -239,7 +229,7 @@ public class Robot extends TimedRobot {
 	public void testPeriodic() {
 	}
 
-	public void handleLEDs() {
+	private void handleLEDs() {
 		if (OI.driverJoy.getRawButton(2) && OI.driverJoy.getRawButton(7) && OI.driverJoy.getRawButton(8))
 			readyForMatch = true;
 
@@ -290,7 +280,7 @@ public class Robot extends TimedRobot {
 
 	}
 
-	public void controllerChooser() {
+	private void controllerChooser() {
 		// if LB & RB
 		if (OI.driverJoy.getRawButton(5) && OI.driverJoy.getRawButton(6)) {
 
@@ -364,11 +354,11 @@ public class Robot extends TimedRobot {
 
 	}
 
-	public void autonChooser() {
+	private void autonChooser() {
 		controllerChooser();
 
 		// if not overriden
-		if (Robot.autonSelector.controllerOverride == false) {
+		if (!Robot.autonSelector.controllerOverride) {
 
 			//If selector feedback nominal
 			if (Robot.autonSelector.uglyAnalog() <= 40 && Robot.autonSelector.uglyAnalog() >= 1) {
@@ -379,14 +369,14 @@ public class Robot extends TimedRobot {
 		}
 	}
 
-	public void startLog() {
+	private void startLog() {
 		if (!safeToLog && logging) {
 			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
 			safeToLog = true;
 		}
 	}
 
-	public void endLog() {
+	private void endLog() {
 		if (safeToLog && logging) {
 			safeToLog = false;
 			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.FINISH);

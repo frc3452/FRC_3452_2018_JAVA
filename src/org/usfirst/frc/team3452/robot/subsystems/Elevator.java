@@ -1,18 +1,11 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import com.ctre.phoenix.ParamEnum;
+import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
-
-import com.ctre.phoenix.ParamEnum;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
-import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  * <b>Elevator subsystem</b> Handles elevator open + closed loop and speed
@@ -153,12 +146,8 @@ public class Elevator extends Subsystem {
 	 * @since
 	 */
 	public boolean isDone(double multiplier) {
-		if ((Elev_1.getSelectedSensorPosition(0) < (m_pos + (102 * multiplier))
-				&& Elev_1.getSelectedSensorPosition(0) > (m_pos - (102 * multiplier)))) {
-			return true;
-		} else {
-			return false;
-		}
+		return (Elev_1.getSelectedSensorPosition(0) < (m_pos + (102 * multiplier))
+				&& Elev_1.getSelectedSensorPosition(0) > (m_pos - (102 * multiplier)));
 	}
 
 	/**
@@ -184,7 +173,7 @@ public class Elevator extends Subsystem {
 	 * @author max
 	 *
 	 */
-	public static enum ESO {
-		TOGGLE, ON, OFF;
+	public enum ESO {
+		TOGGLE, ON, OFF
 	}
 }

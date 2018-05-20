@@ -1,9 +1,8 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import org.usfirst.frc.team3452.robot.Constants;
-
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import org.usfirst.frc.team3452.robot.Constants;
 
 public class Intake extends Subsystem {
 

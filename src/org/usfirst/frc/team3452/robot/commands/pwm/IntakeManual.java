@@ -1,11 +1,10 @@
 package org.usfirst.frc.team3452.robot.commands.pwm;
 
+import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
-
-import edu.wpi.first.wpilibj.command.Command;
 
 public class IntakeManual extends Command {
 	private double m_speed;

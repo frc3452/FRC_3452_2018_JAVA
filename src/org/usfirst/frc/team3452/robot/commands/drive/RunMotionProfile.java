@@ -1,13 +1,11 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
-import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.Utilities.FILES;
-
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.command.Command;
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.Utilities.FILES;
 
 /**
  * @author max

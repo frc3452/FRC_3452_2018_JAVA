@@ -1,18 +1,17 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.command.Subsystem;
+import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.Utilities;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
-
-import org.usfirst.frc.team3452.robot.Constants;
-import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.Utilities;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  * <b>Playback subsystem</b> Also used for file writing, logging, etc.
@@ -21,21 +20,19 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * @since 4-18-2018
  *
  */
-public class Playback extends Subsystem {
-
-	private File f;
-	private BufferedWriter bw;
+public class
+Playback extends Subsystem {
+    /**
+     * variable for storing left values for motion profile
+     */
+    ArrayList<ArrayList<Double>> mpL = new ArrayList<>();
 	private FileWriter fw;
 
 	private FileReader fr;
 	private Scanner scnr;
-
-	/**
-	 * variable for storing left values for motion profile
-	 */
-	public ArrayList<ArrayList<Double>> mpL = new ArrayList<ArrayList<Double>>();
-	public ArrayList<ArrayList<Double>> mpR = new ArrayList<ArrayList<Double>>();
-	public int mpDur = 0;
+    ArrayList<ArrayList<Double>> mpR = new ArrayList<>();
+    int mpDur = 0;
+    private BufferedWriter bw;
 
 	/**
 	 * Time string converted to numbers for parsing
@@ -49,7 +46,6 @@ public class Playback extends Subsystem {
 	 * hardware initialization
 	 * 
 	 * @author max
-	 * @since
 	 */
 	public Playback() {
 	}
@@ -58,7 +54,6 @@ public class Playback extends Subsystem {
 	 * parse file and convert to array
 	 * 
 	 * @author max
-	 * @since
 	 */
 	private void parseFile() {
 		String st;
@@ -71,7 +66,7 @@ public class Playback extends Subsystem {
 
 			//loop through each line
 			while (scnr.hasNextLine()) {
-				ArrayList<Double> temp = new ArrayList<Double>();
+                ArrayList<Double> temp = new ArrayList<>();
 				
 				st = scnr.nextLine();
 
@@ -81,7 +76,7 @@ public class Playback extends Subsystem {
 				temp.add(Double.parseDouble(ar[1]));
 				mpL.add(temp);
 
-				temp = new ArrayList<Double>();
+                temp = new ArrayList<>();
 				
 				temp.add(Double.parseDouble(ar[2]));
 				temp.add(Double.parseDouble(ar[3]));
@@ -97,7 +92,6 @@ public class Playback extends Subsystem {
 	 * print array
 	 * 
 	 * @author max
-	 * @since
 	 */
 	@SuppressWarnings("unused")
 	private void printValues() {
@@ -116,11 +110,10 @@ public class Playback extends Subsystem {
 	 * write time + L and R drivetrain speeds to file
 	 * 
 	 * @author max
-	 * @param boolean
+     * @param isStartup
 	 *            startup
-	 * @since
-	 */
-	private void writeToProfile(boolean startup) {
+     */
+    private void writeToProfile(boolean isStartup) {
 		try {
 			//write to the speed of the motion profile
 			String timeString = String.format("%8s", Utilities.roundToFraction(Robot.drive.timer.get(),
@@ -131,26 +124,25 @@ public class Playback extends Subsystem {
 
 			//ONLY PRINT EVERY ROUNDING
 			if (n_timeString != p_timeString) {
-				if (!startup) {
-					double leftPos = Robot.drive.L1.getSelectedSensorPosition(0);
-					double leftSpeed = Robot.drive.L1.getSelectedSensorVelocity(0);
+                if (!isStartup) {
+                    double leftPos = Robot.drive.L1.getSelectedSensorPosition(0);
+                    double leftSpeed = Robot.drive.L1.getSelectedSensorVelocity(0);
 
-					double rightPos = Robot.drive.R1.getSelectedSensorPosition(0);
-					double rightSpeed = Robot.drive.R1.getSelectedSensorVelocity(0);
+                    double rightPos = Robot.drive.R1.getSelectedSensorPosition(0);
+                    double rightSpeed = Robot.drive.R1.getSelectedSensorVelocity(0);
 
-					bw.write(String.valueOf(leftPos + ","));
-					bw.write(String.valueOf(leftSpeed + ","));
-					bw.write(String.valueOf(rightPos + ","));
-					bw.write(String.valueOf(rightSpeed + ","));
-					bw.write("\r\n");
+                    bw.write(String.valueOf(leftPos + ","));
+                    bw.write(String.valueOf(leftSpeed + ","));
+                    bw.write(String.valueOf(rightPos + ","));
+                    bw.write(String.valueOf(rightSpeed + ","));
+                    bw.write("\r\n");
 
-				} else {
-					bw.write("leftPos,leftSpeed,rightPos,rightSpeed,");
-					bw.write("\r\n");
-					bw.write(String.valueOf(Constants.Playback.RECORDING_MOTION_PROFILE_MS) + ",0,0,0,");
-					bw.write("\r\n");
-				}
-			} else {
+                } else {
+                    bw.write("leftPos,leftSpeed,rightPos,rightSpeed,");
+                    bw.write("\r\n");
+                    bw.write(String.valueOf(Constants.Playback.RECORDING_MOTION_PROFILE_MS) + ",0,0,0,");
+                    bw.write("\r\n");
+                }
 			}
 
 			//Prevent duplicates
@@ -166,8 +158,7 @@ public class Playback extends Subsystem {
 	 * logging system
 	 * 
 	 * @author max
-	 * @param startup
-	 * @since
+     * @param startup boolean
 	 */
 	@SuppressWarnings("deprecation")
 	private void writeToLog(boolean startup) {
@@ -241,11 +232,12 @@ public class Playback extends Subsystem {
 
 					bw.write("\r\n");
 
-				} else {
-					//PREVENT DUPLICATE PRINTS
 				}
+
 				p_timeString = n_timeString;
+
 			}
+
 
 		} catch (Exception e) {
 			if (!hasPrintedLogFailed) {
@@ -257,17 +249,16 @@ public class Playback extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param fileName
-	 * @param readwrite
-	 * @param usb
-	 * @since
+     * @param fileName String
+     * @param readwrite fileState
+     * @param usb boolean
 	 */
 	private void createFile(String fileName, String folder, fileState readwrite, boolean usb) {
 		try {
 			switch (readwrite) {
 			case READ:
 				//SET UP FILE READING
-				f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
+                File f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
 
 				fr = new FileReader(f);
 				scnr = new Scanner(fr);
@@ -298,8 +289,7 @@ public class Playback extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param readwrite
-	 * @since
+     * @param readwrite fileState
 	 */
 	private void closeFile(fileState readwrite) {
 		try {
@@ -332,7 +322,6 @@ public class Playback extends Subsystem {
 	 * @param state
 	 * @see TASK
 	 * @see STATE
-	 * @since
 	 */
 	public void control(String name, String folder, boolean usb, TASK task, STATE state) {
 		switch (state) {
@@ -360,8 +349,8 @@ public class Playback extends Subsystem {
 				Robot.drive.timer.reset();
 				Robot.drive.timer.start();
 
-				System.out.println("Opening Log: " + loggingName(name, true) + ".csv");
-				createFile(loggingName(name, false), folder, fileState.WRITE, usb);
+                System.out.println("Opening Log: " + loggingName(true) + ".csv");
+                createFile(loggingName(false), folder, fileState.WRITE, usb);
 				writeToLog(true);
 
 				break;
@@ -393,18 +382,17 @@ public class Playback extends Subsystem {
 				closeFile(fileState.READ);
 				break;
 			case Log:
-				System.out.println("Closing " + task + ": " + loggingName("", false) + ".csv");
+                System.out.println("Closing " + task + ": " + loggingName(false) + ".csv");
 				closeFile(fileState.WRITE);
 				break;
 			}
 			break;
-		}
-	}
+        }
+    }
 
-	public String loggingName(String name, boolean returnCurrent) {
+    private String loggingName(boolean returnCurrent) {
 		if (returnCurrent) {
-			String retval = "";
-			retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Utilities.dateTime(true);
+            String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Utilities.dateTime(true);
 			prevDateTimeString = retval;
 			return retval;
 		} else {
@@ -419,8 +407,8 @@ public class Playback extends Subsystem {
 	 * 
 	 */
 	public enum fileState {
-		READ, WRITE;
-	}
+        READ, WRITE
+    }
 
 	/**
 	 * startup, runtime, finish
@@ -428,8 +416,8 @@ public class Playback extends Subsystem {
 	 * @author max
 	 */
 	public enum STATE {
-		STARTUP, RUNTIME, FINISH;
-	}
+        STARTUP, RUNTIME, FINISH
+    }
 
 	/**
 	 * record, log, parse, play
@@ -437,8 +425,8 @@ public class Playback extends Subsystem {
 	 * @author max
 	 */
 	public enum TASK {
-		Record, Log, Parse;
-	}
+        Record, Log, Parse
+    }
 
 	@Override
 	public void initDefaultCommand() {

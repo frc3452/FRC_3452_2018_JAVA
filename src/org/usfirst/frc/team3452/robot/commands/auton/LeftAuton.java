@@ -1,15 +1,9 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import org.usfirst.frc.team3452.robot.Constants.Intake;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
-import org.usfirst.frc.team3452.robot.commands.drive.DriveToCube;
-import org.usfirst.frc.team3452.robot.commands.drive.DriveToStop;
-import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
-import org.usfirst.frc.team3452.robot.commands.drive.EncoderGyro;
-import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
-import org.usfirst.frc.team3452.robot.commands.drive.GyroPos;
-import org.usfirst.frc.team3452.robot.commands.drive.GyroReset;
+import org.usfirst.frc.team3452.robot.commands.drive.*;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
@@ -19,13 +13,12 @@ import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
-
 public class LeftAuton extends CommandGroup {
 
 	/**
-	 * @param option
-	 * @param version
+     * @param option AO
+     * @param switchVersion AV
+     * @param scaleVersion AV
 	 * @see AutonSelector
 	 */
 	public LeftAuton(AO option, AV switchVersion, AV scaleVersion) {
@@ -33,7 +26,7 @@ public class LeftAuton extends CommandGroup {
 		addSequential(new GyroReset());
 
 		//IF DATA FOUND
-		if (Robot.autonSelector.gameMsg != "NOT") {
+        if (!Robot.autonSelector.gameMsg.equals("NOT")) {
 
 			switch (option) {
 			case SWITCH:

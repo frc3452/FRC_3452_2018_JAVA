@@ -1,9 +1,8 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
-
-import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class EncoderReset extends InstantCommand {
 

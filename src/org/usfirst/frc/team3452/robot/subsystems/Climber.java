@@ -1,9 +1,8 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import org.usfirst.frc.team3452.robot.Constants;
-
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import org.usfirst.frc.team3452.robot.Constants;
 
 /**
  * <h1>Climber subsystem</h1>
@@ -20,8 +19,7 @@ public class Climber extends Subsystem {
 	 * one direction control of climber
 	 * 
 	 * @author max
-	 * @param speed 
-	 * @since
+     * @param speed double
 	 */
 	public void control(double speed) {
 		climb1.set(Math.abs(speed));
@@ -31,7 +29,6 @@ public class Climber extends Subsystem {
 	 * hardware initialization
 	 * 
 	 * @author max
-	 * @since
 	 */
 	public Climber() {
 		climb1 = new Spark(Constants.Climber.CLIMBER_1);

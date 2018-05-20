@@ -1,8 +1,8 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
-import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.command.Command;
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 
 public class DriveTime extends Command {
 	private double m_speed, m_rotate, m_time;

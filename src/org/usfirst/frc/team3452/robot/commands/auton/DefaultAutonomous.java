@@ -1,9 +1,8 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
-
-import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class DefaultAutonomous extends CommandGroup {
 

@@ -16,7 +16,7 @@ public class DPad extends Button {
 	 *
 	 * @param stick
 	 *            - the stick with the axis to use as a button
-	 * @param angle
+	 * @param povAngle
 	 *            - POV stick angle to treat as a button press (e.g. 0,45,90,135
 	 *            etc...)
 	 **/

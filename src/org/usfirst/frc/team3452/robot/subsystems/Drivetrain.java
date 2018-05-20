@@ -1,14 +1,6 @@
 
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import java.util.ArrayList;
-
-import org.usfirst.frc.team3452.robot.Constants;
-import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.Utilities.FILES;
-import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
-import org.usfirst.frc.team3452.robot.motionprofiles.MotionProfileTest;
-
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -17,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
@@ -25,6 +16,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.Utilities.FILES;
+import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
+import org.usfirst.frc.team3452.robot.motionprofiles.MotionProfileTest;
+
+import java.util.ArrayList;
 
 /**
  * <h1>Drivetrain subsystem</h1> Handles drive train, smartdashboard updating,
@@ -48,7 +46,8 @@ public class Drivetrain extends Subsystem {
 
 	// variable init
 	public double m_modify = 1, m_elev_modify = 1;
-	public double l_pos = 0, r_pos = 0, p_pos;
+	public double p_pos;
+	private double l_pos = 0, r_pos = 0;
 
 	//init timer
 	public Timer timer = new Timer();
@@ -57,7 +56,6 @@ public class Drivetrain extends Subsystem {
 	 * Smartdashboard logging
 	 * 
 	 * @author max
-	 * @since
 	 */
 	public void loggerUpdate() {
 		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
@@ -88,7 +86,6 @@ public class Drivetrain extends Subsystem {
 	 * hardware initialization
 	 * 
 	 * @author max
-	 * @since
 	 */
 	public Drivetrain() {
 		timer.stop();
@@ -142,16 +139,13 @@ public class Drivetrain extends Subsystem {
 	/**
 	 * talon init
 	 */
-	public void talonInit(WPI_TalonSRX talon) {
+	private void talonInit(WPI_TalonSRX talon) {
 		//---All talons---\\
 
 		int id = talon.getDeviceID();
 		boolean lOrR;
 
-		if (id >= Constants.Drivetrain.L1 && id <= Constants.Drivetrain.L4)
-			lOrR = true;
-		else
-			lOrR = false;
+		lOrR = id >= Constants.Drivetrain.L1 && id <= Constants.Drivetrain.L4;
 
 		talon.setInverted((lOrR) ? Constants.Drivetrain.L_INVERT : Constants.Drivetrain.R_INVERT);
 
@@ -197,8 +191,7 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param joy
-	 * @since
+	 * @param joy Joystick
 	 */
 	public void arcade(Joystick joy) {
 		//		Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify), joy.getRawAxis(4) * m_modify);
@@ -208,9 +201,8 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param move
-	 * @param rotate
-	 * @since
+	 * @param move double
+	 * @param rotate double
 	 */
 	public void arcade(double move, double rotate) {
 		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .2));
@@ -218,9 +210,8 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param left
-	 * @param right
-	 * @since
+	 * @param left double
+	 * @param right double
 	 */
 	public void tank(double left, double right) {
 		robotDrive.tankDrive(left * m_elev_modify, right * m_elev_modify);
@@ -239,8 +230,7 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param joy
-	 * @since
+	 * @param joy Joystick
 	 */
 	public void tank(Joystick joy) {
 		robotDrive.tankDrive(-joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
@@ -248,7 +238,7 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param mode
+	 * @param mode NeutralMode
 	 */
 	public void brake(NeutralMode mode) {
 		L1.setNeutralMode(mode);
@@ -265,9 +255,8 @@ public class Drivetrain extends Subsystem {
 	 * Used to select which motion profile to send to talon
 	 * 
 	 * @author max
-	 * @param file
+	 * @param file FILES
 	 * @see FILES
-	 * @since
 	 */
 	public void selectMotionProfile(FILES file) {
 		switch (file) {
@@ -371,8 +360,8 @@ public class Drivetrain extends Subsystem {
 	 * 
 	 * @since 4-22-2018
 	 */
-	public void motionProfileToTalons(ArrayList<ArrayList<Double>> mpL, ArrayList<ArrayList<Double>> mpR,
-			Integer mpDur) {
+	private void motionProfileToTalons(ArrayList<ArrayList<Double>> mpL, ArrayList<ArrayList<Double>> mpR,
+									   Integer mpDur) {
 		System.out.println("Lengths\t\t" + mpL.size() + "\t\t" + mpR.size());
 
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
@@ -439,9 +428,8 @@ public class Drivetrain extends Subsystem {
 	 * Validate duration
 	 * 
 	 * @author max
-	 * @param durationMs
+	 * @param durationMs int
 	 * @return TrajectoryDuration
-	 * @since
 	 */
 	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {
 		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
@@ -468,7 +456,6 @@ public class Drivetrain extends Subsystem {
 	 *            rotations per second (top speed)
 	 * @param rightspeed
 	 *            rotations per second (top speed)
-	 * @since
 	 */
 	public void motionMagic(double leftpos, double rightpos, double leftaccel, double rightaccel, double leftspeed,
 			double rightspeed) {
@@ -503,7 +490,6 @@ public class Drivetrain extends Subsystem {
 	 *            speed (percentage)
 	 * @param rightspeed
 	 *            speed (percentage)
-	 * @since
 	 * @deprecated
 	 */
 	@Deprecated
@@ -525,8 +511,8 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param value
-	 * @return
+	 * @param value double
+	 * @return isUnder boolean
 	 * @since boolean
 	 */
 	public boolean encoderSpeedIsUnder(double value) {
@@ -534,10 +520,7 @@ public class Drivetrain extends Subsystem {
 		double l = Math.abs(L1.getSelectedSensorVelocity(0));
 		double r = Math.abs(R1.getSelectedSensorVelocity(0));
 
-		if (l < value && r < value)
-			return true;
-		else
-			return false;
+		return l < value && r < value;
 	}
 
 	/**
@@ -545,7 +528,6 @@ public class Drivetrain extends Subsystem {
 	 * PercentOutput. Percentage trackers to default
 	 * 
 	 * @author max
-	 * @since
 	 */
 	public void encoderDone() {
 		R1.configPeakOutputForward(1, 0);
@@ -567,41 +549,32 @@ public class Drivetrain extends Subsystem {
 	 * If L and R are within 102*multiplier of target positions, return true
 	 * 
 	 * @author max
-	 * @param multiplier
+	 * @param multiplier double
 	 * @return boolean
-	 * @since
 	 */
 	public boolean encoderIsDone(double multiplier) {
-		if ((L1.getSelectedSensorPosition(0) < (l_pos + (102 * multiplier))
+		return (L1.getSelectedSensorPosition(0) < (l_pos + (102 * multiplier))
 				&& L1.getSelectedSensorPosition(0) > (l_pos - (102 * multiplier)))
 				&& R1.getSelectedSensorPosition(0) < (r_pos + (102 * multiplier))
-				&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier)))
-			return true;
-		else
-			return false;
+				&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier));
 	}
 
 	/**
 	 * If L or R are within 102*multiplier of target positions, return true
 	 * 
 	 * @author max
-	 * @param multiplier
-	 * @return
-	 * @since
+	 * @param multiplier double
+	 * @return boolean
 	 */
 	public boolean encoderIsDoneEither(double multiplier) {
-		if (((L1.getSelectedSensorPosition(0) < (l_pos + (102 * multiplier))
+		return ((L1.getSelectedSensorPosition(0) < (l_pos + (102 * multiplier))
 				&& L1.getSelectedSensorPosition(0) > (l_pos - (102 * multiplier))))
 				|| (R1.getSelectedSensorPosition(0) < (r_pos + (102 * multiplier))
-						&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier))))
-			return true;
-		else
-			return false;
+				&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier)));
 	}
 
 	/**
 	 * @author max
-	 * @since
 	 */
 	public void encoderReset() {
 		L1.setSelectedSensorPosition(0, 0, 10);

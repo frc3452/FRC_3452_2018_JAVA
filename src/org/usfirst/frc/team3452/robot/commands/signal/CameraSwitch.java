@@ -1,9 +1,8 @@
 package org.usfirst.frc.team3452.robot.commands.signal;
 
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
-
-import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class CameraSwitch extends InstantCommand {
 

@@ -1,13 +1,8 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
-import org.usfirst.frc.team3452.robot.commands.drive.DriveToCube;
-import org.usfirst.frc.team3452.robot.commands.drive.DriveToStop;
-import org.usfirst.frc.team3452.robot.commands.drive.EncoderDrive;
-import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
-import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
-import org.usfirst.frc.team3452.robot.commands.drive.GyroReset;
+import org.usfirst.frc.team3452.robot.commands.drive.*;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
@@ -15,13 +10,11 @@ import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
-
 public class MiddleAuton extends CommandGroup {
 
 	/**
-	 * @param option
-	 * @param switchVersion
+	 * @param option AO
+	 * @param switchVersion AV
 	 * @see AutonSelector
 	 */
 	public MiddleAuton(AO option, AV switchVersion) {
@@ -29,7 +22,7 @@ public class MiddleAuton extends CommandGroup {
 		addSequential(new GyroReset());
 
 		//IF DATA FOUND
-		if (Robot.autonSelector.gameMsg != "NOT") {
+		if (!Robot.autonSelector.gameMsg.equals("NOT")) {
 
 			switch (option) {
 			case SWITCH:

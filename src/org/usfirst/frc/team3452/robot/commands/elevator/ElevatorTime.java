@@ -1,11 +1,9 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
-import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevatorTime extends Command {
 
@@ -18,6 +16,7 @@ public class ElevatorTime extends Command {
 	 * @param time
 	 * @see Elevator
 	 */
+
 	public ElevatorTime(double speed, double time) {
 		requires(Robot.elevator);
 
