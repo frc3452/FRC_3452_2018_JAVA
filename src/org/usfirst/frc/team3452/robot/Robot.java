@@ -1,21 +1,30 @@
 package org.usfirst.frc.team3452.robot;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
 import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
-import org.usfirst.frc.team3452.robot.subsystems.*;
+import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
+import org.usfirst.frc.team3452.robot.subsystems.Camera;
+import org.usfirst.frc.team3452.robot.subsystems.Climber;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
+import org.usfirst.frc.team3452.robot.subsystems.Elevator;
+import org.usfirst.frc.team3452.robot.subsystems.Intake;
+import org.usfirst.frc.team3452.robot.subsystems.Lights;
+import org.usfirst.frc.team3452.robot.subsystems.Playback;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.STATE;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
 	public static final Drivetrain drive = new Drivetrain();
@@ -26,7 +35,7 @@ public class Robot extends TimedRobot {
 	public static final Camera camera = new Camera();
 	public static final Lights lights = new Lights();
 	public static final Playback playback = new Playback();
-	private static OI _oi;
+	private static final OI oi = new OI();
 
 	//auto selector init
 	private Command autonomousCommand = null;
@@ -42,11 +51,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		for (int i = 0; i < 41; i++) {
+		for (int i = 0; i < 41; i++)
 			autoCommand[i] = null;
-		}
-
-		_oi = new OI();
 
 		defaultCommand = new DefaultAutonomous();
 
