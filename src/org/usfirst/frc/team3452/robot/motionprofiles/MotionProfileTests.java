@@ -1,8 +1,7 @@
-
 package org.usfirst.frc.team3452.robot.motionprofiles;
 
 public class MotionProfileTests {
-	public static class Test1 {
+    public static class Test1 {
 		public static double[][] mpL = { { 0, 0 }, { 0, 0 }, { 1, 0 }, { 0, 0 }, { 0, 0 }, { -1, 0 }, { 0, 0 },
 				{ 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },
 				{ 0, 0 }, { 0, 0 }, { 0, 0 }, { -1, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, { -1, 0 }, { 0, 0 }, { 0, 0 },
@@ -155,6 +154,8 @@ public class MotionProfileTests {
 				{ -9892, -13 }, { -9892, -7 }, { -9893, -3 }, { -9893, -1 }, { -9892, 0 }, { -9893, 0 }, { -9892, 0 },
 				{ -9893, 0 }, { -9893, 0 }, { -9892, 0 }, { -9892, 0 }, { -9894, 0 }, { -9892, 0 }, { -9893, 0 },
 				{ -9892, 0 }, { -9892, 0 }, { -9893, 0 }, { -9894, 0 }, { -9894, 0 }, { -9893, 0 }, };
+
 		public static Integer mpDur = 20;
 	}
-};
+
+}

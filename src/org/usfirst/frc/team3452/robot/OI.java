@@ -1,6 +1,10 @@
 
 package org.usfirst.frc.team3452.robot;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.usfirst.frc.team3452.robot.Constants.Intake;
 import org.usfirst.frc.team3452.robot.commands.drive.SpeedModifier;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
@@ -10,11 +14,6 @@ import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator.ESO;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
-
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 public class OI {
 	public static Joystick driverJoy = new Joystick(0);
@@ -44,6 +43,7 @@ public class OI {
 		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.SHOOT));
 
+//		driverjoyY.whenPressed(new EncoderReset());
 //		driverJoyY.whileHeld(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Record));
 //		driverJoyRB.whenPressed(new CommandGroup() {
 //			{
