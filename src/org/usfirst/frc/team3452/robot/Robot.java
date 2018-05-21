@@ -35,6 +35,8 @@ public class Robot extends TimedRobot {
 	public static final Camera camera = new Camera();
 	public static final Lights lights = new Lights();
 	public static final Playback playback = new Playback();
+	@SuppressWarnings("unused")
+	//TODO remove?
 	private static final OI oi = new OI();
 
 	//auto selector init

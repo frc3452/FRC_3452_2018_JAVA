@@ -1,13 +1,16 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.Robot;
+
 import com.ctre.phoenix.CANifier;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import org.usfirst.frc.team3452.robot.Constants;
-import org.usfirst.frc.team3452.robot.Robot;
 
 public class Lights extends Subsystem {
 	private static CANifier canifier;
@@ -54,6 +57,21 @@ public class Lights extends Subsystem {
 	public double centerX(int cube) {
 		if (visionLength() > 0)
 			return centerX.getDoubleArray(tempArray)[cube];
+		else
+			return 3452;
+	}
+	
+	/**
+	 * 
+	 * @author max
+	 * @param cube int
+	 * @return double centerY reported from GRIP
+	 * @since
+	 */
+	public double centerY(int cube)
+	{
+		if (visionLength() > 0)
+			return centerY.getDoubleArray(tempArray)[cube];
 		else
 			return 3452;
 	}
@@ -202,7 +220,7 @@ public class Lights extends Subsystem {
 	 */
 	public String gsm() {
 		String f;
-		f = edu.wpi.first.wpilibj.DriverStation.getInstance().getGameSpecificMessage();
+		f = DriverStation.getInstance().getGameSpecificMessage();
 
 		if (f.length() > 0)
 			return f;
@@ -210,6 +228,7 @@ public class Lights extends Subsystem {
 			return "NOT";
 	}
 
+	@Override
 	public void initDefaultCommand() {
 		//		setDefaultCommand(new LightsCycle());
 	}
