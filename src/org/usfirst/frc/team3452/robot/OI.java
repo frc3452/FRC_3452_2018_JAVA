@@ -43,16 +43,17 @@ public class OI {
 		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.SHOOT));
 
-//		driverjoyY.whenPressed(new EncoderReset());
-//		driverJoyY.whileHeld(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Record));
-//		driverJoyRB.whenPressed(new CommandGroup() {
-//			{
-//				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
-//				addSequential(new RunMotionProfile(FILES.Parse));
-//			}
-//		});
+		//		driverjoyY.whenPressed(new EncoderReset());
+		//		driverJoyY.whileHeld(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Record));
 
-//				driverJoyY.whileHeld(new Climb(1));
+		//		driverJoyRB.whenPressed(new CommandGroup() {
+		//			{
+		//				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
+		//				addSequential(new RunMotionProfile(FILES.Parse));
+		//			}
+		//		});
+
+		//				driverJoyY.whileHeld(new Climb(1));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 		driverJoyBack.whenPressed(new OverrideSet(ESO.TOGGLE));
 
