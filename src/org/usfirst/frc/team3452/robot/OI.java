@@ -47,8 +47,8 @@ public class OI {
 //		driverJoyY.whileHeld(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Record));
 //		driverJoyRB.whenPressed(new CommandGroup() {
 //			{
-////				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
-//				addSequential(new RunMotionProfile(FILES.MotionProfileTest));
+//				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
+//				addSequential(new RunMotionProfile(FILES.Parse));
 //			}
 //		});
 

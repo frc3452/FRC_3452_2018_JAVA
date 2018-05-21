@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		for (int i = 0; i < 41; i++)
 			autoCommand[i] = null;
-
+		
 		defaultCommand = new DefaultAutonomous();
 
 		//naming for commands 

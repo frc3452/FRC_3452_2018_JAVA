@@ -1,6 +1,14 @@
 
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import java.util.ArrayList;
+
+import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.Utilities.FILES;
+import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
+import org.usfirst.frc.team3452.robot.motionprofiles.MotionProfileTests;
+
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -9,20 +17,15 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.usfirst.frc.team3452.robot.Constants;
-import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.Utilities.FILES;
-import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
-import org.usfirst.frc.team3452.robot.motionprofiles.MotionProfileTest;
-
-import java.util.ArrayList;
 
 /**
  * <h1>Drivetrain subsystem</h1> Handles drive train, smartdashboard updating,
@@ -160,6 +163,8 @@ public class Drivetrain extends Subsystem {
 
 		talon.enableCurrentLimit(true);
 
+		talon.configNeutralDeadband(0.05, 10);
+
 		talon.setSubsystem("Drive train");
 
 		//If Master
@@ -169,29 +174,35 @@ public class Drivetrain extends Subsystem {
 			talon.setSensorPhase(true);
 
 			talon.config_kF(0, .2379, 10);
-			
+
 			//If left master
 			if (talon.getDeviceID() == Constants.Drivetrain.L1) {
 				talon.config_kP(0, 0.425, 10);
 				talon.config_kI(0, 0, 10);
 				talon.config_kD(0, 4.25, 10);
 
-				//If right master
 			} else {
+				//If right master
 				talon.config_kP(0, 0.8, 10); //.8
 				talon.config_kI(0, 0, 10);
 				talon.config_kD(0, 4.25, 10);
 			}
 
+			talon.config_kF(0, 0, 10);
+			talon.config_kP(0, 0.1, 10);
+			talon.config_kI(0, 0, 10);
+			talon.config_kD(0, 0, 10);
+
 			//If Follower
 		} else {
-			talon.follow((talon.getDeviceID() == Constants.Drivetrain.L1 ? L1 : R1));
+			talon.follow(lOrR ? L1 : R1);
 		}
 	}
 
 	/**
 	 * @author max
-	 * @param joy Joystick
+	 * @param joy
+	 *            Joystick
 	 */
 	public void arcade(Joystick joy) {
 		//		Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify), joy.getRawAxis(4) * m_modify);
@@ -201,8 +212,10 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param move double
-	 * @param rotate double
+	 * @param move
+	 *            double
+	 * @param rotate
+	 *            double
 	 */
 	public void arcade(double move, double rotate) {
 		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .2));
@@ -210,27 +223,19 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param left double
-	 * @param right double
+	 * @param left
+	 *            double
+	 * @param right
+	 *            double
 	 */
 	public void tank(double left, double right) {
 		robotDrive.tankDrive(left * m_elev_modify, right * m_elev_modify);
 	}
 
 	/**
-	 * run processMotionProfileBuffer 2 times on each talon
-	 * @author macco
-	 */
-	public void processMotionProfileBuffer() {
-		for (int i = 0; i < 2; i++) {
-			Robot.drive.L1.processMotionProfileBuffer();
-			Robot.drive.R1.processMotionProfileBuffer();
-		}
-	}
-
-	/**
 	 * @author max
-	 * @param joy Joystick
+	 * @param joy
+	 *            Joystick
 	 */
 	public void tank(Joystick joy) {
 		robotDrive.tankDrive(-joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
@@ -238,7 +243,8 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param mode NeutralMode
+	 * @param mode
+	 *            NeutralMode
 	 */
 	public void brake(NeutralMode mode) {
 		L1.setNeutralMode(mode);
@@ -255,7 +261,8 @@ public class Drivetrain extends Subsystem {
 	 * Used to select which motion profile to send to talon
 	 * 
 	 * @author max
-	 * @param file FILES
+	 * @param file
+	 *            FILES
 	 * @see FILES
 	 */
 	public void selectMotionProfile(FILES file) {
@@ -263,16 +270,34 @@ public class Drivetrain extends Subsystem {
 		case Parse:
 			motionProfileToTalons(Robot.playback.mpL, Robot.playback.mpR, Robot.playback.mpDur);
 			break;
-		case MotionProfileTest:
-			motionProfileToTalons(MotionProfileTest.mpL, MotionProfileTest.mpR, MotionProfileTest.mpDur);
+		case MotionProfileTests_Test1:
+			motionProfileToTalons(MotionProfileTests.Test1.mpL, MotionProfileTests.Test1.mpR, MotionProfileTests.Test1.mpDur);
 			break;
 		default:
 			break;
 		}
 	}
 
+
+	private class Runnable implements java.lang.Runnable {
+		@Override
+		public void run() {
+			L1.processMotionProfileBuffer();
+			R1.processMotionProfileBuffer();
+		}
+		
+	}
+	private Notifier processMotionProfile = new Notifier(new Runnable());
+
+	public void processMotionProfileBuffer(double time) {
+		if (time == 3452)
+			processMotionProfile.stop();
+		else
+			processMotionProfile.startPeriodic(time);
+	}
+
 	/**
-	 * Used to process and push motion profiles to drive train talons
+	 * push motion profiles to drive train talons
 	 * 
 	 * @author max
 	 * 
@@ -286,8 +311,11 @@ public class Drivetrain extends Subsystem {
 	 * @since 4-22-2018
 	 */
 	private void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
+	
 		if (mpL.length != mpR.length)
 			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + mpL.length + "\t\t" + mpR.length);
+
+		processMotionProfileBuffer((double) mpDur / 2);
 
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
@@ -333,7 +361,7 @@ public class Drivetrain extends Subsystem {
 			leftPoint.isLastPoint = false;
 			rightPoint.isLastPoint = false;
 
-			if ((i + 1) == Robot.playback.mpL.size()) {
+			if ((i + 1) == mpL.length) {
 				leftPoint.isLastPoint = true;
 				rightPoint.isLastPoint = true;
 			}
@@ -343,7 +371,6 @@ public class Drivetrain extends Subsystem {
 		}
 
 		System.out.println("Motion profile pushed to Talons");
-
 	}
 
 	/**
@@ -361,8 +388,12 @@ public class Drivetrain extends Subsystem {
 	 * @since 4-22-2018
 	 */
 	private void motionProfileToTalons(ArrayList<ArrayList<Double>> mpL, ArrayList<ArrayList<Double>> mpR,
-									   Integer mpDur) {
-		System.out.println("Lengths\t\t" + mpL.size() + "\t\t" + mpR.size());
+			Integer mpDur) {
+
+		if (mpL.size() != mpR.size())
+			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + mpL.size() + "\t\t" + mpR.size());
+
+		processMotionProfileBuffer((double) mpDur / 2);
 
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
@@ -376,11 +407,8 @@ public class Drivetrain extends Subsystem {
 		L1.clearMotionProfileTrajectories();
 		R1.clearMotionProfileTrajectories();
 
-		L1.configMotionProfileTrajectoryPeriod(10, 10);
-		R1.configMotionProfileTrajectoryPeriod(10, 10);
-
 		//generate and push each mp point
-		for (int i = 0; i < mpL.size(); i++) {
+		for (int i = 0; i < ((mpL.size() <= mpR.size()) ? mpL.size() : mpR.size()); i++) {
 
 			leftPoint.position = mpL.get(i).get(0);
 			leftPoint.velocity = mpL.get(i).get(1);
@@ -421,14 +449,14 @@ public class Drivetrain extends Subsystem {
 		}
 
 		System.out.println("Motion profile pushed to Talons");
-
 	}
 
 	/**
 	 * Validate duration
 	 * 
 	 * @author max
-	 * @param durationMs int
+	 * @param durationMs
+	 *            int
 	 * @return TrajectoryDuration
 	 */
 	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {
@@ -511,7 +539,8 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param value double
+	 * @param value
+	 *            double
 	 * @return isUnder boolean
 	 * @since boolean
 	 */
@@ -524,12 +553,16 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
-	 * Set drive train masters peak outputs to full. Set control mode to
-	 * PercentOutput. Percentage trackers to default
+	 * - Set drive train masters peak outputs to full. 
+	 * - Set control mode to PercentOutput. 
+	 * - Percentage trackers to default.
+	 * - Turns off runnable for motion profiling. 
 	 * 
 	 * @author max
 	 */
 	public void encoderDone() {
+		processMotionProfileBuffer(3452);
+		
 		R1.configPeakOutputForward(1, 0);
 		R1.configPeakOutputReverse(-1, 0);
 		L1.configPeakOutputForward(1, 0);
@@ -549,7 +582,8 @@ public class Drivetrain extends Subsystem {
 	 * If L and R are within 102*multiplier of target positions, return true
 	 * 
 	 * @author max
-	 * @param multiplier double
+	 * @param multiplier
+	 *            double
 	 * @return boolean
 	 */
 	public boolean encoderIsDone(double multiplier) {
@@ -563,14 +597,15 @@ public class Drivetrain extends Subsystem {
 	 * If L or R are within 102*multiplier of target positions, return true
 	 * 
 	 * @author max
-	 * @param multiplier double
+	 * @param multiplier
+	 *            double
 	 * @return boolean
 	 */
 	public boolean encoderIsDoneEither(double multiplier) {
 		return ((L1.getSelectedSensorPosition(0) < (l_pos + (102 * multiplier))
 				&& L1.getSelectedSensorPosition(0) > (l_pos - (102 * multiplier))))
 				|| (R1.getSelectedSensorPosition(0) < (r_pos + (102 * multiplier))
-				&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier)));
+						&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier)));
 	}
 
 	/**

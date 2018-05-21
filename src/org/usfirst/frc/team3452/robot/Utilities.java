@@ -28,7 +28,7 @@ public class Utilities {
 	 * @author max
 	 */
 	public enum FILES {
-		Parse, MotionProfileTest
+		Parse, MotionProfileTests_Test1, 
 	}
 
 	/**

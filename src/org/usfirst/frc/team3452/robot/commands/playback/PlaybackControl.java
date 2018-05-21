@@ -1,10 +1,10 @@
 package org.usfirst.frc.team3452.robot.commands.playback;
 
-import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.Utilities.FILES;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.STATE;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
+
+import edu.wpi.first.wpilibj.command.Command;
 
 public class PlaybackControl extends Command {
 
@@ -56,7 +56,6 @@ public class PlaybackControl extends Command {
 	@Override
 	protected void end() {
 		Robot.playback.control(m_name, m_folder, m_usb, m_task, STATE.FINISH);
-		Robot.drive.selectMotionProfile(FILES.MotionProfileTest);
 	}
 
 	@Override

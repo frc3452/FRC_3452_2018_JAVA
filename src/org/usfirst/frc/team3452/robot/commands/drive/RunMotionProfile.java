@@ -1,11 +1,13 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.Utilities.FILES;
+
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.command.Command;
-import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.Utilities.FILES;
 
 /**
  * @author max
@@ -17,42 +19,25 @@ public class RunMotionProfile extends Command {
 	private MotionProfileStatus lStat = new MotionProfileStatus();
 
 	private SetValueMotionProfile set = SetValueMotionProfile.Disable;
-	private int bufferLooper = 0;
 
 	private FILES m_file;
-	
+
 	public RunMotionProfile(FILES file) {
 		requires(Robot.drive);
-		
+
 		m_file = file;
 	}
 
 	@Override
 	protected void initialize() {
-		Robot.drive.L1.getMotionProfileStatus(lStat);
-		Robot.drive.R1.getMotionProfileStatus(rStat);
-
 		Robot.drive.selectMotionProfile(m_file);
-		
-		Robot.drive.processMotionProfileBuffer();
-
-		//50 loop check for buffercount
-		while (bufferLooper < 50) {
-			if (lStat.btmBufferCnt > 10 && rStat.btmBufferCnt > 10) {
-				set = SetValueMotionProfile.Enable;
-				bufferLooper = 51;
-			} else {
-				set = SetValueMotionProfile.Disable;
-			}
-			bufferLooper++;
-			System.out.println("BUFFER BOY: " + bufferLooper);
-		}
-		
 	}
 
 	@Override
 	protected void execute() {
-		Robot.drive.processMotionProfileBuffer();
+		if (lStat.btmBufferCnt > 5 && rStat.btmBufferCnt > 5) {
+			set = SetValueMotionProfile.Enable;
+		}
 		
 		Robot.drive.L1.set(ControlMode.MotionProfile, set.value);
 		Robot.drive.R1.set(ControlMode.MotionProfile, set.value);
@@ -70,11 +55,7 @@ public class RunMotionProfile extends Command {
 	@Override
 	protected void end() {
 		System.out.println("Motion Profile Complete");
-
-		Robot.drive.L1.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
-		Robot.drive.R1.set(ControlMode.MotionProfile, SetValueMotionProfile.Hold.value);
-		
-		Robot.drive.encoderDone();
+ 		Robot.drive.encoderDone();
 	}
 
 	@Override

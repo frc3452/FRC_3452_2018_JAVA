@@ -1,17 +1,18 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import org.usfirst.frc.team3452.robot.Constants;
-import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.Utilities;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.Utilities;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  * <b>Playback subsystem</b> Also used for file writing, logging, etc.
