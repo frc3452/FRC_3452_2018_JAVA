@@ -21,19 +21,18 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * @since 4-18-2018
  *
  */
-public class
-Playback extends Subsystem {
-    /**
-     * variable for storing left values for motion profile
-     */
-    ArrayList<ArrayList<Double>> mpL = new ArrayList<>();
+public class Playback extends Subsystem {
+	/**
+	 * variable for storing left values for motion profile
+	 */
+	public ArrayList<ArrayList<Double>> mpL = new ArrayList<>();
 	private FileWriter fw;
 
 	private FileReader fr;
 	private Scanner scnr;
-    ArrayList<ArrayList<Double>> mpR = new ArrayList<>();
-    int mpDur = 0;
-    private BufferedWriter bw;
+	public ArrayList<ArrayList<Double>> mpR = new ArrayList<>();
+	int mpDur = 0;
+	private BufferedWriter bw;
 
 	/**
 	 * Time string converted to numbers for parsing
@@ -67,8 +66,8 @@ Playback extends Subsystem {
 
 			//loop through each line
 			while (scnr.hasNextLine()) {
-                ArrayList<Double> temp = new ArrayList<>();
-				
+				ArrayList<Double> temp = new ArrayList<>();
+
 				st = scnr.nextLine();
 
 				String[] ar = st.split(",");
@@ -77,8 +76,8 @@ Playback extends Subsystem {
 				temp.add(Double.parseDouble(ar[1]));
 				mpL.add(temp);
 
-                temp = new ArrayList<>();
-				
+				temp = new ArrayList<>();
+
 				temp.add(Double.parseDouble(ar[2]));
 				temp.add(Double.parseDouble(ar[3]));
 				mpR.add(temp);
@@ -111,39 +110,43 @@ Playback extends Subsystem {
 	 * write time + L and R drivetrain speeds to file
 	 * 
 	 * @author max
-     * @param isStartup
+	 * @param isStartup
 	 *            startup
-     */
-    private void writeToProfile(boolean isStartup) {
+	 */
+	private void writeToProfile(boolean isStartup) {
 		try {
 			//write to the speed of the motion profile
 			String timeString = String.format("%8s", Utilities.roundToFraction(Robot.drive.timer.get(),
 					(1 / ((double) Constants.Playback.RECORDING_MOTION_PROFILE_MS / 1000))));
 
+			//turn time string to number
 			timeString = timeString.replace(' ', '0');
 			n_timeString = Double.valueOf(timeString);
 
 			//ONLY PRINT EVERY ROUNDING
 			if (n_timeString != p_timeString) {
-                if (!isStartup) {
-                    double leftPos = Robot.drive.L1.getSelectedSensorPosition(0);
-                    double leftSpeed = Robot.drive.L1.getSelectedSensorVelocity(0);
+				if (!isStartup) {
+					//populate position and speed values
+					double leftPos = (double) Robot.drive.L1.getSelectedSensorPosition(0) / 4096;
+					double leftSpeed = (double) Robot.drive.L1.getSelectedSensorVelocity(0) / 4096;
 
-                    double rightPos = Robot.drive.R1.getSelectedSensorPosition(0);
-                    double rightSpeed = Robot.drive.R1.getSelectedSensorVelocity(0);
+					double rightPos = (double) Robot.drive.R1.getSelectedSensorPosition(0) / 4096;
+					double rightSpeed = (double) Robot.drive.R1.getSelectedSensorVelocity(0) / 4096;
 
-                    bw.write(String.valueOf(leftPos + ","));
-                    bw.write(String.valueOf(leftSpeed + ","));
-                    bw.write(String.valueOf(rightPos + ","));
-                    bw.write(String.valueOf(rightSpeed + ","));
-                    bw.write("\r\n");
+					//write values
+					bw.write(String.valueOf(leftPos + ","));
+					bw.write(String.valueOf(leftSpeed + ","));
+					bw.write(String.valueOf(rightPos + ","));
+					bw.write(String.valueOf(rightSpeed + ","));
+					bw.write("\r\n");
 
-                } else {
-                    bw.write("leftPos,leftSpeed,rightPos,rightSpeed,");
-                    bw.write("\r\n");
-                    bw.write(String.valueOf(Constants.Playback.RECORDING_MOTION_PROFILE_MS) + ",0,0,0,");
-                    bw.write("\r\n");
-                }
+				} else {
+					//on startup, write header
+					bw.write("leftPos,leftSpeed,rightPos,rightSpeed,");
+					bw.write("\r\n");
+					bw.write(String.valueOf(Constants.Playback.RECORDING_MOTION_PROFILE_MS) + ",0,0,0,");
+					bw.write("\r\n");
+				}
 			}
 
 			//Prevent duplicates
@@ -151,7 +154,7 @@ Playback extends Subsystem {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			//			System.out.println("Writing to profile failed!");
+			System.out.println("Writing to profile failed!");
 		}
 	}
 
@@ -159,7 +162,8 @@ Playback extends Subsystem {
 	 * logging system
 	 * 
 	 * @author max
-     * @param startup boolean
+	 * @param startup
+	 *            boolean
 	 */
 	@SuppressWarnings("deprecation")
 	private void writeToLog(boolean startup) {
@@ -239,7 +243,6 @@ Playback extends Subsystem {
 
 			}
 
-
 		} catch (Exception e) {
 			if (!hasPrintedLogFailed) {
 				System.out.println("Log failed!");
@@ -250,16 +253,19 @@ Playback extends Subsystem {
 
 	/**
 	 * @author max
-     * @param fileName String
-     * @param readwrite fileState
-     * @param usb boolean
+	 * @param fileName
+	 *            String
+	 * @param readwrite
+	 *            fileState
+	 * @param usb
+	 *            boolean
 	 */
 	private void createFile(String fileName, String folder, fileState readwrite, boolean usb) {
 		try {
 			switch (readwrite) {
 			case READ:
 				//SET UP FILE READING
-                File f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
+				File f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
 
 				fr = new FileReader(f);
 				scnr = new Scanner(fr);
@@ -290,7 +296,8 @@ Playback extends Subsystem {
 
 	/**
 	 * @author max
-     * @param readwrite fileState
+	 * @param readwrite
+	 *            fileState
 	 */
 	private void closeFile(fileState readwrite) {
 		try {
@@ -350,8 +357,8 @@ Playback extends Subsystem {
 				Robot.drive.timer.reset();
 				Robot.drive.timer.start();
 
-                System.out.println("Opening Log: " + loggingName(true) + ".csv");
-                createFile(loggingName(false), folder, fileState.WRITE, usb);
+				System.out.println("Opening Log: " + loggingName(true) + ".csv");
+				createFile(loggingName(false), folder, fileState.WRITE, usb);
 				writeToLog(true);
 
 				break;
@@ -383,17 +390,17 @@ Playback extends Subsystem {
 				closeFile(fileState.READ);
 				break;
 			case Log:
-                System.out.println("Closing " + task + ": " + loggingName(false) + ".csv");
+				System.out.println("Closing " + task + ": " + loggingName(false) + ".csv");
 				closeFile(fileState.WRITE);
 				break;
 			}
 			break;
-        }
-    }
+		}
+	}
 
-    private String loggingName(boolean returnCurrent) {
+	private String loggingName(boolean returnCurrent) {
 		if (returnCurrent) {
-            String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Utilities.dateTime(true);
+			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Utilities.dateTime(true);
 			prevDateTimeString = retval;
 			return retval;
 		} else {
@@ -408,8 +415,8 @@ Playback extends Subsystem {
 	 * 
 	 */
 	public enum fileState {
-        READ, WRITE
-    }
+		READ, WRITE
+	}
 
 	/**
 	 * startup, runtime, finish
@@ -417,8 +424,8 @@ Playback extends Subsystem {
 	 * @author max
 	 */
 	public enum STATE {
-        STARTUP, RUNTIME, FINISH
-    }
+		STARTUP, RUNTIME, FINISH
+	}
 
 	/**
 	 * record, log, parse, play
@@ -426,8 +433,8 @@ Playback extends Subsystem {
 	 * @author max
 	 */
 	public enum TASK {
-        Record, Log, Parse
-    }
+		Record, Log, Parse
+	}
 
 	@Override
 	public void initDefaultCommand() {

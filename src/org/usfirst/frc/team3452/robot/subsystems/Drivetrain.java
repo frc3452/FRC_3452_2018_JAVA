@@ -278,8 +278,7 @@ public class Drivetrain extends Subsystem {
 		}
 	}
 
-
-	private class Runnable implements java.lang.Runnable {
+	private class MotionRunnable implements java.lang.Runnable {
 		@Override
 		public void run() {
 			L1.processMotionProfileBuffer();
@@ -287,7 +286,7 @@ public class Drivetrain extends Subsystem {
 		}
 		
 	}
-	private Notifier processMotionProfile = new Notifier(new Runnable());
+	private Notifier processMotionProfile = new Notifier(new MotionRunnable());
 
 	public void processMotionProfileBuffer(double time) {
 		if (time == 3452)
@@ -332,12 +331,12 @@ public class Drivetrain extends Subsystem {
 		//generate and push each mp point
 		for (int i = 0; i < ((mpL.length <= mpR.length) ? mpL.length : mpR.length); i++) {
 
-			leftPoint.position = mpL[i][0];
-			leftPoint.velocity = mpL[i][1];
+			leftPoint.position = mpL[i][0] * 4096;
+			leftPoint.velocity = mpL[i][1] * 4096;
 
-			rightPoint.position = mpR[i][0];
-			rightPoint.velocity = mpR[i][1];
-
+			rightPoint.position = mpR[i][0] * 4096;
+			rightPoint.velocity = mpR[i][1] * 4096;
+					
 			leftPoint.timeDur = GetTrajectoryDuration(mpDur);
 			rightPoint.timeDur = GetTrajectoryDuration(mpDur);
 
@@ -410,11 +409,11 @@ public class Drivetrain extends Subsystem {
 		//generate and push each mp point
 		for (int i = 0; i < ((mpL.size() <= mpR.size()) ? mpL.size() : mpR.size()); i++) {
 
-			leftPoint.position = mpL.get(i).get(0);
-			leftPoint.velocity = mpL.get(i).get(1);
+			leftPoint.position = mpL.get(i).get(0) * 4096;
+			leftPoint.velocity = mpL.get(i).get(1) * 4096;
 
-			rightPoint.position = mpL.get(i).get(0);
-			rightPoint.velocity = mpR.get(i).get(1);
+			rightPoint.position = mpL.get(i).get(0) * 4096;
+			rightPoint.velocity = mpR.get(i).get(1) * 4096;
 
 			leftPoint.timeDur = GetTrajectoryDuration(mpDur);
 			rightPoint.timeDur = GetTrajectoryDuration(mpDur);
