@@ -57,6 +57,10 @@ public class Playback extends Subsystem {
 	 */
 	private void parseFile() {
 		String st;
+		
+		mpL.clear();
+		mpR.clear();
+		
 		try {
 			//Skip first line of text
 			scnr.nextLine();

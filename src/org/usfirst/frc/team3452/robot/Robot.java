@@ -127,7 +127,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		System.out.println("Entering auto");
+		System.out.println("Entering auto...");
 
 		startLog();
 
@@ -201,7 +201,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-		System.out.println("Entering teleop");
+		System.out.println("Entering teleop...");
 		startLog();
 
 		//GREEN LOW BRIGHTNESS
@@ -246,7 +246,7 @@ public class Robot extends TimedRobot {
 			if (wasTest)
 				Robot.lights.pulse(55, 1, .2, .8, .1);
 			else {
-				Robot.lights.hsv(Robot.lights.m_hue, 1, .15);
+				Robot.lights.hsv(Robot.lights.m_hue, 1, .25);
 				Robot.lights.m_hue++;
 				if (Robot.lights.m_hue > 360)
 					Robot.lights.m_hue = 0;
