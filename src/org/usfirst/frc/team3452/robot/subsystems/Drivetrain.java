@@ -200,64 +200,6 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
-	 * @author max
-	 * @param joy
-	 *            Joystick
-	 */
-	public void arcade(Joystick joy) {
-		//		Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify), joy.getRawAxis(4) * m_modify);
-		arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .635 * m_modify));
-		Robot.elevator.setDriveLimit();
-	}
-
-	/**
-	 * @author max
-	 * @param move
-	 *            double
-	 * @param rotate
-	 *            double
-	 */
-	public void arcade(double move, double rotate) {
-		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .2));
-	}
-
-	/**
-	 * @author max
-	 * @param left
-	 *            double
-	 * @param right
-	 *            double
-	 */
-	public void tank(double left, double right) {
-		robotDrive.tankDrive(left * m_elev_modify, right * m_elev_modify);
-	}
-
-	/**
-	 * @author max
-	 * @param joy
-	 *            Joystick
-	 */
-	public void tank(Joystick joy) {
-		robotDrive.tankDrive(-joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
-	}
-
-	/**
-	 * @author max
-	 * @param mode
-	 *            NeutralMode
-	 */
-	public void brake(NeutralMode mode) {
-		L1.setNeutralMode(mode);
-		L2.setNeutralMode(mode);
-		L3.setNeutralMode(mode);
-		L4.setNeutralMode(mode);
-		R1.setNeutralMode(mode);
-		R2.setNeutralMode(mode);
-		R3.setNeutralMode(mode);
-		R4.setNeutralMode(mode);
-	}
-
-	/**
 	 * Used to select which motion profile to send to talon
 	 * 
 	 * @author max
@@ -271,23 +213,37 @@ public class Drivetrain extends Subsystem {
 			motionProfileToTalons(Robot.playback.mpL, Robot.playback.mpR, Robot.playback.mpDur);
 			break;
 		case MotionProfileTests_Test1:
-			motionProfileToTalons(MotionProfileTests.Test1.mpL, MotionProfileTests.Test1.mpR, MotionProfileTests.Test1.mpDur);
+			motionProfileToTalons(MotionProfileTests.Test1.mpL, MotionProfileTests.Test1.mpR,
+					MotionProfileTests.Test1.mpDur);
 			break;
 		default:
 			break;
 		}
 	}
 
-	private class MotionRunnable implements java.lang.Runnable {
+	/**
+	 * used for running 'process motion profile buffer' on drive train talons
+	 * @author Max
+	 * @since 5/22/2018
+	 */
+	private class MotionProfileBuffer implements java.lang.Runnable {
 		@Override
 		public void run() {
 			L1.processMotionProfileBuffer();
 			R1.processMotionProfileBuffer();
 		}
-		
 	}
-	private Notifier processMotionProfile = new Notifier(new MotionRunnable());
 
+	/**
+	 * notifier object for running MotionProfileBuffer
+	 */
+	private Notifier processMotionProfile = new Notifier(new MotionProfileBuffer());
+
+	/**
+	 * Used to turn on/off runnable for motion profiling
+	 * 
+	 * @param time double
+	 */
 	public void processMotionProfileBuffer(double time) {
 		if (time == 3452)
 			processMotionProfile.stop();
@@ -310,11 +266,11 @@ public class Drivetrain extends Subsystem {
 	 * @since 4-22-2018
 	 */
 	private void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
-	
+
 		if (mpL.length != mpR.length)
 			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + mpL.length + "\t\t" + mpR.length);
 
-		processMotionProfileBuffer((double) mpDur / 2);
+		processMotionProfileBuffer((double) mpDur / (1000 * 2));
 
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
@@ -336,7 +292,7 @@ public class Drivetrain extends Subsystem {
 
 			rightPoint.position = mpR[i][0] * 4096;
 			rightPoint.velocity = mpR[i][1] * 4096;
-					
+
 			leftPoint.timeDur = GetTrajectoryDuration(mpDur);
 			rightPoint.timeDur = GetTrajectoryDuration(mpDur);
 
@@ -392,7 +348,7 @@ public class Drivetrain extends Subsystem {
 		if (mpL.size() != mpR.size())
 			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + mpL.size() + "\t\t" + mpR.size());
 
-		processMotionProfileBuffer((double) mpDur / 2);
+		processMotionProfileBuffer((double) mpDur / (1000 * 2));
 
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
@@ -467,6 +423,64 @@ public class Drivetrain extends Subsystem {
 			System.out.println("ERROR Invalid trajectory duration: " + durationMs);
 
 		return retval;
+	}
+
+	/**
+	 * @author max
+	 * @param joy
+	 *            Joystick
+	 */
+	public void arcade(Joystick joy) {
+		//		Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify), joy.getRawAxis(4) * m_modify);
+		arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .635 * m_modify));
+		Robot.elevator.setDriveLimit();
+	}
+
+	/**
+	 * @author max
+	 * @param move
+	 *            double
+	 * @param rotate
+	 *            double
+	 */
+	public void arcade(double move, double rotate) {
+		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .2));
+	}
+
+	/**
+	 * @author max
+	 * @param left
+	 *            double
+	 * @param right
+	 *            double
+	 */
+	public void tank(double left, double right) {
+		robotDrive.tankDrive(left * m_elev_modify, right * m_elev_modify);
+	}
+
+	/**
+	 * @author max
+	 * @param joy
+	 *            Joystick
+	 */
+	public void tank(Joystick joy) {
+		robotDrive.tankDrive(-joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
+	}
+
+	/**
+	 * @author max
+	 * @param mode
+	 *            NeutralMode
+	 */
+	public void brake(NeutralMode mode) {
+		L1.setNeutralMode(mode);
+		L2.setNeutralMode(mode);
+		L3.setNeutralMode(mode);
+		L4.setNeutralMode(mode);
+		R1.setNeutralMode(mode);
+		R2.setNeutralMode(mode);
+		R3.setNeutralMode(mode);
+		R4.setNeutralMode(mode);
 	}
 
 	/**
@@ -552,16 +566,15 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
-	 * - Set drive train masters peak outputs to full. 
-	 * - Set control mode to PercentOutput. 
-	 * - Percentage trackers to default.
-	 * - Turns off runnable for motion profiling. 
-	 * 
+	 * <li>Set drive train masters peak outputs to full.
+	 * <li>Set control mode to PercentOutput. 
+	 * <li>Percentage trackers to default. 
+	 * <li>Turns off runnable for motion profiling.
 	 * @author max
 	 */
 	public void encoderDone() {
 		processMotionProfileBuffer(3452);
-		
+
 		R1.configPeakOutputForward(1, 0);
 		R1.configPeakOutputReverse(-1, 0);
 		L1.configPeakOutputForward(1, 0);

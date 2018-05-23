@@ -35,9 +35,8 @@ public class RunMotionProfile extends Command {
 
 	@Override
 	protected void execute() {
-		if (lStat.btmBufferCnt > 5 && rStat.btmBufferCnt > 5) {
+		if (lStat.btmBufferCnt > 5 && rStat.btmBufferCnt > 5)
 			set = SetValueMotionProfile.Enable;
-		}
 		
 		Robot.drive.L1.set(ControlMode.MotionProfile, set.value);
 		Robot.drive.R1.set(ControlMode.MotionProfile, set.value);
