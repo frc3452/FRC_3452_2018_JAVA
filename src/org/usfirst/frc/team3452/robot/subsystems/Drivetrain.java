@@ -233,7 +233,6 @@ public class Drivetrain extends Subsystem {
 		}
 	}
 
-
 	/**
 	 * notifier object for running MotionProfileBuffer
 	 */
@@ -251,7 +250,6 @@ public class Drivetrain extends Subsystem {
 		else
 			processMotionProfile.startPeriodic(time);
 	}
-
 
 	/**
 	 * push motion profiles to drive train talons
@@ -330,7 +328,6 @@ public class Drivetrain extends Subsystem {
 		System.out.println("Motion profile pushed to Talons");
 	}
 
-
 	/**
 	 * Used to process and push motion profiles to drivetrain talons
 	 * 
@@ -366,13 +363,13 @@ public class Drivetrain extends Subsystem {
 		R1.clearMotionProfileTrajectories();
 
 		//generate and push each mp point
-		for (int i = 0; i < ((mpL.size() <= mpR.size()) ? mpL.size() : mpR.size()); i++) {
+		for (int i = 0; i < (mpL.size() <= mpR.size() ? mpL.size() : mpR.size()); i++) {
 
 			leftPoint.position = mpL.get(i).get(0) * 4096;
 			leftPoint.velocity = mpL.get(i).get(1) * 4096;
 
-			rightPoint.position = mpL.get(i).get(0) * -4096;
-			rightPoint.velocity = mpR.get(i).get(1) * -4096;
+			rightPoint.position = mpR.get(i).get(0) * 4096;
+			rightPoint.velocity = mpR.get(i).get(1) * 4096;
 
 			leftPoint.timeDur = GetTrajectoryDuration(mpDur);
 			rightPoint.timeDur = GetTrajectoryDuration(mpDur);
@@ -397,7 +394,7 @@ public class Drivetrain extends Subsystem {
 			leftPoint.isLastPoint = false;
 			rightPoint.isLastPoint = false;
 
-			if ((i + 1) == Robot.playback.mpL.size()) {
+			if ((i + 1) == mpL.size()) {
 				leftPoint.isLastPoint = true;
 				rightPoint.isLastPoint = true;
 			}
@@ -408,7 +405,6 @@ public class Drivetrain extends Subsystem {
 
 		System.out.println("Motion profile pushed to Talons");
 	}
-	
 
 	/**
 	 * Validate duration
@@ -428,7 +424,6 @@ public class Drivetrain extends Subsystem {
 
 		return retval;
 	}
-	
 
 	/**
 	 * @author max
@@ -440,7 +435,6 @@ public class Drivetrain extends Subsystem {
 		arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .635 * m_modify));
 		Robot.elevator.setDriveLimit();
 	}
-	
 
 	/**
 	 * @author max
@@ -453,7 +447,6 @@ public class Drivetrain extends Subsystem {
 		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .2));
 	}
 
-	
 	/**
 	 * @author max
 	 * @param left
@@ -465,7 +458,6 @@ public class Drivetrain extends Subsystem {
 		robotDrive.tankDrive(left * m_elev_modify, right * m_elev_modify);
 	}
 
-	
 	/**
 	 * @author max
 	 * @param joy
@@ -475,7 +467,6 @@ public class Drivetrain extends Subsystem {
 		robotDrive.tankDrive(-joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
 	}
 
-	
 	/**
 	 * @author max
 	 * @param mode
@@ -492,7 +483,6 @@ public class Drivetrain extends Subsystem {
 		R4.setNeutralMode(mode);
 	}
 
-	
 	/**
 	 * @author max
 	 * @param leftpos
@@ -531,7 +521,6 @@ public class Drivetrain extends Subsystem {
 		R1.set(ControlMode.MotionMagic, r_pos);
 	}
 
-	
 	/**
 	 * @author max
 	 * @param leftpos
@@ -561,7 +550,6 @@ public class Drivetrain extends Subsystem {
 		R1.set(ControlMode.Position, r_pos);
 	}
 
-	
 	/**
 	 * @author max
 	 * @param value
@@ -577,34 +565,36 @@ public class Drivetrain extends Subsystem {
 		return l < value && r < value;
 	}
 
-	
 	/**
-	 * <li>Set drive train masters peak outputs to full.
 	 * <li>Set control mode to PercentOutput.
-	 * <li>Percentage trackers to default.
 	 * <li>Turns off runnable for motion profiling.
+	 * <li>Clears motion profile trajectories
+	 * <li>Set drive train masters peak outputs to full.
+	 * <li>Percentage trackers to default.
 	 * 
 	 * @author max
 	 */
 	public void encoderDone() {
+		L1.set(ControlMode.PercentOutput, 0);
+		R1.set(ControlMode.PercentOutput, 0);
+
 		processMotionProfileBuffer(3452);
+		
+		L1.clearMotionProfileTrajectories();
+		R1.clearMotionProfileTrajectories();
 
 		R1.configPeakOutputForward(1, 0);
 		R1.configPeakOutputReverse(-1, 0);
 		L1.configPeakOutputForward(1, 0);
 		L1.configPeakOutputReverse(-1, 0);
 
-		L1.set(ControlMode.PercentOutput, 0);
-		R1.set(ControlMode.PercentOutput, 0);
 
 		l_pos = 0;
 		r_pos = 0;
 
 		p_pos = 3452;
-
 	}
 
-	
 	/**
 	 * If L and R are within 102*multiplier of target positions, return true
 	 * 
@@ -620,7 +610,6 @@ public class Drivetrain extends Subsystem {
 				&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier));
 	}
 
-	
 	/**
 	 * If L or R are within 102*multiplier of target positions, return true
 	 * 
@@ -636,7 +625,6 @@ public class Drivetrain extends Subsystem {
 						&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier)));
 	}
 
-	
 	/**
 	 * @author max
 	 */
