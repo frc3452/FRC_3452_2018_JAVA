@@ -43,26 +43,25 @@ public class OI {
 		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.SHOOT));
 
-//		driverJoyY.whenPressed(new EncoderReset());
-//		driverJoyY.whileHeld(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Record));
-//
-//		driverJoyRB.whenPressed(new CommandGroup() {
-//			{
-//				addSequential(new EncoderReset());
-//				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
-//				addSequential(new RunMotionProfile(FILES.Parse));
-//			}
-//		});
-//
-//		driverJoyLB.whenPressed(new CommandGroup() {
-//			{
-//				addSequential(new EncoderReset());
-//				addSequential(new RunMotionProfile(FILES.MotionProfileTests_Test1));
-//			}
-//		});
+		//		driverJoyY.whenPressed(new EncoderReset());
+		//		driverJoyY.whileHeld(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Record));
+		//
+		//		driverJoyRB.whenPressed(new CommandGroup() {
+		//			{
+		//				addSequential(new EncoderReset());
+		//				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
+		//			}
+		//		});
+		//
+		//		driverJoyLB.whenPressed(new CommandGroup() {
+		//			{
+		//				addSequential(new EncoderReset());
+		//				addSequential(new RunMotionProfile(new Util.Parse()));
+		//			}
+		//		});
 
 		//				driverJoyY.whileHeld(new Climb(1));
-		//		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
+		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 		driverJoyBack.whenPressed(new OverrideSet(ESO.TOGGLE));
 
 		//				DPAD

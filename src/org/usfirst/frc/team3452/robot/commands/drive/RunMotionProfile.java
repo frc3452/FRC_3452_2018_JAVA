@@ -1,7 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.Utilities.FILES;
+import org.usfirst.frc.team3452.robot.motionprofiles.Path;
 
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
@@ -18,29 +18,33 @@ public class RunMotionProfile extends Command {
 	private MotionProfileStatus rStat = new MotionProfileStatus();
 	private MotionProfileStatus lStat = new MotionProfileStatus();
 
-	private SetValueMotionProfile set = SetValueMotionProfile.Disable;
+	private Path path_ = null;
 
-	private FILES m_file;
-
-	public RunMotionProfile(FILES file) {
+	public RunMotionProfile(Path path) {
 		requires(Robot.drive);
 
-		m_file = file;
+		path_ = path;
 	}
 
 	@Override
 	protected void initialize() {
-		Robot.drive.selectMotionProfile(m_file);
+		if (path_.mpDur() == 3452)
+			Robot.drive.motionProfileToTalons();
+		else
+			Robot.drive.motionProfileToTalons(path_.mpL(), path_.mpR(), path_.mpDur());
 	}
 
 	@Override
 	protected void execute() {
-		if (lStat.btmBufferCnt > 5 && rStat.btmBufferCnt > 5)
-			set = SetValueMotionProfile.Enable;
 		
-		Robot.drive.L1.set(ControlMode.MotionProfile, set.value);
-		Robot.drive.R1.set(ControlMode.MotionProfile, set.value);
-
+		if (lStat.btmBufferCnt > 5 && rStat.btmBufferCnt > 5) {
+			Robot.drive.L1.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
+			Robot.drive.R1.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
+		} else {
+			Robot.drive.L1.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
+			Robot.drive.R1.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
+		}
+		
 		Robot.drive.L1.getMotionProfileStatus(lStat);
 		Robot.drive.R1.getMotionProfileStatus(rStat);
 	}
@@ -54,7 +58,7 @@ public class RunMotionProfile extends Command {
 	@Override
 	protected void end() {
 		System.out.println("Motion Profile Complete");
- 		Robot.drive.encoderDone();
+		Robot.drive.encoderDone();
 	}
 
 	@Override

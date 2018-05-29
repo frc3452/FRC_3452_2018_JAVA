@@ -1,12 +1,8 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import java.util.ArrayList;
-
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.Utilities.FILES;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
-import org.usfirst.frc.team3452.robot.motionprofiles.MotionProfileTests;
 
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
@@ -197,28 +193,7 @@ public class Drivetrain extends Subsystem {
 		}
 	}
 
-	/**
-	 * Used to select which motion profile to send to talon
-	 * 
-	 * @author max
-	 * @param file
-	 *            FILES
-	 * @see FILES
-	 */
-	public void selectMotionProfile(FILES file) {
-		switch (file) {
-		case Parse:
-			motionProfileToTalons(Robot.playback.mpL, Robot.playback.mpR, Robot.playback.mpDur);
-			break;
-		case MotionProfileTests_Test1:
-			motionProfileToTalons(MotionProfileTests.Test1.mpL, MotionProfileTests.Test1.mpR,
-					MotionProfileTests.Test1.mpDur);
-			break;
-		default:
-			break;
-		}
-	}
-
+	
 	/**
 	 * used for running 'process motion profile buffer' on drive train talons
 	 * 
@@ -241,8 +216,10 @@ public class Drivetrain extends Subsystem {
 	/**
 	 * Used to turn on/off runnable for motion profiling
 	 * 
+	 * 
 	 * @param time
 	 *            double
+	 *            - if 3452, stops notifier
 	 */
 	public void processMotionProfileBuffer(double time) {
 		if (time == 3452)
@@ -265,7 +242,7 @@ public class Drivetrain extends Subsystem {
 	 * 
 	 * @since 4-22-2018
 	 */
-	private void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
+	public void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
 
 		if (mpL.length != mpR.length)
 			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + mpL.length + "\t\t" + mpR.length);
@@ -329,50 +306,43 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
-	 * Used to process and push motion profiles to drivetrain talons
+	 * Used to process and push <b>parsed</b> motion profiles to drivetrain talons
 	 * 
 	 * @author max
 	 * 
-	 * @param mpL
-	 *            (2-Dimensional double arrayList)
-	 * @param mpR
-	 *            (2-Dimensional double arrayList)
-	 * @param mpDur
-	 *            (Integer)
 	 * 
 	 * @since 4-22-2018
 	 */
-	private void motionProfileToTalons(ArrayList<ArrayList<Double>> mpL, ArrayList<ArrayList<Double>> mpR,
-			Integer mpDur) {
+	public void motionProfileToTalons() {
 
-		if (mpL.size() != mpR.size())
-			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + mpL.size() + "\t\t" + mpR.size());
+		if (Robot.playback.mpL.size() != Robot.playback.mpR.size())
+			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + Robot.playback.mpL.size() + "\t\t" + Robot.playback.mpR.size());
 
-		processMotionProfileBuffer((double) mpDur / (1000 * 2));
+		processMotionProfileBuffer((double) Robot.playback.mpDur / (1000 * 2));
 
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
 
 		//set talon srx 
-		L1.configMotionProfileTrajectoryPeriod(mpDur, 10);
-		R1.configMotionProfileTrajectoryPeriod(mpDur, 10);
-		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, mpDur, 10);
-		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, mpDur, 10);
+		L1.configMotionProfileTrajectoryPeriod(Robot.playback.mpDur, 10);
+		R1.configMotionProfileTrajectoryPeriod(Robot.playback.mpDur, 10);
+		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Robot.playback.mpDur, 10);
+		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Robot.playback.mpDur, 10);
 
 		L1.clearMotionProfileTrajectories();
 		R1.clearMotionProfileTrajectories();
 
 		//generate and push each mp point
-		for (int i = 0; i < (mpL.size() <= mpR.size() ? mpL.size() : mpR.size()); i++) {
+		for (int i = 0; i < (Robot.playback.mpL.size() <= Robot.playback.mpR.size() ? Robot.playback.mpL.size() : Robot.playback.mpR.size()); i++) {
 
-			leftPoint.position = mpL.get(i).get(0) * 4096;
-			leftPoint.velocity = mpL.get(i).get(1) * 4096;
+			leftPoint.position = Robot.playback.mpL.get(i).get(0) * 4096;
+			leftPoint.velocity = Robot.playback.mpL.get(i).get(1) * 4096;
 
-			rightPoint.position = mpR.get(i).get(0) * 4096;
-			rightPoint.velocity = mpR.get(i).get(1) * 4096;
+			rightPoint.position = Robot.playback.mpR.get(i).get(0) * 4096;
+			rightPoint.velocity = Robot.playback.mpR.get(i).get(1) * 4096;
 
-			leftPoint.timeDur = GetTrajectoryDuration(mpDur);
-			rightPoint.timeDur = GetTrajectoryDuration(mpDur);
+			leftPoint.timeDur = GetTrajectoryDuration(Robot.playback.mpDur);
+			rightPoint.timeDur = GetTrajectoryDuration(Robot.playback.mpDur);
 
 			leftPoint.headingDeg = 0;
 			rightPoint.headingDeg = 0;
@@ -394,7 +364,7 @@ public class Drivetrain extends Subsystem {
 			leftPoint.isLastPoint = false;
 			rightPoint.isLastPoint = false;
 
-			if ((i + 1) == mpL.size()) {
+			if ((i + 1) == Robot.playback.mpL.size()) {
 				leftPoint.isLastPoint = true;
 				rightPoint.isLastPoint = true;
 			}
@@ -579,7 +549,7 @@ public class Drivetrain extends Subsystem {
 		R1.set(ControlMode.PercentOutput, 0);
 
 		processMotionProfileBuffer(3452);
-		
+
 		L1.clearMotionProfileTrajectories();
 		R1.clearMotionProfileTrajectories();
 
@@ -587,7 +557,6 @@ public class Drivetrain extends Subsystem {
 		R1.configPeakOutputReverse(-1, 0);
 		L1.configPeakOutputForward(1, 0);
 		L1.configPeakOutputReverse(-1, 0);
-
 
 		l_pos = 0;
 		r_pos = 0;

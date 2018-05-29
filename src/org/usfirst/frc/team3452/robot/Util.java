@@ -3,11 +3,13 @@ package org.usfirst.frc.team3452.robot;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.usfirst.frc.team3452.robot.motionprofiles.Path;
+
 /**
  * @author max
  *
  */
-public class Utilities {
+public class Util {
 
 	/**
 	 * toRound = 2.342, wanting to round to nearest .05 1/<b>20</b> is .05
@@ -20,15 +22,6 @@ public class Utilities {
 	 */
 	public static double roundToFraction(double value, double denominator) {
 		return Math.round(value * denominator) / denominator;
-	}
-
-	/**
-	 * enum for motion profiling to select which path will be run
-	 *
-	 * @author max
-	 */
-	public enum FILES {
-		Parse, MotionProfileTests_Test1, 
 	}
 
 	/**
@@ -59,4 +52,22 @@ public class Utilities {
 		return temp;
 	}
 
+	public static class Parse implements Path {
+
+		@Override
+		public double[][] mpL() {
+			return null;
+		}
+
+		@Override
+		public double[][] mpR() {
+			return null;
+		}
+
+		@Override
+		public Integer mpDur() {
+			return 3452;
+		}
+	}
+	
 }
