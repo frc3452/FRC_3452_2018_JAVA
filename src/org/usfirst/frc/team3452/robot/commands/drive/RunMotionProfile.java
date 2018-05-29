@@ -28,6 +28,7 @@ public class RunMotionProfile extends Command {
 
 	@Override
 	protected void initialize() {
+		//check if we are parsing or running a stored motion profile
 		if (path_.mpDur() == 3452)
 			Robot.drive.motionProfileToTalons();
 		else
