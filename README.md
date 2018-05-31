@@ -13,8 +13,7 @@
 
 [Command](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/commands/playback/PlaybackControl.java)
 
-[Subsystem]
-(https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/subsystems/Playback.java)
+[Subsystem](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/subsystems/Playback.java)
 
 ### Drive train speed limiting based off elevator positioning along with override
 [Handling](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/subsystems/Elevator.java)
