@@ -179,6 +179,9 @@ public class Lights extends Subsystem {
      * @param b float
 	 */
     private void rgb(float r, float g, float b) {
+    	if (m_hue > 360)
+    		m_hue = 0;
+    	
 		try {
 			canifier.setLEDOutput(r, CANifier.LEDChannel.LEDChannelA);
 			canifier.setLEDOutput(g, CANifier.LEDChannel.LEDChannelB);

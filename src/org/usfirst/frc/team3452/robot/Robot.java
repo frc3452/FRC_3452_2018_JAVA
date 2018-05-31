@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
 	private Command defaultCommand = null;
 
 	//flags
-	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false, lightModeComp = true;
+	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false;
 
 	//LOGGING CONTROL
 	private boolean logging = false, logToUsb = true;
@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		for (int i = 0; i < 41; i++)
 			autoCommand[i] = null;
-		
+
 		defaultCommand = new DefaultAutonomous();
 
 		//naming for commands 
@@ -94,9 +94,6 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic() {
 		handleLEDs();
 		Robot.drive.loggerUpdate();
-
-		//Light mode using auto selectors (Position J-6)
-		lightModeComp = Robot.autonSelector.uglyAnalog() != 96;
 
 		//LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
 		//LOOPED HERE
@@ -241,23 +238,36 @@ public class Robot extends TimedRobot {
 		if (OI.driverJoy.getRawButton(2) && OI.driverJoy.getRawButton(7) && OI.driverJoy.getRawButton(8))
 			readyForMatch = true;
 
-		if (!lightModeComp) {
-			//Not competition
+		switch (Robot.autonSelector.uglyAnalog()) {
+		case 96:
+
+			//fade
 			if (wasTest)
 				Robot.lights.pulse(55, 1, .2, .8, .1);
 			else {
 				Robot.lights.hsv(Robot.lights.m_hue, 1, .25);
 				Robot.lights.m_hue++;
-				if (Robot.lights.m_hue > 360)
-					Robot.lights.m_hue = 0;
 			}
 
-		} else {
+			break;
+		case 97:
 
-			//Comp
-			if (wasTest) {
+			//police
+			if (wasTest)
 				Robot.lights.pulse(55, 1, .2, .8, .1);
-			} else {
+			else {
+				if (Robot.lights.m_hue > 180)
+					Robot.lights.hsv(0, 1, 1);
+				else
+					Robot.lights.hsv(120, 1, 1);
+				Robot.lights.m_hue += 30;
+			}
+			break;
+		default:
+			//Comp
+			if (wasTest)
+				Robot.lights.pulse(55, 1, .2, .8, .1);
+			else {
 
 				if (DriverStation.getInstance().isDisabled()) {
 					//IF CONNECTED LOW GREEN
@@ -278,14 +288,12 @@ public class Robot extends TimedRobot {
 						} else {
 							Robot.lights.hsv(Robot.lights.m_hue, 1, .15);
 							Robot.lights.m_hue++;
-							if (Robot.lights.m_hue > 360)
-								Robot.lights.m_hue = 0;
 						}
 					}
 				}
 			}
+			break;
 		}
-
 	}
 
 	private void controllerChooser() {
