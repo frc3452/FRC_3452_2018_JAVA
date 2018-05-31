@@ -6,7 +6,7 @@
 [Command](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/commands/drive/EncoderGyro.java)
 
 ### Physical autonomous selectors
-[Handling](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/subsystems/AutonSelector.java)
+[Handling](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/c3ab023258caa93ba7efd366bbb7bb83a5273bb9/src/org/usfirst/frc/team3452/robot/subsystems/AutonSelector.java#L92)
 
 [Implementation](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/cf03da1f2c9cb28fc4ecc657a663aaef37c95faf/src/org/usfirst/frc/team3452/robot/Robot.java#L365)
 
