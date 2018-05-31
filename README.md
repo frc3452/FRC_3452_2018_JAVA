@@ -8,7 +8,7 @@
 ### Physical autonomous selectors
 [Handling](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/subsystems/AutonSelector.java)
 
-[Implementation](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/Robot.java)
+[Implementation](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/cf03da1f2c9cb28fc4ecc657a663aaef37c95faf/src/org/usfirst/frc/team3452/robot/Robot.java#L365)
 
 [Where to buy](https://www.robotshop.com/ca/en/gravity-rotary-encoder-module-v1.html) 
 
