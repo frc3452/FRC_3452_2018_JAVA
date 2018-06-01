@@ -17,7 +17,8 @@ public class Util {
 	 *
 	 * @author max
 	 * @param value
-	 * @param denominator double
+	 * @param denominator
+	 *            double
 	 * @return double
 	 */
 	public static double roundToFraction(double value, double denominator) {
@@ -56,12 +57,14 @@ public class Util {
 
 		@Override
 		public double[][] mpL() {
-			return null;
+			double[][] mpL = { { 3452, 3452 }, { 3452, 3452 }, };
+			return mpL;
 		}
 
 		@Override
 		public double[][] mpR() {
-			return null;
+			double[][] mpR = { { 3452, 3452 }, { 3452, 3452 }, };
+			return mpR;
 		}
 
 		@Override
@@ -69,5 +72,5 @@ public class Util {
 			return 3452;
 		}
 	}
-	
+
 }

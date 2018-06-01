@@ -183,9 +183,8 @@ public class Drivetrain extends Subsystem {
 				talon.config_kD(0, 4.25, 10);
 			}
 
-			talon.config_kP(0, 0.1, 10);
+			talon.config_kP(0, 0.21, 10);
 			talon.config_kI(0, 0, 10);
-			talon.config_kD(0, 0, 10);
 
 			//If Follower
 		} else {
@@ -193,7 +192,6 @@ public class Drivetrain extends Subsystem {
 		}
 	}
 
-	
 	/**
 	 * used for running 'process motion profile buffer' on drive train talons
 	 * 
@@ -314,7 +312,6 @@ public class Drivetrain extends Subsystem {
 	 * @since 4-22-2018
 	 */
 	public void motionProfileToTalons() {
-
 		if (Robot.playback.mpL.size() != Robot.playback.mpR.size())
 			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + Robot.playback.mpL.size() + "\t\t" + Robot.playback.mpR.size());
 

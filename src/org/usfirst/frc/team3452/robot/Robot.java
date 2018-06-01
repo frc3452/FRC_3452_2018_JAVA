@@ -39,12 +39,12 @@ public class Robot extends TimedRobot {
 	//TODO remove?
 	private static final OI oi = new OI();
 
-	//auto selector init
+	//Auto selector init
 	private Command autonomousCommand = null;
 	private Command autoCommand[] = new Command[41];
 	private Command defaultCommand = null;
 
-	//flags
+	//Flags
 	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false;
 
 	//LOGGING CONTROL
@@ -264,7 +264,8 @@ public class Robot extends TimedRobot {
 			}
 			break;
 		default:
-			//Comp
+
+			//comp
 			if (wasTest)
 				Robot.lights.pulse(55, 1, .2, .8, .1);
 			else {
