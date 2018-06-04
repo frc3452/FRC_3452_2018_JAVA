@@ -91,14 +91,14 @@ public class Drivetrain extends Subsystem {
 		timer.start();
 
 		//Talons
-		L1 = new WPI_TalonSRX(Constants.Drivetrain.L1);
-		L2 = new WPI_TalonSRX(Constants.Drivetrain.L2);
-		L3 = new WPI_TalonSRX(Constants.Drivetrain.L3);
-		L4 = new WPI_TalonSRX(Constants.Drivetrain.L4);
-		R1 = new WPI_TalonSRX(Constants.Drivetrain.R1);
-		R2 = new WPI_TalonSRX(Constants.Drivetrain.R2);
-		R3 = new WPI_TalonSRX(Constants.Drivetrain.R3);
-		R4 = new WPI_TalonSRX(Constants.Drivetrain.R4);
+		L1 = new WPI_TalonSRX(Constants.kDrivetrain.L1);
+		L2 = new WPI_TalonSRX(Constants.kDrivetrain.L2);
+		L3 = new WPI_TalonSRX(Constants.kDrivetrain.L3);
+		L4 = new WPI_TalonSRX(Constants.kDrivetrain.L4);
+		R1 = new WPI_TalonSRX(Constants.kDrivetrain.R1);
+		R2 = new WPI_TalonSRX(Constants.kDrivetrain.R2);
+		R3 = new WPI_TalonSRX(Constants.kDrivetrain.R3);
+		R4 = new WPI_TalonSRX(Constants.kDrivetrain.R4);
 
 		Gyro = new AHRS(SPI.Port.kMXP);
 
@@ -143,18 +143,18 @@ public class Drivetrain extends Subsystem {
 		int id = talon.getDeviceID();
 		boolean lOrR;
 
-		lOrR = id >= Constants.Drivetrain.L1 && id <= Constants.Drivetrain.L4;
+		lOrR = id >= Constants.kDrivetrain.L1 && id <= Constants.kDrivetrain.L4;
 
-		talon.setInverted((lOrR) ? Constants.Drivetrain.L_INVERT : Constants.Drivetrain.R_INVERT);
+		talon.setInverted((lOrR) ? Constants.kDrivetrain.L_INVERT : Constants.kDrivetrain.R_INVERT);
 
 		talon.configNominalOutputForward(0, 10);
 
 		// AMP LIMIT
 		// OUTER TALONS IN BLOCK = 40amp, INNER TALONS IN BLOCK = 30amp
-		talon.configContinuousCurrentLimit(Constants.Drivetrain.AMP_40_LIMIT, 10);
-		talon.configPeakCurrentLimit(Constants.Drivetrain.AMP_40_TRIGGER, 10);
-		talon.configPeakCurrentDuration(Constants.Drivetrain.AMP_40_TIME, 10);
-		talon.configOpenloopRamp(Constants.Drivetrain.RAMP_TIME, 10);
+		talon.configContinuousCurrentLimit(Constants.kDrivetrain.AMP_40_LIMIT, 10);
+		talon.configPeakCurrentLimit(Constants.kDrivetrain.AMP_40_TRIGGER, 10);
+		talon.configPeakCurrentDuration(Constants.kDrivetrain.AMP_40_TIME, 10);
+		talon.configOpenloopRamp(Constants.kDrivetrain.RAMP_TIME, 10);
 
 		talon.enableCurrentLimit(true);
 
@@ -163,7 +163,7 @@ public class Drivetrain extends Subsystem {
 		talon.setSubsystem("Drive train");
 
 		//If Master
-		if (id == Constants.Drivetrain.L1 || id == Constants.Drivetrain.R1) {
+		if (id == Constants.kDrivetrain.L1 || id == Constants.kDrivetrain.R1) {
 			talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
 			talon.setSelectedSensorPosition(0, 0, 10);
 			talon.setSensorPhase(true);
@@ -171,7 +171,7 @@ public class Drivetrain extends Subsystem {
 			talon.config_kF(0, .2379, 10);
 
 			//If left master
-			if (talon.getDeviceID() == Constants.Drivetrain.L1) {
+			if (talon.getDeviceID() == Constants.kDrivetrain.L1) {
 				talon.config_kP(0, 0.425, 10);
 				talon.config_kI(0, 0, 10);
 				talon.config_kD(0, 4.25, 10);

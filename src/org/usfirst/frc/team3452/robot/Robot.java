@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
 	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false;
 
 	//LOGGING CONTROL
-	private boolean logging = false, logToUsb = true;
+	private boolean logging = true, logToUsb = true;
 	private String loggingLocation = "Logging/Offseason";
 
 	@Override

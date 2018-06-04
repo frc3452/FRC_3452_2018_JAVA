@@ -1,3 +1,4 @@
+
 package org.usfirst.frc.team3452.robot;
 
 /**
@@ -8,7 +9,7 @@ package org.usfirst.frc.team3452.robot;
  */
 
 public class Constants {
-    public class AutonSelector {
+    public class kAutonSelector {
         public static final int AUTO_SELECTOR_1 = 2; //1
         public static final int AUTO_SELECTOR_2 = 3; //0
 
@@ -57,15 +58,15 @@ public class Constants {
         public static final int AUTO_10_H = AUTO_10 + AUTO_V;
     }
 
-    public class Camera {
+    public class kCamera {
     }
 
-    public class Climber {
+    public class kClimber {
         public static final int CLIMBER_1 = 2;
         public static final boolean CLIMBER_1_INVERT = false;
     }
 
-    public class Drivetrain {
+    public class kDrivetrain {
         public final static int L1 = 1, L2 = 2, L3 = 3, L4 = 4;
         public final static int R1 = 5, R2 = 6, R3 = 7, R4 = 8;
 
@@ -79,7 +80,7 @@ public class Constants {
         public final static double RAMP_TIME = 0.125;
     }
 
-    public class PDP {
+    public class kPDP {
         public final static int DRIVE_L_1 = 0, DRIVE_L_2 = 1, DRIVE_L_3 = 5, DRIVE_L_4 = 4;
         public final static int DRIVE_R_1 = 15, DRIVE_R_2 = 14, DRIVE_R_3 = 11, DRIVE_R_4 = 10;
 
@@ -93,7 +94,7 @@ public class Constants {
         public final static int CLIMBER_2 = 2;
     }
 
-    public class Elevator {
+    public class kElevator {
         public static final int E_1 = 9;
         public static final int E_2 = 10;
 
@@ -114,9 +115,15 @@ public class Constants {
         public static final int AMP_TRIGGER = 50;
         public static final int AMP_LIMIT = 40;
         public static final int AMP_TIME = 1000;
+        
+        public class Heights {
+        	public static final double Floor = -15;
+        	public static final double Switch = 3.5;
+        	public static final double Scale = 6.5;
+        }
     }
 
-    public class Intake {
+    public class kIntake {
         public static final int INTAKE_L = 0;
         public static final int INTAKE_R = 1;
 
@@ -138,11 +145,11 @@ public class Constants {
 
     }
 
-    public class Lights {
+    public class kLights {
         public static final int CANIFIER_ID = 0;
     }
 
-    public class Playback {
+    public class kPlayback {
         public final static int RECORDING_MOTION_PROFILE_MS = 20;
     }
 

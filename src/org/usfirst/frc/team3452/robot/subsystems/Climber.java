@@ -31,8 +31,8 @@ public class Climber extends Subsystem {
 	 * @author max
 	 */
 	public Climber() {
-		climb1 = new Spark(Constants.Climber.CLIMBER_1);
-		climb1.setInverted(Constants.Climber.CLIMBER_1_INVERT);
+		climb1 = new Spark(Constants.kClimber.CLIMBER_1);
+		climb1.setInverted(Constants.kClimber.CLIMBER_1_INVERT);
 
 		climb1.setSubsystem("Climber");
 		climb1.setName("Climber Motor");

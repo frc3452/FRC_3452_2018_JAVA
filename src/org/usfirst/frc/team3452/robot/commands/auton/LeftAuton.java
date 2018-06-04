@@ -1,7 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import org.usfirst.frc.team3452.robot.Constants.Intake;
+import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.*;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
@@ -293,7 +293,7 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new CommandGroup() {
 				{
-					addParallel(new IntakeWhileDrive(Intake.Speeds.SLOW, .92, 3));
+					addParallel(new IntakeWhileDrive(kIntake.Speeds.SLOW, .92, 3));
 					addSequential(new EncoderFrom(2.41, 2.61, .1, .1, .15));
 				}
 

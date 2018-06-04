@@ -3,7 +3,7 @@ package org.usfirst.frc.team3452.robot.commands.drive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3452.robot.Constants;
-import org.usfirst.frc.team3452.robot.Constants.Intake;
+import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 
@@ -50,19 +50,19 @@ public class DriveToCube extends Command {
 	protected void execute() {
 		Robot.drive.arcade(m_speed, 0);
 
-		Robot.intake.manual(Intake.Speeds.INTAKE);
+		Robot.intake.manual(kIntake.Speeds.INTAKE);
 
 		if (((double) Robot.drive.L1.getSelectedSensorPosition(0) / 4096) - i_lpos > m_rotation
 				|| ((double) Robot.drive.R1.getSelectedSensorPosition(0) / 4096) - i_rpos > m_rotation)
 			m_complete = true;
 		
-		if (Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_L) > 12 || Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_R) > 12)
+		if (Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) > 12 || Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) > 12)
 			flag_1 = true;
 
-		if (flag_1 && (Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_L) < 7 || Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_R) < 7))
+		if (flag_1 && (Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) < 7 || Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) < 7))
 			flag_2 = true;
 
-		if (flag_2 && (Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_L) > 12 || Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_R) > 12)) {
+		if (flag_2 && (Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) > 12 || Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) > 12)) {
 
 			if (!timeoutSet) {
 				setTimeout(timer.get() + .4);

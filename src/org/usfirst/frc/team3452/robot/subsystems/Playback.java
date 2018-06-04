@@ -121,7 +121,7 @@ public class Playback extends Subsystem {
 		try {
 			//write to the speed of the motion profile
 			String timeString = String.format("%8s", Util.roundToFraction(Robot.drive.timer.get(),
-					(1 / ((double) Constants.Playback.RECORDING_MOTION_PROFILE_MS / 1000))));
+					(1 / ((double) Constants.kPlayback.RECORDING_MOTION_PROFILE_MS / 1000))));
 
 			//turn time string to number
 			timeString = timeString.replace(' ', '0');
@@ -148,7 +148,7 @@ public class Playback extends Subsystem {
 					//on startup, write header
 					bw.write("leftPos,leftSpeed,rightPos,rightSpeed,");
 					bw.write("\r\n");
-					bw.write(String.valueOf(Constants.Playback.RECORDING_MOTION_PROFILE_MS) + ",0,0,0,");
+					bw.write(String.valueOf(Constants.kPlayback.RECORDING_MOTION_PROFILE_MS) + ",0,0,0,");
 					bw.write("\r\n");
 				}
 			}
@@ -229,12 +229,12 @@ public class Playback extends Subsystem {
 									+ Robot.elevator.Elev_2.getMotorOutputVoltage() + ","
 
 									//INTAKE PDP SLOTS
-									+ Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_L) + ","
-									+ Robot.drive.pdp.getCurrent(Constants.PDP.INTAKE_R) + ","
+									+ Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) + ","
+									+ Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) + ","
 
 									//CLIMBER PDP SLOTS
-									+ Robot.drive.pdp.getCurrent(Constants.PDP.CLIMBER_1) + ","
-									+ Robot.drive.pdp.getCurrent(Constants.PDP.CLIMBER_2) + ","
+									+ Robot.drive.pdp.getCurrent(Constants.kPDP.CLIMBER_1) + ","
+									+ Robot.drive.pdp.getCurrent(Constants.kPDP.CLIMBER_2) + ","
 
 									//BATTERY
 									+ DriverStation.getInstance().getBatteryVoltage()));

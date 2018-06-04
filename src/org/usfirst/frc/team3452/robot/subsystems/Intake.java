@@ -15,11 +15,11 @@ public class Intake extends Subsystem {
 	 * @since
 	 */
 	public Intake() {
-		Intake_L = new Spark(Constants.Intake.INTAKE_L);
-		Intake_R = new Spark(Constants.Intake.INTAKE_R);
+		Intake_L = new Spark(Constants.kIntake.INTAKE_L);
+		Intake_R = new Spark(Constants.kIntake.INTAKE_R);
 
-		Intake_L.setInverted(Constants.Intake.INTAKE_L_INVERT);
-		Intake_R.setInverted(Constants.Intake.INTAKE_R_INVERT);
+		Intake_L.setInverted(Constants.kIntake.INTAKE_L_INVERT);
+		Intake_R.setInverted(Constants.kIntake.INTAKE_R_INVERT);
 
 		Intake_L.setSubsystem("Intake");
 		Intake_R.setSubsystem("Intake");

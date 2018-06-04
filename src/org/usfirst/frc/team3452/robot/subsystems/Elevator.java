@@ -30,8 +30,8 @@ public class Elevator extends Subsystem {
 	 * @since
 	 */
 	public Elevator() {
-		Elev_1 = new WPI_TalonSRX(Constants.Elevator.E_1);
-		Elev_2 = new WPI_TalonSRX(Constants.Elevator.E_2);
+		Elev_1 = new WPI_TalonSRX(Constants.kElevator.E_1);
+		Elev_2 = new WPI_TalonSRX(Constants.kElevator.E_2);
 
 		generalTalonInit(Elev_1);
 		generalTalonInit(Elev_2);
@@ -40,21 +40,21 @@ public class Elevator extends Subsystem {
 		Elev_2.follow(Elev_1);
 
 		// INVERT
-		Elev_1.setInverted(Constants.Elevator.E_1_INVERT);
-		Elev_2.setInverted(Constants.Elevator.E_2_INVERT);
+		Elev_1.setInverted(Constants.kElevator.E_1_INVERT);
+		Elev_2.setInverted(Constants.kElevator.E_2_INVERT);
 		
 		// PIDs
 		Elev_1.config_kF(0, 0, 10);
 		Elev_1.config_kP(0, 0.08, 10);
 		Elev_1.config_kI(0, 0.000028, 10);
 		Elev_1.config_kD(0, 2.5, 10);
-		Elev_1.configOpenloopRamp(Constants.Elevator.E_OPEN_RAMP_TIME, 10);
-		Elev_1.configClosedloopRamp(Constants.Elevator.E_CLOSED_RAMP_TIME, 10);
+		Elev_1.configOpenloopRamp(Constants.kElevator.E_OPEN_RAMP_TIME, 10);
+		Elev_1.configClosedloopRamp(Constants.kElevator.E_CLOSED_RAMP_TIME, 10);
 		
 		// ENCODER
 		Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		Elev_1.setSelectedSensorPosition(0, 0, 10);
-		Elev_1.setSensorPhase(Constants.Elevator.E_ENC_INVERT);
+		Elev_1.setSensorPhase(Constants.kElevator.E_ENC_INVERT);
 
 		//		 RESET ENCODER ON LIMIT SWITCH DOWN
 		Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);
@@ -88,9 +88,9 @@ public class Elevator extends Subsystem {
 		Elev_2.setNeutralMode(NeutralMode.Brake);
 
 		//CURRENT LIMITING
-		talon.configContinuousCurrentLimit(Constants.Elevator.AMP_LIMIT, 10);
-		talon.configPeakCurrentLimit(Constants.Elevator.AMP_TRIGGER, 10);
-		talon.configPeakCurrentDuration(Constants.Elevator.AMP_TIME, 10);
+		talon.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10);
+		talon.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10);
+		talon.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10);
 
 		talon.enableCurrentLimit(true);
 		
@@ -109,15 +109,15 @@ public class Elevator extends Subsystem {
 		if (m_overriden == false) {
 
 			if (pos < 8500)
-				Robot.drive.m_elev_modify = Constants.Elevator.SPEED_1;
+				Robot.drive.m_elev_modify = Constants.kElevator.SPEED_1;
 			else if (pos < 12000 && pos > 8500)
-				Robot.drive.m_elev_modify = Constants.Elevator.SPEED_2;
+				Robot.drive.m_elev_modify = Constants.kElevator.SPEED_2;
 			else if (pos < 15000 && pos > 12000)
-				Robot.drive.m_elev_modify = Constants.Elevator.SPEED_3;
+				Robot.drive.m_elev_modify = Constants.kElevator.SPEED_3;
 			else if (pos < 25000 && pos > 15000)
-				Robot.drive.m_elev_modify = Constants.Elevator.SPEED_4;
+				Robot.drive.m_elev_modify = Constants.kElevator.SPEED_4;
 			else if (pos > 25000)
-				Robot.drive.m_elev_modify = Constants.Elevator.SPEED_5;
+				Robot.drive.m_elev_modify = Constants.kElevator.SPEED_5;
 
 		} else {
 			Robot.drive.m_elev_modify = 1;

@@ -1,6 +1,7 @@
 package org.usfirst.frc.team3452.robot;
 
-import org.usfirst.frc.team3452.robot.Constants.Intake;
+import org.usfirst.frc.team3452.robot.Constants.kElevator;
+import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.commands.drive.SpeedModifier;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
@@ -40,52 +41,52 @@ public class OI {
 		// 				DRIVER JOY
 		driverJoyA.whenPressed(new SpeedModifier(-1));
 
-		driverJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
-		driverJoyB.whileHeld(new IntakeManual(Intake.Speeds.SHOOT));
+		driverJoyX.whileHeld(new IntakeManual(kIntake.Speeds.INTAKE));
+		driverJoyB.whileHeld(new IntakeManual(kIntake.Speeds.SHOOT));
 
-//		driverJoyY.whenPressed(new EncoderReset());
-//		driverJoyY.whileHeld(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Record));
-//
-//		driverJoyRB.whenPressed(new CommandGroup() {
-//			{
-//				addSequential(new EncoderReset());
-//				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
-//			}
-//		});
-//
-//	
-//		driverJoyLB.whenPressed(new CommandGroup() {
-//			{
-//				addSequential(new EncoderReset());
-//				addSequential(new RunMotionProfile(new MotionProfileTests.Test1()));
-//			}
-//		});
+		//		driverJoyY.whenPressed(new EncoderReset());
+		//		driverJoyY.whileHeld(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Record));
+		//
+		//		driverJoyRB.whenPressed(new CommandGroup() {
+		//			{
+		//				addSequential(new EncoderReset());
+		//				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
+		//			}
+		//		});
+		//
+		//	
+		//		driverJoyLB.whenPressed(new CommandGroup() {
+		//			{
+		//				addSequential(new EncoderReset());
+		//				addSequential(new RunMotionProfile(new MotionProfileTests.Test1()));
+		//			}
+		//		});
 
-		//				driverJoyY.whileHeld(new Climb(1));
+//		driverJoyY.whileHeld(new Climb(1));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
 		driverJoyBack.whenPressed(new OverrideSet(ESO.TOGGLE));
 
 		//				DPAD
-		driverDown.whenPressed(new ElevatorPosition(-15));
-		driverUp.whileHeld(new IntakeManual(Intake.Speeds.SLOW));
-		driverLeft.whenPressed(new ElevatorPosition(6.8));
-		driverRight.whenPressed(new ElevatorPosition(3.5));
+		driverDown.whenPressed(new ElevatorPosition(kElevator.Heights.Floor));
+		driverUp.whileHeld(new IntakeManual(kIntake.Speeds.SLOW));
+		driverLeft.whenPressed(new ElevatorPosition(kElevator.Heights.Scale));
+		driverRight.whenPressed(new ElevatorPosition(kElevator.Heights.Switch));
 
 		// 				OP JOY
 		opJoyLB.whileHeld(new ElevatorManual(opJoy));
 		//		opJoyRB.whenPressed(new JustGonnaSendIt());
 
-		opJoyA.whileHeld(new IntakeManual(Intake.Speeds.PLACE));
-		opJoyX.whileHeld(new IntakeManual(Intake.Speeds.INTAKE));
-		opJoyB.whileHeld(new IntakeManual(Intake.Speeds.SHOOT));
-		opJoyY.whileHeld(new IntakeManual(Intake.Speeds.SLOW));
+		opJoyA.whileHeld(new IntakeManual(kIntake.Speeds.PLACE));
+		opJoyX.whileHeld(new IntakeManual(kIntake.Speeds.INTAKE));
+		opJoyB.whileHeld(new IntakeManual(kIntake.Speeds.SHOOT));
+		opJoyY.whileHeld(new IntakeManual(kIntake.Speeds.SLOW));
 
-		opJoyBack.whileHeld(new IntakeSpin(Intake.Speeds.SPIN, true));
-		opJoyStart.whileHeld(new IntakeSpin(Intake.Speeds.SPIN, false));
+		opJoyBack.whileHeld(new IntakeSpin(kIntake.Speeds.SPIN, true));
+		opJoyStart.whileHeld(new IntakeSpin(kIntake.Speeds.SPIN, false));
 
 		//				DPAD
-		opDown.whenPressed(new ElevatorPosition(-15));
-		opRight.whenPressed(new ElevatorPosition(3.5));
+		opDown.whenPressed(new ElevatorPosition(kElevator.Heights.Floor));
+		opRight.whenPressed(new ElevatorPosition(kElevator.Heights.Switch));
 
 		//				TRIGGERS
 		driveSafteyOverriden.whenActive(new OverrideSet(ESO.ON));

@@ -35,8 +35,8 @@ public class AutonSelector extends Subsystem {
 	 * @author max
 	 */
 	public AutonSelector() {
-		as_A = new AnalogInput(Constants.AutonSelector.AUTO_SELECTOR_1);
-		as_B = new AnalogInput(Constants.AutonSelector.AUTO_SELECTOR_2);
+		as_A = new AnalogInput(Constants.kAutonSelector.AUTO_SELECTOR_1);
+		as_B = new AnalogInput(Constants.kAutonSelector.AUTO_SELECTOR_2);
 
 		as_A.setSubsystem("AutonSelector");
 		as_B.setSubsystem("AutonSelector");
@@ -90,43 +90,43 @@ public class AutonSelector extends Subsystem {
      * @return int <b>1 - 100</b> or 3452 as error
 	 */
 	public int uglyAnalog() {
-		if (m_asA < Constants.AutonSelector.AUTO_1 + Constants.AutonSelector.AUTO_V
-				&& m_asA > Constants.AutonSelector.AUTO_1 - Constants.AutonSelector.AUTO_V) {
+		if (m_asA < Constants.kAutonSelector.AUTO_1 + Constants.kAutonSelector.AUTO_V
+				&& m_asA > Constants.kAutonSelector.AUTO_1 - Constants.kAutonSelector.AUTO_V) {
 			return selectorB(0);
 
-		} else if (m_asA < Constants.AutonSelector.AUTO_2 + Constants.AutonSelector.AUTO_V
-				&& m_asA > Constants.AutonSelector.AUTO_2 - Constants.AutonSelector.AUTO_V) {
+		} else if (m_asA < Constants.kAutonSelector.AUTO_2 + Constants.kAutonSelector.AUTO_V
+				&& m_asA > Constants.kAutonSelector.AUTO_2 - Constants.kAutonSelector.AUTO_V) {
 			return selectorB(1);
 
-		} else if (m_asA < Constants.AutonSelector.AUTO_3 + Constants.AutonSelector.AUTO_V
-				&& m_asA > Constants.AutonSelector.AUTO_3 - Constants.AutonSelector.AUTO_V) {
+		} else if (m_asA < Constants.kAutonSelector.AUTO_3 + Constants.kAutonSelector.AUTO_V
+				&& m_asA > Constants.kAutonSelector.AUTO_3 - Constants.kAutonSelector.AUTO_V) {
 			return selectorB(2);
 
-		} else if ((m_asA < Constants.AutonSelector.AUTO_4 + Constants.AutonSelector.AUTO_V
-				&& m_asA > Constants.AutonSelector.AUTO_4 - Constants.AutonSelector.AUTO_V)) {
+		} else if ((m_asA < Constants.kAutonSelector.AUTO_4 + Constants.kAutonSelector.AUTO_V
+				&& m_asA > Constants.kAutonSelector.AUTO_4 - Constants.kAutonSelector.AUTO_V)) {
 			return selectorB(3);
 
-		} else if ((m_asA < Constants.AutonSelector.AUTO_5 + Constants.AutonSelector.AUTO_V
-				&& m_asA > Constants.AutonSelector.AUTO_5 - Constants.AutonSelector.AUTO_V)) {
+		} else if ((m_asA < Constants.kAutonSelector.AUTO_5 + Constants.kAutonSelector.AUTO_V
+				&& m_asA > Constants.kAutonSelector.AUTO_5 - Constants.kAutonSelector.AUTO_V)) {
 			return selectorB(4);
 
-		} else if (m_asA < Constants.AutonSelector.AUTO_6 + Constants.AutonSelector.AUTO_V
-				&& m_asA > Constants.AutonSelector.AUTO_6 - Constants.AutonSelector.AUTO_V) {
+		} else if (m_asA < Constants.kAutonSelector.AUTO_6 + Constants.kAutonSelector.AUTO_V
+				&& m_asA > Constants.kAutonSelector.AUTO_6 - Constants.kAutonSelector.AUTO_V) {
 			return selectorB(5);
 
-		} else if (m_asA < Constants.AutonSelector.AUTO_7 + Constants.AutonSelector.AUTO_V
-				&& m_asA > Constants.AutonSelector.AUTO_7 - Constants.AutonSelector.AUTO_V) {
+		} else if (m_asA < Constants.kAutonSelector.AUTO_7 + Constants.kAutonSelector.AUTO_V
+				&& m_asA > Constants.kAutonSelector.AUTO_7 - Constants.kAutonSelector.AUTO_V) {
 			return selectorB(6);
 
-		} else if (m_asA < Constants.AutonSelector.AUTO_8 + Constants.AutonSelector.AUTO_V
-				&& m_asA > Constants.AutonSelector.AUTO_8 - Constants.AutonSelector.AUTO_V) {
+		} else if (m_asA < Constants.kAutonSelector.AUTO_8 + Constants.kAutonSelector.AUTO_V
+				&& m_asA > Constants.kAutonSelector.AUTO_8 - Constants.kAutonSelector.AUTO_V) {
 			return selectorB(7);
-		} else if (m_asA < Constants.AutonSelector.AUTO_9 + Constants.AutonSelector.AUTO_V
-				&& m_asA > Constants.AutonSelector.AUTO_9 - Constants.AutonSelector.AUTO_V) {
+		} else if (m_asA < Constants.kAutonSelector.AUTO_9 + Constants.kAutonSelector.AUTO_V
+				&& m_asA > Constants.kAutonSelector.AUTO_9 - Constants.kAutonSelector.AUTO_V) {
 			return selectorB(8);
 
-		} else if (m_asA < Constants.AutonSelector.AUTO_10 + Constants.AutonSelector.AUTO_V
-				&& m_asA > Constants.AutonSelector.AUTO_10 - Constants.AutonSelector.AUTO_V) {
+		} else if (m_asA < Constants.kAutonSelector.AUTO_10 + Constants.kAutonSelector.AUTO_V
+				&& m_asA > Constants.kAutonSelector.AUTO_10 - Constants.kAutonSelector.AUTO_V) {
 			return selectorB(9);
 
 		} else {
@@ -141,25 +141,25 @@ public class AutonSelector extends Subsystem {
 	}
 
 	private int selectorB(int selectorA) {
-		if (m_asB > Constants.AutonSelector.AUTO_1_L && m_asB < Constants.AutonSelector.AUTO_1_H) {
+		if (m_asB > Constants.kAutonSelector.AUTO_1_L && m_asB < Constants.kAutonSelector.AUTO_1_H) {
 			return 1 + (selectorA * 10);
-		} else if (m_asB > Constants.AutonSelector.AUTO_2_L && m_asB < Constants.AutonSelector.AUTO_2_H) {
+		} else if (m_asB > Constants.kAutonSelector.AUTO_2_L && m_asB < Constants.kAutonSelector.AUTO_2_H) {
 			return 2 + (selectorA * 10);
-		} else if (m_asB > Constants.AutonSelector.AUTO_3_L && m_asB < Constants.AutonSelector.AUTO_3_H) {
+		} else if (m_asB > Constants.kAutonSelector.AUTO_3_L && m_asB < Constants.kAutonSelector.AUTO_3_H) {
 			return 3 + (selectorA * 10);
-		} else if (m_asB > Constants.AutonSelector.AUTO_4_L && m_asB < Constants.AutonSelector.AUTO_4_H) {
+		} else if (m_asB > Constants.kAutonSelector.AUTO_4_L && m_asB < Constants.kAutonSelector.AUTO_4_H) {
 			return 4 + (selectorA * 10);
-		} else if (m_asB > Constants.AutonSelector.AUTO_5_L && m_asB < Constants.AutonSelector.AUTO_5_H) {
+		} else if (m_asB > Constants.kAutonSelector.AUTO_5_L && m_asB < Constants.kAutonSelector.AUTO_5_H) {
 			return 5 + (selectorA * 10);
-		} else if (m_asB > Constants.AutonSelector.AUTO_6_L && m_asB < Constants.AutonSelector.AUTO_6_H) {
+		} else if (m_asB > Constants.kAutonSelector.AUTO_6_L && m_asB < Constants.kAutonSelector.AUTO_6_H) {
 			return 6 + (selectorA * 10);
-		} else if (m_asB > Constants.AutonSelector.AUTO_7_L && m_asB < Constants.AutonSelector.AUTO_7_H) {
+		} else if (m_asB > Constants.kAutonSelector.AUTO_7_L && m_asB < Constants.kAutonSelector.AUTO_7_H) {
 			return 7 + (selectorA * 10);
-		} else if (m_asB > Constants.AutonSelector.AUTO_8_L && m_asB < Constants.AutonSelector.AUTO_8_H) {
+		} else if (m_asB > Constants.kAutonSelector.AUTO_8_L && m_asB < Constants.kAutonSelector.AUTO_8_H) {
 			return 8 + (selectorA * 10);
-		} else if (m_asB > Constants.AutonSelector.AUTO_9_L && m_asB < Constants.AutonSelector.AUTO_9_H) {
+		} else if (m_asB > Constants.kAutonSelector.AUTO_9_L && m_asB < Constants.kAutonSelector.AUTO_9_H) {
 			return 9 + (selectorA * 10);
-		} else if (m_asB > Constants.AutonSelector.AUTO_10_L && m_asB < Constants.AutonSelector.AUTO_10_H) {
+		} else if (m_asB > Constants.kAutonSelector.AUTO_10_L && m_asB < Constants.kAutonSelector.AUTO_10_H) {
 			return 10 + (selectorA * 10);
 		} else {
 			// ERROR

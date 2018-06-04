@@ -9,5 +9,4 @@ public interface Path {
 	public double[][] mpL();
 	public double[][] mpR();
 	public Integer mpDur();
-	
 }

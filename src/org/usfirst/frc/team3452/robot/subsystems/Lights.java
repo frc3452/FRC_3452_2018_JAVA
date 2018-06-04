@@ -35,7 +35,7 @@ public class Lights extends Subsystem {
 		for (int i = 0; i < 10; i++)
 			tempArray[i] = 3452;
 
-		canifier = new CANifier(Constants.Lights.CANIFIER_ID);
+		canifier = new CANifier(Constants.kLights.CANIFIER_ID);
 
 		lightTimer.stop();
 		lightTimer.reset();
