@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import java.util.ArrayList;
+
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
@@ -17,6 +19,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -29,7 +32,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @author max
  *
  */
-public class Drivetrain extends Subsystem {
+public class Drivetrain extends Subsystem implements GZSubsystem {
 	// PDP
 	public PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 
@@ -49,6 +52,8 @@ public class Drivetrain extends Subsystem {
 
 	//init timer
 	public Timer timer = new Timer();
+
+	private ArrayList<WPI_TalonSRX> controllers = new ArrayList<WPI_TalonSRX>();
 
 	/**
 	 * Smartdashboard logging
@@ -102,24 +107,27 @@ public class Drivetrain extends Subsystem {
 
 		Gyro = new AHRS(SPI.Port.kMXP);
 
+		//add to arraylist
+		controllers.add(L1);
+		controllers.add(L2);
+		controllers.add(L3);
+		controllers.add(R4);
+		controllers.add(R1);
+		controllers.add(R2);
+		controllers.add(R3);
+		controllers.add(R4);
+
 		//Config
-		talonInit(L1);
-		talonInit(L2);
-		talonInit(L3);
-		talonInit(L4);
-		talonInit(R1);
-		talonInit(R2);
-		talonInit(R3);
-		talonInit(R4);
+		for (WPI_TalonSRX talons : controllers)
+			talonInit(talons);
 
 		//Drivetrain
 		robotDrive = new DifferentialDrive(L1, R1);
 		robotDrive.setDeadband(0.045); //.08
 		robotDrive.setSafetyEnabled(false);
+		brake(NeutralMode.Coast);
 
 		robotDrive.setSubsystem("Drive train");
-
-		brake(NeutralMode.Coast);
 		pdp.setSubsystem("Drive train");
 
 		L1.setName("L1");
@@ -216,8 +224,7 @@ public class Drivetrain extends Subsystem {
 	 * 
 	 * 
 	 * @param time
-	 *            double
-	 *            - if 3452, stops notifier
+	 *            double - if 3452, stops notifier
 	 */
 	public void processMotionProfileBuffer(double time) {
 		if (time == 3452)
@@ -304,7 +311,8 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
-	 * Used to process and push <b>parsed</b> motion profiles to drivetrain talons
+	 * Used to process and push <b>parsed</b> motion profiles to drivetrain
+	 * talons
 	 * 
 	 * @author max
 	 * 
@@ -313,7 +321,8 @@ public class Drivetrain extends Subsystem {
 	 */
 	public void motionProfileToTalons() {
 		if (Robot.playback.mpL.size() != Robot.playback.mpR.size())
-			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + Robot.playback.mpL.size() + "\t\t" + Robot.playback.mpR.size());
+			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + Robot.playback.mpL.size() + "\t\t"
+					+ Robot.playback.mpR.size());
 
 		processMotionProfileBuffer((double) Robot.playback.mpDur / (1000 * 2));
 
@@ -330,7 +339,8 @@ public class Drivetrain extends Subsystem {
 		R1.clearMotionProfileTrajectories();
 
 		//generate and push each mp point
-		for (int i = 0; i < (Robot.playback.mpL.size() <= Robot.playback.mpR.size() ? Robot.playback.mpL.size() : Robot.playback.mpR.size()); i++) {
+		for (int i = 0; i < (Robot.playback.mpL.size() <= Robot.playback.mpR.size() ? Robot.playback.mpL.size()
+				: Robot.playback.mpR.size()); i++) {
 
 			leftPoint.position = Robot.playback.mpL.get(i).get(0) * 4096;
 			leftPoint.velocity = Robot.playback.mpL.get(i).get(1) * 4096;
@@ -378,7 +388,6 @@ public class Drivetrain extends Subsystem {
 	 * 
 	 * @author max
 	 * @param durationMs
-	 *            int
 	 * @return TrajectoryDuration
 	 */
 	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {
@@ -395,7 +404,6 @@ public class Drivetrain extends Subsystem {
 	/**
 	 * @author max
 	 * @param joy
-	 *            Joystick
 	 */
 	public void arcade(Joystick joy) {
 		//		Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify), joy.getRawAxis(4) * m_modify);
@@ -406,9 +414,7 @@ public class Drivetrain extends Subsystem {
 	/**
 	 * @author max
 	 * @param move
-	 *            double
 	 * @param rotate
-	 *            double
 	 */
 	public void arcade(double move, double rotate) {
 		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .2));
@@ -417,9 +423,7 @@ public class Drivetrain extends Subsystem {
 	/**
 	 * @author max
 	 * @param left
-	 *            double
 	 * @param right
-	 *            double
 	 */
 	public void tank(double left, double right) {
 		robotDrive.tankDrive(left * m_elev_modify, right * m_elev_modify);
@@ -428,7 +432,6 @@ public class Drivetrain extends Subsystem {
 	/**
 	 * @author max
 	 * @param joy
-	 *            Joystick
 	 */
 	public void tank(Joystick joy) {
 		robotDrive.tankDrive(-joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
@@ -436,8 +439,7 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * @author max
-	 * @param mode
-	 *            NeutralMode
+	 * @param mode NeutralMode
 	 */
 	public void brake(NeutralMode mode) {
 		L1.setNeutralMode(mode);
@@ -520,9 +522,7 @@ public class Drivetrain extends Subsystem {
 	/**
 	 * @author max
 	 * @param value
-	 *            double
-	 * @return isUnder boolean
-	 * @since boolean
+	 * @return isUnder 
 	 */
 	public boolean encoderSpeedIsUnder(double value) {
 
@@ -604,4 +604,17 @@ public class Drivetrain extends Subsystem {
 		setDefaultCommand(new DriveTele());
 	}
 
+
+	public boolean tempPrevDisable = false;
+	
+	@Override
+	public void setDisable(boolean toSetDisable) {
+		for (SpeedController controller : controllers)
+			if (toSetDisable)
+				controller.disable();
+			else
+				controller.set(0);
+		
+		tempPrevDisable = toSetDisable;
+	}
 }

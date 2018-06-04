@@ -1,11 +1,20 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import com.ctre.phoenix.ParamEnum;
-import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import java.util.ArrayList;
+
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
+
+import com.ctre.phoenix.ParamEnum;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  * <b>Elevator subsystem</b> Handles elevator open + closed loop and speed
@@ -14,7 +23,7 @@ import org.usfirst.frc.team3452.robot.Robot;
  * @author max
  *
  */
-public class Elevator extends Subsystem {
+public class Elevator extends Subsystem implements GZSubsystem {
 	public double m_pos = 0;
 	public boolean m_overriden = false;
 
@@ -22,6 +31,8 @@ public class Elevator extends Subsystem {
 	public WPI_TalonSRX Elev_2;
 
 	public boolean isRemoteSensor = true;
+
+	private ArrayList<WPI_TalonSRX> controllers = new ArrayList<WPI_TalonSRX>();
 
 	/**
 	 * hardware initialization
@@ -33,16 +44,20 @@ public class Elevator extends Subsystem {
 		Elev_1 = new WPI_TalonSRX(Constants.kElevator.E_1);
 		Elev_2 = new WPI_TalonSRX(Constants.kElevator.E_2);
 
-		generalTalonInit(Elev_1);
-		generalTalonInit(Elev_2);
-		
+		controllers.add(Elev_1);
+		controllers.add(Elev_2);
+
+		//Init talons
+		for (WPI_TalonSRX talons : controllers)
+			generalTalonInit(talons);
+
 		// FOLLOWER
 		Elev_2.follow(Elev_1);
 
 		// INVERT
 		Elev_1.setInverted(Constants.kElevator.E_1_INVERT);
 		Elev_2.setInverted(Constants.kElevator.E_2_INVERT);
-		
+
 		// PIDs
 		Elev_1.config_kF(0, 0, 10);
 		Elev_1.config_kP(0, 0.08, 10);
@@ -50,7 +65,7 @@ public class Elevator extends Subsystem {
 		Elev_1.config_kD(0, 2.5, 10);
 		Elev_1.configOpenloopRamp(Constants.kElevator.E_OPEN_RAMP_TIME, 10);
 		Elev_1.configClosedloopRamp(Constants.kElevator.E_CLOSED_RAMP_TIME, 10);
-		
+
 		// ENCODER
 		Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		Elev_1.setSelectedSensorPosition(0, 0, 10);
@@ -93,7 +108,7 @@ public class Elevator extends Subsystem {
 		talon.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10);
 
 		talon.enableCurrentLimit(true);
-		
+
 		talon.setSubsystem("Elevator");
 	}
 
@@ -175,5 +190,14 @@ public class Elevator extends Subsystem {
 	 */
 	public enum ESO {
 		TOGGLE, ON, OFF
+	}
+
+	@Override
+	public void setDisable(boolean toSetDisable) {
+		for (WPI_TalonSRX controller : controllers)
+			if (toSetDisable)
+				controller.disable();
+			else
+				controller.set(0);
 	}
 }

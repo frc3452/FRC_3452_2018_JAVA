@@ -1,9 +1,10 @@
 
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.Constants;
+
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import org.usfirst.frc.team3452.robot.Constants;
 
 /**
  * <h1>AutonSelector Subsystem</h1> Handles autonomous selector case statements

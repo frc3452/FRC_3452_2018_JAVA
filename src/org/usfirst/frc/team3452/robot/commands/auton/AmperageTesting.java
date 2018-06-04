@@ -66,9 +66,9 @@ public class AmperageTesting extends Command {
 			Robot.intake.manual(0);
 		}
 		if (m_climb) {
-			Robot.climber.climb1.set(percentage);
+			Robot.climber.Climber.set(percentage);
 		} else {
-			Robot.climber.climb1.set(0);
+			Robot.climber.Climber.set(0);
 		}
 
 		if (percentage >= 1)
@@ -90,7 +90,7 @@ public class AmperageTesting extends Command {
 		Robot.drive.arcade(0, 0);
 		Robot.elevator.encoderDone();
 		Robot.intake.manual(0);
-		Robot.climber.climb1.set(0);
+		Robot.climber.Climber.set(0);
 	}
 
 	protected void interrupted() {
