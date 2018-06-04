@@ -1,7 +1,7 @@
 
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.util.Constants;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Subsystem;

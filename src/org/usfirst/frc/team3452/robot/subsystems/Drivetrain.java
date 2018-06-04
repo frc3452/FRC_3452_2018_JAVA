@@ -2,9 +2,9 @@ package org.usfirst.frc.team3452.robot.subsystems;
 
 import java.util.ArrayList;
 
-import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
+import org.usfirst.frc.team3452.robot.util.Constants;
 
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;

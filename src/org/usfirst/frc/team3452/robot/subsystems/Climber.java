@@ -2,7 +2,7 @@ package org.usfirst.frc.team3452.robot.subsystems;
 
 import java.util.ArrayList;
 
-import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.util.Constants;
 
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;

@@ -1,7 +1,5 @@
 package org.usfirst.frc.team3452.robot;
 
-import org.usfirst.frc.team3452.robot.Constants.kElevator;
-import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.commands.drive.SpeedModifier;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
@@ -10,6 +8,9 @@ import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator.ESO;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
+import org.usfirst.frc.team3452.robot.util.DPad;
+import org.usfirst.frc.team3452.robot.util.Constants.kElevator;
+import org.usfirst.frc.team3452.robot.util.Constants.kIntake;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;

@@ -1,5 +1,5 @@
 
-package org.usfirst.frc.team3452.robot;
+package org.usfirst.frc.team3452.robot.util;
 
 /**
  * Robot subsystem constants

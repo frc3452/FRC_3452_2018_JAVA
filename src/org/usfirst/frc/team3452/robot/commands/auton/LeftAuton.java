@@ -1,7 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import org.usfirst.frc.team3452.robot.Constants.kIntake;
+
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.*;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
@@ -12,6 +12,7 @@ import org.usfirst.frc.team3452.robot.commands.pwm.IntakeWhileDrive;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
+import org.usfirst.frc.team3452.robot.util.Constants.kIntake;
 
 public class LeftAuton extends CommandGroup {
 
