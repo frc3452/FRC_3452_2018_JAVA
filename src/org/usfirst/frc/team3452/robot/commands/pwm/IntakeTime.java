@@ -6,38 +6,38 @@ import org.usfirst.frc.team3452.robot.subsystems.Intake;
 
 public class IntakeTime extends Command {
 
-	private double m_speed, m_timeout;
+    private double m_speed, m_timeout;
 
-	/**
-	 * @author macco
-	 * @param speed
-	 * @param timeout
-	 * @see Intake
-	 */
-	public IntakeTime(double speed, double timeout) {
-		requires(Robot.intake);
+    /**
+     * @param speed
+     * @param timeout
+     * @author macco
+     * @see Intake
+     */
+    public IntakeTime(double speed, double timeout) {
+        requires(Robot.intake);
 
-		m_speed = speed;
-		m_timeout = timeout;
-	}
+        m_speed = speed;
+        m_timeout = timeout;
+    }
 
-	protected void initialize() {
-		setTimeout(m_timeout);
-	}
+    protected void initialize() {
+        setTimeout(m_timeout);
+    }
 
-	protected void execute() {
-		Robot.intake.manual(m_speed);
-	}
+    protected void execute() {
+        Robot.intake.manual(m_speed);
+    }
 
-	protected boolean isFinished() {
-		return isTimedOut();
-	}
+    protected boolean isFinished() {
+        return isTimedOut();
+    }
 
-	protected void end() {
-		Robot.intake.manual(0);
-	}
+    protected void end() {
+        Robot.intake.manual(0);
+    }
 
-	protected void interrupted() {
-		end();
-	}
+    protected void interrupted() {
+        end();
+    }
 }

@@ -115,11 +115,11 @@ public class Constants {
         public static final int AMP_TRIGGER = 50;
         public static final int AMP_LIMIT = 40;
         public static final int AMP_TIME = 1000;
-        
+
         public class Heights {
-        	public static final double Floor = -15;
-        	public static final double Switch = 3.5;
-        	public static final double Scale = 6.5;
+            public static final double Floor = -15;
+            public static final double Switch = 3.5;
+            public static final double Scale = 6.5;
         }
     }
 

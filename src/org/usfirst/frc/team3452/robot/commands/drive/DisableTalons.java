@@ -1,8 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
-import org.usfirst.frc.team3452.robot.Robot;
-
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import org.usfirst.frc.team3452.robot.Robot;
 
 /**
  *
@@ -14,8 +13,8 @@ public class DisableTalons extends InstantCommand {
     }
 
     @Override
-	protected void initialize() {
-    	Robot.drive.setDisable(!Robot.drive.tempPrevDisable);
+    protected void initialize() {
+        Robot.drive.setDisable(!Robot.drive.tempPrevDisable);
     }
 
 }

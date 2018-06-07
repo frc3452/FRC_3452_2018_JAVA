@@ -8,32 +8,30 @@ import edu.wpi.first.wpilibj.buttons.Button;
 
 public class DPad extends Button {
 
-	private GenericHID stick;
-	private int povAngle;
+    private GenericHID stick;
+    private int povAngle;
 
-	/**
-	 * Enable POV stick as a set of buttons based on direction
-	 *
-	 * @param stick
-	 *            - the stick with the axis to use as a button
-	 * @param povAngle
-	 *            - POV stick angle to treat as a button press (e.g. 0,45,90,135
-	 *            etc...)
-	 **/
+    /**
+     * Enable POV stick as a set of buttons based on direction
+     *
+     * @param stick    - the stick with the axis to use as a button
+     * @param povAngle - POV stick angle to treat as a button press (e.g. 0,45,90,135
+     *                 etc...)
+     **/
 
-	DPad(GenericHID stick, int povAngle) {
-		this.stick = stick;
-		this.povAngle = povAngle;
-	}
+    public DPad(GenericHID stick, int povAngle) {
+        this.stick = stick;
+        this.povAngle = povAngle;
+    }
 
-	/**
-	 * Gets the value of the joystick button
-	 *
-	 * @return The value of the joystick button
-	 */
-	
-	@Override
-	public boolean get() {
-		return (stick.getPOV() == povAngle);
-	}
+    /**
+     * Gets the value of the joystick button
+     *
+     * @return The value of the joystick button
+     */
+
+    @Override
+    public boolean get() {
+        return (stick.getPOV() == povAngle);
+    }
 }

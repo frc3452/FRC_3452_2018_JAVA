@@ -5,36 +5,36 @@ import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 
 public class DriveToStop extends Command {
-	private double m_speed;
+    private double m_speed;
 
-	/**
-	 * @author macco
-	 * @param speed
-	 * @see Drivetrain
-	 */
-	public DriveToStop(double speed) {
-		requires(Robot.drive);
-		
-		m_speed = speed;
-	}
+    /**
+     * @param speed
+     * @author macco
+     * @see Drivetrain
+     */
+    public DriveToStop(double speed) {
+        requires(Robot.drive);
 
-	protected void initialize() {
-		setTimeout(10);
-	}
+        m_speed = speed;
+    }
 
-	protected void execute() {
-		Robot.drive.arcade(m_speed, 0);
-	}
+    protected void initialize() {
+        setTimeout(10);
+    }
 
-	protected boolean isFinished() {
-		return Robot.drive.encoderSpeedIsUnder(60) || isTimedOut();
-	}
+    protected void execute() {
+        Robot.drive.arcade(m_speed, 0);
+    }
 
-	protected void end() {
-		Robot.drive.arcade(0, 0);
-	}
+    protected boolean isFinished() {
+        return Robot.drive.encoderSpeedIsUnder(60) || isTimedOut();
+    }
 
-	protected void interrupted() {
-		end();
-	}
+    protected void end() {
+        Robot.drive.arcade(0, 0);
+    }
+
+    protected void interrupted() {
+        end();
+    }
 }

@@ -1,63 +1,61 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import java.util.ArrayList;
-
-import org.usfirst.frc.team3452.robot.util.Constants;
-
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import org.usfirst.frc.team3452.robot.util.Constants;
+
+import java.util.ArrayList;
 
 /**
  * <h1>Climber subsystem</h1>
  * Handles climber.
- * 
- * @author max
  *
+ * @author max
  */
 public class Climber extends Subsystem implements GZSubsystem {
-	public Spark Climber;
-	public int climbCounter = 0;
-	
-	private ArrayList<SpeedController> controllers = new ArrayList<SpeedController>();
+    public Spark Climber;
+    public int climbCounter = 0;
 
-	/**
-	 * one direction control of climber
-	 * 
-	 * @author max
+    private ArrayList<SpeedController> controllers = new ArrayList<SpeedController>();
+
+    /**
+     * hardware initialization
+     *
+     * @author max
+     */
+    public Climber() {
+        Climber = new Spark(Constants.kClimber.CLIMBER_1);
+        Climber.setInverted(Constants.kClimber.CLIMBER_1_INVERT);
+
+        Climber.setSubsystem("Climber");
+        Climber.setName("Climber Motor");
+
+        controllers.add(Climber);
+    }
+
+    /**
+     * one direction control of climber
+     *
      * @param speed double
-	 */
-	public void control(double speed) {
-		Climber.set(Math.abs(speed));
-	}
+     * @author max
+     */
+    public void control(double speed) {
+        Climber.set(Math.abs(speed));
+    }
 
-	/**
-	 * hardware initialization
-	 * 
-	 * @author max
-	 */
-	public Climber() {
-		Climber = new Spark(Constants.kClimber.CLIMBER_1);
-		Climber.setInverted(Constants.kClimber.CLIMBER_1_INVERT);
+    @Override
+    public void initDefaultCommand() {
+    }
 
-		Climber.setSubsystem("Climber");
-		Climber.setName("Climber Motor");
-		
-		controllers.add(Climber);
-	}
+    @Override
+    public void setDisable(boolean toSetDisable) {
+        for (SpeedController controller : controllers)
+            if (toSetDisable)
+                controller.disable();
+            else
+                controller.set(0);
 
-	@Override
-	public void initDefaultCommand() {
-	}
-
-	@Override
-	public void setDisable(boolean toSetDisable) {
-		for (SpeedController controller : controllers)
-			if (toSetDisable)
-				controller.disable();
-			else
-				controller.set(0);
-		
-	}
+    }
 
 }
