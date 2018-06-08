@@ -147,6 +147,11 @@ public class Constants {
 
     public class kLights {
         public static final int CANIFIER_ID = 0;
+
+        public static final double Green = 250;
+        public static final double Red = 0;
+        public static final double Blue = 120;
+
     }
 
     public class kPlayback {

@@ -16,6 +16,7 @@ import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.STATE;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
+import org.usfirst.frc.team3452.robot.util.Constants;
 
 public class Robot extends TimedRobot {
     public static final Drivetrain drive = new Drivetrain();
@@ -167,10 +168,7 @@ public class Robot extends TimedRobot {
                 || (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
 
         //SET COLOR ACCORDING TO ALLIANCE
-        if (DriverStation.getInstance().getAlliance() == Alliance.Red)
-            Robot.lights.hsv(0, 1, .5);
-        else
-            Robot.lights.hsv(120, 1, .5);
+        Robot.lights.hsv(DriverStation.getInstance().getAlliance() == Alliance.Red ? Constants.kLights.Red : Constants.kLights.Blue, 1, .5);
 
         //BRAKE MODE DURING AUTO
         Robot.drive.brake(NeutralMode.Brake);
@@ -193,7 +191,7 @@ public class Robot extends TimedRobot {
         startLog();
 
         //GREEN LOW BRIGHTNESS
-        Robot.lights.hsv(250, 1, .5);
+        Robot.lights.hsv(Constants.kLights.Green, 1, .5);
 
         Robot.drive.brake(NeutralMode.Coast);
 
