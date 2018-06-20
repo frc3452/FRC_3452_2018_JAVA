@@ -6,8 +6,8 @@ import org.usfirst.frc.team3452.robot.subsystems.Camera;
 
 public class CameraSwitch extends InstantCommand {
 
-    private int m_cam;
-
+	private int m_cam;
+	
     /**
      * @author macco
      * @param cam
@@ -18,7 +18,7 @@ public class CameraSwitch extends InstantCommand {
         requires(Robot.camera);
     }
     protected void initialize() {
-        Robot.camera.camSwitch(m_cam);
+    	Robot.camera.camSwitch(m_cam);
     }
 
 }

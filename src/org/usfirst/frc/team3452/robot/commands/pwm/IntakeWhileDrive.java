@@ -7,56 +7,57 @@ import org.usfirst.frc.team3452.robot.subsystems.Intake;
 
 public class IntakeWhileDrive extends Command {
 
-    public Timer timer = new Timer();
-    private double m_value, m_percent, m_timeout;
-    private boolean timeoutSet = false;
+	private double m_value, m_percent, m_timeout;
+	private boolean timeoutSet = false;
 
-    /**
-     * @param value
-     * @param atPercent
-     * @param timeout
-     * @author macco
-     * @see Intake
-     */
-    public IntakeWhileDrive(double value, double atPercent, double timeout) {
-        requires(Robot.intake);
+	public Timer timer = new Timer();
 
-        m_value = value;
-        m_percent = atPercent;
-        m_timeout = timeout;
-    }
+	/**
+	 * @author macco
+	 * @param value
+	 * @param atPercent
+	 * @param timeout
+	 * @see Intake
+	 */
+	public IntakeWhileDrive(double value, double atPercent, double timeout) {
+		requires(Robot.intake);
 
-    protected void initialize() {
-        timer.stop();
-        timer.reset();
-        timer.start();
-    }
+		m_value = value;
+		m_percent = atPercent;
+		m_timeout = timeout;
+	}
 
-    protected void execute() {
-        if (Robot.drive.p_pos > m_percent) {
-            Robot.intake.manual(m_value);
+	protected void initialize() {
+		timer.stop();
+		timer.reset();
+		timer.start();
+	}
 
-            if (timeoutSet == false) {
-                System.out.println("timeout set");
-                setTimeout(m_timeout + timer.get());
-                timeoutSet = true;
-            }
+	protected void execute() {
+		if (Robot.drive.p_pos > m_percent) {
+			Robot.intake.manual(m_value);
 
-        } else {
-            Robot.intake.manual(0);
-        }
-    }
+			if (timeoutSet == false) {
+				System.out.println("timeout set");
+				setTimeout(m_timeout + timer.get());
+				timeoutSet = true;
+			}
 
-    protected boolean isFinished() {
-        return isTimedOut();
-    }
+		} else {
+			Robot.intake.manual(0);
+		}
+	}
 
-    protected void end() {
-        System.out.println("Done");
-        Robot.intake.manual(0);
-    }
+	protected boolean isFinished() {
+		return isTimedOut();
+	}
 
-    protected void interrupted() {
-        end();
-    }
+	protected void end() {
+		System.out.println("Done");
+		Robot.intake.manual(0);
+	}
+
+	protected void interrupted() {
+		end();
+	}
 }
