@@ -36,19 +36,19 @@ public class Robot extends TimedRobot {
 	public static final Lights lights = new Lights();
 	public static final Playback playback = new Playback();
 	@SuppressWarnings("unused")
-	//TODO remove?
+	// TODO remove?
 	private static final OI oi = new OI();
 
-	//Auto selector init
+	// Auto selector init
 	private Command autonomousCommand = null;
 	private Command autoCommand[] = new Command[41];
 	private Command defaultCommand = null;
 
-	//Flags
+	// Flags
 	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false;
 
-	//LOGGING CONTROL
-	private boolean logging = true, logToUsb = true;
+	// LOGGING CONTROL
+	private boolean logging = false, logToUsb = true;
 	private String loggingLocation = "Logging/Offseason";
 
 	@Override
@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
 
 		defaultCommand = new DefaultAutonomous();
 
-		//naming for commands 
+		// naming for commands
 		Robot.autonSelector.autoCommandName[1] = "Middle - Switch";
 		Robot.autonSelector.autoCommandName[2] = "Left - Switch";
 		Robot.autonSelector.autoCommandName[3] = "Left - Scale";
@@ -95,8 +95,8 @@ public class Robot extends TimedRobot {
 		handleLEDs();
 		Robot.drive.loggerUpdate();
 
-		//LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
-		//LOOPED HERE
+		// LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
+		// LOOPED HERE
 		if (safeToLog && logging)
 			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.RUNTIME);
 	}
@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
 		endLog();
 
 		Robot.drive.brake((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
-		//		Robot.drive.brake(NeutralMode.Coast);
+		// Robot.drive.brake(NeutralMode.Coast);
 	}
 
 	@Override
@@ -128,12 +128,12 @@ public class Robot extends TimedRobot {
 
 		startLog();
 
-		//timer start
+		// timer start
 		Robot.drive.timer.stop();
 		Robot.drive.timer.reset();
 		Robot.drive.timer.start();
 
-		//keep overriding while game data bad or controller override not set
+		// keep overriding while game data bad or controller override not set
 		do {
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
 
@@ -175,13 +175,13 @@ public class Robot extends TimedRobot {
 		} while ((Robot.autonSelector.gameMsg.equals("NOT") && Robot.drive.timer.get() < 3)
 				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
 
-		//SET COLOR ACCORDING TO ALLIANCE
+		// SET COLOR ACCORDING TO ALLIANCE
 		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
 			Robot.lights.hsv(0, 1, .5);
 		else
 			Robot.lights.hsv(120, 1, .5);
 
-		//BRAKE MODE DURING AUTO
+		// BRAKE MODE DURING AUTO
 		Robot.drive.brake(NeutralMode.Brake);
 
 		autonChooser();
@@ -201,7 +201,7 @@ public class Robot extends TimedRobot {
 		System.out.println("Entering teleop...");
 		startLog();
 
-		//GREEN LOW BRIGHTNESS
+		// GREEN LOW BRIGHTNESS
 		Robot.lights.hsv(250, 1, .5);
 
 		Robot.drive.brake(NeutralMode.Coast);
@@ -212,8 +212,8 @@ public class Robot extends TimedRobot {
 
 		wasTele = true;
 
-		//		Command amp = new AmperageTesting(.02, true, false, false, false);
-		//		amp.start();
+		// Command amp = new AmperageTesting(.02, true, false, false, false);
+		// amp.start();
 	}
 
 	@Override
@@ -238,40 +238,29 @@ public class Robot extends TimedRobot {
 		if (OI.driverJoy.getRawButton(2) && OI.driverJoy.getRawButton(7) && OI.driverJoy.getRawButton(8))
 			readyForMatch = true;
 
-		switch (Robot.autonSelector.uglyAnalog()) {
-		case 96:
+		if (wasTest) {
+			Robot.lights.pulse(55, 1, .2, .8, .1);
+		} else {
+			switch (Robot.autonSelector.uglyAnalog()) {
+			case 96:
 
-			//fade
-			if (wasTest)
-				Robot.lights.pulse(55, 1, .2, .8, .1);
-			else {
 				Robot.lights.hsv(Robot.lights.m_hue, 1, .25);
 				Robot.lights.m_hue++;
-			}
 
-			break;
-		case 97:
+				break;
+			case 97:
 
-			//police
-			if (wasTest)
-				Robot.lights.pulse(55, 1, .2, .8, .1);
-			else {
 				if (Robot.lights.m_hue > 180)
 					Robot.lights.hsv(0, 1, 1);
 				else
 					Robot.lights.hsv(120, 1, 1);
 				Robot.lights.m_hue += 30;
-			}
-			break;
-		default:
 
-			//comp
-			if (wasTest)
-				Robot.lights.pulse(55, 1, .2, .8, .1);
-			else {
+				break;
+			default:
 
 				if (DriverStation.getInstance().isDisabled()) {
-					//IF CONNECTED LOW GREEN
+					// IF CONNECTED LOW GREEN
 					if (DriverStation.getInstance().isDSAttached()) {
 
 						if (readyForMatch)
@@ -281,9 +270,9 @@ public class Robot extends TimedRobot {
 
 					} else {
 
-						//IF FMS PULSE RED, IF NO FMS RGB FADE
+						// IF FMS PULSE RED, IF NO FMS RGB FADE
 						if (DriverStation.getInstance().isFMSAttached()) {
-							//			increase pulsing speed while not connected
+							// increase pulsing speed while not connected
 							Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 100));
 
 						} else {
@@ -292,8 +281,8 @@ public class Robot extends TimedRobot {
 						}
 					}
 				}
+				break;
 			}
-			break;
 		}
 	}
 
@@ -377,7 +366,7 @@ public class Robot extends TimedRobot {
 		// if not overriden
 		if (!Robot.autonSelector.controllerOverride) {
 
-			//If selector feedback nominal
+			// If selector feedback nominal
 			if (Robot.autonSelector.uglyAnalog() <= 40 && Robot.autonSelector.uglyAnalog() >= 1) {
 				autonomousCommand = autoCommand[Robot.autonSelector.uglyAnalog()];
 			} else {

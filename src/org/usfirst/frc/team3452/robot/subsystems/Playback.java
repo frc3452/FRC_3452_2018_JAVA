@@ -354,6 +354,7 @@ public class Playback extends Subsystem {
 				System.out.println("Opening Parse: " + name + ".csv");
 				createFile(name, folder, fileState.READ, usb);
 				parseFile();
+//				printValues();
 				break;
 
 			case Log:

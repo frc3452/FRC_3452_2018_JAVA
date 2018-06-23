@@ -50,7 +50,7 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 	public double p_pos;
 	private double l_pos = 0, r_pos = 0;
 
-	//init timer
+	// init timer
 	public Timer timer = new Timer();
 
 	private ArrayList<WPI_TalonSRX> controllers = new ArrayList<WPI_TalonSRX>();
@@ -95,7 +95,7 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 		timer.reset();
 		timer.start();
 
-		//Talons
+		// Talons
 		L1 = new WPI_TalonSRX(Constants.kDrivetrain.L1);
 		L2 = new WPI_TalonSRX(Constants.kDrivetrain.L2);
 		L3 = new WPI_TalonSRX(Constants.kDrivetrain.L3);
@@ -107,7 +107,7 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 
 		Gyro = new AHRS(SPI.Port.kMXP);
 
-		//add to arraylist
+		// add to arraylist
 		controllers.add(L1);
 		controllers.add(L2);
 		controllers.add(L3);
@@ -117,13 +117,13 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 		controllers.add(R3);
 		controllers.add(R4);
 
-		//Config
+		// Config
 		for (WPI_TalonSRX talons : controllers)
 			talonInit(talons);
 
-		//Drivetrain
+		// Drivetrain
 		robotDrive = new DifferentialDrive(L1, R1);
-		robotDrive.setDeadband(0.045); //.08
+		robotDrive.setDeadband(0.045); // .08
 		robotDrive.setSafetyEnabled(false);
 		brake(NeutralMode.Coast);
 
@@ -146,7 +146,7 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 	 * talon init
 	 */
 	private void talonInit(WPI_TalonSRX talon) {
-		//---All talons---\\
+		// ---All talons---\\
 
 		int id = talon.getDeviceID();
 		boolean lOrR;
@@ -170,31 +170,31 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 
 		talon.setSubsystem("Drive train");
 
-		//If Master
+		// If Master
 		if (id == Constants.kDrivetrain.L1 || id == Constants.kDrivetrain.R1) {
 			talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
 			talon.setSelectedSensorPosition(0, 0, 10);
 			talon.setSensorPhase(true);
 
-			talon.config_kF(0, .2379, 10);
 
-			//If left master
+			talon.config_kF(0, .2379, 10);
+			// If left master
 			if (talon.getDeviceID() == Constants.kDrivetrain.L1) {
-				talon.config_kP(0, 0.425, 10);
+
+				talon.config_kP(0, .5, 10);
 				talon.config_kI(0, 0, 10);
-				talon.config_kD(0, 4.25, 10);
+				talon.config_kD(0, 15, 10);
 
 			} else {
-				//If right master
-				talon.config_kP(0, 0.425, 10); //.8
+				// If right master
+				talon.config_kP(0, .5, 10);
 				talon.config_kI(0, 0, 10);
-				talon.config_kD(0, 4.25, 10);
+				talon.config_kD(0, 20, 10);
 			}
+			
+			
 
-			talon.config_kP(0, 0.21, 10);
-			talon.config_kI(0, 0, 10);
-
-			//If Follower
+			// If Follower
 		} else {
 			talon.follow(lOrR ? L1 : R1);
 		}
@@ -257,7 +257,7 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
 
-		//set talon srx 
+		// set talon srx
 		L1.configMotionProfileTrajectoryPeriod(mpDur, 10);
 		R1.configMotionProfileTrajectoryPeriod(mpDur, 10);
 		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, mpDur, 10);
@@ -266,7 +266,7 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 		L1.clearMotionProfileTrajectories();
 		R1.clearMotionProfileTrajectories();
 
-		//generate and push each mp point
+		// generate and push each mp point
 		for (int i = 0; i < ((mpL.length <= mpR.length) ? mpL.length : mpR.length); i++) {
 
 			leftPoint.position = mpL[i][0] * 4096;
@@ -329,7 +329,7 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
 
-		//set talon srx 
+		// set talon srx
 		L1.configMotionProfileTrajectoryPeriod(Robot.playback.mpDur, 10);
 		R1.configMotionProfileTrajectoryPeriod(Robot.playback.mpDur, 10);
 		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Robot.playback.mpDur, 10);
@@ -338,7 +338,7 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 		L1.clearMotionProfileTrajectories();
 		R1.clearMotionProfileTrajectories();
 
-		//generate and push each mp point
+		// generate and push each mp point
 		for (int i = 0; i < (Robot.playback.mpL.size() <= Robot.playback.mpR.size() ? Robot.playback.mpL.size()
 				: Robot.playback.mpR.size()); i++) {
 
@@ -406,7 +406,8 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 	 * @param joy
 	 */
 	public void arcade(Joystick joy) {
-		//		Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify), joy.getRawAxis(4) * m_modify);
+		// Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify),
+		// joy.getRawAxis(4) * m_modify);
 		arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .635 * m_modify));
 		Robot.elevator.setDriveLimit();
 	}
@@ -439,7 +440,8 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 
 	/**
 	 * @author max
-	 * @param mode NeutralMode
+	 * @param mode
+	 *            NeutralMode
 	 */
 	public void brake(NeutralMode mode) {
 		L1.setNeutralMode(mode);
@@ -522,7 +524,7 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 	/**
 	 * @author max
 	 * @param value
-	 * @return isUnder 
+	 * @return isUnder
 	 */
 	public boolean encoderSpeedIsUnder(double value) {
 
@@ -604,9 +606,8 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 		setDefaultCommand(new DriveTele());
 	}
 
-
 	public boolean tempPrevDisable = false;
-	
+
 	@Override
 	public void setDisable(boolean toSetDisable) {
 		for (SpeedController controller : controllers)
@@ -614,7 +615,7 @@ public class Drivetrain extends Subsystem implements GZSubsystem {
 				controller.disable();
 			else
 				controller.set(0);
-		
+
 		tempPrevDisable = toSetDisable;
 	}
 }
