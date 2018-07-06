@@ -1,7 +1,5 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import java.util.ArrayList;
-
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.Constants;
 
@@ -23,7 +21,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * @author max
  *
  */
-public class Elevator extends Subsystem implements GZSubsystem {
+public class Elevator extends Subsystem {
 	public double m_pos = 0;
 	public boolean m_overriden = false;
 
@@ -31,8 +29,6 @@ public class Elevator extends Subsystem implements GZSubsystem {
 	public WPI_TalonSRX Elev_2;
 
 	public boolean isRemoteSensor = true;
-
-	private ArrayList<WPI_TalonSRX> controllers = new ArrayList<WPI_TalonSRX>();
 
 	/**
 	 * hardware initialization
@@ -44,12 +40,8 @@ public class Elevator extends Subsystem implements GZSubsystem {
 		Elev_1 = new WPI_TalonSRX(Constants.kElevator.E_1);
 		Elev_2 = new WPI_TalonSRX(Constants.kElevator.E_2);
 
-		controllers.add(Elev_1);
-		controllers.add(Elev_2);
-
-		//Init talons
-		for (WPI_TalonSRX talons : controllers)
-			generalTalonInit(talons);
+		generalTalonInit(Elev_1);
+		generalTalonInit(Elev_2);
 
 		// FOLLOWER
 		Elev_2.follow(Elev_1);
@@ -190,14 +182,5 @@ public class Elevator extends Subsystem implements GZSubsystem {
 	 */
 	public enum ESO {
 		TOGGLE, ON, OFF
-	}
-
-	@Override
-	public void setDisable(boolean toSetDisable) {
-		for (WPI_TalonSRX controller : controllers)
-			if (toSetDisable)
-				controller.disable();
-			else
-				controller.set(0);
 	}
 }

@@ -9,7 +9,7 @@ import org.usfirst.frc.team3452.robot.motionprofiles.Path;
  * @author max
  *
  */
-public class Utilities {
+public class Util {
 
 	/**
 	 * toRound = 2.342, wanting to round to nearest .05 1/<b>20</b> is .05

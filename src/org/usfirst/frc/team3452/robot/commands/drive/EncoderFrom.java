@@ -10,15 +10,14 @@ public class EncoderFrom extends CommandGroup {
 	 * @author macco
 	 * @param left
 	 * @param right
-	 * @param leftspeed
-	 * @param rightspeed
+	 * @param leftAccel
+	 * @param rightAccel
 	 * @param topspeed
 	 * @see EncoderReset
 	 * @see EncoderDrive
 	 */
-	public EncoderFrom(double left, double right, double leftspeed, double rightspeed, double topspeed) {
-
+	public EncoderFrom(double left, double right, double leftAccel, double rightAccel, double topspeed) {
 		addSequential(new EncoderReset());
-		addSequential(new EncoderDrive(left, right, leftspeed, rightspeed, topspeed));
+		addSequential(new EncoderDrive(left, right, leftAccel, rightAccel, topspeed));
 	}
 }

@@ -1,22 +1,29 @@
 package org.usfirst.frc.team3452.robot;
 
+import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
+import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
+import org.usfirst.frc.team3452.robot.commands.drive.RunMotionProfile;
 import org.usfirst.frc.team3452.robot.commands.drive.SpeedModifier;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.OverrideSet;
+import org.usfirst.frc.team3452.robot.commands.playback.PlaybackControl;
 import org.usfirst.frc.team3452.robot.commands.pwm.Climb;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator.ESO;
+import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 import org.usfirst.frc.team3452.robot.util.Constants.kElevator;
 import org.usfirst.frc.team3452.robot.util.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.util.DPad;
+import org.usfirst.frc.team3452.robot.util.Util;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class OI {
 	public static Joystick driverJoy = new Joystick(0);
@@ -49,21 +56,22 @@ public class OI {
 		// driverJoyY.whenPressed(new EncoderReset());
 		// driverJoyY.whileHeld(new PlaybackControl("MP1", "Motion_Profiles",
 		// false, TASK.Record));
-		//
-		// driverJoyLB.whenPressed(new CommandGroup() {
-		// {
-		// addSequential(new EncoderReset());
-		// addSequential(new PlaybackControl("MP1", "Motion_Profiles", false,
-		// TASK.Parse));
-		// }
-		// });
-		//
-		// driverJoyRB.whenPressed(new CommandGroup() {
-		// {
-		// addSequential(new EncoderReset());
-		// addSequential(new RunMotionProfile(new Utilities.Parse()));
-		// }
-		// });
+
+//		driverJoyY.whenPressed(new EncoderFrom(5, 5, 1, 1, 1));
+
+//		driverJoyLB.whenPressed(new CommandGroup() {
+//			{
+//				addSequential(new EncoderReset());
+//				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
+//			}
+//		});
+//
+//		driverJoyRB.whenPressed(new CommandGroup() {
+//			{
+//				addSequential(new EncoderReset());
+//				addSequential(new RunMotionProfile(new Util.Parse()));
+//			}
+//		});
 
 		driverJoyY.whileHeld(new Climb(1));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));

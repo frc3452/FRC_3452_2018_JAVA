@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.Constants;
-import org.usfirst.frc.team3452.robot.util.Utilities;
+import org.usfirst.frc.team3452.robot.util.Util;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -120,7 +120,7 @@ public class Playback extends Subsystem {
 	private void writeToProfile(boolean isStartup) {
 		try {
 			//write to the speed of the motion profile
-			String timeString = String.format("%8s", Utilities.roundToFraction(Robot.drive.timer.get(),
+			String timeString = String.format("%8s", Util.roundToFraction(Robot.drive.timer.get(),
 					(1 / ((double) Constants.kPlayback.RECORDING_MOTION_PROFILE_MS / 1000))));
 
 			//turn time string to number
@@ -175,7 +175,7 @@ public class Playback extends Subsystem {
 
 			//ON STARTUP, PRINT NAMES
 			if (startup) {
-				bw.write(Utilities.dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP,"
+				bw.write(Util.dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP,"
 						+ "L1-V,L2-V,L3-V,L4-V," + "R1-AMP,R2-AMP,R3-AMP,R4-AMP," + "R1-V,R2-V,R3-V,R4-V,"
 						+ "Elev_1-AMP,Elev_2-AMP," + "Elev_1-V,Elev_2-V," + "Intake_L-AMP,Intake_R-AMP,"
 						+ "Climber_1-AMP,Climber_2-AMP," + "BATTERY");
@@ -184,7 +184,7 @@ public class Playback extends Subsystem {
 			} else {
 
 				//TIME VALUE (ROUNDED)
-				String timeString = String.format("%8s", Utilities.roundToFraction(Robot.drive.timer.get(), 20));
+				String timeString = String.format("%8s", Util.roundToFraction(Robot.drive.timer.get(), 20));
 				timeString = timeString.replace(' ', '0');
 
 				n_timeString = Double.valueOf(timeString);
@@ -405,7 +405,7 @@ public class Playback extends Subsystem {
 
 	private String loggingName(boolean returnCurrent) {
 		if (returnCurrent) {
-			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Utilities.dateTime(true);
+			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Util.dateTime(true);
 			prevDateTimeString = retval;
 			return retval;
 		} else {

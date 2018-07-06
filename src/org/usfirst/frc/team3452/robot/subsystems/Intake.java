@@ -1,19 +1,14 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import java.util.ArrayList;
-
 import org.usfirst.frc.team3452.robot.util.Constants;
 
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class Intake extends Subsystem implements GZSubsystem {
+public class Intake extends Subsystem {
 
 	public Spark Intake_L, Intake_R;
 	
-	private ArrayList<SpeedController> controllers = new ArrayList<SpeedController>();
-
 	/**
 	 * hardware initialization
 	 * 
@@ -23,9 +18,6 @@ public class Intake extends Subsystem implements GZSubsystem {
 	public Intake() {
 		Intake_L = new Spark(Constants.kIntake.INTAKE_L);
 		Intake_R = new Spark(Constants.kIntake.INTAKE_R);
-
-		controllers.add(Intake_L);
-		controllers.add(Intake_R);
 
 		Intake_L.setInverted(Constants.kIntake.INTAKE_L_INVERT);
 		Intake_R.setInverted(Constants.kIntake.INTAKE_R_INVERT);
@@ -49,16 +41,6 @@ public class Intake extends Subsystem implements GZSubsystem {
 
 	@Override
 	public void initDefaultCommand() {
-	}
-
-	@Override
-	public void setDisable(boolean toSetDisable) {
-		for (SpeedController controller : controllers)
-			if (toSetDisable)
-				controller.disable();
-			else
-				controller.set(0);
-		
 	}
 
 }
