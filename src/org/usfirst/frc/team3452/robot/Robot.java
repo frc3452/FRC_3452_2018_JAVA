@@ -188,9 +188,7 @@ public class Robot extends TimedRobot {
 
 		if (autonomousCommand != null)
 			autonomousCommand.start();
-
-		// TODO REMOVE
-		wasTele = true;
+		
 	}
 
 	@Override
