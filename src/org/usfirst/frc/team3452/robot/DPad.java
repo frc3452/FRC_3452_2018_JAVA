@@ -1,4 +1,4 @@
-package org.usfirst.frc.team3452.robot.util;
+package org.usfirst.frc.team3452.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.buttons.Button;

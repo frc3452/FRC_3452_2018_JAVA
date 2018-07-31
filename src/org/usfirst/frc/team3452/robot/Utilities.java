@@ -1,4 +1,4 @@
-package org.usfirst.frc.team3452.robot.util;
+package org.usfirst.frc.team3452.robot;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,7 +9,7 @@ import org.usfirst.frc.team3452.robot.motionprofiles.Path;
  * @author max
  *
  */
-public class Util {
+public class Utilities {
 
 	/**
 	 * toRound = 2.342, wanting to round to nearest .05 1/<b>20</b> is .05
@@ -40,16 +40,16 @@ public class Util {
 	 * </p>
 	 * 
 	 * @author max
-	 * @param full
+	 * @param precise
 	 * @return string
 	 * @since
 	 */
-	public static String dateTime(boolean full) {
+	public static String dateTime(boolean precise) {
 		String temp;
-		if (full)
-			temp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+		if (precise)
+			temp = new SimpleDateFormat("MM.dd.HH.mm.ss.SSS").format(new Date());
 		else
-			temp = new SimpleDateFormat("MM.dd.HH.mm").format(new Date());
+			temp = new SimpleDateFormat("yyyy.MM.dd.HH.mm").format(new Date());
 		return temp;
 	}
 

@@ -1,5 +1,5 @@
 
-package org.usfirst.frc.team3452.robot.util;
+package org.usfirst.frc.team3452.robot;
 
 /**
  * Robot subsystem constants
@@ -10,6 +10,10 @@ package org.usfirst.frc.team3452.robot.util;
 
 public class Constants {
     public class kAutonSelector {
+    	public static final double CORRECTION = 0.025;
+    	
+    	public static final int SAFTEY_SWITCH = 96;
+    	
         public static final int AUTO_SELECTOR_1 = 2; //1
         public static final int AUTO_SELECTOR_2 = 3; //0
 
@@ -103,8 +107,13 @@ public class Constants {
 
         public static final boolean E_ENC_INVERT = true;
 
-        public static final double E_OPEN_RAMP_TIME = .5;
-        public static final double E_CLOSED_RAMP_TIME = .25;
+        public static final double E_OPEN_RAMP_TIME = .5; //.5
+        public static final double E_CLOSED_RAMP_TIME = .125;
+        
+        public static final double E_CLOSED_DOWN_SPEED_LIMIT = .45;
+        public static final double E_CLOSED_UP_SPEED_LIMIT = .9;
+        
+        public static final double E_CLOSED_COMPLETION = 6.5;
 
         public static final double SPEED_1 = 1;
         public static final double SPEED_2 = .9;
@@ -118,8 +127,8 @@ public class Constants {
         
         public class Heights {
         	public static final double Floor = -15;
-        	public static final double Switch = 3.5;
-        	public static final double Scale = 6.5;
+        	public static final double Switch = 2.8;
+        	public static final double Scale = 8;
         }
     }
 
@@ -150,7 +159,7 @@ public class Constants {
     }
 
     public class kPlayback {
-        public final static int RECORDING_MOTION_PROFILE_MS = 20;
+        public final static int RECORDING_MOTION_PROFILE_MS = 100; //20
     }
 
 }

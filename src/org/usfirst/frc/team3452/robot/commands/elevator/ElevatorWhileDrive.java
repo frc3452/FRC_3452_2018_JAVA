@@ -3,6 +3,7 @@ package org.usfirst.frc.team3452.robot.commands.elevator;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.Constants.kElevator;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 
 public class ElevatorWhileDrive extends Command {
@@ -53,7 +54,7 @@ public class ElevatorWhileDrive extends Command {
 		if (l_fwd && m_value < 0)
 			return true;
 
-		return Robot.elevator.isDone(3.5) || isTimedOut();
+		return Robot.elevator.isDone(kElevator.E_CLOSED_COMPLETION) || isTimedOut();
 	}
 
 	@Override

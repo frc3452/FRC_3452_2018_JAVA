@@ -36,9 +36,9 @@ public class EncoderDrive extends Command {
 	}
 
 	protected boolean isFinished() {
-		return false;
+//		return false;
 //		return isTimedOut();
-//		return Robot.drive.encoderIsDone(1.5) || isTimedOut();
+		return Robot.drive.encoderIsDone(1.5) || isTimedOut();
 	}
 
 	protected void end() {

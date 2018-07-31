@@ -1,7 +1,8 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.util.Constants;
+import org.usfirst.frc.team3452.robot.Constants.kElevator;
 
 import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -50,9 +51,13 @@ public class Elevator extends Subsystem {
 		Elev_1.setInverted(Constants.kElevator.E_1_INVERT);
 		Elev_2.setInverted(Constants.kElevator.E_2_INVERT);
 
+		// F 0
+		// P .08
+		// I .000028
+		// D 2.5
 		// PIDs
 		Elev_1.config_kF(0, 0, 10);
-		Elev_1.config_kP(0, 0.08, 10);
+		Elev_1.config_kP(0, 0.2, 10);
 		Elev_1.config_kI(0, 0.000028, 10);
 		Elev_1.config_kD(0, 2.5, 10);
 		Elev_1.configOpenloopRamp(Constants.kElevator.E_OPEN_RAMP_TIME, 10);
@@ -63,11 +68,11 @@ public class Elevator extends Subsystem {
 		Elev_1.setSelectedSensorPosition(0, 0, 10);
 		Elev_1.setSensorPhase(Constants.kElevator.E_ENC_INVERT);
 
-		//		 RESET ENCODER ON LIMIT SWITCH DOWN
+		// RESET ENCODER ON LIMIT SWITCH DOWN
 		Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);
 
 		if (isRemoteSensor) {
-			//		 REMOTE LIMIT SWITCHES
+			// REMOTE LIMIT SWITCHES
 			Elev_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 					LimitSwitchNormal.NormallyOpen, Elev_2.getDeviceID(), 10);
 			Elev_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
@@ -89,12 +94,23 @@ public class Elevator extends Subsystem {
 		Elev_2.setName("Elev 2");
 	}
 
+	/**
+	 * @return elevator rotations (negative is down, positive is up)
+	 */
+	public double getElevatorHeight() {
+		return (double) -Elev_1.getSelectedSensorPosition(0) / 4096;
+	}
+	public double getElevatorSpeed()
+	{
+		return (double) -Robot.elevator.Elev_1.getSelectedSensorVelocity(0) / 4096;
+	}
+
 	public void generalTalonInit(WPI_TalonSRX talon) {
 		// BRAKE
 		Elev_1.setNeutralMode(NeutralMode.Brake);
 		Elev_2.setNeutralMode(NeutralMode.Brake);
 
-		//CURRENT LIMITING
+		// CURRENT LIMITING
 		talon.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10);
 		talon.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10);
 		talon.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10);
@@ -111,21 +127,26 @@ public class Elevator extends Subsystem {
 	 * @since
 	 */
 	public void setDriveLimit() {
-		double pos = -Elev_1.getSelectedSensorPosition(0);
 
-		if (m_overriden == false) {
+		double pos = getElevatorHeight();
 
-			if (pos < 8500)
-				Robot.drive.m_elev_modify = Constants.kElevator.SPEED_1;
-			else if (pos < 12000 && pos > 8500)
-				Robot.drive.m_elev_modify = Constants.kElevator.SPEED_2;
-			else if (pos < 15000 && pos > 12000)
-				Robot.drive.m_elev_modify = Constants.kElevator.SPEED_3;
-			else if (pos < 25000 && pos > 15000)
-				Robot.drive.m_elev_modify = Constants.kElevator.SPEED_4;
-			else if (pos > 25000)
-				Robot.drive.m_elev_modify = Constants.kElevator.SPEED_5;
+		if (!Robot.autonSelector.isSaftey()) {
+			if (m_overriden == false) {
 
+				if (pos < 2.08)
+					Robot.drive.m_elev_modify = Constants.kElevator.SPEED_1;
+				else if (pos < 2.93 && pos > 2.08)
+					Robot.drive.m_elev_modify = Constants.kElevator.SPEED_2;
+				else if (pos < 3.66 && pos > 2.93)
+					Robot.drive.m_elev_modify = Constants.kElevator.SPEED_3;
+				else if (pos < 6.1 && pos > 3.66)
+					Robot.drive.m_elev_modify = Constants.kElevator.SPEED_4;
+				else if (pos > 6.1)
+					Robot.drive.m_elev_modify = Constants.kElevator.SPEED_5;
+
+			} else {
+				Robot.drive.m_elev_modify = 1;
+			}
 		} else {
 			Robot.drive.m_elev_modify = 1;
 		}
@@ -140,8 +161,8 @@ public class Elevator extends Subsystem {
 	 * @since
 	 */
 	public void encoder(double position) {
-		Elev_1.configPeakOutputForward(.45, 10);
-		Elev_1.configPeakOutputReverse(-.8, 10);
+		Elev_1.configPeakOutputForward(kElevator.E_CLOSED_DOWN_SPEED_LIMIT, 10);
+		Elev_1.configPeakOutputReverse(kElevator.E_CLOSED_UP_SPEED_LIMIT * -1, 10);
 		m_pos = -position * 4096;
 		Elev_1.set(ControlMode.Position, m_pos);
 	}

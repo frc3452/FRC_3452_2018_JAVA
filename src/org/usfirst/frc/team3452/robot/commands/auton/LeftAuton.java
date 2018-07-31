@@ -3,6 +3,8 @@ package org.usfirst.frc.team3452.robot.commands.auton;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.Constants.kAutonSelector;
+import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.commands.drive.*;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
@@ -12,7 +14,6 @@ import org.usfirst.frc.team3452.robot.commands.pwm.IntakeWhileDrive;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
-import org.usfirst.frc.team3452.robot.util.Constants.kIntake;
 
 public class LeftAuton extends CommandGroup {
 
@@ -231,8 +232,10 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
-			//Drive to scale
-			addSequential(new EncoderGyro(15.27, 15.27, .6, .6, .7, 0, .017));
+			//Drive to scale 
+			
+			//15.27
+			addSequential(new EncoderGyro(15.8, 15.8, .6, .6, .7, 0, kAutonSelector.CORRECTION));
 			//TURN CHANGED FINALS 3
 			addSequential(new EncoderFrom(1.5, -1.15, .6, .6, .6)); 
 
@@ -252,7 +255,7 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
 			addSequential(new ElevatorTime(.75, .25));
-			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, .016)); // drive to far side of switch
+			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, kAutonSelector.CORRECTION)); // drive to far side of switch
 
 			addSequential(new EncoderFrom(.2, -.4, .4, .4, .5)); //turn to switch
 			addSequential(new ElevatorPosition(15)); //raise and forward
@@ -280,13 +283,13 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
-			addSequential(new EncoderGyro(11.7, 11.7, .6, .6, .65, 0, .017)); // drive to side of switch
+			addSequential(new EncoderGyro(11.7, 11.7, .6, .6, .65, 0, kAutonSelector.CORRECTION)); // drive to side of switch
 
 			addParallel(new ElevatorPosition(2)); //raise
 			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
 
 			addSequential(new EncoderReset());
-			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, 0.011)); //drive front of scale
+			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, kAutonSelector.CORRECTION)); //drive front of scale
 
 			addSequential(new EncoderFrom(-1.5, .75, .5, .5, .5));
 
@@ -310,13 +313,13 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
-			addSequential(new EncoderGyro(11.7, 11.7, .6, .6, .65, 0, .017)); // drive to side of switch
+			addSequential(new EncoderGyro(11.7, 11.7, .6, .6, .65, 0, kAutonSelector.CORRECTION)); // drive to side of switch
 
 			addParallel(new ElevatorPosition(2)); //raise
 			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
 
 			addSequential(new EncoderReset());
-			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, 0.011)); //drive front of scale
+			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, kAutonSelector.CORRECTION)); //drive front of scale
 
 			addSequential(new EncoderFrom(-1.5, .75, .5, .5, .5));
 
@@ -338,7 +341,7 @@ public class LeftAuton extends CommandGroup {
 		addSequential(new ElevatorTime(.5, .1725));
 		addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
-		addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, .017)); // drive to side of switch
+		addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, kAutonSelector.CORRECTION)); // drive to side of switch
 		addSequential(new ElevatorPosition(3.5)); // raise arm
 	}
 

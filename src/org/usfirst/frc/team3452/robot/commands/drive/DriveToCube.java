@@ -3,10 +3,10 @@ package org.usfirst.frc.team3452.robot.commands.drive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
+import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
-import org.usfirst.frc.team3452.robot.util.Constants;
-import org.usfirst.frc.team3452.robot.util.Constants.kIntake;
 
 public class DriveToCube extends Command {
 
@@ -36,9 +36,9 @@ public class DriveToCube extends Command {
 		flag_2 = false;
 		timeoutSet = false;
 
-		i_lpos = (double) Robot.drive.L1.getSelectedSensorPosition(0) / 4096;
-		i_rpos = (double) -Robot.drive.R1.getSelectedSensorPosition(0) / 4096;
-		
+		i_lpos = Robot.drive.getLeftPosition();
+		i_rpos = Robot.drive.getRightPosition();
+
 		System.out.println(i_lpos);
 		System.out.println(i_rpos);
 
@@ -53,17 +53,20 @@ public class DriveToCube extends Command {
 
 		Robot.intake.manual(kIntake.Speeds.INTAKE);
 
-		if (((double) Robot.drive.L1.getSelectedSensorPosition(0) / 4096) - i_lpos > m_rotation
-				|| ((double) Robot.drive.R1.getSelectedSensorPosition(0) / 4096) - i_rpos > m_rotation)
+		if (Robot.drive.getLeftPosition() - i_lpos > m_rotation
+				|| Robot.drive.getRightPosition() - i_rpos > m_rotation)
 			m_complete = true;
-		
-		if (Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) > 12 || Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) > 12)
+
+		if (Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) > 12
+				|| Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) > 12)
 			flag_1 = true;
 
-		if (flag_1 && (Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) < 7 || Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) < 7))
+		if (flag_1 && (Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) < 7
+				|| Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) < 7))
 			flag_2 = true;
 
-		if (flag_2 && (Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) > 12 || Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) > 12)) {
+		if (flag_2 && (Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) > 12
+				|| Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) > 12)) {
 
 			if (!timeoutSet) {
 				setTimeout(timer.get() + .4);

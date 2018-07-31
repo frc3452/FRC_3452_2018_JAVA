@@ -93,8 +93,8 @@ public class MiddleAuton extends CommandGroup {
 			//TURN AND GRAB CUBE
 			addSequential(new CommandGroup() {
 				{
-					addSequential(new EncoderDrive(.45, -.4, .5, .5, .6)); //turn to switch
-					addSequential(new DriveToCube(.58, 5)); //was .45
+					addSequential(new EncoderDrive(.35, -.4, .5, .5, .6)); //turn to switch
+					addSequential(new DriveToCube(.45, 5)); //was .45 //TODO LEFT
 					addParallel(new IntakeTime(-.2, .75));
 					addSequential(new EncoderDrive(0, 0, .6, .6, .65));
 				}
@@ -139,7 +139,7 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new CommandGroup() {
 				{
 					addParallel(new ElevatorWhileDrive(3.5, .3));
-					addSequential(new EncoderFrom(3.3 /*+ .15*/, 4.2 + .38, .6, .6, .7));
+					addSequential(new EncoderFrom(3.3, 4.2 + .72 /*+.38*/, .6, .6, .7));
 				}
 			});
 
@@ -167,8 +167,8 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new CommandGroup() {
 				{
 					addSequential(new EncoderFrom(-.4, .35, .5, .5, .6)); //turn to switch
-					addSequential(new DriveToCube(.58, 5));
-					addParallel(new IntakeTime(-.5, .75));
+					addSequential(new DriveToCube(.45, 5));
+					addParallel(new IntakeTime(-.5, .75)); //TODO RIGHT
 					addSequential(new EncoderDrive(0, 0, .6, .6, .65));
 				}
 			});

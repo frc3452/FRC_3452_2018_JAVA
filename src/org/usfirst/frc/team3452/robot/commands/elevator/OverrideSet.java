@@ -23,16 +23,18 @@ public class OverrideSet extends InstantCommand {
 	}
 
 	protected void initialize() {
-		switch (m_override) {
-		case ON:
-			Robot.elevator.m_overriden = true;
-			break;
-		case OFF:
-			Robot.elevator.m_overriden = false;
-			break;
-		case TOGGLE:
-			Robot.elevator.m_overriden = !Robot.elevator.m_overriden;
-			break;
+		if (!Robot.autonSelector.isSaftey()) {
+			switch (m_override) {
+			case ON:
+				Robot.elevator.m_overriden = true;
+				break;
+			case OFF:
+				Robot.elevator.m_overriden = false;
+				break;
+			case TOGGLE:
+				Robot.elevator.m_overriden = !Robot.elevator.m_overriden;
+				break;
+			}
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team3452.robot;
 
+import org.usfirst.frc.team3452.robot.Constants.kAutonSelector;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
 import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
@@ -48,7 +49,7 @@ public class Robot extends TimedRobot {
 	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false;
 
 	// LOGGING CONTROL
-	private boolean logging = false, logToUsb = true;
+	private boolean logging = true, logToUsb = true;
 	private String loggingLocation = "Logging/Offseason";
 
 	@Override
@@ -124,8 +125,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		System.out.println("Entering auto...");
-
 		startLog();
 
 		// timer start
@@ -189,6 +188,9 @@ public class Robot extends TimedRobot {
 
 		if (autonomousCommand != null)
 			autonomousCommand.start();
+
+		// TODO REMOVE
+		wasTele = true;
 	}
 
 	@Override
@@ -198,7 +200,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-		System.out.println("Entering teleop...");
 		startLog();
 
 		// GREEN LOW BRIGHTNESS
@@ -211,9 +212,6 @@ public class Robot extends TimedRobot {
 		}
 
 		wasTele = true;
-
-		// Command amp = new AmperageTesting(.02, true, false, false, false);
-		// amp.start();
 	}
 
 	@Override
@@ -242,14 +240,23 @@ public class Robot extends TimedRobot {
 			Robot.lights.pulse(55, 1, .2, .8, .1);
 		} else {
 			switch (Robot.autonSelector.uglyAnalog()) {
-			case 96:
+			case 100:
 
+				// OFF
+				Robot.lights.hsv(0, 0, 0);
+
+				break;
+
+			case kAutonSelector.SAFTEY_SWITCH:
+
+				// FADE
 				Robot.lights.hsv(Robot.lights.m_hue, 1, .25);
 				Robot.lights.m_hue++;
 
 				break;
 			case 97:
 
+				// POLICE
 				if (Robot.lights.m_hue > 180)
 					Robot.lights.hsv(0, 1, 1);
 				else
@@ -269,16 +276,8 @@ public class Robot extends TimedRobot {
 							Robot.lights.pulse(330, 1, .1, .4, 0.025 / 3.5);
 
 					} else {
-
-						// IF FMS PULSE RED, IF NO FMS RGB FADE
-						if (DriverStation.getInstance().isFMSAttached()) {
-							// increase pulsing speed while not connected
-							Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 100));
-
-						} else {
-							Robot.lights.hsv(Robot.lights.m_hue, 1, .15);
-							Robot.lights.m_hue++;
-						}
+						// IF NOT CONNECTED DO AGGRESSIVE RED PULSE
+						Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 100));
 					}
 				}
 				break;
@@ -354,7 +353,7 @@ public class Robot extends TimedRobot {
 			// RIGHT CLICK
 			else if (OI.driverJoy.getRawButton(10)) {
 				Robot.autonSelector.controllerOverride = false;
-				System.out.println("Auto override disengaged. " + Robot.autonSelector.autonString);
+				System.out.println(Robot.autonSelector.autonString);
 			}
 		}
 

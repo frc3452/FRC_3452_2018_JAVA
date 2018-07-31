@@ -1,7 +1,8 @@
 
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import org.usfirst.frc.team3452.robot.util.Constants;
+import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.Constants.kAutonSelector;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -44,11 +45,14 @@ public class AutonSelector extends Subsystem {
 		as_A.setName("Selector A");
 		as_B.setName("Selector B");
 
-		for (int i = 0; i < 41; i++) {
+		for (int i = 0; i < 41; i++)
 			autoCommandName[i] = "NO COMMAND";
-		}
 	}
 
+	public boolean isSaftey(){
+		return uglyAnalog() == kAutonSelector.SAFTEY_SWITCH;
+	}
+	
 	/**
 	 * @author max
 	 */
@@ -56,25 +60,28 @@ public class AutonSelector extends Subsystem {
 		m_asA = as_A.getValue();
 		m_asB = as_B.getValue();
 
-		//		System.out.println(as_A.getValue() + "\t\t\t" + as_B.getValue());
+		// System.out.println(as_A.getValue() + "\t\t\t" + as_B.getValue());
 
 		// If overriden, print overide
-        if (controllerOverride && (!overrideString.equals(overrideStringPrevious)))
-            System.out.println(overrideString);
+		if (controllerOverride && (!overrideString.equals(overrideStringPrevious)))
+			System.out.println(overrideString);
 
-        if (((m_asA + 8 < m_prev_as1 || m_prev_as1 < m_asA - 8)
+		if (((m_asA + 8 < m_prev_as1 || m_prev_as1 < m_asA - 8)
 				|| (m_asB + 8 < m_prev_as2 || m_prev_as2 < m_asB - 8))) {
 
 			if ((uglyAnalog() >= 1) && (uglyAnalog() <= 10)) {
 				autonString = "A / " + uglyAnalog() + ": " + autoCommandName[uglyAnalog()];
 			} else if ((uglyAnalog() >= 11) && (uglyAnalog() <= 20)) {
-				autonString = "B / " + (uglyAnalog() - 10) + ": " + autoCommandName[uglyAnalog()];
+				autonString = "B / " + (uglyAnalog() - 10) + ": " + autoCommandName[uglyAnalog()] + " - "
+						+ uglyAnalog();
 			} else if ((uglyAnalog() >= 21) && (uglyAnalog() <= 30)) {
-				autonString = "C / " + (uglyAnalog() - 20) + ": " + autoCommandName[uglyAnalog()];
+				autonString = "C / " + (uglyAnalog() - 20) + ": " + autoCommandName[uglyAnalog()] + " - "
+						+ uglyAnalog();
 			} else if ((uglyAnalog() >= 31) && (uglyAnalog() <= 40)) {
-				autonString = "D / " + (uglyAnalog() - 30) + ": " + autoCommandName[uglyAnalog()];
+				autonString = "D / " + (uglyAnalog() - 30) + ": " + autoCommandName[uglyAnalog()] + " - "
+						+ uglyAnalog();
 			} else {
-				autonString = "AUTON NOT SELECTED";
+				autonString = "AUTON NOT SELECTED: " + uglyAnalog();
 			}
 			System.out.println(autonString);
 		}
@@ -88,7 +95,7 @@ public class AutonSelector extends Subsystem {
 
 	/**
 	 * @author max
-     * @return int <b>1 - 100</b> or 3452 as error
+	 * @return int <b>1 - 100</b> or 3452 as error
 	 */
 	public int uglyAnalog() {
 		if (m_asA < Constants.kAutonSelector.AUTO_1 + Constants.kAutonSelector.AUTO_V
@@ -178,8 +185,8 @@ public class AutonSelector extends Subsystem {
 	 * @author max
 	 *
 	 */
-    public enum AV {
-        FOREST_HILLS, CURRENT
+	public enum AV {
+		SEASON, FOREST_HILLS, CURRENT
 	}
 
 	/**
@@ -188,8 +195,8 @@ public class AutonSelector extends Subsystem {
 	 * @author max
 	 *
 	 */
-    public enum AO {
-        SWITCH, SCALE, SWITCH_PRIORITY_NO_CROSS, SCALE_PRIORITY_NO_CROSS, SWITCH_ONLY, SCALE_ONLY, DEFAULT
+	public enum AO {
+		SWITCH, SCALE, SWITCH_PRIORITY_NO_CROSS, SCALE_PRIORITY_NO_CROSS, SWITCH_ONLY, SCALE_ONLY, DEFAULT
 	}
 
 }

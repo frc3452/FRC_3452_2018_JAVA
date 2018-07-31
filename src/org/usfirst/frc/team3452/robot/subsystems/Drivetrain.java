@@ -1,8 +1,8 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
-import org.usfirst.frc.team3452.robot.util.Constants;
 
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
@@ -58,16 +58,16 @@ public class Drivetrain extends Subsystem {
 	public void loggerUpdate() {
 		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
 
-		SmartDashboard.putNumber("L1", (double) L1.getSelectedSensorPosition(0) / 4096);
-		SmartDashboard.putNumber("R1", (double) -R1.getSelectedSensorPosition(0) / 4096);
+		SmartDashboard.putNumber("L1", getLeftPosition());
+		SmartDashboard.putNumber("R1", getRightPosition());
 
-		SmartDashboard.putNumber("L1 S", ((double) L1.getSelectedSensorVelocity(0)) / 1);
-		SmartDashboard.putNumber("R1 S", -((double) R1.getSelectedSensorVelocity(0)) / 1);
+		SmartDashboard.putNumber("L1 S", getLeftSpeed());
+		SmartDashboard.putNumber("R1 S", getRightSpeed());
 
 		SmartDashboard.putNumber("% Complete", p_pos);
 
-		SmartDashboard.putNumber("Elevator Enc", -Robot.elevator.Elev_1.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("Elev Velocity", Robot.elevator.Elev_1.getSelectedSensorVelocity(0));
+		SmartDashboard.putNumber("Elevator Enc", Robot.elevator.getElevatorHeight());
+		SmartDashboard.putNumber("Elev Velocity", Robot.elevator.getElevatorSpeed());
 
 		SmartDashboard.putString("Selected auton", Robot.autonSelector.autonString);
 		SmartDashboard.putString("Override String", Robot.autonSelector.overrideString);
@@ -81,7 +81,6 @@ public class Drivetrain extends Subsystem {
 
 		SmartDashboard.putNumber("lerror", L1.getClosedLoopError(0));
 		SmartDashboard.putNumber("rerror", R1.getClosedLoopError(0));
-
 	}
 
 	/**
@@ -163,11 +162,11 @@ public class Drivetrain extends Subsystem {
 		talon.configNeutralDeadband(0.05, 10);
 
 		talon.setSubsystem("Drive train");
-		
+
 		// If Master
 		if (id == Constants.kDrivetrain.L1 || id == Constants.kDrivetrain.R1) {
-//			talon.selectProfileSlot(0, 10);
-			
+			// talon.selectProfileSlot(0, 10);
+
 			talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
 			talon.setSelectedSensorPosition(0, 0, 10);
 			talon.setSensorPhase(true);
@@ -175,25 +174,62 @@ public class Drivetrain extends Subsystem {
 			// P .4
 			// D 8,9
 
-			talon.config_kF(0, .2744, 10); // was .2744
-			talon.config_kP(0, 2.5, 10); // (.1 * 1023) / 7635
+			// P .13
+			// D 1.3
+
+			// P (.1 {Amount of correction you want} * 1023) / 7635
+			// F (100% * 1023) / 3941
+
+			// F
+
+			talon.config_kF(0, 0, 10);
 			talon.config_IntegralZone(0, 50, 10);
 			talon.config_kI(0, 0, 10);
+			talon.config_kD(0, 20, 10);
+			talon.config_kP(0, 0.425, 10);
 
 			// If left master
 			if (LorR) {
-				talon.config_kD(0, 8, 10);
 			} else {
 				// If right master
-				talon.config_kD(0, 9, 10);
 			}
-
-			talon.config_kD(0, 25, 10);
 
 			// If Follower
 		} else {
 			talon.follow(LorR ? L1 : R1);
 		}
+	}
+
+	/**
+	 * 
+	 * @return left position
+	 */
+	public double getLeftPosition() {
+		return (double) L1.getSelectedSensorPosition(0) / 4096;
+	}
+
+	/**
+	 * 
+	 * @return right position
+	 */
+	public double getRightPosition() {
+		return (double) -R1.getSelectedSensorPosition(0) / 4096;
+	}
+	
+	/**
+	 * @return left speed
+	 */
+	public double getLeftSpeed()
+	{
+		return (double) L1.getSelectedSensorVelocity(0) / 4096;
+	}
+	
+	/**
+	 * 
+	 */
+	public double getRightSpeed()
+	{
+		return (double) -R1.getSelectedSensorVelocity(0) / 4096;
 	}
 
 	/**
@@ -404,8 +440,24 @@ public class Drivetrain extends Subsystem {
 	public void arcade(Joystick joy) {
 		// Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify),
 		// joy.getRawAxis(4) * m_modify);
-		arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .635 * m_modify));
+
+		// arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) -
+		// joy.getRawAxis(2)) * .635 * m_modify));
+
+		arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .8 * m_modify));
 		Robot.elevator.setDriveLimit();
+
+	}
+
+	/**
+	 * steering on right analog stick
+	 * 
+	 * @param joy
+	 */
+	public void alternateArcade(Joystick joy) {
+		arcade(-joy.getRawAxis(1) * m_modify, (joy.getRawAxis(4) * m_modify * .85));
+		Robot.elevator.setDriveLimit();
+		m_modify = .5;
 	}
 
 	/**
@@ -467,7 +519,8 @@ public class Drivetrain extends Subsystem {
 	 */
 	public void motionMagic(double leftpos, double rightpos, double leftaccel, double rightaccel, double leftspeed,
 			double rightspeed) {
-		double topspeed = 4240;
+
+		double topspeed = 3941;
 
 		robotDrive.setSafetyEnabled(false);
 

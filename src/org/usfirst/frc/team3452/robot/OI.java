@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3452.robot;
 
+import org.usfirst.frc.team3452.robot.Constants.kElevator;
+import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.commands.drive.SpeedModifier;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorManual;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
@@ -9,9 +11,6 @@ import org.usfirst.frc.team3452.robot.commands.pwm.IntakeManual;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator.ESO;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
-import org.usfirst.frc.team3452.robot.util.Constants.kElevator;
-import org.usfirst.frc.team3452.robot.util.Constants.kIntake;
-import org.usfirst.frc.team3452.robot.util.DPad;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
@@ -45,26 +44,6 @@ public class OI {
 
 		driverJoyX.whileHeld(new IntakeManual(kIntake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(kIntake.Speeds.SHOOT));
-
-		// driverJoyY.whenPressed(new EncoderReset());
-		// driverJoyY.whileHeld(new PlaybackControl("MP1", "Motion_Profiles",
-		// false, TASK.Record));
-
-//		driverJoyY.whenPressed(new EncoderFrom(5, 5, 1, 1, 1));
-
-//		driverJoyLB.whenPressed(new CommandGroup() {
-//			{
-//				addSequential(new EncoderReset());
-//				addSequential(new PlaybackControl("MP1", "Motion_Profiles", false, TASK.Parse));
-//			}
-//		});
-//
-//		driverJoyRB.whenPressed(new CommandGroup() {
-//			{
-//				addSequential(new EncoderReset());
-//				addSequential(new RunMotionProfile(new Util.Parse()));
-//			}
-//		});
 
 		driverJoyY.whileHeld(new Climb(1));
 		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));

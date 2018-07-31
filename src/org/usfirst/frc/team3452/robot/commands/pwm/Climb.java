@@ -28,12 +28,14 @@ public class Climb extends Command {
 	}
 
 	protected void execute() {
-		//WAIT ON FIRST TWO PRESSES
-		if (Robot.climber.climbCounter < 2) {
-			if (timer.get() > .7)
-				Robot.climber.control(m_speed * ((timer.get() - .7) * 1.5));
-		} else {   
-			Robot.climber.control(m_speed /* * (timer.get() * 1.5)*/);
+		if (!Robot.autonSelector.isSaftey()) {
+			// WAIT ON FIRST TWO PRESSES
+			if (Robot.climber.climbCounter < 2) {
+				if (timer.get() > .7)
+					Robot.climber.control(m_speed * ((timer.get() - .7) * 1.5));
+			} else {
+				Robot.climber.control(m_speed /* * (timer.get() * 1.5) */);
+			}
 		}
 	}
 

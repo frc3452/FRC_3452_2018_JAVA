@@ -10,6 +10,7 @@ public class DriveTele extends Command {
 
 	/**
 	 * Drive during teleop
+	 * 
 	 * @author macco
 	 * @see Drivetrain
 	 */
@@ -24,14 +25,17 @@ public class DriveTele extends Command {
 
 	@Override
 	protected void execute() {
-		Robot.drive.arcade(OI.driverJoy);
-//		Robot.drive.Tank(OI.driverJoy);
+		if (!Robot.autonSelector.isSaftey())
+			Robot.drive.arcade(OI.driverJoy);
+		else 
+			Robot.drive.alternateArcade(OI.driverJoy);
+		
+		// Robot.drive.tank(OI.driverJoy);
 		if (Robot.elevator.m_overriden)
 			OI.rumble(CONTROLLER.DRIVER, .45);
 		else
 			OI.rumble(CONTROLLER.DRIVER, 0);
-		
-		
+
 	}
 
 	@Override
@@ -42,8 +46,8 @@ public class DriveTele extends Command {
 	@Override
 	protected void end() {
 		OI.rumble(CONTROLLER.DRIVER, 0);
-		Robot.drive.arcade(0,0);
-		
+		Robot.drive.arcade(0, 0);
+
 	}
 
 	@Override

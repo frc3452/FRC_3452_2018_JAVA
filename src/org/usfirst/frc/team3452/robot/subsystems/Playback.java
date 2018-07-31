@@ -7,11 +7,12 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.util.Constants;
-import org.usfirst.frc.team3452.robot.util.Util;
+import org.usfirst.frc.team3452.robot.Utilities;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -37,10 +38,10 @@ public class Playback extends Subsystem {
 	/**
 	 * Time string converted to numbers for parsing
 	 */
-	private double n_timeString = 0, p_timeString = -1;
 	private String prevDateTimeString = "Empty";
 
 	private boolean hasPrintedLogFailed = false;
+	private boolean hasPrintedProfileRecordFailed = false;
 
 	/**
 	 * hardware initialization
@@ -57,18 +58,18 @@ public class Playback extends Subsystem {
 	 */
 	private void parseFile() {
 		String st;
-		
+
 		mpL.clear();
 		mpR.clear();
-		
+
 		try {
-			//Skip first line of text
+			// Skip first line of text
 			scnr.nextLine();
 
-			//take time var
+			// take time var
 			mpDur = Integer.parseInt(scnr.nextLine().split(",")[0]);
 
-			//loop through each line
+			// loop through each line
 			while (scnr.hasNextLine()) {
 				ArrayList<Double> temp = new ArrayList<>();
 
@@ -119,48 +120,59 @@ public class Playback extends Subsystem {
 	 */
 	private void writeToProfile(boolean isStartup) {
 		try {
-			//write to the speed of the motion profile
-			String timeString = String.format("%8s", Util.roundToFraction(Robot.drive.timer.get(),
-					(1 / ((double) Constants.kPlayback.RECORDING_MOTION_PROFILE_MS / 1000))));
-
-			//turn time string to number
-			timeString = timeString.replace(' ', '0');
-			n_timeString = Double.valueOf(timeString);
-
-			//ONLY PRINT EVERY ROUNDING
-			if (n_timeString != p_timeString) {
-				if (!isStartup) {
-					//populate position and speed values
-					double leftPos = (double) Robot.drive.L1.getSelectedSensorPosition(0) / 4096;
-					double leftSpeed = (double) Robot.drive.L1.getSelectedSensorVelocity(0) / 4096;
-
-					double rightPos = (double) Robot.drive.R1.getSelectedSensorPosition(0) / 4096;
-					double rightSpeed = (double) Robot.drive.R1.getSelectedSensorVelocity(0) / 4096;
-
-					//write values
-					bw.write(String.valueOf(leftPos + ","));
-					bw.write(String.valueOf(leftSpeed + ","));
-					bw.write(String.valueOf(rightPos + ","));
-					bw.write(String.valueOf(rightSpeed + ","));
-					bw.write("\r\n");
-
-				} else {
-					//on startup, write header
-					bw.write("leftPos,leftSpeed,rightPos,rightSpeed,");
-					bw.write("\r\n");
-					bw.write(String.valueOf(Constants.kPlayback.RECORDING_MOTION_PROFILE_MS) + ",0,0,0,");
-					bw.write("\r\n");
-				}
+			if (isStartup) {
+				// on startup, write header
+				bw.write("leftPos,leftSpeed,rightPos,rightSpeed,");
+				bw.write("\r\n");
+				bw.write(String.valueOf(Constants.kPlayback.RECORDING_MOTION_PROFILE_MS) + ",0,0,0,");
+				bw.write("\r\n");
+				profileRecord.startPeriodic((double) Constants.kPlayback.RECORDING_MOTION_PROFILE_MS / 1000);
+			} else {
+				profileRecord.stop();
 			}
-
-			//Prevent duplicates
-			p_timeString = n_timeString;
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Writing to profile failed!");
 		}
 	}
+
+	/**
+	 * profile recording runnable
+	 * 
+	 * @author Max
+	 * @since 5/22/2018
+	 */
+	private class profileRecordRunnable implements java.lang.Runnable {
+		@Override
+		public void run() {
+			try {
+				// populate position and speed values
+				double leftPos = (double) Robot.drive.L1.getSelectedSensorPosition(0) / 4096;
+				double leftSpeed = (double) Robot.drive.L1.getSelectedSensorVelocity(0) / 4096;
+
+				double rightPos = (double) Robot.drive.R1.getSelectedSensorPosition(0) / 4096;
+				double rightSpeed = (double) Robot.drive.R1.getSelectedSensorVelocity(0) / 4096;
+
+				// write values
+				bw.write(String.valueOf(leftPos + ","));
+				bw.write(String.valueOf(leftSpeed + ","));
+				bw.write(String.valueOf(rightPos + ","));
+				bw.write(String.valueOf(rightSpeed + ","));
+				bw.write("\r\n");
+
+			} catch (Exception e) {
+				if (!hasPrintedProfileRecordFailed) {
+					System.out.println("Writing to profile failed!");
+					hasPrintedProfileRecordFailed = true;
+				}
+			}
+		}
+	}
+
+	/**
+	 * notifier object for running profile recorder
+	 */
+	private Notifier profileRecord = new Notifier(new profileRecordRunnable());
 
 	/**
 	 * logging system
@@ -169,91 +181,96 @@ public class Playback extends Subsystem {
 	 * @param startup
 	 *            boolean
 	 */
-	@SuppressWarnings("deprecation")
 	private void writeToLog(boolean startup) {
 		try {
-
-			//ON STARTUP, PRINT NAMES
+			// ON STARTUP, PRINT NAMES
 			if (startup) {
-				bw.write(Util.dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP,"
+				bw.write(Utilities.dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP,"
 						+ "L1-V,L2-V,L3-V,L4-V," + "R1-AMP,R2-AMP,R3-AMP,R4-AMP," + "R1-V,R2-V,R3-V,R4-V,"
 						+ "Elev_1-AMP,Elev_2-AMP," + "Elev_1-V,Elev_2-V," + "Intake_L-AMP,Intake_R-AMP,"
 						+ "Climber_1-AMP,Climber_2-AMP," + "BATTERY");
 				bw.write("\r\n");
-
+				logging.startPeriodic(0.125); // eighth of a second logging
 			} else {
-
-				//TIME VALUE (ROUNDED)
-				String timeString = String.format("%8s", Util.roundToFraction(Robot.drive.timer.get(), 20));
-				timeString = timeString.replace(' ', '0');
-
-				n_timeString = Double.valueOf(timeString);
-
-				//ONLY PRINT EVERY ROUNDING
-				if (n_timeString != p_timeString) {
-
-					//PRINT VALUES
-					bw.write(timeString + ",");
-					bw.write(String.valueOf(
-
-							//SPEED
-							((double) Robot.drive.L1.getSelectedSensorVelocity(0) / 4096) + ","
-									+ ((double) -Robot.drive.R1.getSelectedSensorVelocity(0) / 4096) + "," +
-
-									//LEFT CURRENT
-									Robot.drive.L1.getOutputCurrent() + "," + Robot.drive.L2.getOutputCurrent() + ","
-									+ Robot.drive.L3.getOutputCurrent() + "," + Robot.drive.L4.getOutputCurrent() + ","
-
-									//LEFT VOLTAGE
-									+ Robot.drive.L1.getMotorOutputVoltage() + ","
-									+ Robot.drive.L2.getMotorOutputVoltage() + ","
-									+ Robot.drive.L3.getMotorOutputVoltage() + ","
-									+ Robot.drive.L4.getMotorOutputVoltage() + ","
-
-									//RIGHT CURRENT
-									+ Robot.drive.R1.getOutputCurrent() + "," + Robot.drive.R2.getOutputCurrent() + ","
-									+ Robot.drive.R3.getOutputCurrent() + "," + Robot.drive.R4.getOutputCurrent() + ","
-
-									//RIGHT VOLTAGE
-									+ Robot.drive.R1.getMotorOutputVoltage() + ","
-									+ Robot.drive.R2.getMotorOutputVoltage() + ","
-									+ Robot.drive.R3.getMotorOutputVoltage() + ","
-									+ Robot.drive.R4.getMotorOutputVoltage() + ","
-
-									//ELEVATOR CURRENT
-									+ Robot.elevator.Elev_1.getOutputCurrent() + ","
-									+ Robot.elevator.Elev_2.getOutputCurrent() + ","
-
-									//ELEVATOR VOLTAGE
-									+ Robot.elevator.Elev_1.getMotorOutputVoltage() + ","
-									+ Robot.elevator.Elev_2.getMotorOutputVoltage() + ","
-
-									//INTAKE PDP SLOTS
-									+ Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) + ","
-									+ Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) + ","
-
-									//CLIMBER PDP SLOTS
-									+ Robot.drive.pdp.getCurrent(Constants.kPDP.CLIMBER_1) + ","
-									+ Robot.drive.pdp.getCurrent(Constants.kPDP.CLIMBER_2) + ","
-
-									//BATTERY
-									+ DriverStation.getInstance().getBatteryVoltage()));
-
-					bw.write("\r\n");
-
-				}
-
-				p_timeString = n_timeString;
-
+				logging.stop();
 			}
 
 		} catch (Exception e) {
-			if (!hasPrintedLogFailed) {
-				System.out.println("Log failed!");
-				hasPrintedLogFailed = true;
-			}
+			e.printStackTrace();
+			System.out.println("Writing to log failed!");
 		}
 	}
+
+	/**
+	 * logging runnable
+	 * 
+	 * @author Max
+	 * @since 5/22/2018
+	 */
+	private class loggingRunnable implements java.lang.Runnable {
+		@SuppressWarnings("deprecation")
+		@Override
+		public void run() {
+			try {
+				bw.write(Utilities.dateTime(true) + ",");
+				bw.write(String.valueOf(
+
+						// SPEED
+						((double) Robot.drive.L1.getSelectedSensorVelocity(0) / 4096) + ","
+								+ ((double) -Robot.drive.R1.getSelectedSensorVelocity(0) / 4096) + "," +
+
+								// LEFT CURRENT
+								Robot.drive.L1.getOutputCurrent() + "," + Robot.drive.L2.getOutputCurrent() + ","
+								+ Robot.drive.L3.getOutputCurrent() + "," + Robot.drive.L4.getOutputCurrent() + ","
+
+								// LEFT VOLTAGE
+								+ Robot.drive.L1.getMotorOutputVoltage() + "," + Robot.drive.L2.getMotorOutputVoltage()
+								+ "," + Robot.drive.L3.getMotorOutputVoltage() + ","
+								+ Robot.drive.L4.getMotorOutputVoltage() + ","
+
+								// RIGHT CURRENT
+								+ Robot.drive.R1.getOutputCurrent() + "," + Robot.drive.R2.getOutputCurrent() + ","
+								+ Robot.drive.R3.getOutputCurrent() + "," + Robot.drive.R4.getOutputCurrent() + ","
+
+								// RIGHT VOLTAGE
+								+ Robot.drive.R1.getMotorOutputVoltage() + "," + Robot.drive.R2.getMotorOutputVoltage()
+								+ "," + Robot.drive.R3.getMotorOutputVoltage() + ","
+								+ Robot.drive.R4.getMotorOutputVoltage() + ","
+
+								// ELEVATOR CURRENT
+								+ Robot.elevator.Elev_1.getOutputCurrent() + ","
+								+ Robot.elevator.Elev_2.getOutputCurrent() + ","
+
+								// ELEVATOR VOLTAGE
+								+ Robot.elevator.Elev_1.getMotorOutputVoltage() + ","
+								+ Robot.elevator.Elev_2.getMotorOutputVoltage() + ","
+
+								// INTAKE PDP SLOTS
+								+ Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) + ","
+								+ Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) + ","
+
+								// CLIMBER PDP SLOTS
+								+ Robot.drive.pdp.getCurrent(Constants.kPDP.CLIMBER_1) + ","
+								+ Robot.drive.pdp.getCurrent(Constants.kPDP.CLIMBER_2) + ","
+
+								// BATTERY
+								+ DriverStation.getInstance().getBatteryVoltage()));
+				bw.write("\r\n");
+				
+			} catch (Exception e) {
+				if (!hasPrintedLogFailed) {
+					System.out.println("Logging writing failed!");
+					hasPrintedLogFailed = true;
+				}
+			}
+
+		}
+	}
+
+	/**
+	 * notifier object for running profile recorder
+	 */
+	private Notifier logging = new Notifier(new loggingRunnable());
 
 	/**
 	 * @author max
@@ -268,7 +285,7 @@ public class Playback extends Subsystem {
 		try {
 			switch (readwrite) {
 			case READ:
-				//SET UP FILE READING
+				// SET UP FILE READING
 				File f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
 
 				fr = new FileReader(f);
@@ -278,16 +295,16 @@ public class Playback extends Subsystem {
 			case WRITE:
 				new File(((usb) ? "/u/" : "/home/lvuser") + folder).mkdirs();
 
-				//SETUP FILE WRITING
+				// SETUP FILE WRITING
 				f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder);
 				f.mkdirs();
 				f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
 
-				//if it isn't there, create it
+				// if it isn't there, create it
 				if (!f.exists())
 					f.createNewFile();
 
-				//create file writing vars
+				// create file writing vars
 				fw = new FileWriter(f);
 				bw = new BufferedWriter(fw);
 			}
@@ -307,12 +324,12 @@ public class Playback extends Subsystem {
 		try {
 			switch (readwrite) {
 			case READ:
-				//CLOSE READING
+				// CLOSE READING
 				scnr.close();
 				fr.close();
 				break;
 			case WRITE:
-				//CLOSE WRITING
+				// CLOSE WRITING
 				bw.close();
 				fw.close();
 				break;
@@ -348,13 +365,14 @@ public class Playback extends Subsystem {
 				System.out.println("Opening Record: " + name + ".csv");
 				createFile(name, folder, fileState.WRITE, usb);
 				writeToProfile(true);
+				
 				break;
 
 			case Parse:
 				System.out.println("Opening Parse: " + name + ".csv");
 				createFile(name, folder, fileState.READ, usb);
 				parseFile();
-//				printValues();
+				// printValues();
 				break;
 
 			case Log:
@@ -372,15 +390,10 @@ public class Playback extends Subsystem {
 		case RUNTIME:
 			switch (task) {
 			case Record:
-				writeToProfile(false);
-
 				break;
 			case Parse:
-
 				break;
 			case Log:
-				writeToLog(false);
-
 				break;
 			}
 			break;
@@ -388,6 +401,7 @@ public class Playback extends Subsystem {
 			switch (task) {
 			case Record:
 				System.out.println("Closing " + task + ": " + name + ".csv");
+				writeToProfile(false);
 				closeFile(fileState.WRITE);
 				break;
 			case Parse:
@@ -396,6 +410,7 @@ public class Playback extends Subsystem {
 				break;
 			case Log:
 				System.out.println("Closing " + task + ": " + loggingName(false) + ".csv");
+				writeToLog(false);
 				closeFile(fileState.WRITE);
 				break;
 			}
@@ -405,7 +420,7 @@ public class Playback extends Subsystem {
 
 	private String loggingName(boolean returnCurrent) {
 		if (returnCurrent) {
-			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Util.dateTime(true);
+			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Utilities.dateTime(false);
 			prevDateTimeString = retval;
 			return retval;
 		} else {
@@ -443,6 +458,6 @@ public class Playback extends Subsystem {
 
 	@Override
 	public void initDefaultCommand() {
-		//		setDefaultCommand(new Record("LOG", TASK.LOG));
+		// setDefaultCommand(new Record("LOG", TASK.LOG));
 	}
 }
