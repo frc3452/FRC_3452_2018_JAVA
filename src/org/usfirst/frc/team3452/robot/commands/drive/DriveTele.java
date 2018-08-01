@@ -20,7 +20,8 @@ public class DriveTele extends Command {
 
 	@Override
 	protected void initialize() {
-		
+		if (Robot.autonSelector.isSaftey())
+			Robot.drive.m_modify = .5;
 	}
 
 	@Override
@@ -31,6 +32,7 @@ public class DriveTele extends Command {
 			Robot.drive.alternateArcade(OI.driverJoy);
 		
 		// Robot.drive.tank(OI.driverJoy);
+		
 		if (Robot.elevator.m_overriden)
 			OI.rumble(CONTROLLER.DRIVER, .45);
 		else
@@ -45,7 +47,7 @@ public class DriveTele extends Command {
 
 	@Override
 	protected void end() {
-		OI.rumble(CONTROLLER.DRIVER, 0);
+		OI.rumble(CONTROLLER.BOTH, 0);
 		Robot.drive.arcade(0, 0);
 
 	}
