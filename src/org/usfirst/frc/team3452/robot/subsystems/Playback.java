@@ -216,8 +216,8 @@ public class Playback extends Subsystem {
 				bw.write(String.valueOf(
 
 						// SPEED
-						((double) Robot.drive.L1.getSelectedSensorVelocity(0) / 4096) + ","
-								+ ((double) -Robot.drive.R1.getSelectedSensorVelocity(0) / 4096) + "," +
+						Robot.drive.getLeftSpeed() + ","
+								+ Robot.drive.getRightSpeed() + "," +
 
 								// LEFT CURRENT
 								Robot.drive.L1.getOutputCurrent() + "," + Robot.drive.L2.getOutputCurrent() + ","

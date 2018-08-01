@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  *
  */
 public class Climber extends Subsystem {
-	public Spark Climber;
+	private Spark Climber;
 	public int climbCounter = 0;
 	
 	/**
