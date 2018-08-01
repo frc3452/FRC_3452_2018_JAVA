@@ -100,6 +100,10 @@ public class Elevator extends Subsystem {
 	public double getElevatorHeight() {
 		return (double) -Elev_1.getSelectedSensorPosition(0) / 4096;
 	}
+	
+	/**
+	 * @return elevator speed (negative is down, positive is up)
+	 */
 	public double getElevatorSpeed()
 	{
 		return (double) -Robot.elevator.Elev_1.getSelectedSensorVelocity(0) / 4096;
