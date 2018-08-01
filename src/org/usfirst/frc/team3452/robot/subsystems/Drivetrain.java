@@ -225,7 +225,7 @@ public class Drivetrain extends Subsystem {
 	}
 	
 	/**
-	 * 
+	 * @return right speed
 	 */
 	public double getRightSpeed()
 	{
