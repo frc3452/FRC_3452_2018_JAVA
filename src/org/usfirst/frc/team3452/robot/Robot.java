@@ -1,30 +1,28 @@
 package org.usfirst.frc.team3452.robot;
 
+import java.util.Arrays;
+
 import org.usfirst.frc.team3452.robot.Constants.kAutonSelector;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
-import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
-import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
-import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
-import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
+import org.usfirst.frc.team3452.robot.subsystems.Climber2;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
+import org.usfirst.frc.team3452.robot.subsystems.Intake2;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
 import org.usfirst.frc.team3452.robot.subsystems.Playback;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.STATE;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
+import org.usfirst.frc.team3452.robot.util.GZSubsystemManager;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
@@ -36,15 +34,18 @@ public class Robot extends TimedRobot {
 	public static final Camera camera = new Camera();
 	public static final Lights lights = new Lights();
 	public static final Playback playback = new Playback();
+
+	public static final Climber2 climber2 = new Climber2();
+	public static final Intake2 intake2 = new Intake2();
+
 	@SuppressWarnings("unused")
-	// TODO remove?
+	//TODO REMOVE?
 	private static final OI oi = new OI();
 
-	// Auto selector init
-	private Command autonomousCommand = null;
-	private Command autoCommand[] = new Command[41];
-	private Command defaultCommand = null;
+	//TODO STATE TESTING
+	private static final GZSubsystemManager mSubsystems = new GZSubsystemManager(Arrays.asList(climber2, intake2)); 
 
+	
 	// Flags
 	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false;
 
@@ -54,45 +55,13 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		for (int i = 0; i < 41; i++)
-			autoCommand[i] = null;
-
-		defaultCommand = new DefaultAutonomous();
-
-		// naming for commands
-		Robot.autonSelector.autoCommandName[1] = "Middle - Switch";
-		Robot.autonSelector.autoCommandName[2] = "Left - Switch";
-		Robot.autonSelector.autoCommandName[3] = "Left - Scale";
-		Robot.autonSelector.autoCommandName[4] = "Right - Switch";
-		Robot.autonSelector.autoCommandName[5] = "Right - Scale";
-
-		Robot.autonSelector.autoCommandName[11] = "Left Only - Switch Priority";
-		Robot.autonSelector.autoCommandName[12] = "Left Only - Scale Priority";
-		Robot.autonSelector.autoCommandName[13] = "Left Only - Switch Only";
-		Robot.autonSelector.autoCommandName[14] = "Left Only - Scale Only";
-
-		Robot.autonSelector.autoCommandName[15] = "Right Only - Switch Priority";
-		Robot.autonSelector.autoCommandName[16] = "Right Only - Scale Priority";
-		Robot.autonSelector.autoCommandName[17] = "Right Only - Switch Only";
-		Robot.autonSelector.autoCommandName[18] = "Right Only - Scale Only";
-
-		Robot.autonSelector.autoCommandName[19] = "Left - Default";
-		Robot.autonSelector.autoCommandName[20] = "Right - Default";
-
-		Robot.autonSelector.autoCommandName[21] = "(MIFOR) Middle - Switch";
-		Robot.autonSelector.autoCommandName[22] = "(MIFOR) Left - Switch";
-		Robot.autonSelector.autoCommandName[23] = "(MIFOR) Left - Scale";
-		Robot.autonSelector.autoCommandName[24] = "(MIFOR) Right - Switch";
-		Robot.autonSelector.autoCommandName[25] = "(MIFOR) Right - Scale";
-
-		Robot.autonSelector.autoCommandName[26] = "(MIFOR) Left Only - Switch Priority";
-		Robot.autonSelector.autoCommandName[27] = "(MIFOR) Left Only - Scale Priority";
-		Robot.autonSelector.autoCommandName[28] = "(MIFOR) Right Only - Switch Priority";
-		Robot.autonSelector.autoCommandName[29] = "(MIFOR) Right Only - Scale Priority";
 	}
 
 	@Override
 	public void robotPeriodic() {
+		//TODO STATE TESTING
+		mSubsystems.loop();
+		
 		handleLEDs();
 		Robot.drive.loggerUpdate();
 
@@ -112,7 +81,10 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic() {
-		autonChooser();
+		//TODO STATE TESTING
+		mSubsystems.stop();
+		
+		Robot.autonSelector.autonChooser();
 		Robot.autonSelector.printSelected();
 
 		if (wasTest)
@@ -132,47 +104,12 @@ public class Robot extends TimedRobot {
 		Robot.drive.timer.reset();
 		Robot.drive.timer.start();
 
-		// keep overriding while game data bad or controller override not set
+		// keep overriding while game data bad
 		do {
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
+		} while ((Robot.autonSelector.gameMsg.equals("NOT") && Robot.drive.timer.get() < 3));
 
-			autoCommand[1] = (new MiddleAuton(AO.SWITCH, AV.CURRENT));
-			autoCommand[2] = (new LeftAuton(AO.SWITCH, AV.CURRENT, AV.CURRENT));
-			autoCommand[3] = (new LeftAuton(AO.SCALE, AV.CURRENT, AV.CURRENT));
-			autoCommand[4] = (new RightAuton(AO.SWITCH, AV.CURRENT, AV.CURRENT));
-			autoCommand[5] = (new RightAuton(AO.SCALE, AV.CURRENT, AV.CURRENT));
-
-			autoCommand[11] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
-			autoCommand[12] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
-			autoCommand[13] = (new LeftAuton(AO.SWITCH_ONLY, AV.CURRENT, AV.CURRENT));
-			autoCommand[14] = (new LeftAuton(AO.SCALE_ONLY, AV.CURRENT, AV.CURRENT));
-
-			autoCommand[15] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
-			autoCommand[16] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
-			autoCommand[17] = (new RightAuton(AO.SWITCH_ONLY, AV.CURRENT, AV.CURRENT));
-			autoCommand[18] = (new RightAuton(AO.SCALE_ONLY, AV.CURRENT, AV.CURRENT));
-
-			autoCommand[19] = (new LeftAuton(AO.DEFAULT, AV.CURRENT, AV.CURRENT));
-			autoCommand[20] = (new RightAuton(AO.DEFAULT, AV.CURRENT, AV.CURRENT));
-
-			autoCommand[21] = (new MiddleAuton(AO.SWITCH, AV.FOREST_HILLS));
-			autoCommand[22] = (new LeftAuton(AO.SWITCH, AV.FOREST_HILLS, AV.CURRENT));
-			autoCommand[23] = (new LeftAuton(AO.SCALE, AV.FOREST_HILLS, AV.CURRENT));
-			autoCommand[24] = (new RightAuton(AO.SWITCH, AV.FOREST_HILLS, AV.CURRENT));
-			autoCommand[25] = (new RightAuton(AO.SCALE, AV.FOREST_HILLS, AV.CURRENT));
-
-			autoCommand[26] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.FOREST_HILLS, AV.CURRENT));
-			autoCommand[27] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.FOREST_HILLS, AV.CURRENT));
-			autoCommand[28] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.FOREST_HILLS, AV.CURRENT));
-			autoCommand[29] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.FOREST_HILLS, AV.CURRENT));
-
-			if (Robot.autonSelector.controllerOverride) {
-				autonomousCommand = autoCommand[Robot.autonSelector.overrideValue];
-				Robot.autonSelector.confirmOverride = true;
-			}
-
-		} while ((Robot.autonSelector.gameMsg.equals("NOT") && Robot.drive.timer.get() < 3)
-				|| (Robot.autonSelector.controllerOverride && !Robot.autonSelector.confirmOverride));
+		Robot.autonSelector.setAutons();
 
 		// SET COLOR ACCORDING TO ALLIANCE
 		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
@@ -183,12 +120,12 @@ public class Robot extends TimedRobot {
 		// BRAKE MODE DURING AUTO
 		Robot.drive.brake(NeutralMode.Brake);
 
-		autonChooser();
+		Robot.autonSelector.autonChooser();
 		Robot.autonSelector.printSelected();
 
-		if (autonomousCommand != null)
-			autonomousCommand.start();
-		
+		if (Robot.autonSelector.autonomousCommand != null)
+			Robot.autonSelector.autonomousCommand.start();
+
 	}
 
 	@Override
@@ -205,8 +142,8 @@ public class Robot extends TimedRobot {
 
 		Robot.drive.brake(NeutralMode.Coast);
 
-		if (autonomousCommand != null) {
-			autonomousCommand.cancel();
+		if (Robot.autonSelector.autonomousCommand != null) {
+			Robot.autonSelector.autonomousCommand.cancel();
 		}
 
 		wasTele = true;
@@ -279,95 +216,6 @@ public class Robot extends TimedRobot {
 					}
 				}
 				break;
-			}
-		}
-	}
-
-	private void controllerChooser() {
-		// if LB & RB
-		if (OI.driverJoy.getRawButton(5) && OI.driverJoy.getRawButton(6)) {
-
-			// A BUTTON
-			if (OI.driverJoy.getRawButton(1)) {
-				Robot.autonSelector.overrideValue = 2;
-				Robot.autonSelector.overrideString = "Controller override 1:\t"
-						+ Robot.autonSelector.autoCommandName[2];
-				Robot.autonSelector.controllerOverride = true;
-				Robot.autonSelector.confirmOverride = false;
-			}
-
-			// B BUTTON
-			else if (OI.driverJoy.getRawButton(2)) {
-				Robot.autonSelector.overrideValue = 3;
-				Robot.autonSelector.overrideString = "Controller override 2:\t"
-						+ Robot.autonSelector.autoCommandName[3];
-				Robot.autonSelector.controllerOverride = true;
-				Robot.autonSelector.confirmOverride = false;
-			}
-
-			// X BUTTON
-			else if (OI.driverJoy.getRawButton(3)) {
-				Robot.autonSelector.overrideValue = 4;
-				Robot.autonSelector.overrideString = "Controller override 3:\t"
-						+ Robot.autonSelector.autoCommandName[4];
-				Robot.autonSelector.controllerOverride = true;
-				Robot.autonSelector.confirmOverride = false;
-			}
-
-			// Y BUTTON
-			else if (OI.driverJoy.getRawButton(4)) {
-				Robot.autonSelector.overrideValue = 5;
-				Robot.autonSelector.overrideString = "Controller override 4:\t"
-						+ Robot.autonSelector.autoCommandName[5];
-				Robot.autonSelector.controllerOverride = true;
-				Robot.autonSelector.confirmOverride = false;
-			}
-
-			// BACK BUTTON
-			else if (OI.driverJoy.getRawButton(7)) {
-				Robot.autonSelector.overrideValue = 13;
-				Robot.autonSelector.overrideString = "Controller override 5:\t"
-						+ Robot.autonSelector.autoCommandName[13];
-				Robot.autonSelector.controllerOverride = true;
-				Robot.autonSelector.confirmOverride = false;
-			}
-
-			// START BUTTON
-			else if (OI.driverJoy.getRawButton(8)) {
-				Robot.autonSelector.overrideValue = 17;
-				Robot.autonSelector.overrideString = "Controller override 6:\t"
-						+ Robot.autonSelector.autoCommandName[17];
-				Robot.autonSelector.controllerOverride = true;
-				Robot.autonSelector.confirmOverride = false;
-			}
-
-			// LEFT CLICK
-			else if (OI.driverJoy.getRawButton(9)) {
-				autonomousCommand = defaultCommand;
-				Robot.autonSelector.overrideString = "Controller override: DEFAULT AUTO SELECTED";
-				Robot.autonSelector.controllerOverride = true;
-			}
-
-			// RIGHT CLICK
-			else if (OI.driverJoy.getRawButton(10)) {
-				Robot.autonSelector.controllerOverride = false;
-				System.out.println(Robot.autonSelector.autonString);
-			}
-		}
-
-	}
-
-	private void autonChooser() {
-		controllerChooser();
-
-		// if not overriden
-		if (!Robot.autonSelector.controllerOverride) {
-
-			// If selector feedback nominal
-			if (Robot.autonSelector.uglyAnalog() <= 40 && Robot.autonSelector.uglyAnalog() >= 1) {
-				autonomousCommand = autoCommand[Robot.autonSelector.uglyAnalog()];
-			} else {
-				autonomousCommand = defaultCommand;
 			}
 		}
 	}
