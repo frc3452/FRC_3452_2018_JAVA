@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import java.util.ArrayList;
+
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
@@ -10,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -38,6 +41,8 @@ public class Drivetrain extends Subsystem {
 
 	// ROBOT DRIVE OBJECT
 	private DifferentialDrive robotDrive;
+
+	private ArrayList<WPI_TalonSRX> talons = new ArrayList<WPI_TalonSRX>();
 
 	// GYRO
 	public AHRS Gyro;
@@ -84,25 +89,21 @@ public class Drivetrain extends Subsystem {
 		timer.start();
 
 		// Talons
-		L1 = new WPI_TalonSRX(Constants.kDrivetrain.L1);
-		L2 = new WPI_TalonSRX(Constants.kDrivetrain.L2);
-		L3 = new WPI_TalonSRX(Constants.kDrivetrain.L3);
-		L4 = new WPI_TalonSRX(Constants.kDrivetrain.L4);
-		R1 = new WPI_TalonSRX(Constants.kDrivetrain.R1);
-		R2 = new WPI_TalonSRX(Constants.kDrivetrain.R2);
-		R3 = new WPI_TalonSRX(Constants.kDrivetrain.R3);
-		R4 = new WPI_TalonSRX(Constants.kDrivetrain.R4);
+		talons.add(L1 = new WPI_TalonSRX(Constants.kDrivetrain.L1));
+		talons.add(L2 = new WPI_TalonSRX(Constants.kDrivetrain.L2));
+		talons.add(L3 = new WPI_TalonSRX(Constants.kDrivetrain.L3));
+		talons.add(L4 = new WPI_TalonSRX(Constants.kDrivetrain.L4));
+		talons.add(R1 = new WPI_TalonSRX(Constants.kDrivetrain.R1));
+		talons.add(R2 = new WPI_TalonSRX(Constants.kDrivetrain.R2));
+		talons.add(R3 = new WPI_TalonSRX(Constants.kDrivetrain.R3));
+		talons.add(R4 = new WPI_TalonSRX(Constants.kDrivetrain.R4));
 
 		Gyro = new AHRS(SPI.Port.kMXP);
 
-		talonInit(L1);
-		talonInit(L2);
-		talonInit(L3);
-		talonInit(L4);
-		talonInit(R1);
-		talonInit(R2);
-		talonInit(R3);
-		talonInit(R4);
+		for (WPI_TalonSRX t : talons) {
+			t.configFactoryDefault();
+			talonInit(t);
+		}
 
 		// Drivetrain
 		robotDrive = new DifferentialDrive(L1, R1);
@@ -158,27 +159,29 @@ public class Drivetrain extends Subsystem {
 			talon.setSelectedSensorPosition(0, 0, 10);
 			talon.setSensorPhase(true);
 
-			// P .4
-			// D 8,9
+			// P .4 D 8,9
+			// P .13 D 1.3
+			// P (.1 {Amount of correction you want} * 1023) / 7635 ~ F (100% * 1023) / 3941
+			// P .425 D 20
 
-			// P .13
-			// D 1.3
 
-			// P (.1 {Amount of correction you want} * 1023) / 7635
-			// F (100% * 1023) / 3941
-
-			// F
-
-			talon.config_kF(0, 0, 10);
-			talon.config_IntegralZone(0, 50, 10);
-			talon.config_kI(0, 0, 10);
-			talon.config_kD(0, 20, 10);
-			talon.config_kP(0, 0.425, 10);
+			//TODO IMPLEMENT
+			TalonSRXConfiguration f = new TalonSRXConfiguration();
+			talon.configAllSettings(f);
+			
+			talon.config_kF(0, .2379, 10);
 
 			// If left master
-			if (LorR) {
+			if (talon.getDeviceID() == Constants.kDrivetrain.L1) {
+				talon.config_kP(0, 0.425, 10);
+				talon.config_kI(0, 0, 10);
+				talon.config_kD(0, 4.25, 10);
+
 			} else {
 				// If right master
+				talon.config_kP(0, 0.425, 10); // .8
+				talon.config_kI(0, 0, 10);
+				talon.config_kD(0, 4.25, 10);
 			}
 
 			// If Follower
@@ -186,7 +189,7 @@ public class Drivetrain extends Subsystem {
 			talon.follow(LorR ? L1 : R1);
 		}
 	}
-	
+
 	public double getLeftPosition() {
 		return (double) L1.getSelectedSensorPosition(0) / 4096;
 	}
@@ -194,14 +197,12 @@ public class Drivetrain extends Subsystem {
 	public double getRightPosition() {
 		return (double) -R1.getSelectedSensorPosition(0) / 4096;
 	}
-	
-	public double getLeftSpeed()
-	{
+
+	public double getLeftSpeed() {
 		return (double) L1.getSelectedSensorVelocity(0) / 4096;
 	}
-	
-	public double getRightSpeed()
-	{
+
+	public double getRightSpeed() {
 		return (double) -R1.getSelectedSensorVelocity(0) / 4096;
 	}
 
@@ -220,8 +221,8 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * Used to turn on/off runnable for motion profiling
-	 * @param time
-	 *            double - if 3452, stops notifier
+	 * 
+	 * @param time double - if 3452, stops notifier
 	 */
 	public void processMotionProfileBuffer(double time) {
 		if (time == 3452)
@@ -232,6 +233,7 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * push motion profiles to drive train talons
+	 * 
 	 * @since 4-22-2018
 	 */
 	public void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
@@ -298,8 +300,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	/**
-	 * Used to process and push <b>parsed</b> motion profiles to drivetrain
-	 * talons
+	 * Used to process and push <b>parsed</b> motion profiles to drivetrain talons
 	 * 
 	 * @author max
 	 * @since 4-22-2018
@@ -368,9 +369,9 @@ public class Drivetrain extends Subsystem {
 		System.out.println("Motion profile pushed to Talons");
 	}
 
+	@SuppressWarnings("static-access")
 	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {
 		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
-
 		retval = retval.valueOf(durationMs);
 
 		if (retval.value != durationMs)
@@ -503,8 +504,7 @@ public class Drivetrain extends Subsystem {
 	 * If L and R are within 102*multiplier of target positions, return true
 	 * 
 	 * @author max
-	 * @param multiplier
-	 *            double
+	 * @param multiplier double
 	 * @return boolean
 	 */
 	public boolean encoderIsDone(double multiplier) {
@@ -518,8 +518,7 @@ public class Drivetrain extends Subsystem {
 	 * If L or R are within 102*multiplier of target positions, return true
 	 * 
 	 * @author max
-	 * @param multiplier
-	 *            double
+	 * @param multiplier double
 	 * @return boolean
 	 */
 	public boolean encoderIsDoneEither(double multiplier) {

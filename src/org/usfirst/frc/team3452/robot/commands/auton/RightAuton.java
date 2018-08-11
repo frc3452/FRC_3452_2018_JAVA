@@ -275,7 +275,6 @@ public class RightAuton extends CommandGroup {
 			// kAutonSelector.CORRECTION)); // drive front of scale
 			addSequential(new EncoderGyro(10.6 / 3, 10.6 / 3, .5, .5, .5, -90, kAutonSelector.CORRECTION));
 
-			// TODO CHANGES FOR 2337
 			/**
 			 * addSequential(new EncoderFrom(.75, -1.5, .5, .5, .5));
 			 * 

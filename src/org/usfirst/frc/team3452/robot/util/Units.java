@@ -3,6 +3,17 @@ package org.usfirst.frc.team3452.robot.util;
 
 //thx 254
 public class Units {
+	
+	public static double ticks_to_rotations(double ticks)
+	{
+		return ticks / 4096;
+	}
+	
+	public static int rotations_to_ticks(double rotations)
+	{
+		return (int) (rotations * 4096);
+	}
+	
     public static double inches_to_meters(double inches) {
         return inches * 0.0254;
     }

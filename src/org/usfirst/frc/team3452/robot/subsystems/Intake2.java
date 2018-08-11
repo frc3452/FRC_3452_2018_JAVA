@@ -8,22 +8,22 @@ import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class IntakeV2 extends GZSubsystem {
+public class Intake2 extends GZSubsystem {
 
 	private static Spark left_intake, right_intake;
 
 	public IntakeStates mState = IntakeStates.NEUTRAL;
 
 	// Construction
-	public IntakeV2() {
+	public Intake2() {
 		left_intake = new Spark(kIntake.INTAKE_L);
 		right_intake = new Spark(kIntake.INTAKE_R);
 
 		left_intake.setInverted(kIntake.INTAKE_L_INVERT);
 		right_intake.setInverted(kIntake.INTAKE_R_INVERT);
 
-		left_intake.setSubsystem(IntakeV2.class.getName());
-		right_intake.setSubsystem(IntakeV2.class.getName());
+		left_intake.setSubsystem(Intake2.class.getName());
+		right_intake.setSubsystem(Intake2.class.getName());
 
 		left_intake.setName("left_intake");
 		right_intake.setName("right_intake");
@@ -91,8 +91,8 @@ public class IntakeV2 extends GZSubsystem {
 
 	@Override
 	public void outputSmartDashboard() {
-		SmartDashboard.putNumber(IntakeV2.class.getName() + " - Left Amperage", Values.left_amperage);
-		SmartDashboard.putNumber(IntakeV2.class.getName() + " - Right Amperage", Values.right_amperage);
+		SmartDashboard.putNumber(Intake2.class.getName() + " - Left Amperage", Values.left_amperage);
+		SmartDashboard.putNumber(Intake2.class.getName() + " - Right Amperage", Values.right_amperage);
 	}
 
 }
