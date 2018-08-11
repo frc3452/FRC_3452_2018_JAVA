@@ -51,13 +51,13 @@ public class IntakeV2 extends GZSubsystem {
 		super.inputOutput();
 	}
 
-	// READ INPUT VALUES
+	@Override
 	public void in() {
 		Values.left_amperage = Robot.drive.pdp.getCurrent(kPDP.INTAKE_L);
 		Values.right_amperage = Robot.drive.pdp.getCurrent(kPDP.INTAKE_R);
 	}
 
-	// WRITE OUTPUT VALUES
+	@Override
 	public void out() {
 		left_intake.set(Values.left_output);
 		right_intake.set(Values.right_output);
