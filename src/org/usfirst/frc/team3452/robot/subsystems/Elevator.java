@@ -1,8 +1,9 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Constants;
-import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.Constants.kElevator;
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.util.Units;
 
 import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -31,10 +32,14 @@ public class Elevator extends Subsystem {
 
 	public boolean isRemoteSensor = true;
 
+	@SuppressWarnings("deprecation")
 	public Elevator() {
 		Elev_1 = new WPI_TalonSRX(Constants.kElevator.E_1);
 		Elev_2 = new WPI_TalonSRX(Constants.kElevator.E_2);
 
+		Elev_1.configFactoryDefault();
+		Elev_2.configFactoryDefault();
+		
 		generalTalonInit(Elev_1);
 		generalTalonInit(Elev_2);
 
@@ -61,9 +66,15 @@ public class Elevator extends Subsystem {
 		Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		Elev_1.setSelectedSensorPosition(0, 0, 10);
 		Elev_1.setSensorPhase(Constants.kElevator.E_ENC_INVERT);
+		
+		//SOFT LIMITS FOR DEMO MODE
+		//TODO CHECK POLARITY
+		Elev_1.configForwardSoftLimitThreshold(Units.rotations_to_ticks(5));
+		Elev_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-1));
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
 		Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);
+		
 
 		if (isRemoteSensor) {
 			// REMOTE LIMIT SWITCHES
@@ -100,6 +111,11 @@ public class Elevator extends Subsystem {
 	 */
 	public double getElevatorSpeed() {
 		return (double) -Robot.elevator.Elev_1.getSelectedSensorVelocity(0) / 4096;
+	}
+
+	public void softLimits(boolean enableSoftLimit) {
+		Elev_1.configForwardSoftLimitEnable(enableSoftLimit);
+		Elev_1.configReverseSoftLimitEnable(enableSoftLimit);
 	}
 
 	public void generalTalonInit(WPI_TalonSRX talon) {

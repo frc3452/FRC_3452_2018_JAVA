@@ -12,7 +12,7 @@ public class ElevatorManual extends Command {
 	private int m_axis;
 	private Joystick m_joy;
 
-	double speedmodifier = 0;
+	double value = 0;
 	double speeds[] = new double[2];
 
 	/**
@@ -33,10 +33,12 @@ public class ElevatorManual extends Command {
 	protected void initialize() {
 		m_axis = ((m_joy == OI.opJoy) ? 1 : 5);
 
+		// speeds[0] is downward speed, speeds[1] is upward speed
 		if (!Robot.autonSelector.isSaftey()) {
 			speeds[0] = .6;
 			speeds[1] = 1;
 		} else {
+			Robot.elevator.softLimits(true);
 			speeds[0] = .3;
 			speeds[1] = .5;
 		}
@@ -44,26 +46,9 @@ public class ElevatorManual extends Command {
 
 	@Override
 	protected void execute() {
-		// TODO REMOVE
-		if (m_joy.getRawAxis(m_axis) > 0)
-			// DOWN
-			speedmodifier = m_joy.getRawAxis(m_axis) * speeds[0];
-		else {
-
-			// UP
-
-			if (((double) -Robot.elevator.Elev_1.getSelectedSensorPosition(0) / 4096) < 5)
-				speedmodifier = m_joy.getRawAxis(m_axis) * speeds[1];
-			else {
-				if (m_joy.getRawAxis(m_axis) > 0)
-					speedmodifier = m_joy.getRawAxis(m_axis) * speeds[1];
-				else
-					speedmodifier = 0;
-			}
-		}
-
-		Robot.elevator.Elev_1.set(ControlMode.PercentOutput, speedmodifier);
-
+		value = m_joy.getRawAxis(m_axis) * (m_joy.getRawAxis(m_axis) > 0 ? speeds[0] : speeds[1]);
+		
+		Robot.elevator.Elev_1.set(ControlMode.PercentOutput, value);
 	}
 
 	@Override
@@ -74,6 +59,7 @@ public class ElevatorManual extends Command {
 	@Override
 	protected void end() {
 		Robot.elevator.Elev_1.set(ControlMode.PercentOutput, 0);
+		Robot.elevator.softLimits(false);
 	}
 
 	@Override
