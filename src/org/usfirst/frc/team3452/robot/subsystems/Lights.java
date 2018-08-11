@@ -46,51 +46,28 @@ public class Lights extends Subsystem {
 
 		centerX = table.getEntry("centerX");
 		centerY = table.getEntry("centerY");
-
 	}
 
-	/**
-	 * @author max
-     * @param cube int
-	 * @return double centerX reported from GRIP
-	 */
-	public double centerX(int cube) {
+	public double centerX(int whichCube) {
 		if (visionLength() > 0)
-			return centerX.getDoubleArray(tempArray)[cube];
+			return centerX.getDoubleArray(tempArray)[whichCube];
 		else
 			return 3452;
 	}
 	
-	/**
-	 * 
-	 * @author max
-	 * @param cube int
-	 * @return double centerY reported from GRIP
-	 * @since
-	 */
-	public double centerY(int cube)
+	public double centerY(int whichCube)
 	{
 		if (visionLength() > 0)
-			return centerY.getDoubleArray(tempArray)[cube];
+			return centerY.getDoubleArray(tempArray)[whichCube];
 		else
 			return 3452;
 	}
 
-	/**
-	 * @author max
-	 * @return int vision array length
-	 */
     private int visionLength() {
 		return centerX.getDoubleArray(tempArray).length;
 	}
 
-	/**
-	 * @author max
-     * @param hDegrees double
-     * @param S double
-     * @param V double
-	 */
-	public void hsv(double hDegrees, double S, double V) {
+	public void hsv(double hDegrees, double saturation, double value) {
 		double R, G, B;
 		double H = hDegrees;
 
@@ -101,49 +78,49 @@ public class Lights extends Subsystem {
 			H -= 360;
 		}
 
-		if (V <= 0) {
+		if (value <= 0) {
 			R = G = B = 0;
-		} else if (S <= 0) {
-			R = G = B = V;
+		} else if (saturation <= 0) {
+			R = G = B = value;
 		} else {
 			double hf = H / 60.0;
 			int i = (int) Math.floor(hf);
 			double f = hf - i;
-			double pv = V * (1 - S);
-			double qv = V * (1 - S * f);
-			double tv = V * (1 - S * (1 - f));
+			double pv = value * (1 - saturation);
+			double qv = value * (1 - saturation * f);
+			double tv = value * (1 - saturation * (1 - f));
 			switch (i) {
 			/* Red is dominant color */
 			case 0:
-				R = V;
+				R = value;
 				G = tv;
 				B = pv;
 				break;
 			/* Green is dominant color */
 			case 1:
 				R = qv;
-				G = V;
+				G = value;
 				B = pv;
 				break;
 			case 2:
 				R = pv;
-				G = V;
+				G = value;
 				B = tv;
 				break;
 			/* Blue is the dominant color */
 			case 3:
 				R = pv;
 				G = qv;
-				B = V;
+				B = value;
 				break;
 			case 4:
 				R = tv;
 				G = pv;
-				B = V;
+				B = value;
 				break;
 			/* Red is the dominant color */
 			case 5:
-				R = V;
+				R = value;
 				G = pv;
 				B = qv;
 				break;
@@ -153,74 +130,55 @@ public class Lights extends Subsystem {
 			 * these here
 			 */
 			case 6:
-				R = V;
+				R = value;
 				G = tv;
 				B = pv;
 				break;
 			case -1:
-				R = V;
+				R = value;
 				G = pv;
 				B = qv;
 				break;
 			/* The color is not defined, we should throw an error */
 			default:
 				/* Just pretend its black/white */
-				R = G = B = V;
+				R = G = B = value;
 				break;
 			}
 		}
 		rgb((float) R, (float) G, (float) B);
 	}
 
-	/**
-	 * @author max
-     * @param r float
-     * @param g float
-     * @param b float
-	 */
-    private void rgb(float r, float g, float b) {
+    private void rgb(float red, float green, float blue) {
     	if (m_hue > 360)
     		m_hue = 0;
     	
 		try {
-			canifier.setLEDOutput(r, CANifier.LEDChannel.LEDChannelA);
-			canifier.setLEDOutput(g, CANifier.LEDChannel.LEDChannelB);
-			canifier.setLEDOutput(b, CANifier.LEDChannel.LEDChannelC);
+			canifier.setLEDOutput(red, CANifier.LEDChannel.LEDChannelA);
+			canifier.setLEDOutput(green, CANifier.LEDChannel.LEDChannelB);
+			canifier.setLEDOutput(blue, CANifier.LEDChannel.LEDChannelC);
 		} catch (Exception e) {
 		}
 	}
 
-	/**
-	 * @author max
-     * @param h int
-     * @param s double
-     * @param low double
-     * @param high double
-     * @param pulseIntensity double
-	 */
-	public void pulse(int h, double s, double low, double high, double pulseIntensity) {
-		if (pulseIntensity > high / 15)
-			pulseIntensity = high / 15;
+	public void pulse(int hue, double saturation, double lowBounePoint, double highBouncePoint, double pulseIntensity) {
+		if (pulseIntensity > highBouncePoint / 15)
+			pulseIntensity = highBouncePoint / 15;
 
-		if (pulseDirection) {
+		if (pulseDirection)
 			pulseBrightness += pulseIntensity;
-		} else {
+		else
 			pulseBrightness -= pulseIntensity;
-		}
 
-        if (pulseBrightness >= high) pulseDirection = false;
+        if (pulseBrightness >= highBouncePoint) pulseDirection = false;
 
-        if (pulseBrightness <= low) pulseDirection = true;
+        if (pulseBrightness <= lowBounePoint) pulseDirection = true;
 
-		hsv(h, s, pulseBrightness);
+		hsv(hue, saturation, pulseBrightness);
 
-		Robot.lights.m_hue = h;
+		Robot.lights.m_hue = hue;
 	}
 
-	/**
-	 * @author max
-	 * @return game specific message or "NOT"
-	 */
 	public String gsm() {
 		String f;
 		f = DriverStation.getInstance().getGameSpecificMessage();

@@ -1,0 +1,36 @@
+package org.usfirst.frc.team3452.robot.util;
+
+import edu.wpi.first.wpilibj.command.Subsystem;
+
+//thx 254
+public abstract class GZSubsystem extends Subsystem {
+	
+	//All input and output values
+	protected class Values{}
+	
+	// Stopping all motors
+	public abstract void stop();
+	
+	//Main loop
+	public abstract void loop();
+	
+	protected void inputOutput()
+	{
+		in();
+		out();
+	}
+	
+	// Read all inputs
+	protected abstract void in();
+	
+	// Write all outputs
+	protected abstract void out();
+
+	// Zero sensors
+	public void zeroSensors() {
+	}
+	
+	//Write values to smart dashboard
+	public abstract void outputSmartDashboard();
+	
+}

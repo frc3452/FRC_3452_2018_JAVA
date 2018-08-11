@@ -1,16 +1,23 @@
-package org.usfirst.frc.team3452.robot;
+package org.usfirst.frc.team3452.robot.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.usfirst.frc.team3452.robot.motionprofiles.Path;
 
-/**
- * @author max
- *
- */
-public class Utilities {
 
+public class Util {
+
+	//thx 254
+	public static double limit(double v, double maxMagnitude) {
+        return limit(v, -maxMagnitude, maxMagnitude);
+    }
+
+	//thx 254
+    public static double limit(double v, double min, double max) {
+        return Math.min(max, Math.max(min, v));
+    }
+	
 	/**
 	 * toRound = 2.342, wanting to round to nearest .05 1/<b>20</b> is .05
 	 * roundToFraction(2.342,20)
@@ -30,23 +37,21 @@ public class Utilities {
 	 * Returns current date in format
 	 * </p>
 	 * <p>
-	 * <b>yyyy.MM.dd.HH.mm.ss</b>
+	 * <b>MM.dd.HH.mm.ss.SSS</b>
 	 * </p>
 	 * <p>
 	 * or
 	 * </p>
 	 * <p>
-	 * <b>MM.dd.HH.mm</b>
+	 * <b>yyyy.MM.dd.HH.mm</b>
 	 * </p>
 	 * 
 	 * @author max
-	 * @param precise
-	 * @return string
 	 * @since
 	 */
-	public static String dateTime(boolean precise) {
+	public static String dateTime(boolean precision) {
 		String temp;
-		if (precise)
+		if (precision)
 			temp = new SimpleDateFormat("MM.dd.HH.mm.ss.SSS").format(new Date());
 		else
 			temp = new SimpleDateFormat("yyyy.MM.dd.HH.mm").format(new Date());

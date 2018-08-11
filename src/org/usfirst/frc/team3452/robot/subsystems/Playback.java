@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.Utilities;
+import org.usfirst.frc.team3452.robot.util.Util;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
@@ -185,7 +185,7 @@ public class Playback extends Subsystem {
 		try {
 			// ON STARTUP, PRINT NAMES
 			if (startup) {
-				bw.write(Utilities.dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP,"
+				bw.write(Util.dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP,"
 						+ "L1-V,L2-V,L3-V,L4-V," + "R1-AMP,R2-AMP,R3-AMP,R4-AMP," + "R1-V,R2-V,R3-V,R4-V,"
 						+ "Elev_1-AMP,Elev_2-AMP," + "Elev_1-V,Elev_2-V," + "Intake_L-AMP,Intake_R-AMP,"
 						+ "Climber_1-AMP,Climber_2-AMP," + "BATTERY");
@@ -212,7 +212,7 @@ public class Playback extends Subsystem {
 		@Override
 		public void run() {
 			try {
-				bw.write(Utilities.dateTime(true) + ",");
+				bw.write(Util.dateTime(true) + ",");
 				bw.write(String.valueOf(
 
 						// SPEED
@@ -420,7 +420,7 @@ public class Playback extends Subsystem {
 
 	private String loggingName(boolean returnCurrent) {
 		if (returnCurrent) {
-			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Utilities.dateTime(false);
+			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Util.dateTime(false);
 			prevDateTimeString = retval;
 			return retval;
 		} else {

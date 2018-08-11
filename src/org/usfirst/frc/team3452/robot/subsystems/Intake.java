@@ -9,12 +9,6 @@ public class Intake extends Subsystem {
 
 	public Spark Intake_L, Intake_R;
 	
-	/**
-	 * hardware initialization
-	 * 
-	 * @author max
-	 * @since
-	 */
 	public Intake() {
 		Intake_L = new Spark(Constants.kIntake.INTAKE_L);
 		Intake_R = new Spark(Constants.kIntake.INTAKE_R);
@@ -29,14 +23,9 @@ public class Intake extends Subsystem {
 		Intake_R.setName("Intake R");
 	}
 
-	/**
-	 * @author max
-	 * @param speed
-	 * @since
-	 */
-	public void manual(double speed) {
-		Intake_L.set(speed);
-		Intake_R.set(speed);
+	public void manual(double percentage) {
+		Intake_L.set(percentage);
+		Intake_R.set(percentage);
 	}
 
 	@Override

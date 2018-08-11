@@ -53,9 +53,6 @@ public class AutonSelector extends Subsystem {
 		return uglyAnalog() == kAutonSelector.SAFTEY_SWITCH;
 	}
 	
-	/**
-	 * @author max
-	 */
 	public void printSelected() {
 		m_asA = as_A.getValue();
 		m_asB = as_B.getValue();
@@ -95,7 +92,7 @@ public class AutonSelector extends Subsystem {
 
 	/**
 	 * @author max
-	 * @return int <b>1 - 100</b> or 3452 as error
+	 * @return Number between 1 - 100, A1 = 1, A10 = 10, B1 = 11, B10 = 20, or 3452 as error
 	 */
 	public int uglyAnalog() {
 		if (m_asA < Constants.kAutonSelector.AUTO_1 + Constants.kAutonSelector.AUTO_V
@@ -142,10 +139,6 @@ public class AutonSelector extends Subsystem {
 			return 3452;
 		}
 
-		/*
-		 * @return Number between 1 - 40, A1 = 1, A10 = 10, B1 = 11, B10 = 20
-		 * 
-		 */
 	}
 
 	private int selectorB(int selectorA) {

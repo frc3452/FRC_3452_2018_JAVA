@@ -16,21 +16,10 @@ public class Climber extends Subsystem {
 	private Spark Climber;
 	public int climbCounter = 0;
 	
-	/**
-	 * one direction control of climber
-	 * 
-	 * @author max
-     * @param speed double
-	 */
 	public void control(double speed) {
 		Climber.set(Math.abs(speed));
 	}
 
-	/**
-	 * hardware initialization
-	 * 
-	 * @author max
-	 */
 	public Climber() {
 		Climber = new Spark(Constants.kClimber.CLIMBER_1);
 		Climber.setInverted(Constants.kClimber.CLIMBER_1_INVERT);

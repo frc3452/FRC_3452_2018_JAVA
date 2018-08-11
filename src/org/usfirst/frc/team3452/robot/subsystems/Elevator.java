@@ -31,12 +31,6 @@ public class Elevator extends Subsystem {
 
 	public boolean isRemoteSensor = true;
 
-	/**
-	 * hardware initialization
-	 * 
-	 * @author max
-	 * @since
-	 */
 	public Elevator() {
 		Elev_1 = new WPI_TalonSRX(Constants.kElevator.E_1);
 		Elev_2 = new WPI_TalonSRX(Constants.kElevator.E_2);
@@ -100,12 +94,11 @@ public class Elevator extends Subsystem {
 	public double getElevatorHeight() {
 		return (double) -Elev_1.getSelectedSensorPosition(0) / 4096;
 	}
-	
+
 	/**
 	 * @return elevator speed (negative is down, positive is up)
 	 */
-	public double getElevatorSpeed()
-	{
+	public double getElevatorSpeed() {
 		return (double) -Robot.elevator.Elev_1.getSelectedSensorVelocity(0) / 4096;
 	}
 
@@ -124,12 +117,6 @@ public class Elevator extends Subsystem {
 		talon.setSubsystem("Elevator");
 	}
 
-	/**
-	 * update elevator modifier
-	 * 
-	 * @author max
-	 * @since
-	 */
 	public void setDriveLimit() {
 
 		double pos = getElevatorHeight();
@@ -157,37 +144,18 @@ public class Elevator extends Subsystem {
 
 	}
 
-	/**
-	 * run to position
-	 * 
-	 * @author max
-	 * @param position
-	 * @since
-	 */
-	public void encoder(double position) {
+	public void encoder(double rotations) {
 		Elev_1.configPeakOutputForward(kElevator.E_CLOSED_DOWN_SPEED_LIMIT, 10);
 		Elev_1.configPeakOutputReverse(kElevator.E_CLOSED_UP_SPEED_LIMIT * -1, 10);
-		m_pos = -position * 4096;
+		m_pos = -rotations * 4096;
 		Elev_1.set(ControlMode.Position, m_pos);
 	}
 
-	/**
-	 * @author max
-	 * @param multiplier
-	 * @return boolean
-	 * @since
-	 */
 	public boolean isDone(double multiplier) {
 		return (Elev_1.getSelectedSensorPosition(0) < (m_pos + (102 * multiplier))
 				&& Elev_1.getSelectedSensorPosition(0) > (m_pos - (102 * multiplier)));
 	}
 
-	/**
-	 * set output to default set position target default
-	 * 
-	 * @author max
-	 * @since
-	 */
 	public void encoderDone() {
 		Elev_1.set(ControlMode.PercentOutput, 0);
 		Elev_1.configPeakOutputForward(1, 10);

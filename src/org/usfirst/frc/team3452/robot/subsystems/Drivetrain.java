@@ -50,11 +50,6 @@ public class Drivetrain extends Subsystem {
 	// init timer
 	public Timer timer = new Timer();
 
-	/**
-	 * Smartdashboard logging
-	 * 
-	 * @author max
-	 */
 	public void loggerUpdate() {
 		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
 
@@ -83,11 +78,6 @@ public class Drivetrain extends Subsystem {
 		SmartDashboard.putNumber("rerror", R1.getClosedLoopError(0));
 	}
 
-	/**
-	 * hardware initialization
-	 * 
-	 * @author max
-	 */
 	public Drivetrain() {
 		timer.stop();
 		timer.reset();
@@ -135,9 +125,6 @@ public class Drivetrain extends Subsystem {
 		Gyro.reset();
 	}
 
-	/**
-	 * talon init
-	 */
 	private void talonInit(WPI_TalonSRX talon) {
 		// ---All talons---\\
 
@@ -199,45 +186,25 @@ public class Drivetrain extends Subsystem {
 			talon.follow(LorR ? L1 : R1);
 		}
 	}
-
-	/**
-	 * 
-	 * @return left position
-	 */
+	
 	public double getLeftPosition() {
 		return (double) L1.getSelectedSensorPosition(0) / 4096;
 	}
 
-	/**
-	 * 
-	 * @return right position
-	 */
 	public double getRightPosition() {
 		return (double) -R1.getSelectedSensorPosition(0) / 4096;
 	}
 	
-	/**
-	 * @return left speed
-	 */
 	public double getLeftSpeed()
 	{
 		return (double) L1.getSelectedSensorVelocity(0) / 4096;
 	}
 	
-	/**
-	 * @return right speed
-	 */
 	public double getRightSpeed()
 	{
 		return (double) -R1.getSelectedSensorVelocity(0) / 4096;
 	}
 
-	/**
-	 * used for running 'process motion profile buffer' on drive train talons
-	 * 
-	 * @author Max
-	 * @since 5/22/2018
-	 */
 	private class MotionProfileBuffer implements java.lang.Runnable {
 		@Override
 		public void run() {
@@ -253,8 +220,6 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * Used to turn on/off runnable for motion profiling
-	 * 
-	 * 
 	 * @param time
 	 *            double - if 3452, stops notifier
 	 */
@@ -267,16 +232,6 @@ public class Drivetrain extends Subsystem {
 
 	/**
 	 * push motion profiles to drive train talons
-	 * 
-	 * @author max
-	 * 
-	 * @param mpL
-	 *            (2-Dimensional double array)
-	 * @param mpR
-	 *            (2-Dimensional double array)
-	 * @param mpDur
-	 *            (Integer)
-	 * 
 	 * @since 4-22-2018
 	 */
 	public void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
@@ -347,8 +302,6 @@ public class Drivetrain extends Subsystem {
 	 * talons
 	 * 
 	 * @author max
-	 * 
-	 * 
 	 * @since 4-22-2018
 	 */
 	public void motionProfileToTalons() {
@@ -415,13 +368,6 @@ public class Drivetrain extends Subsystem {
 		System.out.println("Motion profile pushed to Talons");
 	}
 
-	/**
-	 * Validate duration
-	 * 
-	 * @author max
-	 * @param durationMs
-	 * @return TrajectoryDuration
-	 */
 	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {
 		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
 
@@ -433,10 +379,6 @@ public class Drivetrain extends Subsystem {
 		return retval;
 	}
 
-	/**
-	 * @author max
-	 * @param joy
-	 */
 	public void arcade(Joystick joy) {
 		// Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify),
 		// joy.getRawAxis(4) * m_modify);
@@ -449,48 +391,24 @@ public class Drivetrain extends Subsystem {
 
 	}
 
-	/**
-	 * steering on right analog stick
-	 * 
-	 * @param joy
-	 */
 	public void alternateArcade(Joystick joy) {
 		arcade(-joy.getRawAxis(1) * m_modify, (joy.getRawAxis(4) * m_modify * .85));
 		Robot.elevator.setDriveLimit();
 		m_modify = .5;
 	}
 
-	/**
-	 * @author max
-	 * @param move
-	 * @param rotate
-	 */
 	public void arcade(double move, double rotate) {
 		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .2));
 	}
 
-	/**
-	 * @author max
-	 * @param left
-	 * @param right
-	 */
 	public void tank(double left, double right) {
 		robotDrive.tankDrive(left * m_elev_modify, right * m_elev_modify);
 	}
 
-	/**
-	 * @author max
-	 * @param joy
-	 */
 	public void tank(Joystick joy) {
 		robotDrive.tankDrive(-joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
 	}
 
-	/**
-	 * @author max
-	 * @param mode
-	 *            NeutralMode
-	 */
 	public void brake(NeutralMode mode) {
 		L1.setNeutralMode(mode);
 		L2.setNeutralMode(mode);
@@ -502,21 +420,6 @@ public class Drivetrain extends Subsystem {
 		R4.setNeutralMode(mode);
 	}
 
-	/**
-	 * @author max
-	 * @param leftpos
-	 *            rotations
-	 * @param rightpos
-	 *            rotations
-	 * @param leftaccel
-	 *            rotations per second (accel)
-	 * @param rightaccel
-	 *            rotations per second (accel)
-	 * @param leftspeed
-	 *            rotations per second (top speed)
-	 * @param rightspeed
-	 *            rotations per second (top speed)
-	 */
 	public void motionMagic(double leftpos, double rightpos, double leftaccel, double rightaccel, double leftspeed,
 			double rightspeed) {
 
@@ -542,18 +445,6 @@ public class Drivetrain extends Subsystem {
 		R1.set(ControlMode.MotionMagic, r_pos);
 	}
 
-	/**
-	 * @author max
-	 * @param leftpos
-	 *            rotations
-	 * @param rightpos
-	 *            rotations
-	 * @param leftspeed
-	 *            speed (percentage)
-	 * @param rightspeed
-	 *            speed (percentage)
-	 * @deprecated
-	 */
 	@Deprecated
 	public void encoder(double leftpos, double rightpos, double leftspeed, double rightspeed) {
 		L1.configPeakOutputForward(leftspeed, 10);
@@ -571,11 +462,6 @@ public class Drivetrain extends Subsystem {
 		R1.set(ControlMode.Position, r_pos);
 	}
 
-	/**
-	 * @author max
-	 * @param value
-	 * @return isUnder
-	 */
 	public boolean encoderSpeedIsUnder(double value) {
 
 		double l = Math.abs(L1.getSelectedSensorVelocity(0));

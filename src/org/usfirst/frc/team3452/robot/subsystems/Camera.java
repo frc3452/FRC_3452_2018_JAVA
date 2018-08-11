@@ -15,11 +15,6 @@ public class Camera extends Subsystem {
 	private UsbCamera mCamera0, mCamera1;
 	private VideoSink server;
 
-	/**
-	 * hardware initialization
-	 * 
-	 * @author max
-	 */
 	public Camera() {
 		mCamera0 = CameraServer.getInstance().startAutomaticCapture(0);
 		mCamera0.setResolution(640, 480);
@@ -35,11 +30,6 @@ public class Camera extends Subsystem {
 		server.setSource(mCamera0);
 	}
 
-	/**
-	 * @author max
-     * @param cameraswitch int
-	 * @since
-	 */
 	public void camSwitch(int cameraswitch) {
 		switch (cameraswitch) {
 		case 0:
@@ -54,12 +44,6 @@ public class Camera extends Subsystem {
 		}
 	}
 
-	/**
-	 * @author max
-     * @param camera int
-     * @param exposure int
-	 * @since
-	 */
 	public void camExposure(int camera, int exposure) {
 		switch (camera) {
 		case 0:
