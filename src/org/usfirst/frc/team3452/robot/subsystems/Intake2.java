@@ -12,7 +12,7 @@ public class Intake2 extends GZSubsystem {
 
 	private static Spark left_intake, right_intake;
 
-	public IntakeStates mState = IntakeStates.NEUTRAL;
+	private IntakeStates mState = IntakeStates.NEUTRAL;
 
 	// Construction
 	public Intake2() {
@@ -28,7 +28,16 @@ public class Intake2 extends GZSubsystem {
 		left_intake.setName("left_intake");
 		right_intake.setName("right_intake");
 	}
-
+	
+	public void switchState(IntakeStates wantedState)
+	{
+		if (this.isDisabed())
+			mState = IntakeStates.NEUTRAL;
+		else
+			mState = wantedState;
+	}
+	
+	
 	public synchronized void loop() {
 		switch (mState) {
 		case MANUAL:

@@ -12,9 +12,9 @@ public class Climber2 extends GZSubsystem {
 
 	private static Spark climber_1;
 
-	public static ClimberStates mState = ClimberStates.NEUTRAL;
+	private static ClimberStates mState = ClimberStates.NEUTRAL;
 
-	//Construction
+	// Construction
 	public Climber2() {
 		climber_1 = new Spark(kClimber.CLIMBER_1);
 		climber_1.setInverted(kClimber.CLIMBER_1_INVERT);
@@ -23,6 +23,12 @@ public class Climber2 extends GZSubsystem {
 		climber_1.setName("climber_1");
 	}
 
+	public void switchState(ClimberStates wantedState) {
+		if (this.isDisabed())
+			mState = ClimberStates.NEUTRAL;
+		else
+			mState = wantedState;
+	}
 
 	@Override
 	public synchronized void loop() {
@@ -40,7 +46,7 @@ public class Climber2 extends GZSubsystem {
 			System.out.println("Incorrect climber state " + mState + " reached.");
 			break;
 		}
-		
+
 		super.inputOutput();
 	}
 
@@ -48,7 +54,7 @@ public class Climber2 extends GZSubsystem {
 	public void stop() {
 		mState = ClimberStates.NEUTRAL;
 	}
-	
+
 	@Override
 	protected void in() {
 		Values.climber_1_amperage = Robot.drive.pdp.getCurrent(kPDP.CLIMBER_1);
@@ -61,7 +67,7 @@ public class Climber2 extends GZSubsystem {
 	}
 
 	public enum ClimberStates {
-		NEUTRAL, MANUAL
+		NEUTRAL, MANUAL,
 	}
 
 	public static class Values {
@@ -85,5 +91,4 @@ public class Climber2 extends GZSubsystem {
 		SmartDashboard.putNumber(Climber2.class.getName() + " - Climber 2 Amperage (" + kPDP.CLIMBER_2 + ")",
 				Values.climber_2_amperage);
 	}
-
 }

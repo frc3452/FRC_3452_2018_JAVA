@@ -2,9 +2,8 @@ package org.usfirst.frc.team3452.robot.util;
 
 import java.util.List;
 
-
 //thx 254
-public class GZSubsystemManager {
+public  class GZSubsystemManager  {
 
 	private final List<GZSubsystem> allSystems;
 
@@ -16,12 +15,17 @@ public class GZSubsystemManager {
 		allSystems.forEach((s) -> s.loop());
 	}
 
-	public void outputToSmartDashboard() {
+	public void outputSmartDashboard() {
 		allSystems.forEach((s) -> s.outputSmartDashboard());
 	}
 
 	public void stop() {
 		allSystems.forEach((s) -> s.stop());
+	}
+	
+	public void disable(boolean toDisable)
+	{
+		allSystems.forEach((s) -> s.disable(toDisable));
 	}
 
 	public void zeroSensors() {

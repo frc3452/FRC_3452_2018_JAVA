@@ -4,16 +4,17 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 //thx 254
 public abstract class GZSubsystem extends Subsystem {
-	
-	//All input and output values
-	protected class Values{}
-	
 	// Stopping all motors
 	public abstract void stop();
 	
+	//Saftey
+	private boolean isDisabled = false;
+	public void disable(boolean toDisable) { isDisabled = toDisable; }
+	public boolean isDisabed() { return isDisabled; }
+	
 	//Main loop
 	public abstract void loop();
-	
+
 	protected void inputOutput()
 	{
 		in();
@@ -21,10 +22,12 @@ public abstract class GZSubsystem extends Subsystem {
 	}
 	
 	// Read all inputs
-	protected abstract void in();
+	protected void in() {
+	}
 	
 	// Write all outputs
-	protected abstract void out();
+	protected void out() {
+	}
 
 	// Zero sensors
 	public void zeroSensors() {
@@ -32,5 +35,9 @@ public abstract class GZSubsystem extends Subsystem {
 	
 	//Write values to smart dashboard
 	public abstract void outputSmartDashboard();
+
+	
+	
+	
 	
 }
