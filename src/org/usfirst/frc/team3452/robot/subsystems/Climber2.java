@@ -12,7 +12,7 @@ public class Climber2 extends GZSubsystem {
 
 	private static Spark climber_1;
 
-	private static ClimberStates mState = ClimberStates.NEUTRAL;
+	private static ClimberState mState = ClimberState.NEUTRAL;
 
 	// Construction
 	public Climber2() {
@@ -23,11 +23,16 @@ public class Climber2 extends GZSubsystem {
 		climber_1.setName("climber_1");
 	}
 
-	public void switchState(ClimberStates wantedState) {
+	public void switchState(ClimberState wantedState) {
 		if (this.isDisabed())
-			mState = ClimberStates.NEUTRAL;
+			mState = ClimberState.NEUTRAL;
 		else
 			mState = wantedState;
+	}
+	
+	public ClimberState getState()
+	{
+		return mState;
 	}
 
 	@Override
@@ -43,7 +48,7 @@ public class Climber2 extends GZSubsystem {
 			break;
 
 		default:
-			System.out.println("Incorrect climber state " + mState + " reached.");
+			System.out.println("WARNING: Incorrect climber state " + mState + " reached.");
 			break;
 		}
 
@@ -52,7 +57,7 @@ public class Climber2 extends GZSubsystem {
 
 	@Override
 	public void stop() {
-		mState = ClimberStates.NEUTRAL;
+		mState = ClimberState.NEUTRAL;
 	}
 
 	@Override
@@ -66,29 +71,22 @@ public class Climber2 extends GZSubsystem {
 		climber_1.set(Math.abs(Values.climber_output));
 	}
 
-	public enum ClimberStates {
+	public enum ClimberState {
 		NEUTRAL, MANUAL,
 	}
 
 	public static class Values {
 		// in
-		static double climber_1_amperage;
-		static double climber_2_amperage;
+		static double climber_1_amperage = 0;
+		static double climber_2_amperage = 0;
 
 		// out
-		static double climber_output;
-		static double climber_desired_output;
+		static double climber_output = 0;
+		static double climber_desired_output = 0;
 	}
 
 	@Override
 	protected void initDefaultCommand() {
 	}
 
-	@Override
-	public void outputSmartDashboard() {
-		SmartDashboard.putNumber(Climber2.class.getName() + " - Climber 1 Amperage (" + kPDP.CLIMBER_1 + ")",
-				Values.climber_1_amperage);
-		SmartDashboard.putNumber(Climber2.class.getName() + " - Climber 2 Amperage (" + kPDP.CLIMBER_2 + ")",
-				Values.climber_2_amperage);
-	}
 }
