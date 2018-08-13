@@ -1,4 +1,3 @@
-
 package org.usfirst.frc.team3452.robot;
 
 /**
@@ -76,6 +75,8 @@ public class Constants {
 
         public final static boolean L_INVERT = false;
         public final static boolean R_INVERT = false;
+        
+        public final static double DIFFERENTIAL_DRIVE_DEADBAND = 0.045;
 
         public final static int AMP_40_TRIGGER = 60, AMP_40_LIMIT = 30, AMP_40_TIME = 4000;
 
