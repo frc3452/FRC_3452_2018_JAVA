@@ -5,27 +5,37 @@ import java.util.Date;
 
 import org.usfirst.frc.team3452.robot.motionprofiles.Path;
 
-
 public class Util {
 
-	//thx 254
-	public static double limit(double v, double maxMagnitude) {
-        return limit(v, -maxMagnitude, maxMagnitude);
-    }
+	public static double limit(double value) {
+		if (value > 1.0) {
+			return 1.0;
+		}
+		if (value < -1.0) {
+			return -1.0;
+		}
+		return value;
+	}
 
-	//thx 254
-    public static double limit(double v, double min, double max) {
-        return Math.min(max, Math.max(min, v));
-    }
-	
+	public static double applyDeadband(double value, double deadband) {
+		if (Math.abs(value) > deadband) {
+			if (value > 0.0) {
+				return (value - deadband) / (1.0 - deadband);
+			} else {
+				return (value + deadband) / (1.0 - deadband);
+			}
+		} else {
+			return 0.0;
+		}
+	}
+
 	/**
 	 * toRound = 2.342, wanting to round to nearest .05 1/<b>20</b> is .05
 	 * roundToFraction(2.342,20)
 	 *
 	 * @author max
 	 * @param value
-	 * @param denominator
-	 *            double
+	 * @param denominator double
 	 * @return double
 	 */
 	public static double roundToFraction(double value, double denominator) {
