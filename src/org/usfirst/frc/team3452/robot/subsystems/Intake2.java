@@ -57,7 +57,7 @@ public class Intake2 extends GZSubsystem {
 			break;
 		}
 
-		super.inputOutput();
+		this.inputOutput();
 	}
 
 	@Override
