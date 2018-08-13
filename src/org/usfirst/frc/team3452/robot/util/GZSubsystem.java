@@ -7,6 +7,11 @@ public abstract class GZSubsystem extends Subsystem {
 	// Stopping all motors
 	public abstract void stop();
 	
+	//Values class
+	//State
+	//switchState
+	//getState
+	
 	//Saftey
 	private boolean isDisabled = false;
 	public void disable(boolean toDisable) { isDisabled = toDisable; }
@@ -22,22 +27,19 @@ public abstract class GZSubsystem extends Subsystem {
 	}
 	
 	// Read all inputs
-	protected void in() {
-	}
+	protected abstract void in();
 	
 	// Write all outputs
-	protected void out() {
-	}
+	protected abstract void out();
 
 	// Zero sensors
 	public void zeroSensors() {
 	}
 	
 	//Write values to smart dashboard
-	public abstract void outputSmartDashboard();
-
-	
-	
-	
+	public void outputSmartDashboard()
+	{
+		
+	}
 	
 }
