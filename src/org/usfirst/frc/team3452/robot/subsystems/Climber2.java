@@ -85,8 +85,8 @@ public class Climber2 extends GZSubsystem {
 
 	@Override
 	protected void in() {
-		Values.climber_1_amperage = Robot.drive.pdp.getCurrent(kPDP.CLIMBER_1);
-		Values.climber_2_amperage = Robot.drive.pdp.getCurrent(kPDP.CLIMBER_2);
+		Values.climber_1_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.CLIMBER_1);
+		Values.climber_2_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.CLIMBER_2);
 	}
 
 	@Override

@@ -37,16 +37,17 @@ public class Robot extends TimedRobot {
 	public static final Lights lights = new Lights();
 	public static final Playback playback = new Playback();
 
+	// TODO STATE TESTING CONSTRUCTION
 	public static final Climber2 climber2 = new Climber2();
 	public static final Intake2 intake2 = new Intake2();
 	public static final Drivetrain2 drive2 = new Drivetrain2();
 	public static final Elevator2 elevator2 = new Elevator2();
-
-	private static final OI oi = new OI();
-
-	// TODO STATE TESTING CONSTRUCTION
 	private static final GZSubsystemManager mSubsystems = new GZSubsystemManager(
 			Arrays.asList(climber2, intake2, drive2, elevator2));
+
+	@SuppressWarnings("unused")
+	private static final OI oi = new OI();
+
 
 	// Flags
 	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false;
