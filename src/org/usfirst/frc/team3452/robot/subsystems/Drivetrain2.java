@@ -30,10 +30,10 @@ public class Drivetrain2 extends GZSubsystem {
 	private DrivetrainState mState = DrivetrainState.NEUTRAL;
 
 	// PDP
-	public PowerDistributionPanel pdp = new PowerDistributionPanel(0);
+	private PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 
 	// DRIVETRAIN
-	public GZSRX L1, L2, L3, L4, R1, R2, R3, R4;
+	private GZSRX L1, L2, L3, L4, R1, R2, R3, R4;
 
 	// ROBOT DRIVE OBJECT
 //	private DifferentialDrive robotDrive;
@@ -142,15 +142,15 @@ public class Drivetrain2 extends GZSubsystem {
 		Values.R3_amp = R3.getOutputCurrent();
 		Values.R4_amp = R4.getOutputCurrent();
 
-//		Values.L1_amp = Robot.drive.pdp.getCurrent(kPDP.DRIVE_L_1);
-//		Values.L2_amp = Robot.drive.pdp.getCurrent(kPDP.DRIVE_L_2);
-//		Values.L3_amp = Robot.drive.pdp.getCurrent(kPDP.DRIVE_L_3);
-//		Values.L4_amp = Robot.drive.pdp.getCurrent(kPDP.DRIVE_L_4);
+//		Values.L1_amp = getPDPChannelCurrent(kPDP.DRIVE_L_1);
+//		Values.L2_amp = getPDPChannelCurrent(kPDP.DRIVE_L_2);
+//		Values.L3_amp = getPDPChannelCurrent(kPDP.DRIVE_L_3);
+//		Values.L4_amp = getPDPChannelCurrent(kPDP.DRIVE_L_4);
 //		
-//		Values.R1_amp = Robot.drive.pdp.getCurrent(kPDP.DRIVE_R_1);
-//		Values.R2_amp = Robot.drive.pdp.getCurrent(kPDP.DRIVE_R_2);
-//		Values.R3_amp = Robot.drive.pdp.getCurrent(kPDP.DRIVE_R_3);
-//		Values.R4_amp = Robot.drive.pdp.getCurrent(kPDP.DRIVE_R_4);
+//		Values.R1_amp = getPDPChannelCurrent(kPDP.DRIVE_R_1);
+//		Values.R2_amp = getPDPChannelCurrent(kPDP.DRIVE_R_2);
+//		Values.R3_amp = getPDPChannelCurrent(kPDP.DRIVE_R_3);
+//		Values.R4_amp = getPDPChannelCurrent(kPDP.DRIVE_R_4);
 	}
 
 	@Override
@@ -567,6 +567,31 @@ public class Drivetrain2 extends GZSubsystem {
 		mGyro.reset();
 	}
 
+	public double getPDPChannelCurrent(int channel) {
+		return pdp.getCurrent(channel);
+	}
+
+	public double getPDPTemperature() {
+		return pdp.getTemperature();
+	}
+
+	public double getPDPTotalCurrent() {
+		return pdp.getTotalCurrent();
+	}
+
+	public double getPDPTotalEnergy() {
+		return pdp.getTotalEnergy();
+	}
+
+	public double getPDPTotalPower() {
+		return pdp.getTotalPower();
+	}
+
+	public double getPDPVoltage()
+	{
+		return pdp.getVoltage();
+	}
+	
 	public double getPercentageModify() {
 		return percentageModify;
 	}

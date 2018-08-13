@@ -67,8 +67,8 @@ public class Intake2 extends GZSubsystem {
 
 	@Override
 	public void in() {
-		Values.left_amperage = Robot.drive.pdp.getCurrent(kPDP.INTAKE_L);
-		Values.right_amperage = Robot.drive.pdp.getCurrent(kPDP.INTAKE_R);
+		Values.left_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.INTAKE_L);
+		Values.right_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.INTAKE_R);
 	}
 
 	@Override
