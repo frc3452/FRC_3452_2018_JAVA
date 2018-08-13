@@ -9,7 +9,9 @@ import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
 import org.usfirst.frc.team3452.robot.subsystems.Climber2;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain2;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
+import org.usfirst.frc.team3452.robot.subsystems.Elevator2;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.Intake2;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
@@ -37,15 +39,15 @@ public class Robot extends TimedRobot {
 
 	public static final Climber2 climber2 = new Climber2();
 	public static final Intake2 intake2 = new Intake2();
+	public static final Drivetrain2 drive2 = new Drivetrain2();
+	public static final Elevator2 elevator2 = new Elevator2();
 
-	@SuppressWarnings("unused")
-	//TODO REMOVE?
 	private static final OI oi = new OI();
 
-	//TODO STATE TESTING
-	private static final GZSubsystemManager mSubsystems = new GZSubsystemManager(Arrays.asList(climber2, intake2)); 
+	// TODO STATE TESTING CONSTRUCTION
+	private static final GZSubsystemManager mSubsystems = new GZSubsystemManager(
+			Arrays.asList(climber2, intake2, drive2, elevator2));
 
-	
 	// Flags
 	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false;
 
@@ -59,9 +61,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic() {
-		//TODO STATE TESTING
+		// TODO STATE TESTING CONSTRUCTION
 		mSubsystems.loop();
-		
+
 		handleLEDs();
 		Robot.drive.loggerUpdate();
 
@@ -73,6 +75,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
+		// TODO STATE TESTING CONSTRUCTION
+		mSubsystems.stop();
+		
 		endLog();
 
 		Robot.drive.brake((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
@@ -81,9 +86,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic() {
-		//TODO STATE TESTING
-		mSubsystems.stop();
-		
+
 		Robot.autonSelector.autonChooser();
 		Robot.autonSelector.printSelected();
 
