@@ -12,7 +12,7 @@ public class Intake2 extends GZSubsystem {
 
 	private static Spark left_intake, right_intake;
 
-	private IntakeStates mState = IntakeStates.NEUTRAL;
+	private IntakeState mState = IntakeState.NEUTRAL;
 
 	// Construction
 	public Intake2() {
@@ -29,12 +29,17 @@ public class Intake2 extends GZSubsystem {
 		right_intake.setName("right_intake");
 	}
 	
-	public void switchState(IntakeStates wantedState)
+	public void setState(IntakeState wantedState)
 	{
 		if (this.isDisabed())
-			mState = IntakeStates.NEUTRAL;
+			mState = IntakeState.NEUTRAL;
 		else
 			mState = wantedState;
+	}
+	
+	public IntakeState getState()
+	{
+		return mState;
 	}
 	
 	
@@ -53,7 +58,7 @@ public class Intake2 extends GZSubsystem {
 
 			break;
 		default:
-			System.out.println("Incorrect intake state " + mState + " reached.");
+			System.out.println("WARNING: Incorrect intake state " + mState + " reached.");
 			break;
 		}
 
@@ -74,34 +79,28 @@ public class Intake2 extends GZSubsystem {
 
 	@Override
 	public void stop() {
-		mState = IntakeStates.NEUTRAL;
+		mState = IntakeState.NEUTRAL;
 	}
 
 	public static class Values {
 		// in
-		static double left_amperage;
-		static double right_amperage;
+		static double left_amperage = 0;
+		static double right_amperage = 0;
 
 		// out
-		static double left_output;
-		static double left_desired_output;
+		static double left_output = 0;
+		static double left_desired_output = 0;
 
-		static double right_output;
-		static double right_desired_output;
+		static double right_output = 0;
+		static double right_desired_output = 0;
 	}
 
-	public enum IntakeStates {
+	public enum IntakeState {
 		NEUTRAL, MANUAL
 	}
 
 	@Override
 	protected void initDefaultCommand() {
-	}
-
-	@Override
-	public void outputSmartDashboard() {
-		SmartDashboard.putNumber(Intake2.class.getName() + " - Left Amperage", Values.left_amperage);
-		SmartDashboard.putNumber(Intake2.class.getName() + " - Right Amperage", Values.right_amperage);
 	}
 
 }
