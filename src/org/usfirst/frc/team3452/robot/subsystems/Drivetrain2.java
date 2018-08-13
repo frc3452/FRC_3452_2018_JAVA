@@ -1,7 +1,8 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Constants.kDrivetrain;
-import org.usfirst.frc.team3452.robot.Constants.kPDP;
+import org.usfirst.frc.team3452.robot.OI;
+import org.usfirst.frc.team3452.robot.OI.User;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
 import org.usfirst.frc.team3452.robot.util.GZJoystick;
@@ -89,25 +90,102 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	public void setState(DrivetrainState wantedState) {
+		//If disabled, ignore
+		//If state is different from previous state, run the onStartStart (what needs to be done when the subsystem first goes into a new state?)
+		
 		if (this.isDisabed())
 			mState = DrivetrainState.NEUTRAL;
-		else
+		else if (wantedState != mState) {
+			onStateExit(mState);
+			onStateStart(wantedState);
 			mState = wantedState;
+		}
 	}
 
 	public DrivetrainState getState() {
 		return mState;
 	}
 
+	public void onStateStart(DrivetrainState newState) {
+		switch (newState) {
+		case MOTION_MAGIC:
+			break;
+		case MOTION_PROFILE:
+			break;
+		case NEUTRAL:
+			break;
+			
+		case OPEN_LOOP:
+			
+			if (Robot.autonSelector.isSaftey())
+				percentageModify = .5;
+			
+			break;
+		default:
+			break;
+		}
+	}
+	
+	public void onStateExit(DrivetrainState prevState)
+	{
+		switch (prevState)
+		{
+		case MOTION_MAGIC:
+			
+			encoderDone();
+			
+			break;
+		case MOTION_PROFILE:
+			break;
+		case NEUTRAL:
+			break;
+		case OPEN_LOOP:
+			
+			OI.rumble(User.BOTH, 0);
+			
+			break;
+		default:
+			break;
+		}
+	}
+	
+	
+
 	@Override
 	public void loop() {
-		if (mState != DrivetrainState.NEUTRAL) {
+		switch (mState) {
+		case MOTION_MAGIC:
+
+			Values.control_mode = ControlMode.MotionMagic;
 			Values.left_output = Values.left_desired_output;
 			Values.right_output = Values.right_desired_output;
-		} else {
+
+			break;
+		case MOTION_PROFILE:
+
+			Values.control_mode = ControlMode.MotionProfile;
+			Values.left_output = Values.left_desired_output;
+			Values.right_output = Values.right_desired_output;
+
+			break;
+		case NEUTRAL:
+
 			Values.control_mode = ControlMode.Disabled;
 			Values.left_output = 0;
 			Values.right_output = 0;
+
+			break;
+		case OPEN_LOOP:
+
+			Values.control_mode = ControlMode.PercentOutput;
+			Values.left_output = Values.left_desired_output;
+			Values.right_output = Values.right_desired_output;
+
+			break;
+
+		default:
+
+			break;
 		}
 
 		this.inputOutput();
@@ -132,7 +210,6 @@ public class Drivetrain2 extends GZSubsystem {
 		Values.right_encoder_rotations = -Units.ticks_to_rotations(Values.right_encoder_ticks);
 		Values.right_encoder_vel = -R1.getSelectedSensorVelocity(0);
 
-		// TODO STATE TESTING - GET CURRENT FROM PDP OR TALON? ASK AJ
 		Values.L1_amp = L1.getOutputCurrent();
 		Values.L2_amp = L2.getOutputCurrent();
 		Values.L3_amp = L3.getOutputCurrent();
@@ -141,16 +218,6 @@ public class Drivetrain2 extends GZSubsystem {
 		Values.R2_amp = R2.getOutputCurrent();
 		Values.R3_amp = R3.getOutputCurrent();
 		Values.R4_amp = R4.getOutputCurrent();
-
-//		Values.L1_amp = getPDPChannelCurrent(kPDP.DRIVE_L_1);
-//		Values.L2_amp = getPDPChannelCurrent(kPDP.DRIVE_L_2);
-//		Values.L3_amp = getPDPChannelCurrent(kPDP.DRIVE_L_3);
-//		Values.L4_amp = getPDPChannelCurrent(kPDP.DRIVE_L_4);
-//		
-//		Values.R1_amp = getPDPChannelCurrent(kPDP.DRIVE_R_1);
-//		Values.R2_amp = getPDPChannelCurrent(kPDP.DRIVE_R_2);
-//		Values.R3_amp = getPDPChannelCurrent(kPDP.DRIVE_R_3);
-//		Values.R4_amp = getPDPChannelCurrent(kPDP.DRIVE_R_4);
 	}
 
 	@Override
@@ -184,9 +251,7 @@ public class Drivetrain2 extends GZSubsystem {
 
 		static double right_output = 0;
 		static double right_desired_output = 0;
-
 		static ControlMode control_mode = ControlMode.PercentOutput;
-
 	}
 
 	@Override
@@ -205,12 +270,10 @@ public class Drivetrain2 extends GZSubsystem {
 	public void arcade(GZJoystick joy) {
 		arcade(joy.getLeftAnalogY() * percentageModify,
 				(joy.getRightTrigger() - joy.getLeftTrigger()) * .8 * percentageModify);
-		Robot.elevator.setDriveLimit();
 	}
 
 	public void alternateArcade(GZJoystick joy) {
 		arcade(joy.getLeftAnalogY() * percentageModify, (joy.getRightAnalogX() * percentageModify * .85));
-		Robot.elevator.setDriveLimit();
 		percentageModify = .5;
 	}
 
@@ -587,11 +650,10 @@ public class Drivetrain2 extends GZSubsystem {
 		return pdp.getTotalPower();
 	}
 
-	public double getPDPVoltage()
-	{
+	public double getPDPVoltage() {
 		return pdp.getVoltage();
 	}
-	
+
 	public double getPercentageModify() {
 		return percentageModify;
 	}

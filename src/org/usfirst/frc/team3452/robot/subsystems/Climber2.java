@@ -1,12 +1,11 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.Constants.kClimber;
 import org.usfirst.frc.team3452.robot.Constants.kPDP;
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Climber2 extends GZSubsystem {
 
@@ -26,12 +25,36 @@ public class Climber2 extends GZSubsystem {
 	public void switchState(ClimberState wantedState) {
 		if (this.isDisabed())
 			mState = ClimberState.NEUTRAL;
-		else
+		else if (wantedState != mState) {
+			onStateExit(mState);
+			onStateStart(wantedState);
 			mState = wantedState;
+		}
 	}
-	
-	public ClimberState getState()
-	{
+
+	private void onStateStart(ClimberState wantedState) {
+		switch (wantedState) {
+		case MANUAL:
+			break;
+		case NEUTRAL:
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void onStateExit(ClimberState prevState) {
+		switch (prevState) {
+		case MANUAL:
+			break;
+		case NEUTRAL:
+			break;
+		default:
+			break;
+		}
+	}
+
+	public ClimberState getState() {
 		return mState;
 	}
 

@@ -1,9 +1,10 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Constants;
-import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.Constants.kElevator;
-import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
+import org.usfirst.frc.team3452.robot.OI;
+import org.usfirst.frc.team3452.robot.OI.User;
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.GZSRX;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 import org.usfirst.frc.team3452.robot.util.Units;
@@ -23,7 +24,7 @@ public class Elevator2 extends GZSubsystem {
 	private boolean isOverriden = false;
 
 	public Elevator2() {
-		//TODO 2) EXPERIMENT WITH TALONSRX CONFIGS AND FINISH CONSTRUCTION
+		// TODO 4) EXPERIMENT WITH TALONSRX CONFIGS AND FINISH CONSTRUCTION
 	}
 
 	@Override
@@ -34,8 +35,37 @@ public class Elevator2 extends GZSubsystem {
 	public void setState(ElevatorState wantedState) {
 		if (this.isDisabed())
 			mState = ElevatorState.NEUTRAL;
-		else
+		else if (wantedState != mState) {
+			onStateExit(mState);
+			onStateStart(wantedState);
 			mState = wantedState;
+		}
+	}
+
+	private void onStateStart(ElevatorState wantedState) {
+		switch (wantedState) {
+		case MANUAL:
+			break;
+		case NEUTRAL:
+			break;
+		case POSITION:
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void onStateExit(ElevatorState prevState) {
+		switch (prevState) {
+		case MANUAL:
+			break;
+		case NEUTRAL:
+			break;
+		case POSITION:
+			break;
+		default:
+			break;
+		}
 	}
 
 	public ElevatorState getState() {
@@ -46,8 +76,14 @@ public class Elevator2 extends GZSubsystem {
 	public void loop() {
 		switch (mState) {
 		case MANUAL:
+
+			handleManual();
+
 			break;
 		case NEUTRAL:
+			Values.control_mode = ControlMode.Disabled;
+			Values.output = 0;
+
 			break;
 		case POSITION:
 			break;
@@ -55,9 +91,10 @@ public class Elevator2 extends GZSubsystem {
 			System.out.println("WARNING: Incorrect elevator state " + mState + " reached.");
 			break;
 		}
-		
+
 		this.inputOutput();
-		speedLimiting();
+
+		handleSpeedLimiting();
 	}
 
 	public static class Values {
@@ -82,7 +119,6 @@ public class Elevator2 extends GZSubsystem {
 		Values.encoder_rotations = Units.ticks_to_rotations(Values.encoder_ticks);
 		Values.encoder_vel = elevator_1.getSelectedSensorVelocity(0);
 
-		// TODO STATE TESTING - GET CURRENT FROM PDP OR TALON? ASK AJ
 		Values.elevator_1_amp = elevator_1.getOutputCurrent();
 		Values.elevator_2_amp = elevator_2.getOutputCurrent();
 	}
@@ -105,8 +141,19 @@ public class Elevator2 extends GZSubsystem {
 	protected void initDefaultCommand() {
 	}
 
-	public void speedLimiting() {
+	private void handleManual() {
+	}
 
+	private void handleSpeedLimiting() {
+		speedLimiting();
+
+		if (isOverriden)
+			OI.rumble(User.DRIVER, .45);
+		else
+			OI.rumble(User.DRIVER, 0);
+	}
+
+	public void speedLimiting() {
 		double pos = Values.encoder_rotations;
 
 		if (!Robot.autonSelector.isSaftey()) {
@@ -134,37 +181,35 @@ public class Elevator2 extends GZSubsystem {
 		elevator_1.configForwardSoftLimitEnable(enableSoftLimit);
 		elevator_1.configReverseSoftLimitEnable(enableSoftLimit);
 	}
-	
+
 	public void encoder(double rotations) {
 		elevator_1.configPeakOutputForward(kElevator.E_CLOSED_DOWN_SPEED_LIMIT, 10);
 		elevator_1.configPeakOutputReverse(kElevator.E_CLOSED_UP_SPEED_LIMIT * -1, 10);
-		
+
 		Values.control_mode = ControlMode.Position;
 		target = Values.desired_output = -Units.rotations_to_ticks(rotations);
 	}
-	
+
 	public boolean isDone(double multiplier) {
 		return (Values.encoder_ticks < (target + (102 * multiplier))
 				&& Values.encoder_ticks > (target - (102 * multiplier)));
 	}
-	
+
 	public void encoderDone() {
 		Values.control_mode = ControlMode.PercentOutput;
 		Values.desired_output = 0;
-		
+
 		elevator_1.configPeakOutputForward(1, 10);
 		elevator_1.configPeakOutputReverse(-1, 10);
-		
+
 		target = 0;
 	}
-	
-	public void manual(double percentage)
-	{
+
+	public void manual(double percentage) {
 		Values.control_mode = ControlMode.PercentOutput;
 		Values.desired_output = percentage;
 	}
-	
-	
+
 	public double getPercentageModify() {
 		return percentageModify;
 	}
@@ -172,7 +217,7 @@ public class Elevator2 extends GZSubsystem {
 	public void setPercentageModify(double percentageModify) {
 		this.percentageModify = percentageModify;
 	}
-	
+
 	public enum ESO {
 		TOGGLE, ON, OFF
 	}

@@ -1,12 +1,11 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.Constants.kPDP;
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake2 extends GZSubsystem {
 
@@ -28,21 +27,44 @@ public class Intake2 extends GZSubsystem {
 		left_intake.setName("left_intake");
 		right_intake.setName("right_intake");
 	}
-	
-	public void setState(IntakeState wantedState)
-	{
+
+	public void setState(IntakeState wantedState) {
 		if (this.isDisabed())
 			mState = IntakeState.NEUTRAL;
-		else
+		else if (wantedState != mState) {
+			onStateExit(mState);
+			onStateStart(wantedState);
 			mState = wantedState;
+		}
 	}
-	
-	public IntakeState getState()
-	{
+
+	private void onStateStart(IntakeState wantedState) {
+		switch (wantedState) {
+		case MANUAL:
+			break;
+		case NEUTRAL:
+			break;
+		default:
+			break;
+		}
+	}
+
+	private void onStateExit(IntakeState prevState) {
+		switch (prevState) {
+		case MANUAL:
+			break;
+		case NEUTRAL:
+			break;
+		default:
+			break;
+
+		}
+	}
+
+	public IntakeState getState() {
 		return mState;
 	}
-	
-	
+
 	public synchronized void loop() {
 		switch (mState) {
 		case MANUAL:
