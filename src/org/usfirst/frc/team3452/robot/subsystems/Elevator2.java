@@ -3,7 +3,7 @@ package org.usfirst.frc.team3452.robot.subsystems;
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Constants.kElevator;
 import org.usfirst.frc.team3452.robot.OI;
-import org.usfirst.frc.team3452.robot.OI.User;
+import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.GZSRX;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
@@ -148,9 +148,9 @@ public class Elevator2 extends GZSubsystem {
 		speedLimiting();
 
 		if (isOverriden)
-			OI.rumble(User.DRIVER, .45);
+			OI.rumble(CONTROLLER.DRIVER, .45);
 		else
-			OI.rumble(User.DRIVER, 0);
+			OI.rumble(CONTROLLER.DRIVER, 0);
 	}
 
 	public void speedLimiting() {

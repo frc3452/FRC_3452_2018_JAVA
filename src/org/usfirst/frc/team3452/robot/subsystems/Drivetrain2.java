@@ -2,7 +2,7 @@ package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Constants.kDrivetrain;
 import org.usfirst.frc.team3452.robot.OI;
-import org.usfirst.frc.team3452.robot.OI.User;
+import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
 import org.usfirst.frc.team3452.robot.util.GZJoystick;
@@ -141,7 +141,7 @@ public class Drivetrain2 extends GZSubsystem {
 			break;
 		case OPEN_LOOP:
 			
-			OI.rumble(User.BOTH, 0);
+			OI.rumble(CONTROLLER.BOTH, 0);
 			
 			break;
 		default:
