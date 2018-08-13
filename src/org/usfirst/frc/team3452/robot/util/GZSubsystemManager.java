@@ -27,6 +27,21 @@ public  class GZSubsystemManager  {
 	{
 		allSystems.forEach((s) -> s.disable(toDisable));
 	}
+	
+	public boolean[] isDisabled()
+	{
+		boolean temp[] = null;
+
+		for (int i = 0; i < allSystems.size(); i++) 
+			temp[i] = allSystems.get(i).isDisabed();
+		
+		
+		//TODO 3) IMPLEMENT ABILITY TO READ WHICH SUBSYSTEMS ARE DISABLED EASILY
+//		allSystems.get(1).getName();
+		//Arrays.toString(arr);
+		
+		return temp;
+	}
 
 	public void zeroSensors() {
 		allSystems.forEach((s) -> s.zeroSensors());
