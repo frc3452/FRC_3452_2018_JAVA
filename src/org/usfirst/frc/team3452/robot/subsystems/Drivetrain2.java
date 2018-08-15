@@ -8,6 +8,7 @@ import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
 import org.usfirst.frc.team3452.robot.util.GZJoystick;
 import org.usfirst.frc.team3452.robot.util.GZSRX;
 import org.usfirst.frc.team3452.robot.util.GZSRX.Breaker;
+import org.usfirst.frc.team3452.robot.util.GZSRX.Master;
 import org.usfirst.frc.team3452.robot.util.GZSRX.Side;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 import org.usfirst.frc.team3452.robot.util.Units;
@@ -56,15 +57,15 @@ public class Drivetrain2 extends GZSubsystem {
 		timer.reset();
 		timer.start();
 
-		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, true);
-		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, false);
-		L3 = new GZSRX(kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, false);
-		L4 = new GZSRX(kDrivetrain.L4, Breaker.AMP_30, Side.LEFT, false);
+		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
+		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
+		L3 = new GZSRX(kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
+		L4 = new GZSRX(kDrivetrain.L4, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
 
-		R1 = new GZSRX(kDrivetrain.R1, Breaker.AMP_40, Side.RIGHT, true);
-		R2 = new GZSRX(kDrivetrain.R2, Breaker.AMP_40, Side.RIGHT, false);
-		R3 = new GZSRX(kDrivetrain.R3, Breaker.AMP_30, Side.RIGHT, false);
-		R4 = new GZSRX(kDrivetrain.R4, Breaker.AMP_30, Side.RIGHT, false);
+		R1 = new GZSRX(kDrivetrain.R1, Breaker.AMP_40, Side.RIGHT, Master.MASTER);
+		R2 = new GZSRX(kDrivetrain.R2, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
+		R3 = new GZSRX(kDrivetrain.R3, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
+		R4 = new GZSRX(kDrivetrain.R4, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
 
 		mGyro = new AHRS(SPI.Port.kMXP);
 

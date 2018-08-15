@@ -4,24 +4,24 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class GZSRX extends WPI_TalonSRX {
 
-	private Breaker mBreaker = Breaker.NULL;
-	private Side mSide = Side.NULL;
-	private boolean mIsMaster = true;
+	private Breaker mBreaker = Breaker.NO_INFO;
+	private Side mSide = Side.NO_INFO;
+	private Master mMaster = Master.NO_INFO;
 
-	public GZSRX(int deviceNumber, Breaker breaker, Side side, boolean isMaster) {
+	public GZSRX(int deviceNumber, Breaker breaker, Side side, Master master) {
 		super(deviceNumber);
 
 		mBreaker = breaker;
 		mSide = side;
-		mIsMaster = isMaster;
+		mMaster = master;
 	}
 	
-	public GZSRX(int deviceNumber, Breaker breaker, boolean isMaster)
+	public GZSRX(int deviceNumber, Breaker breaker, Master master)
 	{
 		super(deviceNumber);
 		
 		mBreaker = breaker;
-		mIsMaster = isMaster;
+		mMaster = master;
 	}
 	
 	public GZSRX(int deviceNumber, Breaker breaker)
@@ -40,16 +40,20 @@ public class GZSRX extends WPI_TalonSRX {
 		return mSide;
 	}
 
-	public boolean isMaster() {
-		return mIsMaster;
+	public Master isMaster() {
+		return mMaster;
 	}
 
 	public enum Side {
-		LEFT, RIGHT, NULL
+		LEFT, RIGHT, NO_INFO
 	}
 
 	public enum Breaker {
-		AMP_20, AMP_30, AMP_40, NULL
+		AMP_20, AMP_30, AMP_40, NO_INFO
+	}
+	
+	public enum Master {
+		MASTER, FOLLOWER, NO_INFO
 	}
 
 }
