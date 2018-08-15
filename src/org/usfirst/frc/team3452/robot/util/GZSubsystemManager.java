@@ -3,7 +3,7 @@ package org.usfirst.frc.team3452.robot.util;
 import java.util.List;
 
 //thx 254
-public  class GZSubsystemManager  {
+public class GZSubsystemManager {
 
 	private final List<GZSubsystem> allSystems;
 
@@ -22,25 +22,30 @@ public  class GZSubsystemManager  {
 	public void stop() {
 		allSystems.forEach((s) -> s.stop());
 	}
-	
-	public void disable(boolean toDisable)
-	{
+
+	public void disable(boolean toDisable) {
 		allSystems.forEach((s) -> s.disable(toDisable));
 	}
-	
-	public boolean[] isDisabled()
-	{
-		boolean temp[] = null;
 
-		for (int i = 0; i < allSystems.size(); i++) 
-			temp[i] = allSystems.get(i).isDisabed();
+	public void whatIsDisabled(boolean printHeader) {
+		//TODO 2) *A USE FOR TESTING
+		if (printHeader)
+			System.out.println("~~~SUBSYSTEMS DISABLED~~~");
 		
+		for (int i = 0; i < allSystems.size() - 1; i++) {
+			System.out.println(allSystems.get(i).getName() + ": " + allSystems.get(i).isDisabed());
+		}
+	}
+	
+	public void printStates(boolean printHeader)
+	{
+		//TODO 2) *A USE FOR TESTING
+		if (printHeader)
+			System.out.println("~~~SUBSYSTEM STATES~~~");
 		
-		//TODO 3) IMPLEMENT ABILITY TO READ WHICH SUBSYSTEMS ARE DISABLED EASILY
-//		allSystems.get(1).getName();
-		//Arrays.toString(arr);
+		for (int i = 0; i < allSystems.size() - 1; i++)
+			System.out.println(allSystems.get(i).getName() + ": " + allSystems.get(i).getStateString());
 		
-		return temp;
 	}
 
 	public void zeroSensors() {

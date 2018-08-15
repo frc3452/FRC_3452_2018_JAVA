@@ -4,8 +4,10 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 //thx 254
 public abstract class GZSubsystem extends Subsystem {
-	// Stopping all motors
-	public abstract void stop();
+	
+	
+	// Set to neutral
+	public abstract void stop(); //TODO 2) *A USE FOR TESTING
 
 	// Values class
 	// State
@@ -28,6 +30,8 @@ public abstract class GZSubsystem extends Subsystem {
 		return isDisabled;
 	}
 
+	public abstract String getStateString();
+	
 	// Main loop
 	public abstract void loop();
 
