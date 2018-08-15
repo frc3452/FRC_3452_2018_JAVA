@@ -59,13 +59,13 @@ public class Elevator extends Subsystem {
 		Elev_1.config_kP(0, 0.2, 10);
 		Elev_1.config_kI(0, 0.000028, 10);
 		Elev_1.config_kD(0, 2.5, 10);
-		Elev_1.configOpenloopRamp(Constants.kElevator.E_OPEN_RAMP_TIME, 10);
-		Elev_1.configClosedloopRamp(Constants.kElevator.E_CLOSED_RAMP_TIME, 10);
+		Elev_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10);
+		Elev_1.configClosedloopRamp(Constants.kElevator.CLOSED_RAMP_TIME, 10);
 
 		// ENCODER
 		Elev_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		Elev_1.setSelectedSensorPosition(0, 0, 10);
-		Elev_1.setSensorPhase(Constants.kElevator.E_ENC_INVERT);
+		Elev_1.setSensorPhase(Constants.kElevator.ENC_INVERT);
 		
 		//SOFT LIMITS FOR DEMO MODE
 		//TODO 1) CHECK POLARITY
@@ -161,8 +161,8 @@ public class Elevator extends Subsystem {
 	}
 
 	public void encoder(double rotations) {
-		Elev_1.configPeakOutputForward(kElevator.E_CLOSED_DOWN_SPEED_LIMIT, 10);
-		Elev_1.configPeakOutputReverse(kElevator.E_CLOSED_UP_SPEED_LIMIT * -1, 10);
+		Elev_1.configPeakOutputForward(kElevator.CLOSED_DOWN_SPEED_LIMIT, 10);
+		Elev_1.configPeakOutputReverse(kElevator.CLOSED_UP_SPEED_LIMIT * -1, 10);
 		m_pos = -rotations * 4096;
 		Elev_1.set(ControlMode.Position, m_pos);
 	}

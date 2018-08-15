@@ -1,6 +1,8 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain2.Values;
 
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -27,6 +29,7 @@ public class Intake extends Subsystem {
 		Intake_L.set(percentage);
 		Intake_R.set(percentage);
 	}
+	
 
 	@Override
 	public void initDefaultCommand() {

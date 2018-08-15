@@ -5,6 +5,7 @@ import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
+import org.usfirst.frc.team3452.robot.motionprofiles.Path;
 import org.usfirst.frc.team3452.robot.util.GZJoystick;
 import org.usfirst.frc.team3452.robot.util.GZSRX;
 import org.usfirst.frc.team3452.robot.util.GZSRX.Breaker;
@@ -29,7 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drivetrain2 extends GZSubsystem {
 
-	private DrivetrainState mState = DrivetrainState.NEUTRAL;
+	private DriveState mState = DriveState.NEUTRAL;
 
 	// PDP
 	private PowerDistributionPanel pdp = new PowerDistributionPanel(0);
@@ -70,6 +71,8 @@ public class Drivetrain2 extends GZSubsystem {
 		mGyro = new AHRS(SPI.Port.kMXP);
 
 		brake(NeutralMode.Coast);
+		
+		//TODO 4) EXPERIMENT WITH TALONSRX CONFIGS AND FINISH CONSTRUCTION
 
 		pdp.setSubsystem("Drive train");
 
@@ -87,15 +90,15 @@ public class Drivetrain2 extends GZSubsystem {
 
 	@Override
 	public void stop() {
-		mState = DrivetrainState.NEUTRAL;
+		mState = DriveState.NEUTRAL;
 	}
 
-	public void setState(DrivetrainState wantedState) {
+	public void setState(DriveState wantedState) {
 		//If disabled, ignore
 		//If state is different from previous state, run the onStartStart (what needs to be done when the subsystem first goes into a new state?)
 		
 		if (this.isDisabed())
-			mState = DrivetrainState.NEUTRAL;
+			mState = DriveState.NEUTRAL;
 		else if (wantedState != mState) {
 			onStateExit(mState);
 			onStateStart(wantedState);
@@ -103,11 +106,16 @@ public class Drivetrain2 extends GZSubsystem {
 		}
 	}
 
-	public DrivetrainState getState() {
+	public String getStateString()
+	{
+		return mState.toString();
+	}
+	
+	public DriveState getState() {
 		return mState;
 	}
 
-	public void onStateStart(DrivetrainState newState) {
+	public void onStateStart(DriveState newState) {
 		switch (newState) {
 		case MOTION_MAGIC:
 			break;
@@ -127,7 +135,7 @@ public class Drivetrain2 extends GZSubsystem {
 		}
 	}
 	
-	public void onStateExit(DrivetrainState prevState)
+	public void onStateExit(DriveState prevState)
 	{
 		switch (prevState)
 		{
@@ -197,7 +205,7 @@ public class Drivetrain2 extends GZSubsystem {
 		setDefaultCommand(new DriveTele());
 	}
 
-	public enum DrivetrainState {
+	public enum DriveState {
 		OPEN_LOOP, NEUTRAL, MOTION_MAGIC, MOTION_PROFILE
 	}
 
@@ -229,22 +237,22 @@ public class Drivetrain2 extends GZSubsystem {
 
 	public static class Values {
 		// in
-		static double left_encoder_ticks = 0;
-		static double left_encoder_rotations = 0;
-		static double left_encoder_vel = 0;
+		static double left_encoder_ticks = -1;
+		static double left_encoder_rotations = -1;
+		static double left_encoder_vel = -1;
 
-		static double right_encoder_ticks = 0;
-		static double right_encoder_rotations = 0;
-		static double right_encoder_vel = 0;
+		static double right_encoder_ticks = -1;
+		static double right_encoder_rotations = -1;
+		static double right_encoder_vel = -1;
 
-		static double L1_amp = 0;
-		static double L2_amp = 0;
-		static double L3_amp = 0;
-		static double L4_amp = 0;
-		static double R1_amp = 0;
-		static double R2_amp = 0;
-		static double R3_amp = 0;
-		static double R4_amp = 0;
+		static double L1_amp = -1;
+		static double L2_amp = -1;
+		static double L3_amp = -1;
+		static double L4_amp = -1;
+		static double R1_amp = -1;
+		static double R2_amp = -1;
+		static double R3_amp = -1;
+		static double R4_amp = -1;
 
 		// out
 		static double left_output = 0;
@@ -269,20 +277,25 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	public void arcade(GZJoystick joy) {
+		setState(DriveState.OPEN_LOOP);
+		
 		arcade(joy.getLeftAnalogY() * percentageModify,
 				(joy.getRightTrigger() - joy.getLeftTrigger()) * .8 * percentageModify);
 	}
 
 	public void alternateArcade(GZJoystick joy) {
+		setState(DriveState.OPEN_LOOP);
+		
 		arcade(joy.getLeftAnalogY() * percentageModify, (joy.getRightAnalogX() * percentageModify * .85));
 		percentageModify = .5;
 	}
 
 	public void arcade(double move, double rotate) {
+		setState(DriveState.OPEN_LOOP);
+		
 		double[] temp = arcadeToLR(move * Robot.elevator2.getPercentageModify(),
 				rotate * (Robot.elevator2.getPercentageModify() + .2));
 
-		Values.control_mode = ControlMode.PercentOutput;
 		Values.left_desired_output = temp[0];
 		Values.right_desired_output = temp[1];
 	}
@@ -329,8 +342,8 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	public void tank(double left, double right) {
-		Values.control_mode = ControlMode.PercentOutput;
-
+		setState(DriveState.OPEN_LOOP);
+		
 		// TODO STATE TESTING - CHECK SIGN
 		Values.left_desired_output = Util.applyDeadband(left * Robot.elevator2.getPercentageModify(),
 				kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
@@ -339,8 +352,8 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	public void tank(GZJoystick joy) {
-		Values.control_mode = ControlMode.PercentOutput;
-
+		setState(DriveState.OPEN_LOOP);
+		
 		Values.left_desired_output = Util.applyDeadband(joy.getLeftAnalogY() * Robot.elevator2.getPercentageModify(),
 				kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
 		// TODO STATE TESTING -CHECK SIGN
@@ -361,7 +374,8 @@ public class Drivetrain2 extends GZSubsystem {
 
 	public void motionMagic(double leftRotations, double rightRotations, double leftAccel, double rightAccel,
 			double leftSpeed, double rightSpeed) {
-
+		setState(DriveState.MOTION_MAGIC);
+		
 		double topspeed = 3941;
 
 		left_target = Units.rotations_to_ticks(leftRotations);
@@ -442,6 +456,7 @@ public class Drivetrain2 extends GZSubsystem {
 				|| (Values.right_encoder_ticks < right_target + 102 * multiplier
 						&& Values.right_encoder_ticks > right_target - 102 * multiplier);
 	}
+	
 
 	private class MotionProfileBuffer implements java.lang.Runnable {
 		@Override

@@ -1,11 +1,14 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
+import org.usfirst.frc.team3452.robot.util.GZJoystick;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevatorManual extends Command {
 
@@ -22,7 +25,7 @@ public class ElevatorManual extends Command {
 	 * @param joy
 	 * @see Elevator
 	 */
-	public ElevatorManual(Joystick joy) {
+	public ElevatorManual(GZJoystick joy) {
 		requires(Robot.elevator);
 		m_joy = joy;
 		m_axis = 1;

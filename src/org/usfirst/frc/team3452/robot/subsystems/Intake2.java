@@ -2,6 +2,7 @@ package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.Constants.kPDP;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain2.Values;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 
@@ -61,6 +62,11 @@ public class Intake2 extends GZSubsystem {
 		}
 	}
 
+	public String getStateString()
+	{
+		return mState.toString();
+	}
+	
 	public IntakeState getState() {
 		return mState;
 	}
@@ -98,6 +104,19 @@ public class Intake2 extends GZSubsystem {
 		left_intake.set(Values.left_output);
 		right_intake.set(Values.right_output);
 	}
+	
+	public void manual(double percentage) {
+		setState(IntakeState.MANUAL);
+		
+		Values.left_desired_output = Values.right_desired_output = percentage;
+	}
+	
+	public void spin(double percentage, boolean clockwise)
+	{
+		Values.left_desired_output = percentage * (clockwise ? -1 : 1);
+		Values.right_desired_output = percentage  * (clockwise ? 1 : -1);
+	}
+	
 
 	@Override
 	public void stop() {
@@ -106,8 +125,8 @@ public class Intake2 extends GZSubsystem {
 
 	public static class Values {
 		// in
-		static double left_amperage = 0;
-		static double right_amperage = 0;
+		static double left_amperage = -1;
+		static double right_amperage = -1;
 
 		// out
 		static double left_output = 0;

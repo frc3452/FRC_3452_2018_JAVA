@@ -5,6 +5,7 @@ import org.usfirst.frc.team3452.robot.Constants.kElevator;
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.util.GZJoystick;
 import org.usfirst.frc.team3452.robot.util.GZSRX;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 import org.usfirst.frc.team3452.robot.util.Units;
@@ -45,6 +46,10 @@ public class Elevator2 extends GZSubsystem {
 	private void onStateStart(ElevatorState wantedState) {
 		switch (wantedState) {
 		case MANUAL:
+
+			if (Robot.autonSelector.isSaftey())
+				softLimits(true);
+
 			break;
 		case NEUTRAL:
 			break;
@@ -58,6 +63,9 @@ public class Elevator2 extends GZSubsystem {
 	private void onStateExit(ElevatorState prevState) {
 		switch (prevState) {
 		case MANUAL:
+
+			softLimits(false);
+
 			break;
 		case NEUTRAL:
 			break;
@@ -68,6 +76,11 @@ public class Elevator2 extends GZSubsystem {
 		}
 	}
 
+	public String getStateString()
+	{
+		return mState.toString();
+	}
+	
 	public ElevatorState getState() {
 		return mState;
 	}
@@ -77,17 +90,22 @@ public class Elevator2 extends GZSubsystem {
 		switch (mState) {
 		case MANUAL:
 
-			handleManual();
+			Values.control_mode = ControlMode.PercentOutput;
+			Values.output = Values.desired_output;
 
 			break;
 		case NEUTRAL:
-			
+
 			Values.control_mode = ControlMode.Disabled;
 			Values.output = 0;
 
 			break;
 		case POSITION:
+
+			Values.control_mode = ControlMode.Position;
+			Values.output = Values.desired_output;
 			break;
+
 		default:
 			System.out.println("WARNING: Incorrect elevator state " + mState + " reached.");
 			break;
@@ -100,13 +118,19 @@ public class Elevator2 extends GZSubsystem {
 
 	public static class Values {
 		// in
-		static double encoder_ticks = 0;
-		static double encoder_rotations = 0;
-		static double encoder_vel = 0;
+		static double encoder_ticks = -1;
+		static double encoder_rotations = -1;
+		static double encoder_vel = -1;
 
-		static double elevator_1_amp = 0;
-		static double elevator_2_amp = 0;
+		static double elevator_1_amp = -1;
+		static double elevator_2_amp = -1;
 
+		static boolean elevator_1_fwd_lmt = false;
+		static boolean elevator_1_rev_lmt = false;
+		
+		static boolean elevator_2_fwd_lmt = false;
+		static boolean elevator_2_rev_lmt = false;
+		
 		// out
 		static double output = 0;
 		static double desired_output = 0;
@@ -122,6 +146,12 @@ public class Elevator2 extends GZSubsystem {
 
 		Values.elevator_1_amp = elevator_1.getOutputCurrent();
 		Values.elevator_2_amp = elevator_2.getOutputCurrent();
+		
+		Values.elevator_1_fwd_lmt = elevator_1.getSensorCollection().isFwdLimitSwitchClosed();
+		Values.elevator_1_rev_lmt = elevator_1.getSensorCollection().isRevLimitSwitchClosed();
+		
+		Values.elevator_2_fwd_lmt = elevator_2.getSensorCollection().isFwdLimitSwitchClosed();
+		Values.elevator_2_rev_lmt = elevator_2.getSensorCollection().isRevLimitSwitchClosed();
 	}
 
 	@Override
@@ -140,9 +170,6 @@ public class Elevator2 extends GZSubsystem {
 
 	@Override
 	protected void initDefaultCommand() {
-	}
-
-	private void handleManual() {
 	}
 
 	private void handleSpeedLimiting() {
@@ -184,10 +211,11 @@ public class Elevator2 extends GZSubsystem {
 	}
 
 	public void encoder(double rotations) {
-		elevator_1.configPeakOutputForward(kElevator.E_CLOSED_DOWN_SPEED_LIMIT, 10);
-		elevator_1.configPeakOutputReverse(kElevator.E_CLOSED_UP_SPEED_LIMIT * -1, 10);
+		setState(ElevatorState.POSITION);
 
-		Values.control_mode = ControlMode.Position;
+		elevator_1.configPeakOutputForward(kElevator.CLOSED_DOWN_SPEED_LIMIT, 10);
+		elevator_1.configPeakOutputReverse(kElevator.CLOSED_UP_SPEED_LIMIT * -1, 10);
+
 		target = Values.desired_output = -Units.rotations_to_ticks(rotations);
 	}
 
@@ -197,7 +225,6 @@ public class Elevator2 extends GZSubsystem {
 	}
 
 	public void encoderDone() {
-		Values.control_mode = ControlMode.PercentOutput;
 		Values.desired_output = 0;
 
 		elevator_1.configPeakOutputForward(1, 10);
@@ -206,8 +233,26 @@ public class Elevator2 extends GZSubsystem {
 		target = 0;
 	}
 
+	public void manualJoystick(GZJoystick joy) {
+		double up, down;
+
+		up = ((Robot.autonSelector.isSaftey() ? kElevator.SAFTEY_JOYSTICK_MODIFIER_UP
+				: kElevator.JOYSTICK_MODIFIER_UP));
+		down = ((Robot.autonSelector.isSaftey() ? kElevator.SAFTEY_JOYSTICK_MODIFIER_DOWN
+				: kElevator.JOYSTICK_MODIFIER_DOWN));
+
+		if (joy == OI.opJoy)
+			manual(joy.getLeftAnalogY() * ((joy.getLeftAnalogY() > 0) ? up : down));
+		else if (joy == OI.driverJoy)
+			manual(joy.getRightAnalogY() * ((joy.getRightAnalogY() > 0) ? up : down));
+		else
+			System.out.println("WARNING Incorrect joystick given to manualJoystick of Elevator");
+
+	}
+
 	public void manual(double percentage) {
-		Values.control_mode = ControlMode.PercentOutput;
+		setState(ElevatorState.MANUAL);
+
 		Values.desired_output = percentage;
 	}
 

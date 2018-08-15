@@ -12,6 +12,7 @@ import org.usfirst.frc.team3452.robot.commands.pwm.IntakeSpin;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator.ESO;
 import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 import org.usfirst.frc.team3452.robot.util.DPad;
+import org.usfirst.frc.team3452.robot.util.GZJoystick;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
@@ -19,8 +20,8 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 public class OI {
-	public static Joystick driverJoy = new Joystick(0);
-	public static Joystick opJoy = new Joystick(1);
+	public static GZJoystick driverJoy = new GZJoystick(0);
+	public static GZJoystick opJoy = new GZJoystick(1);
 
 	public static DriveSafteyOverriden driveSafteyOverriden = new DriveSafteyOverriden();
 
@@ -79,7 +80,7 @@ public class OI {
 
 	private static void buttonInit() {
 
-		driverJoy = new Joystick(0);
+		driverJoy = new GZJoystick(0);
 		driverJoyA = new JoystickButton(driverJoy, 1);
 		driverJoyB = new JoystickButton(driverJoy, 2);
 		driverJoyX = new JoystickButton(driverJoy, 3);
@@ -96,7 +97,7 @@ public class OI {
 		driverLeft = new DPad(driverJoy, 270);
 		driverRight = new DPad(driverJoy, 90);
 
-		opJoy = new Joystick(1);
+		opJoy = new GZJoystick(1);
 		opJoyA = new JoystickButton(opJoy, 1);
 		opJoyB = new JoystickButton(opJoy, 2);
 		opJoyX = new JoystickButton(opJoy, 3);

@@ -106,15 +106,21 @@ public class Constants {
         public static final boolean E_1_INVERT = false;
         public static final boolean E_2_INVERT = false;
 
-        public static final boolean E_ENC_INVERT = true;
+        public static final boolean ENC_INVERT = true;
 
-        public static final double E_OPEN_RAMP_TIME = .5; //.5
-        public static final double E_CLOSED_RAMP_TIME = .125;
+        public static final double OPEN_RAMP_TIME = .5;
+        public static final double CLOSED_RAMP_TIME = .125;
         
-        public static final double E_CLOSED_DOWN_SPEED_LIMIT = .45;
-        public static final double E_CLOSED_UP_SPEED_LIMIT = .9;
+        public static final double JOYSTICK_MODIFIER_UP = 1;
+        public static final double JOYSTICK_MODIFIER_DOWN = .6;
         
-        public static final double E_CLOSED_COMPLETION = 6.5;
+        public static final double SAFTEY_JOYSTICK_MODIFIER_UP = .5;
+        public static final double SAFTEY_JOYSTICK_MODIFIER_DOWN = .3;
+        
+        public static final double CLOSED_DOWN_SPEED_LIMIT = .45;
+        public static final double CLOSED_UP_SPEED_LIMIT = .9;
+        
+        public static final double CLOSED_COMPLETION = 6.5;
 
         public static final double SPEED_1 = 1;
         public static final double SPEED_2 = .9;

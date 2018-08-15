@@ -48,7 +48,7 @@ public class ElevatorPosition extends Command {
 		if (l_fwd && m_value < 0)
 			return true;
 
-		return Robot.elevator.isDone(kElevator.E_CLOSED_COMPLETION) || isTimedOut();
+		return Robot.elevator.isDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
 	}
 
 	protected void end() {

@@ -54,6 +54,11 @@ public class Climber2 extends GZSubsystem {
 		}
 	}
 
+	public String getStateString()
+	{
+		return mState.toString();
+	}
+	
 	public ClimberState getState() {
 		return mState;
 	}
@@ -100,8 +105,8 @@ public class Climber2 extends GZSubsystem {
 
 	public static class Values {
 		// in
-		static double climber_1_amperage = 0;
-		static double climber_2_amperage = 0;
+		static double climber_1_amperage = -1;
+		static double climber_2_amperage = -1;
 
 		// out
 		static double climber_output = 0;
