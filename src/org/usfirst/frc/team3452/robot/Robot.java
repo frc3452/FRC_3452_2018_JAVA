@@ -155,6 +155,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
+		//TODO 4) FIND SOME WAY TO BETTER MANAGE TASKS THAN TODOS
 		//TODO 2) A - VERIFY STOP AND DISABLE WORK FOR EACH SUBSYSTEM, TRY WITH SUBSYSTEMMANAGER
 		
 		//TODO 2) B - USE FOR TESTING
