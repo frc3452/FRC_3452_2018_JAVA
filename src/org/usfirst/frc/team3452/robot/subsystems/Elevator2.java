@@ -25,25 +25,10 @@ public class Elevator2 extends GZSubsystem {
 	private boolean isOverriden = false;
 
 	public Elevator2() {
-		// TODO 4) EXPERIMENT WITH TALONSRX CONFIGS AND FINISH CONSTRUCTION
+		// TODO 3) A - EXPERIMENT WITH TALONSRX CONFIGS
 	}
 
-	@Override
-	public void stop() {
-		mState = ElevatorState.NEUTRAL;
-	}
-
-	public void setState(ElevatorState wantedState) {
-		if (this.isDisabed())
-			mState = ElevatorState.NEUTRAL;
-		else if (wantedState != mState) {
-			onStateExit(mState);
-			onStateStart(wantedState);
-			mState = wantedState;
-		}
-	}
-
-	private void onStateStart(ElevatorState wantedState) {
+	private synchronized void onStateStart(ElevatorState wantedState) {
 		switch (wantedState) {
 		case MANUAL:
 
@@ -60,7 +45,7 @@ public class Elevator2 extends GZSubsystem {
 		}
 	}
 
-	private void onStateExit(ElevatorState prevState) {
+	private synchronized void onStateExit(ElevatorState prevState) {
 		switch (prevState) {
 		case MANUAL:
 
@@ -76,17 +61,8 @@ public class Elevator2 extends GZSubsystem {
 		}
 	}
 
-	public String getStateString()
-	{
-		return mState.toString();
-	}
-	
-	public ElevatorState getState() {
-		return mState;
-	}
-
 	@Override
-	public void loop() {
+	public synchronized void loop() {
 		switch (mState) {
 		case MANUAL:
 
@@ -127,43 +103,34 @@ public class Elevator2 extends GZSubsystem {
 
 		static boolean elevator_1_fwd_lmt = false;
 		static boolean elevator_1_rev_lmt = false;
-		
+
 		static boolean elevator_2_fwd_lmt = false;
 		static boolean elevator_2_rev_lmt = false;
-		
+
 		// out
-		static double output = 0;
+		static private double output = 0;
 		static double desired_output = 0;
 
 		static ControlMode control_mode = ControlMode.PercentOutput;
 	}
 
 	@Override
-	protected void in() {
+	protected synchronized void in() {
 		Values.encoder_ticks = elevator_1.getSelectedSensorPosition(0);
 		Values.encoder_rotations = Units.ticks_to_rotations(Values.encoder_ticks);
 		Values.encoder_vel = elevator_1.getSelectedSensorVelocity(0);
 
 		Values.elevator_1_amp = elevator_1.getOutputCurrent();
 		Values.elevator_2_amp = elevator_2.getOutputCurrent();
-		
+
 		Values.elevator_1_fwd_lmt = elevator_1.getSensorCollection().isFwdLimitSwitchClosed();
 		Values.elevator_1_rev_lmt = elevator_1.getSensorCollection().isRevLimitSwitchClosed();
-		
+
 		Values.elevator_2_fwd_lmt = elevator_2.getSensorCollection().isFwdLimitSwitchClosed();
 		Values.elevator_2_rev_lmt = elevator_2.getSensorCollection().isRevLimitSwitchClosed();
 	}
 
-	@Override
-	protected void out() {
-		elevator_1.set(Values.control_mode, Values.output);
-	}
-
-	public enum ElevatorState {
-		NEUTRAL, MANUAL, POSITION
-	}
-
-	public void outputSmartDashboard() {
+	public synchronized void outputSmartDashboard() {
 		SmartDashboard.putNumber("Elevator Rotations", Values.encoder_rotations);
 		SmartDashboard.putNumber("Elevator Vel", Values.encoder_vel);
 	}
@@ -172,7 +139,7 @@ public class Elevator2 extends GZSubsystem {
 	protected void initDefaultCommand() {
 	}
 
-	private void handleSpeedLimiting() {
+	private synchronized void handleSpeedLimiting() {
 		speedLimiting();
 
 		if (isOverriden)
@@ -181,12 +148,11 @@ public class Elevator2 extends GZSubsystem {
 			OI.rumble(CONTROLLER.DRIVER, 0);
 	}
 
-	public void speedLimiting() {
+	public synchronized void speedLimiting() {
 		double pos = Values.encoder_rotations;
 
 		if (!Robot.autonSelector.isSaftey()) {
 			if (isOverriden == false) {
-
 				if (pos < 2.08)
 					percentageModify = Constants.kElevator.SPEED_1;
 				else if (pos < 2.93 && pos > 2.08)
@@ -205,12 +171,12 @@ public class Elevator2 extends GZSubsystem {
 		}
 	}
 
-	public void softLimits(boolean enableSoftLimit) {
+	public synchronized void softLimits(boolean enableSoftLimit) {
 		elevator_1.configForwardSoftLimitEnable(enableSoftLimit);
 		elevator_1.configReverseSoftLimitEnable(enableSoftLimit);
 	}
 
-	public void encoder(double rotations) {
+	public synchronized void encoder(double rotations) {
 		setState(ElevatorState.POSITION);
 
 		elevator_1.configPeakOutputForward(kElevator.CLOSED_DOWN_SPEED_LIMIT, 10);
@@ -219,12 +185,12 @@ public class Elevator2 extends GZSubsystem {
 		target = Values.desired_output = -Units.rotations_to_ticks(rotations);
 	}
 
-	public boolean isDone(double multiplier) {
+	public synchronized boolean isDone(double multiplier) {
 		return (Values.encoder_ticks < (target + (102 * multiplier))
 				&& Values.encoder_ticks > (target - (102 * multiplier)));
 	}
 
-	public void encoderDone() {
+	public synchronized void encoderDone() {
 		Values.desired_output = 0;
 
 		elevator_1.configPeakOutputForward(1, 10);
@@ -233,7 +199,7 @@ public class Elevator2 extends GZSubsystem {
 		target = 0;
 	}
 
-	public void manualJoystick(GZJoystick joy) {
+	public synchronized void manualJoystick(GZJoystick joy) {
 		double up, down;
 
 		up = ((Robot.autonSelector.isSaftey() ? kElevator.SAFTEY_JOYSTICK_MODIFIER_UP
@@ -250,22 +216,68 @@ public class Elevator2 extends GZSubsystem {
 
 	}
 
-	public void manual(double percentage) {
+	public synchronized void manual(double percentage) {
 		setState(ElevatorState.MANUAL);
 
 		Values.desired_output = percentage;
 	}
 
-	public double getPercentageModify() {
+	public synchronized double getPercentageModify() {
 		return percentageModify;
 	}
 
-	public void setPercentageModify(double percentageModify) {
+	public synchronized void setPercentageModify(double percentageModify) {
 		this.percentageModify = percentageModify;
+	}
+
+	public synchronized void setSpeedLimitingOverride(ESO override) {
+		switch (override) {
+		case OFF:
+			isOverriden = false;
+			break;
+		case ON:
+			isOverriden = true;
+			break;
+		case TOGGLE:
+			isOverriden = !isOverriden;
+			break;
+		}
 	}
 
 	public enum ESO {
 		TOGGLE, ON, OFF
+	}
+
+	@Override
+	protected synchronized void out() {
+		elevator_1.set(Values.control_mode, Values.output);
+	}
+
+	public enum ElevatorState {
+		NEUTRAL, MANUAL, POSITION
+	}
+
+	@Override
+	public synchronized void stop() {
+		setState(ElevatorState.NEUTRAL);
+	}
+
+	public synchronized void setState(ElevatorState wantedState) {
+		if (this.isDisabed())
+			mState = ElevatorState.NEUTRAL;
+		else if (wantedState != mState) {
+			onStateExit(mState);
+			onStateStart(wantedState);
+			mState = wantedState;
+		}
+	}
+
+	public synchronized String getStateString() {
+		return mState.toString();
+	}
+
+	public synchronized ElevatorState getState() {
+		return mState;
 	}
 
 }

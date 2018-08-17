@@ -58,7 +58,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		drive2.disable(true);
 	}
 
 	@Override
@@ -156,6 +155,10 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
+		//TODO 2) A - VERIFY STOP AND DISABLE WORK FOR EACH SUBSYSTEM, TRY WITH SUBSYSTEMMANAGER
+		
+		//TODO 2) B - USE FOR TESTING
+		//Comment out, just if joy.getrawbutton(1) disable else enable
 		if (!wasTest)
 			Scheduler.getInstance().run();
 	}

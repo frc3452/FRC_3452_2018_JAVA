@@ -22,17 +22,7 @@ public class Climber2 extends GZSubsystem {
 		climber_1.setName("climber_1");
 	}
 
-	public void switchState(ClimberState wantedState) {
-		if (this.isDisabed())
-			mState = ClimberState.NEUTRAL;
-		else if (wantedState != mState) {
-			onStateExit(mState);
-			onStateStart(wantedState);
-			mState = wantedState;
-		}
-	}
-
-	private void onStateStart(ClimberState wantedState) {
+	private synchronized void onStateStart(ClimberState wantedState) {
 		switch (wantedState) {
 		case MANUAL:
 			break;
@@ -43,7 +33,7 @@ public class Climber2 extends GZSubsystem {
 		}
 	}
 
-	private void onStateExit(ClimberState prevState) {
+	private synchronized void onStateExit(ClimberState prevState) {
 		switch (prevState) {
 		case MANUAL:
 			break;
@@ -52,15 +42,6 @@ public class Climber2 extends GZSubsystem {
 		default:
 			break;
 		}
-	}
-
-	public String getStateString()
-	{
-		return mState.toString();
-	}
-	
-	public ClimberState getState() {
-		return mState;
 	}
 
 	@Override
@@ -83,34 +64,60 @@ public class Climber2 extends GZSubsystem {
 		this.inputOutput();
 	}
 
-	@Override
-	public void stop() {
-		mState = ClimberState.NEUTRAL;
-	}
-
-	@Override
-	protected void in() {
-		Values.climber_1_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.CLIMBER_1);
-		Values.climber_2_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.CLIMBER_2);
-	}
-
-	@Override
-	protected void out() {
-		climber_1.set(Math.abs(Values.climber_output));
-	}
-
-	public enum ClimberState {
-		NEUTRAL, MANUAL,
-	}
-
 	public static class Values {
 		// in
 		static double climber_1_amperage = -1;
 		static double climber_2_amperage = -1;
 
 		// out
-		static double climber_output = 0;
+		static private double climber_output = 0;
 		static double climber_desired_output = 0;
+	}
+
+
+	public void manual(double percentage)
+	{
+		setState(ClimberState.MANUAL);
+		Values.climber_desired_output = percentage;
+	}
+	
+	@Override
+	protected synchronized void in() {
+		Values.climber_1_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.CLIMBER_1);
+		Values.climber_2_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.CLIMBER_2);
+	}
+
+	@Override
+	protected synchronized void out() {
+		climber_1.set(Math.abs(Values.climber_output));
+	}
+	
+	public enum ClimberState {
+		NEUTRAL, MANUAL,
+	}
+
+
+	@Override
+	public synchronized void stop() {
+		setState(ClimberState.NEUTRAL);
+	}
+
+	public synchronized void setState(ClimberState wantedState) {
+		if (this.isDisabed())
+			mState = ClimberState.NEUTRAL;
+		else if (wantedState != mState) {
+			onStateExit(mState);
+			onStateStart(wantedState);
+			mState = wantedState;
+		}
+	}
+
+	public String getStateString() {
+		return mState.toString();
+	}
+
+	public ClimberState getState() {
+		return mState;
 	}
 
 	@Override

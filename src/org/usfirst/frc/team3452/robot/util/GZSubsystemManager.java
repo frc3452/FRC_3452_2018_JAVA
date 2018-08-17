@@ -28,18 +28,17 @@ public class GZSubsystemManager {
 	}
 
 	public void whatIsDisabled(boolean printHeader) {
-		//TODO 2) *A USE FOR TESTING
+		//TODO 2) B - USE FOR TESTING
 		if (printHeader)
 			System.out.println("~~~SUBSYSTEMS DISABLED~~~");
 		
-		for (int i = 0; i < allSystems.size() - 1; i++) {
+		for (int i = 0; i < allSystems.size() - 1; i++)
 			System.out.println(allSystems.get(i).getName() + ": " + allSystems.get(i).isDisabed());
-		}
 	}
 	
 	public void printStates(boolean printHeader)
 	{
-		//TODO 2) *A USE FOR TESTING
+		//TODO 2) B - USE FOR TESTING
 		if (printHeader)
 			System.out.println("~~~SUBSYSTEM STATES~~~");
 		

@@ -2,7 +2,6 @@ package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.Constants.kPDP;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain2.Values;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 
@@ -29,17 +28,7 @@ public class Intake2 extends GZSubsystem {
 		right_intake.setName("right_intake");
 	}
 
-	public void setState(IntakeState wantedState) {
-		if (this.isDisabed())
-			mState = IntakeState.NEUTRAL;
-		else if (wantedState != mState) {
-			onStateExit(mState);
-			onStateStart(wantedState);
-			mState = wantedState;
-		}
-	}
-
-	private void onStateStart(IntakeState wantedState) {
+	private synchronized void onStateStart(IntakeState wantedState) {
 		switch (wantedState) {
 		case MANUAL:
 			break;
@@ -50,7 +39,7 @@ public class Intake2 extends GZSubsystem {
 		}
 	}
 
-	private void onStateExit(IntakeState prevState) {
+	private synchronized void onStateExit(IntakeState prevState) {
 		switch (prevState) {
 		case MANUAL:
 			break;
@@ -60,15 +49,6 @@ public class Intake2 extends GZSubsystem {
 			break;
 
 		}
-	}
-
-	public String getStateString()
-	{
-		return mState.toString();
-	}
-	
-	public IntakeState getState() {
-		return mState;
 	}
 
 	public synchronized void loop() {
@@ -93,51 +73,68 @@ public class Intake2 extends GZSubsystem {
 		this.inputOutput();
 	}
 
-	@Override
-	public void in() {
-		Values.left_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.INTAKE_L);
-		Values.right_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.INTAKE_R);
-	}
-
-	@Override
-	public void out() {
-		left_intake.set(Values.left_output);
-		right_intake.set(Values.right_output);
-	}
-	
-	public void manual(double percentage) {
-		setState(IntakeState.MANUAL);
-		
-		Values.left_desired_output = Values.right_desired_output = percentage;
-	}
-	
-	public void spin(double percentage, boolean clockwise)
-	{
-		Values.left_desired_output = percentage * (clockwise ? -1 : 1);
-		Values.right_desired_output = percentage  * (clockwise ? 1 : -1);
-	}
-	
-
-	@Override
-	public void stop() {
-		mState = IntakeState.NEUTRAL;
-	}
-
 	public static class Values {
 		// in
 		static double left_amperage = -1;
 		static double right_amperage = -1;
 
 		// out
-		static double left_output = 0;
+		static private double left_output = 0;
 		static double left_desired_output = 0;
 
-		static double right_output = 0;
+		static private double right_output = 0;
 		static double right_desired_output = 0;
+	}
+
+	@Override
+	public synchronized void in() {
+		Values.left_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.INTAKE_L);
+		Values.right_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.INTAKE_R);
+	}
+
+	public void manual(double percentage) {
+		setState(IntakeState.MANUAL);
+
+		Values.left_desired_output = Values.right_desired_output = percentage;
+	}
+
+	public void spin(double percentage, boolean clockwise) {
+		setState(IntakeState.MANUAL);
+		Values.left_desired_output = percentage * (clockwise ? -1 : 1);
+		Values.right_desired_output = percentage * (clockwise ? 1 : -1);
+	}
+
+	@Override
+	public synchronized void out() {
+		left_intake.set(Values.left_output);
+		right_intake.set(Values.right_output);
 	}
 
 	public enum IntakeState {
 		NEUTRAL, MANUAL
+	}
+
+	@Override
+	public synchronized void stop() {
+		setState(IntakeState.NEUTRAL);
+	}
+
+	public synchronized void setState(IntakeState wantedState) {
+		if (this.isDisabed())
+			mState = IntakeState.NEUTRAL;
+		else if (wantedState != mState) {
+			onStateExit(mState);
+			onStateStart(wantedState);
+			mState = wantedState;
+		}
+	}
+
+	public String getStateString() {
+		return mState.toString();
+	}
+
+	public IntakeState getState() {
+		return mState;
 	}
 
 	@Override

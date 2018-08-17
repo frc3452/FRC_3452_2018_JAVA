@@ -165,7 +165,6 @@ public class Drivetrain extends Subsystem {
 			// P .425 D 20
 
 
-			//TODO IMPLEMENT
 			TalonSRXConfiguration f = new TalonSRXConfiguration();
 			talon.configAllSettings(f);
 			

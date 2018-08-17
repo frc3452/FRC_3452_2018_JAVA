@@ -5,7 +5,6 @@ import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
-import org.usfirst.frc.team3452.robot.motionprofiles.Path;
 import org.usfirst.frc.team3452.robot.util.GZJoystick;
 import org.usfirst.frc.team3452.robot.util.GZSRX;
 import org.usfirst.frc.team3452.robot.util.GZSRX.Breaker;
@@ -71,8 +70,8 @@ public class Drivetrain2 extends GZSubsystem {
 		mGyro = new AHRS(SPI.Port.kMXP);
 
 		brake(NeutralMode.Coast);
-		
-		//TODO 4) EXPERIMENT WITH TALONSRX CONFIGS AND FINISH CONSTRUCTION
+
+		// TODO 3) B - FINISH CONSTRUCTION
 
 		pdp.setSubsystem("Drive train");
 
@@ -88,34 +87,7 @@ public class Drivetrain2 extends GZSubsystem {
 		mGyro.reset();
 	}
 
-	@Override
-	public void stop() {
-		mState = DriveState.NEUTRAL;
-	}
-
-	public void setState(DriveState wantedState) {
-		//If disabled, ignore
-		//If state is different from previous state, run the onStartStart (what needs to be done when the subsystem first goes into a new state?)
-		
-		if (this.isDisabed())
-			mState = DriveState.NEUTRAL;
-		else if (wantedState != mState) {
-			onStateExit(mState);
-			onStateStart(wantedState);
-			mState = wantedState;
-		}
-	}
-
-	public String getStateString()
-	{
-		return mState.toString();
-	}
-	
-	public DriveState getState() {
-		return mState;
-	}
-
-	public void onStateStart(DriveState newState) {
+	public synchronized void onStateStart(DriveState newState) {
 		switch (newState) {
 		case MOTION_MAGIC:
 			break;
@@ -123,45 +95,41 @@ public class Drivetrain2 extends GZSubsystem {
 			break;
 		case NEUTRAL:
 			break;
-			
+
 		case OPEN_LOOP:
-			
+
 			if (Robot.autonSelector.isSaftey())
 				percentageModify = .5;
-			
+
 			break;
 		default:
 			break;
 		}
 	}
-	
-	public void onStateExit(DriveState prevState)
-	{
-		switch (prevState)
-		{
+
+	public synchronized void onStateExit(DriveState prevState) {
+		switch (prevState) {
 		case MOTION_MAGIC:
-			
+
 			encoderDone();
-			
+
 			break;
 		case MOTION_PROFILE:
 			break;
 		case NEUTRAL:
 			break;
 		case OPEN_LOOP:
-			
+
 			OI.rumble(CONTROLLER.BOTH, 0);
-			
+
 			break;
 		default:
 			break;
 		}
 	}
-	
-	
 
 	@Override
-	public void loop() {
+	public synchronized void loop() {
 		switch (mState) {
 		case MOTION_MAGIC:
 
@@ -193,46 +161,11 @@ public class Drivetrain2 extends GZSubsystem {
 			break;
 
 		default:
-
+			System.out.println("WARNING: Incorrect drive state " + mState + " reached.");
 			break;
 		}
 
 		this.inputOutput();
-	}
-
-	@Override
-	protected void initDefaultCommand() {
-		setDefaultCommand(new DriveTele());
-	}
-
-	public enum DriveState {
-		OPEN_LOOP, NEUTRAL, MOTION_MAGIC, MOTION_PROFILE
-	}
-
-	@Override
-	protected void in() {
-		Values.left_encoder_ticks = L1.getSelectedSensorPosition(0);
-		Values.left_encoder_rotations = Units.ticks_to_rotations(Values.left_encoder_ticks);
-		Values.left_encoder_vel = L1.getSelectedSensorVelocity(0);
-
-		Values.right_encoder_ticks = -R1.getSelectedSensorPosition(0);
-		Values.right_encoder_rotations = -Units.ticks_to_rotations(Values.right_encoder_ticks);
-		Values.right_encoder_vel = -R1.getSelectedSensorVelocity(0);
-
-		Values.L1_amp = L1.getOutputCurrent();
-		Values.L2_amp = L2.getOutputCurrent();
-		Values.L3_amp = L3.getOutputCurrent();
-		Values.L4_amp = L4.getOutputCurrent();
-		Values.R1_amp = R1.getOutputCurrent();
-		Values.R2_amp = R2.getOutputCurrent();
-		Values.R3_amp = R3.getOutputCurrent();
-		Values.R4_amp = R4.getOutputCurrent();
-	}
-
-	@Override
-	protected void out() {
-		L1.set(Values.control_mode, Values.left_output);
-		R1.set(Values.control_mode, Values.right_output);
 	}
 
 	public static class Values {
@@ -255,12 +188,32 @@ public class Drivetrain2 extends GZSubsystem {
 		static double R4_amp = -1;
 
 		// out
-		static double left_output = 0;
+		static private double left_output = 0;
 		static double left_desired_output = 0;
 
-		static double right_output = 0;
+		static private double right_output = 0;
 		static double right_desired_output = 0;
 		static ControlMode control_mode = ControlMode.PercentOutput;
+	}
+
+	@Override
+	protected synchronized void in() {
+		Values.left_encoder_ticks = L1.getSelectedSensorPosition(0);
+		Values.left_encoder_rotations = Units.ticks_to_rotations(Values.left_encoder_ticks);
+		Values.left_encoder_vel = L1.getSelectedSensorVelocity(0);
+
+		Values.right_encoder_ticks = -R1.getSelectedSensorPosition(0);
+		Values.right_encoder_rotations = -Units.ticks_to_rotations(Values.right_encoder_ticks);
+		Values.right_encoder_vel = -R1.getSelectedSensorVelocity(0);
+
+		Values.L1_amp = L1.getOutputCurrent();
+		Values.L2_amp = L2.getOutputCurrent();
+		Values.L3_amp = L3.getOutputCurrent();
+		Values.L4_amp = L4.getOutputCurrent();
+		Values.R1_amp = R1.getOutputCurrent();
+		Values.R2_amp = R2.getOutputCurrent();
+		Values.R3_amp = R3.getOutputCurrent();
+		Values.R4_amp = R4.getOutputCurrent();
 	}
 
 	@Override
@@ -276,23 +229,23 @@ public class Drivetrain2 extends GZSubsystem {
 		SmartDashboard.putNumber("PercentageCompleted", getPercentageComplete());
 	}
 
-	public void arcade(GZJoystick joy) {
+	public synchronized void arcade(GZJoystick joy) {
 		setState(DriveState.OPEN_LOOP);
-		
+
 		arcade(joy.getLeftAnalogY() * percentageModify,
 				(joy.getRightTrigger() - joy.getLeftTrigger()) * .8 * percentageModify);
 	}
 
-	public void alternateArcade(GZJoystick joy) {
+	public synchronized void alternateArcade(GZJoystick joy) {
 		setState(DriveState.OPEN_LOOP);
-		
+
 		arcade(joy.getLeftAnalogY() * percentageModify, (joy.getRightAnalogX() * percentageModify * .85));
 		percentageModify = .5;
 	}
 
-	public void arcade(double move, double rotate) {
+	public synchronized void arcade(double move, double rotate) {
 		setState(DriveState.OPEN_LOOP);
-		
+
 		double[] temp = arcadeToLR(move * Robot.elevator2.getPercentageModify(),
 				rotate * (Robot.elevator2.getPercentageModify() + .2));
 
@@ -302,7 +255,7 @@ public class Drivetrain2 extends GZSubsystem {
 
 	// Modified from DifferentialDrive.java to produce double array, [0] being left
 	// motor value, [1] being right motor value
-	public double[] arcadeToLR(double xSpeed, double zRotation) {
+	public synchronized double[] arcadeToLR(double xSpeed, double zRotation) {
 		xSpeed = Util.limit(xSpeed);
 		xSpeed = Util.applyDeadband(xSpeed, kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
 
@@ -341,9 +294,9 @@ public class Drivetrain2 extends GZSubsystem {
 		return retval;
 	}
 
-	public void tank(double left, double right) {
+	public synchronized void tank(double left, double right) {
 		setState(DriveState.OPEN_LOOP);
-		
+
 		// TODO STATE TESTING - CHECK SIGN
 		Values.left_desired_output = Util.applyDeadband(left * Robot.elevator2.getPercentageModify(),
 				kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
@@ -351,9 +304,9 @@ public class Drivetrain2 extends GZSubsystem {
 				kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
 	}
 
-	public void tank(GZJoystick joy) {
+	public synchronized void tank(GZJoystick joy) {
 		setState(DriveState.OPEN_LOOP);
-		
+
 		Values.left_desired_output = Util.applyDeadband(joy.getLeftAnalogY() * Robot.elevator2.getPercentageModify(),
 				kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
 		// TODO STATE TESTING -CHECK SIGN
@@ -361,7 +314,7 @@ public class Drivetrain2 extends GZSubsystem {
 				kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
 	}
 
-	public void brake(NeutralMode mode) {
+	public synchronized void brake(NeutralMode mode) {
 		L1.setNeutralMode(mode);
 		L2.setNeutralMode(mode);
 		L3.setNeutralMode(mode);
@@ -372,10 +325,10 @@ public class Drivetrain2 extends GZSubsystem {
 		R4.setNeutralMode(mode);
 	}
 
-	public void motionMagic(double leftRotations, double rightRotations, double leftAccel, double rightAccel,
-			double leftSpeed, double rightSpeed) {
+	public synchronized void motionMagic(double leftRotations, double rightRotations, double leftAccel,
+			double rightAccel, double leftSpeed, double rightSpeed) {
 		setState(DriveState.MOTION_MAGIC);
-		
+
 		double topspeed = 3941;
 
 		left_target = Units.rotations_to_ticks(leftRotations);
@@ -397,7 +350,7 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	@Deprecated
-	public void encoder(double leftRotations, double rightRotations, double leftPercentageLimit,
+	public synchronized void encoder(double leftRotations, double rightRotations, double leftPercentageLimit,
 			double rightPercentageLimit) {
 		L1.configPeakOutputForward(leftPercentageLimit, 10);
 		L1.configPeakOutputReverse(-leftPercentageLimit, 10);
@@ -415,7 +368,7 @@ public class Drivetrain2 extends GZSubsystem {
 		Values.right_desired_output = right_target;
 	}
 
-	public boolean encoderSpeedIsUnder(double ticksPer100Ms) {
+	public synchronized boolean encoderSpeedIsUnder(double ticksPer100Ms) {
 
 		double l = Math.abs(Values.left_encoder_vel);
 		double r = Math.abs(Values.right_encoder_vel);
@@ -423,7 +376,7 @@ public class Drivetrain2 extends GZSubsystem {
 		return l < ticksPer100Ms && r < ticksPer100Ms;
 	}
 
-	public void encoderDone() {
+	public synchronized void encoderDone() {
 		Values.control_mode = ControlMode.PercentOutput;
 		Values.left_desired_output = Values.right_desired_output = 0;
 
@@ -443,20 +396,19 @@ public class Drivetrain2 extends GZSubsystem {
 		percentageComplete = 3452;
 	}
 
-	public boolean encoderIsDone(double multiplier) {
+	public synchronized boolean encoderIsDone(double multiplier) {
 		return (Values.left_encoder_ticks < left_target + 102 * multiplier)
 				&& (Values.left_encoder_ticks > left_target - 102 * multiplier)
 				&& (Values.right_encoder_ticks < right_target + 102 * multiplier)
 				&& (Values.right_encoder_ticks > right_target - 102 * multiplier);
 	}
 
-	public boolean encoderIsDoneEither(double multiplier) {
+	public synchronized boolean encoderIsDoneEither(double multiplier) {
 		return (Values.left_encoder_ticks < left_target + 102 * multiplier
 				&& Values.left_encoder_ticks > left_target - 102 * multiplier)
 				|| (Values.right_encoder_ticks < right_target + 102 * multiplier
 						&& Values.right_encoder_ticks > right_target - 102 * multiplier);
 	}
-	
 
 	private class MotionProfileBuffer implements java.lang.Runnable {
 		@Override
@@ -476,7 +428,7 @@ public class Drivetrain2 extends GZSubsystem {
 	 * 
 	 * @param time double - if 3452, stops notifier
 	 */
-	public void processMotionProfileBuffer(double time) {
+	public synchronized void processMotionProfileBuffer(double time) {
 		if (time == 3452)
 			processMotionProfile.stop();
 		else
@@ -488,7 +440,7 @@ public class Drivetrain2 extends GZSubsystem {
 	 * 
 	 * @since 4-22-2018
 	 */
-	public void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
+	public synchronized void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
 
 		if (mpL.length != mpR.length)
 			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + mpL.length + "\t\t" + mpR.length);
@@ -557,7 +509,7 @@ public class Drivetrain2 extends GZSubsystem {
 	 * @author max
 	 * @since 4-22-2018
 	 */
-	public void motionProfileToTalons() {
+	public synchronized void motionProfileToTalons() {
 		if (Robot.playback.mpL.size() != Robot.playback.mpR.size())
 			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + Robot.playback.mpL.size() + "\t\t"
 					+ Robot.playback.mpR.size());
@@ -622,7 +574,7 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	@SuppressWarnings("static-access")
-	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {
+	private synchronized TrajectoryDuration GetTrajectoryDuration(int durationMs) {
 		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
 		retval = retval.valueOf(durationMs);
 
@@ -632,66 +584,106 @@ public class Drivetrain2 extends GZSubsystem {
 		return retval;
 	}
 
-	public void zeroEncoders() {
+	public synchronized void zeroEncoders() {
 		L1.setSelectedSensorPosition(0, 0, 10);
 		R1.setSelectedSensorPosition(0, 0, 10);
 	}
 
-	public void zeroSensors() {
+	public synchronized void zeroSensors() {
 		zeroEncoders();
 		zeroGyro();
 	}
 
-	public void zeroGyro() {
+	public synchronized void zeroGyro() {
 		mGyro.reset();
 	}
 
-	public double getPDPChannelCurrent(int channel) {
+	public synchronized double getPDPChannelCurrent(int channel) {
 		return pdp.getCurrent(channel);
 	}
 
-	public double getPDPTemperature() {
+	public synchronized double getPDPTemperature() {
 		return pdp.getTemperature();
 	}
 
-	public double getPDPTotalCurrent() {
+	public synchronized double getPDPTotalCurrent() {
 		return pdp.getTotalCurrent();
 	}
 
-	public double getPDPTotalEnergy() {
+	public synchronized double getPDPTotalEnergy() {
 		return pdp.getTotalEnergy();
 	}
 
-	public double getPDPTotalPower() {
+	public synchronized double getPDPTotalPower() {
 		return pdp.getTotalPower();
 	}
 
-	public double getPDPVoltage() {
+	public synchronized double getPDPVoltage() {
 		return pdp.getVoltage();
 	}
 
-	public double getPercentageModify() {
+	public synchronized double getPercentageModify() {
 		return percentageModify;
 	}
 
-	public void setPercentageModify(double percentageModify) {
+	public synchronized void setPercentageModify(double percentageModify) {
 		this.percentageModify = percentageModify;
 	}
 
-	public double getPercentageComplete() {
+	public synchronized double getPercentageComplete() {
 		return percentageComplete;
 	}
 
-	public void setPercentageComplete(double percentageComplete) {
+	public synchronized void setPercentageComplete(double percentageComplete) {
 		this.percentageComplete = percentageComplete;
 	}
 
-	public Timer getTimer() {
+	public synchronized Timer getTimer() {
 		return timer;
 	}
 
-	public AHRS getGyro() {
+	public synchronized AHRS getGyro() {
 		return mGyro;
 	}
 
+	@Override
+	protected synchronized void out() {
+		L1.set(Values.control_mode, Values.left_output);
+		R1.set(Values.control_mode, Values.right_output);
+	}
+
+	public enum DriveState {
+		OPEN_LOOP, NEUTRAL, MOTION_MAGIC, MOTION_PROFILE
+	}
+
+	@Override
+	public synchronized void stop() {
+		setState(DriveState.NEUTRAL);
+	}
+
+	public synchronized void setState(DriveState wantedState) {
+		// If disabled, ignore
+		// If state is different from previous state, run the onStartStart (what needs
+		// to be done when the subsystem first goes into a new state?)
+
+		if (this.isDisabed())
+			mState = DriveState.NEUTRAL;
+		else if (wantedState != mState) {
+			onStateExit(mState);
+			onStateStart(wantedState);
+			mState = wantedState;
+		}
+	}
+
+	public String getStateString() {
+		return mState.toString();
+	}
+
+	public DriveState getState() {
+		return mState;
+	}
+
+	protected void initDefaultCommand() {
+		setDefaultCommand(new DriveTele());
+	}
 }
