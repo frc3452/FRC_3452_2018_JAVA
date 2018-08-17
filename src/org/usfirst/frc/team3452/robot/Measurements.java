@@ -1,6 +1,6 @@
 package org.usfirst.frc.team3452.robot;
 
-public class Geometry {
+public class Measurements {
 
 	public class Robot {
 
