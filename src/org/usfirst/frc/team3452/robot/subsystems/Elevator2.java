@@ -176,6 +176,11 @@ public class Elevator2 extends GZSubsystem {
 			percentageModify = 1;
 		}
 	}
+	
+	public synchronized void enableFollower()
+	{
+		elevator_2.follow(elevator_1);
+	}
 
 	public synchronized void softLimits(boolean enableSoftLimit) {
 		elevator_1.configForwardSoftLimitEnable(enableSoftLimit);

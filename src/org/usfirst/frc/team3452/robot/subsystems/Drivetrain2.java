@@ -1,5 +1,9 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import java.net.SocketTimeoutException;
+import java.util.Arrays;
+import java.util.List;
+
 import org.usfirst.frc.team3452.robot.Constants.kDrivetrain;
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
@@ -37,6 +41,7 @@ public class Drivetrain2 extends GZSubsystem {
 
 	// DRIVETRAIN
 	private GZSRX L1, L2, L3, L4, R1, R2, R3, R4;
+	private List<GZSRX> controllers = Arrays.asList(L1, L2, L3, L4, R1, R2, R3, R4);
 
 	// ROBOT DRIVE OBJECT
 //	private DifferentialDrive robotDrive;
@@ -579,6 +584,21 @@ public class Drivetrain2 extends GZSubsystem {
 		return retval;
 	}
 
+	public synchronized void enableFollower() {
+		for (GZSRX c : controllers) {
+			switch (c.getSide()) {
+			case LEFT:
+				c.follow(L1);
+				break;
+			case RIGHT:
+				c.follow(R1);
+				break;
+			case NO_INFO:
+				System.out.println("ERROR Drive talon " + c.getName() + " could not enter follower mode!");
+			}
+		}
+	}
+
 	public synchronized void zeroEncoders() {
 		L1.setSelectedSensorPosition(0, 0, 10);
 		R1.setSelectedSensorPosition(0, 0, 10);
@@ -678,16 +698,14 @@ public class Drivetrain2 extends GZSubsystem {
 		}
 	}
 
-	public synchronized void checkPrevState()
-	{
-		if (mState != prevState)
-		{
+	public synchronized void checkPrevState() {
+		if (mState != prevState) {
 			onStateExit(prevState);
 			onStateStart(mState);
 		}
 		prevState = mState;
 	}
-	
+
 	public String getStateString() {
 		return mState.toString();
 	}

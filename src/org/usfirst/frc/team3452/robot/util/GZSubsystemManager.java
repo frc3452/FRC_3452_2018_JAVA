@@ -26,6 +26,11 @@ public class GZSubsystemManager {
 	public void disable(boolean toDisable) {
 		allSystems.forEach((s) -> s.disable(toDisable));
 	}
+	
+	public void enableFollower()
+	{
+		allSystems.forEach((s) -> s.enableFollower());
+	}
 
 	public void whatIsDisabled(boolean printHeader) {
 		//TODO 2) B - USE FOR TESTING

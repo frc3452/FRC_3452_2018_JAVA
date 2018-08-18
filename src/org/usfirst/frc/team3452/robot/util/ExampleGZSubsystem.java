@@ -188,17 +188,12 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * to any state, we do that.
 	 */
 	public synchronized void setState(ExampleState wantedState) {
-		if (this.isDisabed()) {
-
+		if (this.isDisabed())
 			mState = ExampleState.NEUTRAL;
-			
-		} else if (Robot.autonSelector.isDemo()) {
-			
+		else if (Robot.autonSelector.isDemo())
 			mState = ExampleState.DEMO;
-			
-		} else {
+		else
 			mState = wantedState;
-		}
 	}
 	
 	/** This is the runner for onStateExit and onStateStart. */
@@ -210,6 +205,15 @@ public class ExampleGZSubsystem extends GZSubsystem {
 			onStateStart(mState);
 		}
 		prevState = mState;
+	}
+	
+	/**
+	 * This is used with subsystems that use CAN bus and following.
+	 * When entering Test mode, the robot will take every motor out of follower mode, unless this is called.
+	 */
+	public synchronized void enableFollower()
+	{
+		//controller_2.follow(controller_1);
 	}
 
 	/**

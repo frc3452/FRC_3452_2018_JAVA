@@ -4,8 +4,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 //thx 254
 public abstract class GZSubsystem extends Subsystem {
-	
-	
+
 	// Set to neutral
 	public abstract void stop();
 
@@ -19,23 +18,28 @@ public abstract class GZSubsystem extends Subsystem {
 	// Saftey
 	private boolean isDisabled = false;
 
-	//Record subsystem locked out and stop subsystem.
+	// Record subsystem locked out and stop subsystem.
 	public void disable(boolean toDisable) {
 		isDisabled = toDisable;
 		if (toDisable)
 			stop();
 	}
 
-	//Return if subsystem is disabled or not.
+	// Return if subsystem is disabled or not.
 	public boolean isDisabed() {
 		return isDisabled;
 	}
-	
+
+	public void enableFollower() {
+
+	}
+
+	// Runs onStateStart and onStateExit appropriately
 	public abstract void checkPrevState();
 
-	//Each subsystem is able to report its current state as a string
+	// Each subsystem is able to report its current state as a string
 	public abstract String getStateString();
-	
+
 	// Main loop
 	public void loop() {
 		in();
