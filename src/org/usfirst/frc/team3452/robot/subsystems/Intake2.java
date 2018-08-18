@@ -12,6 +12,7 @@ public class Intake2 extends GZSubsystem {
 	private static Spark left_intake, right_intake;
 
 	private IntakeState mState = IntakeState.NEUTRAL;
+	private IntakeState prevState = mState;
 
 	// Construction
 	public Intake2() {
@@ -69,8 +70,6 @@ public class Intake2 extends GZSubsystem {
 			System.out.println("WARNING: Incorrect intake state " + mState + " reached.");
 			break;
 		}
-
-		this.inputOutput();
 	}
 
 	public static class Values {
@@ -120,13 +119,21 @@ public class Intake2 extends GZSubsystem {
 	}
 
 	public synchronized void setState(IntakeState wantedState) {
+		// we dont need to worry about isDemo() here, we don't change anything
 		if (this.isDisabed())
 			mState = IntakeState.NEUTRAL;
-		else if (wantedState != mState) {
-			onStateExit(mState);
-			onStateStart(wantedState);
+		else
 			mState = wantedState;
+	}
+	
+	public synchronized void checkPrevState()
+	{
+		if (mState != prevState)
+		{
+			onStateExit(prevState);
+			onStateStart(mState);
 		}
+		prevState = mState;
 	}
 
 	public String getStateString() {

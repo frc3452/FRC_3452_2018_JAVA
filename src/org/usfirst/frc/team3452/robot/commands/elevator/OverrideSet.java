@@ -23,7 +23,7 @@ public class OverrideSet extends InstantCommand {
 	}
 
 	protected void initialize() {
-		if (!Robot.autonSelector.isSaftey()) {
+		if (!Robot.autonSelector.isDemo()) {
 			switch (m_override) {
 			case ON:
 				Robot.elevator.m_overriden = true;

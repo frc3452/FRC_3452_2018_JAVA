@@ -30,17 +30,17 @@ public abstract class GZSubsystem extends Subsystem {
 	public boolean isDisabed() {
 		return isDisabled;
 	}
+	
+	public abstract void checkPrevState();
 
 	//Each subsystem is able to report its current state as a string
 	public abstract String getStateString();
 	
 	// Main loop
-	public abstract void loop();
-
-	//Calls input and output lines
-	protected synchronized void inputOutput() {
+	public void loop() {
 		in();
 		out();
+		checkPrevState();
 	}
 
 	// Read all inputs

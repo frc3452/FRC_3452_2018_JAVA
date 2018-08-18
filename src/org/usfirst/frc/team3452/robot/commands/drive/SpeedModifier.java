@@ -20,7 +20,7 @@ public class SpeedModifier extends InstantCommand {
 	}
 
 	protected void initialize() {
-		if (!Robot.autonSelector.isSaftey()) {
+		if (!Robot.autonSelector.isDemo()) {
 			if (m_modify == -1) {
 
 				if (Robot.drive.m_modify == 1)

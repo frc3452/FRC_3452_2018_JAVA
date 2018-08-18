@@ -37,7 +37,7 @@ public class ElevatorManual extends Command {
 		m_axis = ((m_joy == OI.opJoy) ? 1 : 5);
 
 		// speeds[0] is downward speed, speeds[1] is upward speed
-		if (!Robot.autonSelector.isSaftey()) {
+		if (!Robot.autonSelector.isDemo()) {
 			speeds[0] = .6;
 			speeds[1] = 1;
 		} else {

@@ -9,9 +9,10 @@ import edu.wpi.first.wpilibj.Spark;
 
 public class Climber2 extends GZSubsystem {
 
-	private static Spark climber_1;
+	private Spark climber_1;
 
-	private static ClimberState mState = ClimberState.NEUTRAL;
+	private ClimberState mState = ClimberState.NEUTRAL;
+	private ClimberState prevState = mState;
 
 	// Construction
 	public Climber2() {
@@ -60,8 +61,6 @@ public class Climber2 extends GZSubsystem {
 			System.out.println("WARNING: Incorrect climber state " + mState + " reached.");
 			break;
 		}
-
-		this.inputOutput();
 	}
 
 	public static class Values {
@@ -74,13 +73,11 @@ public class Climber2 extends GZSubsystem {
 		static double climber_desired_output = 0;
 	}
 
-
-	public void manual(double percentage)
-	{
+	public void manual(double percentage) {
 		setState(ClimberState.MANUAL);
 		Values.climber_desired_output = percentage;
 	}
-	
+
 	@Override
 	protected synchronized void in() {
 		Values.climber_1_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.CLIMBER_1);
@@ -91,11 +88,10 @@ public class Climber2 extends GZSubsystem {
 	protected synchronized void out() {
 		climber_1.set(Math.abs(Values.climber_output));
 	}
-	
+
 	public enum ClimberState {
 		NEUTRAL, MANUAL,
 	}
-
 
 	@Override
 	public synchronized void stop() {
@@ -103,13 +99,18 @@ public class Climber2 extends GZSubsystem {
 	}
 
 	public synchronized void setState(ClimberState wantedState) {
-		if (this.isDisabed())
+		if (this.isDisabed() || Robot.autonSelector.isDemo())
 			mState = ClimberState.NEUTRAL;
-		else if (wantedState != mState) {
-			onStateExit(mState);
-			onStateStart(wantedState);
+		else
 			mState = wantedState;
+	}
+
+	public synchronized void checkPrevState() {
+		if (mState != prevState) {
+			onStateExit(prevState);
+			onStateStart(mState);
 		}
+		prevState = mState;
 	}
 
 	public String getStateString() {

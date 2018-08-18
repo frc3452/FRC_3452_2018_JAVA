@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3452.robot.util;
 
+import org.usfirst.frc.team3452.robot.Robot;
+
 import edu.wpi.first.wpilibj.Spark;
 
 public class ExampleGZSubsystem extends GZSubsystem {
@@ -14,6 +16,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 
 	/** Current state of subsystem */
 	private ExampleState mState = ExampleState.NEUTRAL;
+	private ExampleState prevState = mState;
 
 	/**
 	 * This is a constructor, this runs when you create the object in Robot.java.
@@ -75,14 +78,14 @@ public class ExampleGZSubsystem extends GZSubsystem {
 		case NEUTRAL:
 
 			Values.output = 0;
-
 			break;
+
+		case DEMO:
+
 		default:
 			System.out.println("WARNING: Incorrect ExampleSubsystem state " + mState + " reached.");
 			break;
 		}
-
-		this.inputOutput();
 	}
 
 	/**
@@ -145,7 +148,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * vary.
 	 */
 	public enum ExampleState {
-		NEUTRAL, MANUAL
+		NEUTRAL, MANUAL, DEMO
 	}
 
 	/** Set the state of the subsystem to NEUTRAL */
@@ -178,16 +181,35 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * instead of just changing the mState variable because this is what keeps the
 	 * robot locked in a disabled state if we call .disable(true) on the subsystem.
 	 * This also calls onStateExit and onStateStart for the current and new state.
-	 * See next method comments explanations.
+	 * 
+	 * First, we check if it's disabled, thats our first priority. If it is, we put
+	 * the system in neutral. If it isn't, we check if its in demo. Either we set it
+	 * to demo. Then, if we aren't in demo or disabled, which means were safe to switch 
+	 * to any state, we do that.
 	 */
-	public void setState(ExampleState wantedState) {
-		if (this.isDisabed())
+	public synchronized void setState(ExampleState wantedState) {
+		if (this.isDisabed()) {
+
 			mState = ExampleState.NEUTRAL;
-		else if (mState != wantedState) {
-			onStateExit(mState);
-			onStateStart(wantedState);
+			
+		} else if (Robot.autonSelector.isDemo()) {
+			
+			mState = ExampleState.DEMO;
+			
+		} else {
 			mState = wantedState;
 		}
+	}
+	
+	/** This is the runner for onStateExit and onStateStart. */
+	public synchronized void checkPrevState()
+	{
+		if (mState != prevState)
+		{
+			onStateExit(prevState);
+			onStateStart(mState);
+		}
+		prevState = mState;
 	}
 
 	/**

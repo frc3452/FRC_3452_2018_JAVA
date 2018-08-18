@@ -20,13 +20,13 @@ public class DriveTele extends Command {
 
 	@Override
 	protected void initialize() {
-		if (Robot.autonSelector.isSaftey())
+		if (Robot.autonSelector.isDemo())
 			Robot.drive.m_modify = .5;
 	}
 
 	@Override
 	protected void execute() {
-		if (!Robot.autonSelector.isSaftey())
+		if (!Robot.autonSelector.isDemo())
 			Robot.drive.arcade(OI.driverJoy);
 		else 
 			Robot.drive.alternateArcade(OI.driverJoy);

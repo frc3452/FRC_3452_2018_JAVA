@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Drivetrain2 extends GZSubsystem {
 
 	private DriveState mState = DriveState.NEUTRAL;
+	private DriveState prevState = mState;
 
 	// PDP
 	private PowerDistributionPanel pdp = new PowerDistributionPanel(0);
@@ -95,12 +96,7 @@ public class Drivetrain2 extends GZSubsystem {
 			break;
 		case NEUTRAL:
 			break;
-
 		case OPEN_LOOP:
-
-			if (Robot.autonSelector.isSaftey())
-				percentageModify = .5;
-
 			break;
 		default:
 			break;
@@ -110,18 +106,14 @@ public class Drivetrain2 extends GZSubsystem {
 	public synchronized void onStateExit(DriveState prevState) {
 		switch (prevState) {
 		case MOTION_MAGIC:
-
 			encoderDone();
-
 			break;
 		case MOTION_PROFILE:
 			break;
 		case NEUTRAL:
 			break;
 		case OPEN_LOOP:
-
 			OI.rumble(CONTROLLER.BOTH, 0);
-
 			break;
 		default:
 			break;
@@ -159,13 +151,18 @@ public class Drivetrain2 extends GZSubsystem {
 			Values.right_output = Values.right_desired_output;
 
 			break;
+		case DEMO:
+
+			Values.control_mode = ControlMode.PercentOutput;
+			Values.left_output = Values.left_desired_output * .5;
+			Values.right_output = Values.right_desired_output * .5;
+
+			break;
 
 		default:
 			System.out.println("WARNING: Incorrect drive state " + mState + " reached.");
 			break;
 		}
-
-		this.inputOutput();
 	}
 
 	public static class Values {
@@ -237,10 +234,9 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	public synchronized void alternateArcade(GZJoystick joy) {
-		setState(DriveState.OPEN_LOOP);
+		setState(DriveState.DEMO);
 
-		arcade(joy.getLeftAnalogY() * percentageModify, (joy.getRightAnalogX() * percentageModify * .85));
-		percentageModify = .5;
+		arcade(joy.getLeftAnalogY(), (joy.getRightAnalogX() * .85));
 	}
 
 	public synchronized void arcade(double move, double rotate) {
@@ -369,7 +365,6 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	public synchronized boolean encoderSpeedIsUnder(double ticksPer100Ms) {
-
 		double l = Math.abs(Values.left_encoder_vel);
 		double r = Math.abs(Values.right_encoder_vel);
 
@@ -653,7 +648,7 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	public enum DriveState {
-		OPEN_LOOP, NEUTRAL, MOTION_MAGIC, MOTION_PROFILE
+		OPEN_LOOP, DEMO, NEUTRAL, MOTION_MAGIC, MOTION_PROFILE,
 	}
 
 	@Override
@@ -662,19 +657,37 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	public synchronized void setState(DriveState wantedState) {
-		// If disabled, ignore
-		// If state is different from previous state, run the onStartStart (what needs
-		// to be done when the subsystem first goes into a new state?)
 
-		if (this.isDisabed())
-			mState = DriveState.NEUTRAL;
-		else if (wantedState != mState) {
+		if (this.isDisabed()) {
+
 			onStateExit(mState);
-			onStateStart(wantedState);
+			mState = DriveState.NEUTRAL;
+			onStateStart(mState);
+
+		} else if (Robot.autonSelector.isDemo()) {
+
+			onStateExit(mState);
+			mState = DriveState.DEMO;
+			onStateStart(mState);
+
+		} else if (mState != wantedState) {
+
+			onStateExit(mState);
 			mState = wantedState;
+			onStateStart(mState);
 		}
 	}
 
+	public synchronized void checkPrevState()
+	{
+		if (mState != prevState)
+		{
+			onStateExit(prevState);
+			onStateStart(mState);
+		}
+		prevState = mState;
+	}
+	
 	public String getStateString() {
 		return mState.toString();
 	}

@@ -19,6 +19,7 @@ public class Elevator2 extends GZSubsystem {
 	private static GZSRX elevator_1, elevator_2;
 
 	private ElevatorState mState = ElevatorState.NEUTRAL;
+	private ElevatorState prevState = mState;
 
 	private double percentageModify = 0;
 	private double target = 0;
@@ -31,14 +32,15 @@ public class Elevator2 extends GZSubsystem {
 	private synchronized void onStateStart(ElevatorState wantedState) {
 		switch (wantedState) {
 		case MANUAL:
-
-			if (Robot.autonSelector.isSaftey())
-				softLimits(true);
-
 			break;
 		case NEUTRAL:
 			break;
 		case POSITION:
+			break;
+		case DEMO:
+
+			softLimits(true);
+
 			break;
 		default:
 			break;
@@ -49,12 +51,13 @@ public class Elevator2 extends GZSubsystem {
 		switch (prevState) {
 		case MANUAL:
 
-			softLimits(false);
-
 			break;
 		case NEUTRAL:
 			break;
 		case POSITION:
+			break;
+		case DEMO:
+			softLimits(false);
 			break;
 		default:
 			break;
@@ -81,13 +84,14 @@ public class Elevator2 extends GZSubsystem {
 			Values.control_mode = ControlMode.Position;
 			Values.output = Values.desired_output;
 			break;
+		case DEMO:
+			Values.control_mode = ControlMode.PercentOutput;
+			Values.output = Values.desired_output;
 
 		default:
 			System.out.println("WARNING: Incorrect elevator state " + mState + " reached.");
 			break;
 		}
-
-		this.inputOutput();
 
 		handleSpeedLimiting();
 	}
@@ -151,7 +155,7 @@ public class Elevator2 extends GZSubsystem {
 	public synchronized void speedLimiting() {
 		double pos = Values.encoder_rotations;
 
-		if (!Robot.autonSelector.isSaftey()) {
+		if (mState == ElevatorState.DEMO) {
 			if (isOverriden == false) {
 				if (pos < 2.08)
 					percentageModify = Constants.kElevator.SPEED_1;
@@ -166,6 +170,8 @@ public class Elevator2 extends GZSubsystem {
 			} else {
 				percentageModify = 1;
 			}
+
+			// If not in demo, we are already slowing the drivetrain down somewhere else
 		} else {
 			percentageModify = 1;
 		}
@@ -202,10 +208,11 @@ public class Elevator2 extends GZSubsystem {
 	public synchronized void manualJoystick(GZJoystick joy) {
 		double up, down;
 
-		up = ((Robot.autonSelector.isSaftey() ? kElevator.SAFTEY_JOYSTICK_MODIFIER_UP
-				: kElevator.JOYSTICK_MODIFIER_UP));
-		down = ((Robot.autonSelector.isSaftey() ? kElevator.SAFTEY_JOYSTICK_MODIFIER_DOWN
-				: kElevator.JOYSTICK_MODIFIER_DOWN));
+		if (getState() == ElevatorState.DEMO) {
+
+		}
+		up = kElevator.JOYSTICK_MODIFIER_UP;
+		down = kElevator.JOYSTICK_MODIFIER_DOWN;
 
 		if (joy == OI.opJoy)
 			manual(joy.getLeftAnalogY() * ((joy.getLeftAnalogY() > 0) ? up : down));
@@ -254,7 +261,7 @@ public class Elevator2 extends GZSubsystem {
 	}
 
 	public enum ElevatorState {
-		NEUTRAL, MANUAL, POSITION
+		NEUTRAL, MANUAL, DEMO, POSITION
 	}
 
 	@Override
@@ -265,11 +272,18 @@ public class Elevator2 extends GZSubsystem {
 	public synchronized void setState(ElevatorState wantedState) {
 		if (this.isDisabed())
 			mState = ElevatorState.NEUTRAL;
-		else if (wantedState != mState) {
-			onStateExit(mState);
-			onStateStart(wantedState);
+		else if (Robot.autonSelector.isDemo())
+			mState = ElevatorState.DEMO;
+		else
 			mState = wantedState;
+	}
+
+	public synchronized void checkPrevState() {
+		if (mState != prevState) {
+			onStateExit(prevState);
+			onStateStart(mState);
 		}
+		prevState = mState;
 	}
 
 	public synchronized String getStateString() {

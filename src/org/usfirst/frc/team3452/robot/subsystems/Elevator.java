@@ -137,7 +137,7 @@ public class Elevator extends Subsystem {
 
 		double pos = getElevatorHeight();
 
-		if (!Robot.autonSelector.isSaftey()) {
+		if (!Robot.autonSelector.isDemo()) {
 			if (m_overriden == false) {
 
 				if (pos < 2.08)

@@ -218,7 +218,7 @@ public class AutonSelector extends Subsystem {
 			autonomousCommand = autoCommand[Robot.autonSelector.overrideValue];
 	}
 	
-	public boolean isSaftey() {
+	public boolean isDemo() {
 		return uglyAnalog() == kAutonSelector.SAFTEY_SWITCH;
 	}
 

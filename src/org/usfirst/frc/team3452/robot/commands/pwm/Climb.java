@@ -28,7 +28,7 @@ public class Climb extends Command {
 	}
 
 	protected void execute() {
-		if (!Robot.autonSelector.isSaftey()) {
+		if (!Robot.autonSelector.isDemo()) {
 			// WAIT ON FIRST TWO PRESSES
 			if (Robot.climber.climbCounter < 2) {
 				if (timer.get() > .7)

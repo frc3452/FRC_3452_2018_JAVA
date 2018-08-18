@@ -28,7 +28,7 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected void execute() {
-		if (!Robot.autonSelector.isSaftey()) {
+		if (!Robot.autonSelector.isDemo()) {
 			Robot.elevator.encoder(m_value);
 
 			if (Robot.elevator.isRemoteSensor) {

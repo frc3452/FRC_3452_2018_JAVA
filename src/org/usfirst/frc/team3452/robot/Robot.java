@@ -87,7 +87,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic() {
-
 		Robot.autonSelector.autonChooser();
 		Robot.autonSelector.printSelected();
 
