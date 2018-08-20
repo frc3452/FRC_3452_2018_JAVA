@@ -41,7 +41,7 @@ public class ElevatorManual extends Command {
 			speeds[0] = .6;
 			speeds[1] = 1;
 		} else {
-			Robot.elevator.softLimits(true);
+//			Robot.elevator.softLimits(true);
 			speeds[0] = .3;
 			speeds[1] = .5;
 		}
@@ -62,7 +62,7 @@ public class ElevatorManual extends Command {
 	@Override
 	protected void end() {
 		Robot.elevator.Elev_1.set(ControlMode.PercentOutput, 0);
-		Robot.elevator.softLimits(false);
+//		Robot.elevator.softLimits(false);
 	}
 
 	@Override

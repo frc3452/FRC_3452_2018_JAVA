@@ -8,6 +8,14 @@ package org.usfirst.frc.team3452.robot;
  */
 
 public class Constants {
+	public class kDemoMode {
+		public static final double DRIVE_MODIFIER = .5;
+		
+		public static final double ELEVATOR_JOYSTICK_MODIFIER_UP = .5;
+		public static final double ELEVATOR_JOYSTICK_MODIFIER_DOWN = .3;
+		
+	}
+	
     public class kAutonSelector {
     	public static final double CORRECTION = 0.025;
     	
@@ -114,9 +122,6 @@ public class Constants {
         public static final double JOYSTICK_MODIFIER_UP = 1;
         public static final double JOYSTICK_MODIFIER_DOWN = .6;
         
-        public static final double SAFTEY_JOYSTICK_MODIFIER_UP = .5;
-        public static final double SAFTEY_JOYSTICK_MODIFIER_DOWN = .3;
-        
         public static final double CLOSED_DOWN_SPEED_LIMIT = .45;
         public static final double CLOSED_UP_SPEED_LIMIT = .9;
         
@@ -126,7 +131,7 @@ public class Constants {
         public static final double SPEED_2 = .9;
         public static final double SPEED_3 = .65;
         public static final double SPEED_4 = .55;
-        public static final double SPEED_5 = .48; //.45
+        public static final double SPEED_5 = .43; //.45
 
         public static final int AMP_TRIGGER = 50;
         public static final int AMP_LIMIT = 40;

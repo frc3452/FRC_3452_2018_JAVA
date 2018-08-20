@@ -22,6 +22,8 @@ public class DriveTele extends Command {
 	protected void initialize() {
 		if (Robot.autonSelector.isDemo())
 			Robot.drive.m_modify = .5;
+		else
+			Robot.drive.m_modify = 1;
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public class MiddleAuton extends CommandGroup {
 	 * @see AutonSelector
 	 */
 	public MiddleAuton(AO option, AV switchVersion) {
-		addSequential(new EncoderReset());
+		addSequential(new ZeroEncoders());
 		addSequential(new GyroReset());
 
 		//IF DATA FOUND
@@ -88,7 +88,7 @@ public class MiddleAuton extends CommandGroup {
 				}
 			});
 
-			addSequential(new EncoderReset());
+			addSequential(new ZeroEncoders());
 
 			//TURN AND GRAB CUBE
 			addSequential(new CommandGroup() {
@@ -161,7 +161,7 @@ public class MiddleAuton extends CommandGroup {
 			});
 
 			//lower and reset encoders
-			addSequential(new EncoderReset());
+			addSequential(new ZeroEncoders());
 
 			//TURN AND GRAB CUBE
 			addSequential(new CommandGroup() {

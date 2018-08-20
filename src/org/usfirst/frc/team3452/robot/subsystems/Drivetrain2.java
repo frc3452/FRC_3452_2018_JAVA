@@ -3,6 +3,7 @@ package org.usfirst.frc.team3452.robot.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
+import org.usfirst.frc.team3452.robot.Constants.kDemoMode;
 import org.usfirst.frc.team3452.robot.Constants.kDrivetrain;
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
@@ -102,6 +103,10 @@ public class Drivetrain2 extends GZSubsystem {
 			break;
 		case OPEN_LOOP:
 			break;
+		case OPEN_LOOP_DRIVER:
+			break;
+		case DEMO:
+			break;
 		default:
 			break;
 		}
@@ -115,9 +120,15 @@ public class Drivetrain2 extends GZSubsystem {
 		case MOTION_PROFILE:
 			break;
 		case NEUTRAL:
+			OI.rumble(CONTROLLER.BOTH, 0);
 			break;
 		case OPEN_LOOP:
 			OI.rumble(CONTROLLER.BOTH, 0);
+			break;
+		case OPEN_LOOP_DRIVER:
+			OI.rumble(CONTROLLER.BOTH, 0);
+			break;
+		case DEMO:
 			break;
 		default:
 			break;
@@ -155,11 +166,20 @@ public class Drivetrain2 extends GZSubsystem {
 			Values.right_output = Values.right_desired_output;
 
 			break;
-		case DEMO:
-
+		case OPEN_LOOP_DRIVER:
+			
+			arcade(OI.driverJoy);
 			Values.control_mode = ControlMode.PercentOutput;
-			Values.left_output = Values.left_desired_output * .5;
-			Values.right_output = Values.right_desired_output * .5;
+			Values.left_output = Values.left_desired_output;
+			Values.right_output = Values.right_desired_output;
+			
+			break;
+		case DEMO:
+			
+			alternateArcade(OI.driverJoy);
+			Values.control_mode = ControlMode.PercentOutput;
+			Values.left_output = Values.left_desired_output * kDemoMode.DRIVE_MODIFIER;
+			Values.right_output = Values.right_desired_output * kDemoMode.DRIVE_MODIFIER;
 
 			break;
 
@@ -231,21 +251,15 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	public synchronized void arcade(GZJoystick joy) {
-		setState(DriveState.OPEN_LOOP);
-
 		arcade(joy.getLeftAnalogY() * percentageModify,
 				(joy.getRightTrigger() - joy.getLeftTrigger()) * .8 * percentageModify);
 	}
 
 	public synchronized void alternateArcade(GZJoystick joy) {
-		setState(DriveState.DEMO);
-
 		arcade(joy.getLeftAnalogY(), (joy.getRightAnalogX() * .85));
 	}
 
 	public synchronized void arcade(double move, double rotate) {
-		setState(DriveState.OPEN_LOOP);
-
 		double[] temp = arcadeToLR(move * Robot.elevator2.getPercentageModify(),
 				rotate * (Robot.elevator2.getPercentageModify() + .2));
 
@@ -327,8 +341,6 @@ public class Drivetrain2 extends GZSubsystem {
 
 	public synchronized void motionMagic(double leftRotations, double rightRotations, double leftAccel,
 			double rightAccel, double leftSpeed, double rightSpeed) {
-		setState(DriveState.MOTION_MAGIC);
-
 		double topspeed = 3941;
 
 		left_target = Units.rotations_to_ticks(leftRotations);
@@ -344,7 +356,6 @@ public class Drivetrain2 extends GZSubsystem {
 		L1.configMotionCruiseVelocity((int) (topspeed * leftSpeed), 10);
 		R1.configMotionCruiseVelocity((int) (topspeed * rightSpeed), 10);
 
-		Values.control_mode = ControlMode.MotionMagic;
 		Values.left_desired_output = left_target;
 		Values.right_desired_output = right_target;
 	}
@@ -363,7 +374,6 @@ public class Drivetrain2 extends GZSubsystem {
 		percentageComplete = Math.abs(
 				((Values.left_encoder_rotations / left_target) + (Values.right_encoder_rotations / right_target)) / 2);
 
-		Values.control_mode = ControlMode.Position;
 		Values.left_desired_output = left_target;
 		Values.right_desired_output = right_target;
 	}
@@ -667,7 +677,7 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	public enum DriveState {
-		OPEN_LOOP, DEMO, NEUTRAL, MOTION_MAGIC, MOTION_PROFILE,
+		OPEN_LOOP, OPEN_LOOP_DRIVER, DEMO, NEUTRAL, MOTION_MAGIC, MOTION_PROFILE,
 	}
 
 	@Override
@@ -677,24 +687,12 @@ public class Drivetrain2 extends GZSubsystem {
 
 	public synchronized void setState(DriveState wantedState) {
 
-		if (this.isDisabed()) {
-
-			onStateExit(mState);
+		if (this.isDisabed())
 			mState = DriveState.NEUTRAL;
-			onStateStart(mState);
-
-		} else if (Robot.autonSelector.isDemo()) {
-
-			onStateExit(mState);
+		else if (Robot.autonSelector.isDemo())
 			mState = DriveState.DEMO;
-			onStateStart(mState);
-
-		} else if (mState != wantedState) {
-
-			onStateExit(mState);
+		else if (mState != wantedState)
 			mState = wantedState;
-			onStateStart(mState);
-		}
 	}
 
 	public synchronized void checkPrevState() {

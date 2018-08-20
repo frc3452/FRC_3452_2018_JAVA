@@ -173,6 +173,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testPeriodic() {
+//		Robot.climber.control(-.35);
 	}
 
 	private void handleLEDs() {

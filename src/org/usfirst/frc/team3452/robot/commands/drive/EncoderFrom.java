@@ -13,11 +13,11 @@ public class EncoderFrom extends CommandGroup {
 	 * @param leftAccel
 	 * @param rightAccel
 	 * @param topspeed
-	 * @see EncoderReset
+	 * @see ZeroEncoders
 	 * @see EncoderDrive
 	 */
 	public EncoderFrom(double left, double right, double leftAccel, double rightAccel, double topspeed) {
-		addSequential(new EncoderReset());
+		addSequential(new ZeroEncoders());
 		addSequential(new EncoderDrive(left, right, leftAccel, rightAccel, topspeed));
 	}
 }

@@ -24,7 +24,7 @@ public class LeftAuton extends CommandGroup {
 	 * @see AutonSelector
 	 */
 	public LeftAuton(AO option, AV switchVersion, AV scaleVersion) {
-		addSequential(new EncoderReset());
+		addSequential(new ZeroEncoders());
 		addSequential(new GyroReset());
 
 		//IF DATA FOUND
@@ -164,7 +164,7 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .6)); // turn to switch 
 
-			addSequential(new EncoderReset());
+			addSequential(new ZeroEncoders());
 			addSequential(new CommandGroup() {
 				{
 					addParallel(new ElevatorWhileDrive(3.5, .6));
@@ -203,7 +203,7 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
 
-			addSequential(new EncoderReset());
+			addSequential(new ZeroEncoders());
 
 			addSequential(new CommandGroup() {
 				{
@@ -288,7 +288,7 @@ public class LeftAuton extends CommandGroup {
 			addParallel(new ElevatorPosition(2)); //raise
 			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
 
-			addSequential(new EncoderReset());
+			addSequential(new ZeroEncoders());
 			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, kAutonSelector.CORRECTION)); //drive front of scale
 
 			addSequential(new EncoderFrom(-1.5, .75, .5, .5, .5));
@@ -318,7 +318,7 @@ public class LeftAuton extends CommandGroup {
 			addParallel(new ElevatorPosition(2)); //raise
 			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
 
-			addSequential(new EncoderReset());
+			addSequential(new ZeroEncoders());
 			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, kAutonSelector.CORRECTION)); //drive front of scale
 
 			addSequential(new EncoderFrom(-1.5, .75, .5, .5, .5));

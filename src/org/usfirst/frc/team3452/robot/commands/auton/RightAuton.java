@@ -6,7 +6,7 @@ import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveToStop;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
 import org.usfirst.frc.team3452.robot.commands.drive.EncoderGyro;
-import org.usfirst.frc.team3452.robot.commands.drive.EncoderReset;
+import org.usfirst.frc.team3452.robot.commands.drive.ZeroEncoders;
 import org.usfirst.frc.team3452.robot.commands.drive.GyroPos;
 import org.usfirst.frc.team3452.robot.commands.drive.GyroReset;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
@@ -32,7 +32,7 @@ public class RightAuton extends CommandGroup {
 	 */
 	public RightAuton(AO option, AV switchVersion, AV scaleVersion) {
 		addSequential(new GyroReset());
-		addSequential(new EncoderReset());
+		addSequential(new ZeroEncoders());
 
 		// IF DATA FOUND
 		if (!Robot.autonSelector.gameMsg.equals("NOT")) {
@@ -133,7 +133,7 @@ public class RightAuton extends CommandGroup {
 			addSequential(new EncoderFrom(-1.5, 0.75, .5, .5, .5)); // turn to
 																	// switch
 
-			addSequential(new EncoderReset());
+			addSequential(new ZeroEncoders());
 			addSequential(new CommandGroup() {
 				{
 					addParallel(new ElevatorWhileDrive(3.5, .6));
@@ -172,7 +172,7 @@ public class RightAuton extends CommandGroup {
 																	// switch
 			addParallel(new ElevatorPosition(2)); // raise
 
-			addSequential(new EncoderReset());
+			addSequential(new ZeroEncoders());
 			addSequential(new EncoderGyro(6.95, 6.95, .4, .4, .4, -90, kAutonSelector.CORRECTION)); // drive
 			// back
 			// of
@@ -270,7 +270,7 @@ public class RightAuton extends CommandGroup {
 			addSequential(new EncoderFrom(-1.5, 0.75, .5, .5, .5)); // turn to
 																	// switch
 
-			addSequential(new EncoderReset());
+			addSequential(new ZeroEncoders());
 			// addSequential(new EncoderGyro(10.6, 10.6, .5, .5, .5, -90,
 			// kAutonSelector.CORRECTION)); // drive front of scale
 			addSequential(new EncoderGyro(10.6 / 3, 10.6 / 3, .5, .5, .5, -90, kAutonSelector.CORRECTION));
@@ -309,7 +309,7 @@ public class RightAuton extends CommandGroup {
 			addSequential(new EncoderFrom(-1.5, 0.75, .5, .5, .5)); // turn to
 																	// switch
 
-			addSequential(new EncoderReset());
+			addSequential(new ZeroEncoders());
 			addSequential(new EncoderGyro(10.6, 10.6, .5, .5, .5, -90, kAutonSelector.CORRECTION)); // drive
 			// front
 			// of

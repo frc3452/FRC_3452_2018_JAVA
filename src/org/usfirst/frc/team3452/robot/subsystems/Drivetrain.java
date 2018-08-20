@@ -136,7 +136,11 @@ public class Drivetrain extends Subsystem {
 
 		talon.setInverted((LorR) ? Constants.kDrivetrain.L_INVERT : Constants.kDrivetrain.R_INVERT);
 
+		
+		talon.configPeakOutputForward(1);
+		talon.configPeakOutputReverse(-1);
 		talon.configNominalOutputForward(0, 10);
+		talon.configNominalOutputReverse(0,10);
 
 		// AMP LIMIT
 		// OUTER TALONS IN BLOCK = 40amp, INNER TALONS IN BLOCK = 30amp
@@ -164,10 +168,6 @@ public class Drivetrain extends Subsystem {
 			// P (.1 {Amount of correction you want} * 1023) / 7635 ~ F (100% * 1023) / 3941
 			// P .425 D 20
 
-
-			TalonSRXConfiguration f = new TalonSRXConfiguration();
-			talon.configAllSettings(f);
-			
 			talon.config_kF(0, .2379, 10);
 
 			// If left master
@@ -388,11 +388,10 @@ public class Drivetrain extends Subsystem {
 
 		arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .8 * m_modify));
 		Robot.elevator.setDriveLimit();
-
 	}
 
 	public void alternateArcade(Joystick joy) {
-		arcade(-joy.getRawAxis(1) * m_modify, (joy.getRawAxis(4) * m_modify * .85));
+		arcade(-joy.getRawAxis(1) * m_modify, (joy.getRawAxis(4) * m_modify * .8));
 		Robot.elevator.setDriveLimit();
 		m_modify = .5;
 	}
@@ -530,7 +529,7 @@ public class Drivetrain extends Subsystem {
 	/**
 	 * @author max
 	 */
-	public void encoderReset() {
+	public void zeroEncoders() {
 		L1.setSelectedSensorPosition(0, 0, 10);
 		R1.setSelectedSensorPosition(0, 0, 10);
 	}
