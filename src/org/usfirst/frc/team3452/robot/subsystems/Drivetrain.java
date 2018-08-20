@@ -25,8 +25,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * <h1>Drivetrain subsystem</h1> Handles drive train, smartdashboard updating,
- * PDP slots
+ * <h1>Drivetrain subsystem</h1> Handles drive train, smartdashboard updating
  * 
  * @author max
  *
