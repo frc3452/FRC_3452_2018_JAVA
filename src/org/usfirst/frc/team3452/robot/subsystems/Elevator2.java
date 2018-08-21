@@ -69,24 +69,24 @@ public class Elevator2 extends GZSubsystem {
 		switch (mState) {
 		case MANUAL:
 
-			Values.control_mode = ControlMode.PercentOutput;
-			Values.output = Values.desired_output;
+			IO.control_mode = ControlMode.PercentOutput;
+			IO.output = IO.desired_output;
 
 			break;
 		case NEUTRAL:
 
-			Values.control_mode = ControlMode.Disabled;
-			Values.output = 0;
+			IO.control_mode = ControlMode.Disabled;
+			IO.output = 0;
 
 			break;
 		case POSITION:
 
-			Values.control_mode = ControlMode.Position;
-			Values.output = Values.desired_output;
+			IO.control_mode = ControlMode.Position;
+			IO.output = IO.desired_output;
 			break;
 		case DEMO:
-			Values.control_mode = ControlMode.PercentOutput;
-			Values.output = Values.desired_output;
+			IO.control_mode = ControlMode.PercentOutput;
+			IO.output = IO.desired_output;
 
 		default:
 			System.out.println("WARNING: Incorrect elevator state " + mState + " reached.");
@@ -96,7 +96,7 @@ public class Elevator2 extends GZSubsystem {
 		handleSpeedLimiting();
 	}
 
-	public static class Values {
+	public static class IO {
 		// in
 		static double encoder_ticks = -1;
 		static double encoder_rotations = -1;
@@ -120,23 +120,23 @@ public class Elevator2 extends GZSubsystem {
 
 	@Override
 	protected synchronized void in() {
-		Values.encoder_ticks = elevator_1.getSelectedSensorPosition(0);
-		Values.encoder_rotations = Units.ticks_to_rotations(Values.encoder_ticks);
-		Values.encoder_vel = elevator_1.getSelectedSensorVelocity(0);
+		IO.encoder_ticks = elevator_1.getSelectedSensorPosition(0);
+		IO.encoder_rotations = Units.ticks_to_rotations(IO.encoder_ticks);
+		IO.encoder_vel = elevator_1.getSelectedSensorVelocity(0);
 
-		Values.elevator_1_amp = elevator_1.getOutputCurrent();
-		Values.elevator_2_amp = elevator_2.getOutputCurrent();
+		IO.elevator_1_amp = elevator_1.getOutputCurrent();
+		IO.elevator_2_amp = elevator_2.getOutputCurrent();
 
-		Values.elevator_1_fwd_lmt = elevator_1.getSensorCollection().isFwdLimitSwitchClosed();
-		Values.elevator_1_rev_lmt = elevator_1.getSensorCollection().isRevLimitSwitchClosed();
+		IO.elevator_1_fwd_lmt = elevator_1.getSensorCollection().isFwdLimitSwitchClosed();
+		IO.elevator_1_rev_lmt = elevator_1.getSensorCollection().isRevLimitSwitchClosed();
 
-		Values.elevator_2_fwd_lmt = elevator_2.getSensorCollection().isFwdLimitSwitchClosed();
-		Values.elevator_2_rev_lmt = elevator_2.getSensorCollection().isRevLimitSwitchClosed();
+		IO.elevator_2_fwd_lmt = elevator_2.getSensorCollection().isFwdLimitSwitchClosed();
+		IO.elevator_2_rev_lmt = elevator_2.getSensorCollection().isRevLimitSwitchClosed();
 	}
 
 	public synchronized void outputSmartDashboard() {
-		SmartDashboard.putNumber("Elevator Rotations", Values.encoder_rotations);
-		SmartDashboard.putNumber("Elevator Vel", Values.encoder_vel);
+		SmartDashboard.putNumber("Elevator Rotations", IO.encoder_rotations);
+		SmartDashboard.putNumber("Elevator Vel", IO.encoder_vel);
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class Elevator2 extends GZSubsystem {
 	}
 
 	public synchronized void speedLimiting() {
-		double pos = Values.encoder_rotations;
+		double pos = IO.encoder_rotations;
 
 		if (mState == ElevatorState.DEMO) {
 			if (isOverriden == false) {
@@ -193,16 +193,16 @@ public class Elevator2 extends GZSubsystem {
 		elevator_1.configPeakOutputForward(kElevator.CLOSED_DOWN_SPEED_LIMIT, 10);
 		elevator_1.configPeakOutputReverse(kElevator.CLOSED_UP_SPEED_LIMIT * -1, 10);
 
-		target = Values.desired_output = -Units.rotations_to_ticks(rotations);
+		target = IO.desired_output = -Units.rotations_to_ticks(rotations);
 	}
 
 	public synchronized boolean isDone(double multiplier) {
-		return (Values.encoder_ticks < (target + (102 * multiplier))
-				&& Values.encoder_ticks > (target - (102 * multiplier)));
+		return (IO.encoder_ticks < (target + (102 * multiplier))
+				&& IO.encoder_ticks > (target - (102 * multiplier)));
 	}
 
 	public synchronized void encoderDone() {
-		Values.desired_output = 0;
+		IO.desired_output = 0;
 
 		elevator_1.configPeakOutputForward(1, 10);
 		elevator_1.configPeakOutputReverse(-1, 10);
@@ -231,7 +231,7 @@ public class Elevator2 extends GZSubsystem {
 	public synchronized void manual(double percentage) {
 		setState(ElevatorState.MANUAL);
 
-		Values.desired_output = percentage;
+		IO.desired_output = percentage;
 	}
 
 	public synchronized double getPercentageModify() {
@@ -262,7 +262,7 @@ public class Elevator2 extends GZSubsystem {
 
 	@Override
 	protected synchronized void out() {
-		elevator_1.set(Values.control_mode, Values.output);
+		elevator_1.set(IO.control_mode, IO.output);
 	}
 
 	public enum ElevatorState {

@@ -50,11 +50,11 @@ public class Climber2 extends GZSubsystem {
 		switch (mState) {
 
 		case MANUAL:
-			Values.climber_output = Values.climber_desired_output;
+			IO.climber_output = IO.climber_desired_output;
 			break;
 
 		case NEUTRAL:
-			Values.climber_output = 0;
+			IO.climber_output = 0;
 			break;
 
 		default:
@@ -63,7 +63,7 @@ public class Climber2 extends GZSubsystem {
 		}
 	}
 
-	public static class Values {
+	public static class IO {
 		// in
 		static double climber_1_amperage = -1;
 		static double climber_2_amperage = -1;
@@ -75,18 +75,18 @@ public class Climber2 extends GZSubsystem {
 
 	public void manual(double percentage) {
 		setState(ClimberState.MANUAL);
-		Values.climber_desired_output = percentage;
+		IO.climber_desired_output = percentage;
 	}
 
 	@Override
 	protected synchronized void in() {
-		Values.climber_1_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.CLIMBER_1);
-		Values.climber_2_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.CLIMBER_2);
+		IO.climber_1_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.CLIMBER_1);
+		IO.climber_2_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.CLIMBER_2);
 	}
 
 	@Override
 	protected synchronized void out() {
-		climber_1.set(Math.abs(Values.climber_output));
+		climber_1.set(Math.abs(IO.climber_output));
 	}
 
 	public enum ClimberState {

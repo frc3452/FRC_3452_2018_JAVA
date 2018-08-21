@@ -8,8 +8,9 @@ public abstract class GZSubsystem extends Subsystem {
 	// Set to neutral
 	public abstract void stop();
 
-	// Values class
+	// IO class
 	// State
+	// prevState
 	// void setState (State s)
 	// State getState
 	// void onStateStart (State s)

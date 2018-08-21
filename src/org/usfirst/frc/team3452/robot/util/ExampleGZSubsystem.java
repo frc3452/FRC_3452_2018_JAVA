@@ -72,12 +72,12 @@ public class ExampleGZSubsystem extends GZSubsystem {
 		switch (mState) {
 		case MANUAL:
 
-			Values.output = Values.desired_output;
+			IO.output = IO.desired_output;
 
 			break;
 		case NEUTRAL:
 
-			Values.output = 0;
+			IO.output = 0;
 			break;
 
 		case DEMO:
@@ -105,7 +105,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * anything to be able to change what the subsystem is trying to do, but nothing
 	 * but the subsystem itself to change what it is actually doing.
 	 */
-	public static class Values {
+	public static class IO {
 		// In
 		static double speed = -1;
 		static double position = -1;
@@ -121,8 +121,8 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 */
 	@Override
 	protected void in() {
-		Values.speed = example_motor.getSpeed();
-		Values.position = example_motor.getPosition();
+		IO.speed = example_motor.getSpeed();
+		IO.position = example_motor.getPosition();
 	}
 
 	// Put methods you need to create here!
@@ -134,13 +134,13 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 */
 	public void exampleMethodRunMotorWithJoystick(GZJoystick joy) {
 		setState(ExampleState.MANUAL);
-		Values.desired_output = joy.getLeftAnalogY();
+		IO.desired_output = joy.getLeftAnalogY();
 	}
 
 	/** Set our motor values to what they should be */
 	@Override
 	protected void out() {
-		example_motor.set(Values.output);
+		example_motor.set(IO.output);
 	}
 
 	/**

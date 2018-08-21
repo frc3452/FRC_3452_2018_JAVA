@@ -56,14 +56,14 @@ public class Intake2 extends GZSubsystem {
 		switch (mState) {
 		case MANUAL:
 
-			Values.left_output = Values.left_desired_output;
-			Values.right_output = Values.right_desired_output;
+			IO.left_output = IO.left_desired_output;
+			IO.right_output = IO.right_desired_output;
 
 			break;
 		case NEUTRAL:
 
-			Values.left_output = 0;
-			Values.right_output = 0;
+			IO.left_output = 0;
+			IO.right_output = 0;
 
 			break;
 		default:
@@ -72,7 +72,7 @@ public class Intake2 extends GZSubsystem {
 		}
 	}
 
-	public static class Values {
+	public static class IO {
 		// in
 		static double left_amperage = -1;
 		static double right_amperage = -1;
@@ -87,26 +87,26 @@ public class Intake2 extends GZSubsystem {
 
 	@Override
 	public synchronized void in() {
-		Values.left_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.INTAKE_L);
-		Values.right_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.INTAKE_R);
+		IO.left_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.INTAKE_L);
+		IO.right_amperage = Robot.drive2.getPDPChannelCurrent(kPDP.INTAKE_R);
 	}
 
 	public void manual(double percentage) {
 		setState(IntakeState.MANUAL);
 
-		Values.left_desired_output = Values.right_desired_output = percentage;
+		IO.left_desired_output = IO.right_desired_output = percentage;
 	}
 
 	public void spin(double percentage, boolean clockwise) {
 		setState(IntakeState.MANUAL);
-		Values.left_desired_output = percentage * (clockwise ? -1 : 1);
-		Values.right_desired_output = percentage * (clockwise ? 1 : -1);
+		IO.left_desired_output = percentage * (clockwise ? -1 : 1);
+		IO.right_desired_output = percentage * (clockwise ? 1 : -1);
 	}
 
 	@Override
 	public synchronized void out() {
-		left_intake.set(Values.left_output);
-		right_intake.set(Values.right_output);
+		left_intake.set(IO.left_output);
+		right_intake.set(IO.right_output);
 	}
 
 	public enum IntakeState {

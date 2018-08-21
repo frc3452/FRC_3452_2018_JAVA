@@ -140,46 +140,46 @@ public class Drivetrain2 extends GZSubsystem {
 		switch (mState) {
 		case MOTION_MAGIC:
 
-			Values.control_mode = ControlMode.MotionMagic;
-			Values.left_output = Values.left_desired_output;
-			Values.right_output = Values.right_desired_output;
+			IO.control_mode = ControlMode.MotionMagic;
+			IO.left_output = IO.left_desired_output;
+			IO.right_output = IO.right_desired_output;
 
 			break;
 		case MOTION_PROFILE:
 
-			Values.control_mode = ControlMode.MotionProfile;
-			Values.left_output = Values.left_desired_output;
-			Values.right_output = Values.right_desired_output;
+			IO.control_mode = ControlMode.MotionProfile;
+			IO.left_output = IO.left_desired_output;
+			IO.right_output = IO.right_desired_output;
 
 			break;
 		case NEUTRAL:
 
-			Values.control_mode = ControlMode.Disabled;
-			Values.left_output = 0;
-			Values.right_output = 0;
+			IO.control_mode = ControlMode.Disabled;
+			IO.left_output = 0;
+			IO.right_output = 0;
 
 			break;
 		case OPEN_LOOP:
 
-			Values.control_mode = ControlMode.PercentOutput;
-			Values.left_output = Values.left_desired_output;
-			Values.right_output = Values.right_desired_output;
+			IO.control_mode = ControlMode.PercentOutput;
+			IO.left_output = IO.left_desired_output;
+			IO.right_output = IO.right_desired_output;
 
 			break;
 		case OPEN_LOOP_DRIVER:
 			
 			arcade(OI.driverJoy);
-			Values.control_mode = ControlMode.PercentOutput;
-			Values.left_output = Values.left_desired_output;
-			Values.right_output = Values.right_desired_output;
+			IO.control_mode = ControlMode.PercentOutput;
+			IO.left_output = IO.left_desired_output;
+			IO.right_output = IO.right_desired_output;
 			
 			break;
 		case DEMO:
 			
 			alternateArcade(OI.driverJoy);
-			Values.control_mode = ControlMode.PercentOutput;
-			Values.left_output = Values.left_desired_output * kDemoMode.DRIVE_MODIFIER;
-			Values.right_output = Values.right_desired_output * kDemoMode.DRIVE_MODIFIER;
+			IO.control_mode = ControlMode.PercentOutput;
+			IO.left_output = IO.left_desired_output * kDemoMode.DRIVE_MODIFIER;
+			IO.right_output = IO.right_desired_output * kDemoMode.DRIVE_MODIFIER;
 
 			break;
 
@@ -189,7 +189,7 @@ public class Drivetrain2 extends GZSubsystem {
 		}
 	}
 
-	public static class Values {
+	public static class IO {
 		// in
 		static double left_encoder_ticks = -1;
 		static double left_encoder_rotations = -1;
@@ -219,33 +219,33 @@ public class Drivetrain2 extends GZSubsystem {
 
 	@Override
 	protected synchronized void in() {
-		Values.left_encoder_ticks = L1.getSelectedSensorPosition(0);
-		Values.left_encoder_rotations = Units.ticks_to_rotations(Values.left_encoder_ticks);
-		Values.left_encoder_vel = L1.getSelectedSensorVelocity(0);
+		IO.left_encoder_ticks = L1.getSelectedSensorPosition(0);
+		IO.left_encoder_rotations = Units.ticks_to_rotations(IO.left_encoder_ticks);
+		IO.left_encoder_vel = L1.getSelectedSensorVelocity(0);
 
-		Values.right_encoder_ticks = -R1.getSelectedSensorPosition(0);
-		Values.right_encoder_rotations = -Units.ticks_to_rotations(Values.right_encoder_ticks);
-		Values.right_encoder_vel = -R1.getSelectedSensorVelocity(0);
+		IO.right_encoder_ticks = -R1.getSelectedSensorPosition(0);
+		IO.right_encoder_rotations = -Units.ticks_to_rotations(IO.right_encoder_ticks);
+		IO.right_encoder_vel = -R1.getSelectedSensorVelocity(0);
 
-		Values.L1_amp = L1.getOutputCurrent();
-		Values.L2_amp = L2.getOutputCurrent();
-		Values.L3_amp = L3.getOutputCurrent();
-		Values.L4_amp = L4.getOutputCurrent();
-		Values.R1_amp = R1.getOutputCurrent();
-		Values.R2_amp = R2.getOutputCurrent();
-		Values.R3_amp = R3.getOutputCurrent();
-		Values.R4_amp = R4.getOutputCurrent();
+		IO.L1_amp = L1.getOutputCurrent();
+		IO.L2_amp = L2.getOutputCurrent();
+		IO.L3_amp = L3.getOutputCurrent();
+		IO.L4_amp = L4.getOutputCurrent();
+		IO.R1_amp = R1.getOutputCurrent();
+		IO.R2_amp = R2.getOutputCurrent();
+		IO.R3_amp = R3.getOutputCurrent();
+		IO.R4_amp = R4.getOutputCurrent();
 	}
 
 	@Override
 	public void outputSmartDashboard() {
 		SmartDashboard.putNumber("NavX Angle", mGyro.getAngle());
 
-		SmartDashboard.putNumber("L1", Values.left_encoder_rotations);
-		SmartDashboard.putNumber("R1", Values.right_encoder_rotations);
+		SmartDashboard.putNumber("L1", IO.left_encoder_rotations);
+		SmartDashboard.putNumber("R1", IO.right_encoder_rotations);
 
-		SmartDashboard.putNumber("L1 Vel", Values.left_encoder_vel);
-		SmartDashboard.putNumber("R1 Vel", Values.right_encoder_vel);
+		SmartDashboard.putNumber("L1 Vel", IO.left_encoder_vel);
+		SmartDashboard.putNumber("R1 Vel", IO.right_encoder_vel);
 
 		SmartDashboard.putNumber("PercentageCompleted", getPercentageComplete());
 	}
@@ -263,8 +263,8 @@ public class Drivetrain2 extends GZSubsystem {
 		double[] temp = arcadeToLR(move * Robot.elevator2.getPercentageModify(),
 				rotate * (Robot.elevator2.getPercentageModify() + .2));
 
-		Values.left_desired_output = temp[0];
-		Values.right_desired_output = temp[1];
+		IO.left_desired_output = temp[0];
+		IO.right_desired_output = temp[1];
 	}
 
 	// Modified from DifferentialDrive.java to produce double array, [0] being left
@@ -312,19 +312,19 @@ public class Drivetrain2 extends GZSubsystem {
 		setState(DriveState.OPEN_LOOP);
 
 		// TODO STATE TESTING - CHECK SIGN
-		Values.left_desired_output = Util.applyDeadband(left * Robot.elevator2.getPercentageModify(),
+		IO.left_desired_output = Util.applyDeadband(left * Robot.elevator2.getPercentageModify(),
 				kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
-		Values.right_desired_output = -Util.applyDeadband(right * Robot.elevator2.getPercentageModify(),
+		IO.right_desired_output = -Util.applyDeadband(right * Robot.elevator2.getPercentageModify(),
 				kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
 	}
 
 	public synchronized void tank(GZJoystick joy) {
 		setState(DriveState.OPEN_LOOP);
 
-		Values.left_desired_output = Util.applyDeadband(joy.getLeftAnalogY() * Robot.elevator2.getPercentageModify(),
+		IO.left_desired_output = Util.applyDeadband(joy.getLeftAnalogY() * Robot.elevator2.getPercentageModify(),
 				kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
 		// TODO STATE TESTING -CHECK SIGN
-		Values.right_desired_output = -Util.applyDeadband(joy.getRightAnalogY() * Robot.elevator2.getPercentageModify(),
+		IO.right_desired_output = -Util.applyDeadband(joy.getRightAnalogY() * Robot.elevator2.getPercentageModify(),
 				kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
 	}
 
@@ -348,7 +348,7 @@ public class Drivetrain2 extends GZSubsystem {
 		right_target = Units.rotations_to_ticks(rightRotations);
 
 		percentageComplete = Math.abs(
-				((Values.left_encoder_rotations / left_target) + (Values.right_encoder_rotations / right_target)) / 2);
+				((IO.left_encoder_rotations / left_target) + (IO.right_encoder_rotations / right_target)) / 2);
 
 		L1.configMotionAcceleration((int) (topspeed * leftAccel), 10);
 		R1.configMotionAcceleration((int) (topspeed * rightAccel), 10);
@@ -356,8 +356,8 @@ public class Drivetrain2 extends GZSubsystem {
 		L1.configMotionCruiseVelocity((int) (topspeed * leftSpeed), 10);
 		R1.configMotionCruiseVelocity((int) (topspeed * rightSpeed), 10);
 
-		Values.left_desired_output = left_target;
-		Values.right_desired_output = right_target;
+		IO.left_desired_output = left_target;
+		IO.right_desired_output = right_target;
 	}
 
 	@Deprecated
@@ -372,22 +372,22 @@ public class Drivetrain2 extends GZSubsystem {
 		right_target = -Units.rotations_to_ticks(rightRotations);
 
 		percentageComplete = Math.abs(
-				((Values.left_encoder_rotations / left_target) + (Values.right_encoder_rotations / right_target)) / 2);
+				((IO.left_encoder_rotations / left_target) + (IO.right_encoder_rotations / right_target)) / 2);
 
-		Values.left_desired_output = left_target;
-		Values.right_desired_output = right_target;
+		IO.left_desired_output = left_target;
+		IO.right_desired_output = right_target;
 	}
 
 	public synchronized boolean encoderSpeedIsUnder(double ticksPer100Ms) {
-		double l = Math.abs(Values.left_encoder_vel);
-		double r = Math.abs(Values.right_encoder_vel);
+		double l = Math.abs(IO.left_encoder_vel);
+		double r = Math.abs(IO.right_encoder_vel);
 
 		return l < ticksPer100Ms && r < ticksPer100Ms;
 	}
 
 	public synchronized void encoderDone() {
-		Values.control_mode = ControlMode.PercentOutput;
-		Values.left_desired_output = Values.right_desired_output = 0;
+		IO.control_mode = ControlMode.PercentOutput;
+		IO.left_desired_output = IO.right_desired_output = 0;
 
 		processMotionProfileBuffer(3452);
 
@@ -406,17 +406,17 @@ public class Drivetrain2 extends GZSubsystem {
 	}
 
 	public synchronized boolean encoderIsDone(double multiplier) {
-		return (Values.left_encoder_ticks < left_target + 102 * multiplier)
-				&& (Values.left_encoder_ticks > left_target - 102 * multiplier)
-				&& (Values.right_encoder_ticks < right_target + 102 * multiplier)
-				&& (Values.right_encoder_ticks > right_target - 102 * multiplier);
+		return (IO.left_encoder_ticks < left_target + 102 * multiplier)
+				&& (IO.left_encoder_ticks > left_target - 102 * multiplier)
+				&& (IO.right_encoder_ticks < right_target + 102 * multiplier)
+				&& (IO.right_encoder_ticks > right_target - 102 * multiplier);
 	}
 
 	public synchronized boolean encoderIsDoneEither(double multiplier) {
-		return (Values.left_encoder_ticks < left_target + 102 * multiplier
-				&& Values.left_encoder_ticks > left_target - 102 * multiplier)
-				|| (Values.right_encoder_ticks < right_target + 102 * multiplier
-						&& Values.right_encoder_ticks > right_target - 102 * multiplier);
+		return (IO.left_encoder_ticks < left_target + 102 * multiplier
+				&& IO.left_encoder_ticks > left_target - 102 * multiplier)
+				|| (IO.right_encoder_ticks < right_target + 102 * multiplier
+						&& IO.right_encoder_ticks > right_target - 102 * multiplier);
 	}
 
 	private class MotionProfileBuffer implements java.lang.Runnable {
@@ -672,8 +672,8 @@ public class Drivetrain2 extends GZSubsystem {
 
 	@Override
 	protected synchronized void out() {
-		L1.set(Values.control_mode, Values.left_output);
-		R1.set(Values.control_mode, Values.right_output);
+		L1.set(IO.control_mode, IO.left_output);
+		R1.set(IO.control_mode, IO.right_output);
 	}
 
 	public enum DriveState {
