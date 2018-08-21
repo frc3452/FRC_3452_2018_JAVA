@@ -191,22 +191,22 @@ public class Drivetrain2 extends GZSubsystem {
 
 	public static class IO {
 		// in
-		static double left_encoder_ticks = -1;
-		static double left_encoder_rotations = -1;
-		static double left_encoder_vel = -1;
+		static double left_encoder_ticks = Double.NaN;
+		static double left_encoder_rotations = Double.NaN;
+		static double left_encoder_vel = Double.NaN;
 
-		static double right_encoder_ticks = -1;
-		static double right_encoder_rotations = -1;
-		static double right_encoder_vel = -1;
+		static double right_encoder_ticks = Double.NaN;
+		static double right_encoder_rotations = Double.NaN;
+		static double right_encoder_vel = Double.NaN;
 
-		static double L1_amp = -1;
-		static double L2_amp = -1;
-		static double L3_amp = -1;
-		static double L4_amp = -1;
-		static double R1_amp = -1;
-		static double R2_amp = -1;
-		static double R3_amp = -1;
-		static double R4_amp = -1;
+		static double L1_amp = Double.NaN;
+		static double L2_amp = Double.NaN;
+		static double L3_amp = Double.NaN;
+		static double L4_amp = Double.NaN;
+		static double R1_amp = Double.NaN;
+		static double R2_amp = Double.NaN;
+		static double R3_amp = Double.NaN;
+		static double R4_amp = Double.NaN;
 
 		// out
 		static private double left_output = 0;

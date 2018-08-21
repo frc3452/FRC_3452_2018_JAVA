@@ -65,8 +65,8 @@ public class Climber2 extends GZSubsystem {
 
 	public static class IO {
 		// in
-		static double climber_1_amperage = -1;
-		static double climber_2_amperage = -1;
+		static double climber_1_amperage = Double.NaN;
+		static double climber_2_amperage = Double.NaN;
 
 		// out
 		static private double climber_output = 0;

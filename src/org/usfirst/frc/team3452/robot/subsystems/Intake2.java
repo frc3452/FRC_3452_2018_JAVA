@@ -74,8 +74,8 @@ public class Intake2 extends GZSubsystem {
 
 	public static class IO {
 		// in
-		static double left_amperage = -1;
-		static double right_amperage = -1;
+		static double left_amperage = Double.NaN;
+		static double right_amperage = Double.NaN;
 
 		// out
 		static private double left_output = 0;

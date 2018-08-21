@@ -98,12 +98,12 @@ public class Elevator2 extends GZSubsystem {
 
 	public static class IO {
 		// in
-		static double encoder_ticks = -1;
-		static double encoder_rotations = -1;
-		static double encoder_vel = -1;
-
-		static double elevator_1_amp = -1;
-		static double elevator_2_amp = -1;
+		static double encoder_ticks = Double.NaN;
+		static double encoder_rotations = Double.NaN;
+		static double encoder_vel = Double.NaN;
+		
+		static double elevator_1_amp = Double.NaN;
+		static double elevator_2_amp = Double.NaN;
 
 		static boolean elevator_1_fwd_lmt = false;
 		static boolean elevator_1_rev_lmt = false;
