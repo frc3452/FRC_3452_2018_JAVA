@@ -1,24 +1,17 @@
 package org.usfirst.frc.team3452.robot;
 
-import java.util.Arrays;
-
 import org.usfirst.frc.team3452.robot.Constants.kAutonSelector;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
-import org.usfirst.frc.team3452.robot.subsystems.Climber2;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain2;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
-import org.usfirst.frc.team3452.robot.subsystems.Elevator2;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
-import org.usfirst.frc.team3452.robot.subsystems.Intake2;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
 import org.usfirst.frc.team3452.robot.subsystems.Playback;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.STATE;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
-import org.usfirst.frc.team3452.robot.util.GZSubsystemManager;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -37,17 +30,8 @@ public class Robot extends TimedRobot {
 	public static final Lights lights = new Lights();
 	public static final Playback playback = new Playback();
 
-	// TODO STATE TESTING CONSTRUCTION
-	public static final Climber2 climber2 = new Climber2();
-	public static final Intake2 intake2 = new Intake2();
-	public static final Drivetrain2 drive2 = new Drivetrain2();
-	public static final Elevator2 elevator2 = new Elevator2();
-	private static final GZSubsystemManager mSubsystems = new GZSubsystemManager(
-			Arrays.asList(climber2, intake2, drive2, elevator2));
-
 	@SuppressWarnings("unused")
 	private static final OI oi = new OI();
-
 
 	// Flags
 	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false;
@@ -62,9 +46,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic() {
-		// TODO STATE TESTING CONSTRUCTION
-		mSubsystems.loop();
-
 		handleLEDs();
 		Robot.drive.loggerUpdate();
 
@@ -76,9 +57,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
-		// TODO STATE TESTING CONSTRUCTION
-		mSubsystems.stop();
-		
 		endLog();
 
 		Robot.drive.brake((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
@@ -154,11 +132,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		//TODO 4) FIND SOME WAY TO BETTER MANAGE TASKS THAN TODOS
-		//TODO 2) A - VERIFY STOP AND DISABLE WORK FOR EACH SUBSYSTEM, TRY WITH SUBSYSTEMMANAGER
-		
-		//TODO 2) B - USE FOR TESTING
-		//Comment out, just if joy.getrawbutton(1) disable else enable
 		if (!wasTest)
 			Scheduler.getInstance().run();
 	}

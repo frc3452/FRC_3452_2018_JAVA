@@ -68,9 +68,8 @@ public class Elevator extends Subsystem {
 		Elev_1.setSensorPhase(Constants.kElevator.ENC_INVERT);
 		
 		//SOFT LIMITS FOR DEMO MODE
-		//TODO 1) CHECK POLARITY
 		Elev_1.configForwardSoftLimitThreshold(Units.rotations_to_ticks(5));
-		Elev_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-1));
+		Elev_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-5));
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
 		Elev_1.configSetParameter(ParamEnum.eClearPosOnLimitF, 1, 0, 0, 10);

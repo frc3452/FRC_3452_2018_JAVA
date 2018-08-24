@@ -18,7 +18,6 @@ public class Climber extends Subsystem {
 	
 	public void control(double speed) {
 		Climber.set(Math.abs(speed));
-//		Climber.set(speed);
 	}
 
 	public Climber() {
