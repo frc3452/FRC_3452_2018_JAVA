@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.command.Command;
 public class ElevatorWhileDrive extends Command {
 
 	private double m_value, m_percent;
-	private boolean l_rev = false, l_fwd = false;
 
 	/**
 	 * @author macco
