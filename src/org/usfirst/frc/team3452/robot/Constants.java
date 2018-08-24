@@ -172,6 +172,7 @@ public class Constants {
 
     public class kPlayback {
         public final static int RECORDING_MOTION_PROFILE_MS = 100; //20
+        public final static double LOGGING_SPEED = .125;
     }
 
 }

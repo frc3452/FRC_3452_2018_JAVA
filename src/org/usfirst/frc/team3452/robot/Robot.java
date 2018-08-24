@@ -7,13 +7,10 @@ import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
-import org.usfirst.frc.team3452.robot.subsystems.Climber2;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain2;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.DriveState;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
-import org.usfirst.frc.team3452.robot.subsystems.Elevator2;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
-import org.usfirst.frc.team3452.robot.subsystems.Intake2;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
 import org.usfirst.frc.team3452.robot.subsystems.Playback;
 import org.usfirst.frc.team3452.robot.subsystems.Playback.STATE;
@@ -25,9 +22,11 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
+
 	public static final Drivetrain drive = new Drivetrain();
 	public static final Elevator elevator = new Elevator();
 	public static final Intake intake = new Intake();
@@ -38,16 +37,13 @@ public class Robot extends TimedRobot {
 	public static final Playback playback = new Playback();
 
 	// TODO STATE TESTING CONSTRUCTION
-	public static final Climber2 climber2 = new Climber2();
-	public static final Intake2 intake2 = new Intake2();
-	public static final Drivetrain2 drive2 = new Drivetrain2();
-	public static final Elevator2 elevator2 = new Elevator2();
 	private static final GZSubsystemManager mSubsystems = new GZSubsystemManager(
-			Arrays.asList(climber2, intake2, drive2, elevator2));
+			Arrays.asList(drive, elevator, intake, climber));
 
 	@SuppressWarnings("unused")
 	private static final OI oi = new OI();
 
+	private Timer mAutoTimer = new Timer();
 
 	// Flags
 	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false;
@@ -58,16 +54,16 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
+		mAutoTimer.stop();
+		mAutoTimer.reset();
+		mAutoTimer.start();
 	}
 
 	@Override
 	public void robotPeriodic() {
-		// TODO STATE TESTING CONSTRUCTION
-		mSubsystems.loop();
-
+		mSubsystems.stop(); 
+		
 		handleLEDs();
-		Robot.drive.loggerUpdate();
-
 		// LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
 		// LOOPED HERE
 		if (safeToLog && logging)
@@ -76,9 +72,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
-		// TODO STATE TESTING CONSTRUCTION
 		mSubsystems.stop();
-		
+
 		endLog();
 
 		Robot.drive.brake((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
@@ -103,14 +98,14 @@ public class Robot extends TimedRobot {
 		startLog();
 
 		// timer start
-		Robot.drive.timer.stop();
-		Robot.drive.timer.reset();
-		Robot.drive.timer.start();
+		mAutoTimer.stop();
+		mAutoTimer.reset();
+		mAutoTimer.start();
 
 		// keep overriding while game data bad
 		do {
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
-		} while ((Robot.autonSelector.gameMsg.equals("NOT") && Robot.drive.timer.get() < 3));
+		} while ((Robot.autonSelector.gameMsg.equals("NOT") && mAutoTimer.get() < 3));
 
 		Robot.autonSelector.setAutons();
 
@@ -139,6 +134,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		startLog();
+		
+		Robot.drive.setState(DriveState.OPEN_LOOP_DRIVER);
 
 		// GREEN LOW BRIGHTNESS
 		Robot.lights.hsv(250, 1, .5);
@@ -154,11 +151,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		//TODO 4) FIND SOME WAY TO BETTER MANAGE TASKS THAN TODOS
-		//TODO 2) A - VERIFY STOP AND DISABLE WORK FOR EACH SUBSYSTEM, TRY WITH SUBSYSTEMMANAGER
-		
-		//TODO 2) B - USE FOR TESTING
-		//Comment out, just if joy.getrawbutton(1) disable else enable
+		// TODO 4) FIND SOME WAY TO BETTER MANAGE TASKS THAN TODOS
 		if (!wasTest)
 			Scheduler.getInstance().run();
 	}
@@ -221,7 +214,7 @@ public class Robot extends TimedRobot {
 
 					} else {
 						// IF NOT CONNECTED DO AGGRESSIVE RED PULSE
-						Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (Robot.drive.timer.get() / 100));
+						Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (mAutoTimer.get()) / 100);
 					}
 				}
 				break;

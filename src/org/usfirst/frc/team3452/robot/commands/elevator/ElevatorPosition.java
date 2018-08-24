@@ -8,7 +8,7 @@ import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 public class ElevatorPosition extends Command {
 
 	private double m_value;
-	private boolean l_rev = false, l_fwd = false;
+//	private boolean l_rev = false, l_fwd = false;
 
 	/**
 	 * Encoder movement of elevator
@@ -28,30 +28,21 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected void execute() {
-		if (!Robot.autonSelector.isDemo()) {
-			Robot.elevator.encoder(m_value);
-
-			if (Robot.elevator.isRemoteSensor) {
-				l_rev = Robot.elevator.Elev_2.getSensorCollection().isRevLimitSwitchClosed();
-				l_fwd = Robot.elevator.Elev_2.getSensorCollection().isFwdLimitSwitchClosed();
-			} else {
-				l_rev = Robot.elevator.Elev_1.getSensorCollection().isRevLimitSwitchClosed();
-				l_fwd = Robot.elevator.Elev_1.getSensorCollection().isFwdLimitSwitchClosed();
-			}
-		}
+		Robot.elevator.encoder(m_value);
 	}
 
 	protected boolean isFinished() {
-		if (l_rev && m_value > 0)
+		if (Robot.elevator.mIO.elevator_rev_lmt && m_value > 0)
 			return true;
 
-		if (l_fwd && m_value < 0)
+		if (Robot.elevator.mIO.elevator_fwd_lmt && m_value < 0)
 			return true;
 
 		return Robot.elevator.isDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
 	}
 
 	protected void end() {
+		Robot.elevator.stop();
 		Robot.elevator.encoderDone();
 	}
 

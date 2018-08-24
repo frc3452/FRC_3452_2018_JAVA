@@ -40,7 +40,7 @@ public class EncoderGyro extends Command {
 	}
 
 	protected void execute() {
-		c_gyro = Robot.drive.Gyro.getAngle();
+		c_gyro = Robot.drive.getGyro().getAngle();
 
 		if (c_gyro < t_gyro + .4 && c_gyro > t_gyro - .4)
 			Robot.drive.motionMagic(l_pos, r_pos, l_accel, r_accel, m_speed, m_speed);
@@ -60,6 +60,7 @@ public class EncoderGyro extends Command {
 
 	protected void end() {
 		Robot.drive.encoderDone();
+		Robot.drive.stop();
 	}
 
 	protected void interrupted() {

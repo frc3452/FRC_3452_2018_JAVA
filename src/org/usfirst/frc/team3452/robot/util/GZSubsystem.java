@@ -10,7 +10,6 @@ public abstract class GZSubsystem extends Subsystem {
 
 	// IO class
 	// State
-	// prevState
 	// void setState (State s)
 	// State getState
 	// void onStateStart (State s)
@@ -32,22 +31,14 @@ public abstract class GZSubsystem extends Subsystem {
 	}
 
 	public void enableFollower() {
-
 	}
-
-	// Runs onStateStart and onStateExit appropriately
-	public abstract void checkPrevState();
 
 	// Each subsystem is able to report its current state as a string
 	public abstract String getStateString();
 
 	// Main loop
-	public void loop() {
-		in();
-		out();
-		checkPrevState();
-	}
-
+	public abstract void loop();
+	
 	// Read all inputs
 	protected abstract void in();
 

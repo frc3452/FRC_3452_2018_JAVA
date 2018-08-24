@@ -26,8 +26,7 @@ public class IntakeSpin extends Command {
 	}
 
 	protected void execute() {
-		Robot.intake.Intake_L.set((m_speed * ((m_clockwise) ? -1 : 1)));
-		Robot.intake.Intake_R.set((m_speed * ((m_clockwise) ? 1 : -1)));
+		Robot.intake.spin(m_speed, m_clockwise);
 	}
 
 	protected boolean isFinished() {
@@ -35,7 +34,7 @@ public class IntakeSpin extends Command {
 	}
 
 	protected void end() {
-		Robot.intake.manual(0);
+		Robot.intake.stop();
 	}
 
 	protected void interrupted() {

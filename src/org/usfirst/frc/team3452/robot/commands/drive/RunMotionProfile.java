@@ -2,10 +2,11 @@ package org.usfirst.frc.team3452.robot.commands.drive;
 
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.motionprofiles.Path;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.DriveState;
+import org.usfirst.frc.team3452.robot.util.GZSRX.Side;
 
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -28,7 +29,7 @@ public class RunMotionProfile extends Command {
 
 	@Override
 	protected void initialize() {
-		//check if we are parsing or running a stored motion profile
+		// check if we are parsing or running a stored motion profile
 		if (path_.mpDur() == 3452)
 			Robot.drive.motionProfileToTalons();
 		else
@@ -37,22 +38,22 @@ public class RunMotionProfile extends Command {
 
 	@Override
 	protected void execute() {
-		
+		Robot.drive.setState(DriveState.MOTION_PROFILE);
+
 		if (lStat.btmBufferCnt > 5 && rStat.btmBufferCnt > 5) {
-			Robot.drive.L1.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
-			Robot.drive.R1.set(ControlMode.MotionProfile, SetValueMotionProfile.Enable.value);
+			Robot.drive.mIO.left_desired_output = Robot.drive.mIO.right_desired_output = SetValueMotionProfile.Enable.value;
 		} else {
-			Robot.drive.L1.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
-			Robot.drive.R1.set(ControlMode.MotionProfile, SetValueMotionProfile.Disable.value);
+			Robot.drive.mIO.left_desired_output = Robot.drive.mIO.right_desired_output = SetValueMotionProfile.Disable.value;
+
 		}
-		
-		Robot.drive.L1.getMotionProfileStatus(lStat);
-		Robot.drive.R1.getMotionProfileStatus(rStat);
+
+		Robot.drive.getMotionProfileStatus(Side.LEFT, lStat);
+		Robot.drive.getMotionProfileStatus(Side.RIGHT, rStat);
 	}
 
 	@Override
 	protected boolean isFinished() {
-		//		return isTimedOut();
+		// return isTimedOut();
 		return (lStat.activePointValid && lStat.isLast) || (rStat.activePointValid && rStat.isLast) || isTimedOut();
 	}
 
@@ -60,6 +61,7 @@ public class RunMotionProfile extends Command {
 	protected void end() {
 		System.out.println("Motion Profile Complete");
 		Robot.drive.encoderDone();
+		Robot.drive.stop();
 	}
 
 	@Override

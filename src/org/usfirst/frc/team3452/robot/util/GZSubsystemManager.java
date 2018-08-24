@@ -33,7 +33,6 @@ public class GZSubsystemManager {
 	}
 
 	public void whatIsDisabled(boolean printHeader) {
-		//TODO 2) B - USE FOR TESTING
 		if (printHeader)
 			System.out.println("~~~SUBSYSTEMS DISABLED~~~");
 		
@@ -43,7 +42,6 @@ public class GZSubsystemManager {
 	
 	public void printStates(boolean printHeader)
 	{
-		//TODO 2) B - USE FOR TESTING
 		if (printHeader)
 			System.out.println("~~~SUBSYSTEM STATES~~~");
 		

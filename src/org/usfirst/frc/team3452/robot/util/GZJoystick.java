@@ -9,7 +9,7 @@ public class GZJoystick extends Joystick {
 	}
 
 	public double getLeftAnalogY() {
-		return -this.getRawAxis(Axises.LEFT_ANALOG_X);
+		return -this.getRawAxis(Axises.LEFT_ANALOG_Y);
 	}
 
 	public double getLeftAnalogX() {
@@ -34,10 +34,6 @@ public class GZJoystick extends Joystick {
 		return this.getRawAxis(Axises.RIGHT_TRIGGER);
 	}
 
-	public boolean getButton(int button) {
-		return this.getRawButton(button);
-	}
-
 	public static class Axises {
 		public static int LEFT_ANALOG_X = 0;
 		public static int LEFT_ANALOG_Y = 1;
@@ -48,16 +44,16 @@ public class GZJoystick extends Joystick {
 	}
 
 	public static class Buttons {
-		static int A = 1;
-		static int B = 2;
-		static int X = 3;
-		static int Y = 4;
-		static int LB = 5;
-		static int RB = 6;
-		static int BACK = 7;
-		static int START = 8;
-		static int LEFT_CLICK = 9;
-		static int RIGHT_CLICK = 10;
+		public static int A = 1;
+		public static int B = 2;
+		public static int X = 3;
+		public static int Y = 4;
+		public static int LB = 5;
+		public static int RB = 6;
+		public static int BACK = 7;
+		public static int START = 8;
+		public static int LEFT_CLICK = 9;
+		public static int RIGHT_CLICK = 10;
 	}
 	
 	public void rumble(double intensity)

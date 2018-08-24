@@ -34,7 +34,7 @@ public class IntakeWhileDrive extends Command {
 	}
 
 	protected void execute() {
-		if (Robot.drive.p_pos > m_percent) {
+		if (Robot.drive.getPercentageComplete() > m_percent) {
 			Robot.intake.manual(m_value);
 
 			if (timeoutSet == false) {

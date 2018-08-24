@@ -1,11 +1,24 @@
 package org.usfirst.frc.team3452.robot.subsystems;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.Constants.kDemoMode;
+import org.usfirst.frc.team3452.robot.Constants.kDrivetrain;
+import org.usfirst.frc.team3452.robot.OI;
+import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.commands.drive.DriveTele;
+import org.usfirst.frc.team3452.robot.util.GZJoystick;
+import org.usfirst.frc.team3452.robot.util.GZSRX;
+import org.usfirst.frc.team3452.robot.util.GZSRX.Breaker;
+import org.usfirst.frc.team3452.robot.util.GZSRX.Master;
+import org.usfirst.frc.team3452.robot.util.GZSRX.Side;
+import org.usfirst.frc.team3452.robot.util.GZSubsystem;
+import org.usfirst.frc.team3452.robot.util.Units;
+import org.usfirst.frc.team3452.robot.util.Util;
 
+import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -15,101 +28,66 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * <h1>Drivetrain subsystem</h1> Handles drive train, smartdashboard updating
- * 
- * @author max
- *
- */
-public class Drivetrain extends Subsystem {
+public class Drivetrain extends GZSubsystem {
+
+	private DriveState mState = DriveState.NEUTRAL;
+	public IO mIO = new IO();
+
 	// PDP
-	public PowerDistributionPanel pdp = new PowerDistributionPanel(0);
+	private PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 
 	// DRIVETRAIN
-	public WPI_TalonSRX L1, L2, L3, L4, R1, R2, R3, R4;
+	private GZSRX L1, L2, L3, L4, R1, R2, R3, R4;
+	private List<GZSRX> controllers;
 
 	// ROBOT DRIVE OBJECT
-	private DifferentialDrive robotDrive;
-
-	private ArrayList<WPI_TalonSRX> talons = new ArrayList<WPI_TalonSRX>();
+//	private DifferentialDrive robotDrive;
 
 	// GYRO
-	public AHRS Gyro;
-
-	// variable init
-	public double m_modify = 1, m_elev_modify = 1;
-	public double p_pos;
-	private double l_pos = 0, r_pos = 0;
+	private AHRS mGyro;
 
 	// init timer
-	public Timer timer = new Timer();
+	private Timer timer = new Timer();
 
-	public void loggerUpdate() {
-		SmartDashboard.putNumber("NavX Angle", Gyro.getAngle());
-
-		SmartDashboard.putNumber("L1", getLeftPosition());
-		SmartDashboard.putNumber("R1", getRightPosition());
-
-		SmartDashboard.putNumber("L1 S", getLeftSpeed());
-		SmartDashboard.putNumber("R1 S", getRightSpeed());
-
-		SmartDashboard.putNumber("% Complete", p_pos);
-
-		SmartDashboard.putNumber("Elevator Enc", Robot.elevator.getElevatorHeight());
-		SmartDashboard.putNumber("Elev Velocity", Robot.elevator.getElevatorSpeed());
-
-		SmartDashboard.putString("Selected auton", Robot.autonSelector.autonString);
-		SmartDashboard.putString("Override String", Robot.autonSelector.overrideString);
-
-		SmartDashboard.putString("FIELD DATA", Robot.lights.gsm());
-
-		SmartDashboard.putNumber("Selector A", Robot.autonSelector.as_A.getValue());
-		SmartDashboard.putNumber("Selector B", Robot.autonSelector.as_B.getValue());
-
-		SmartDashboard.putNumber("UglyAnalog", Robot.autonSelector.uglyAnalog());
-
-		SmartDashboard.putNumber("lerror", L1.getClosedLoopError(0));
-		SmartDashboard.putNumber("rerror", R1.getClosedLoopError(0));
-	}
+	private double percentageModify = 1;
+	private double percentageComplete;
+	private double left_target = 0, right_target = 0;
 
 	public Drivetrain() {
+
+		// init timer
 		timer.stop();
 		timer.reset();
 		timer.start();
 
-		// Talons
-		talons.add(L1 = new WPI_TalonSRX(Constants.kDrivetrain.L1));
-		talons.add(L2 = new WPI_TalonSRX(Constants.kDrivetrain.L2));
-		talons.add(L3 = new WPI_TalonSRX(Constants.kDrivetrain.L3));
-		talons.add(L4 = new WPI_TalonSRX(Constants.kDrivetrain.L4));
-		talons.add(R1 = new WPI_TalonSRX(Constants.kDrivetrain.R1));
-		talons.add(R2 = new WPI_TalonSRX(Constants.kDrivetrain.R2));
-		talons.add(R3 = new WPI_TalonSRX(Constants.kDrivetrain.R3));
-		talons.add(R4 = new WPI_TalonSRX(Constants.kDrivetrain.R4));
+		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
+		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
+		L3 = new GZSRX(kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
+		L4 = new GZSRX(kDrivetrain.L4, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
 
-		Gyro = new AHRS(SPI.Port.kMXP);
+		R1 = new GZSRX(kDrivetrain.R1, Breaker.AMP_40, Side.RIGHT, Master.MASTER);
+		R2 = new GZSRX(kDrivetrain.R2, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
+		R3 = new GZSRX(kDrivetrain.R3, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
+		R4 = new GZSRX(kDrivetrain.R4, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
 
-		for (WPI_TalonSRX t : talons) {
+		controllers = Arrays.asList(L1, L2, L3, L4, R1, R2, R3, R4);
+
+		mGyro = new AHRS(SPI.Port.kMXP);
+
+		brake(NeutralMode.Coast);
+
+		// TODO 3) B - FINISH CONSTRUCTION
+		for (GZSRX t : controllers) {
 			t.configFactoryDefault();
 			talonInit(t);
 		}
 
-		// Drivetrain
-		robotDrive = new DifferentialDrive(L1, R1);
-		robotDrive.setDeadband(0.045); // .08
-		robotDrive.setSafetyEnabled(false);
-		brake(NeutralMode.Coast);
-
-		robotDrive.setSubsystem("Drive train");
 		pdp.setSubsystem("Drive train");
 
 		L1.setName("L1");
@@ -121,7 +99,7 @@ public class Drivetrain extends Subsystem {
 		R3.setName("R3");
 		R4.setName("R4");
 
-		Gyro.reset();
+		mGyro.reset();
 	}
 
 	private void talonInit(WPI_TalonSRX talon) {
@@ -134,11 +112,10 @@ public class Drivetrain extends Subsystem {
 
 		talon.setInverted((LorR) ? Constants.kDrivetrain.L_INVERT : Constants.kDrivetrain.R_INVERT);
 
-		
 		talon.configPeakOutputForward(1);
 		talon.configPeakOutputReverse(-1);
 		talon.configNominalOutputForward(0, 10);
-		talon.configNominalOutputReverse(0,10);
+		talon.configNominalOutputReverse(0, 10);
 
 		// AMP LIMIT
 		// OUTER TALONS IN BLOCK = 40amp, INNER TALONS IN BLOCK = 30amp
@@ -187,20 +164,346 @@ public class Drivetrain extends Subsystem {
 		}
 	}
 
-	public double getLeftPosition() {
-		return (double) L1.getSelectedSensorPosition(0) / 4096;
+	private synchronized void onStateStart(DriveState newState) {
+		switch (newState) {
+		case MOTION_MAGIC:
+			break;
+		case MOTION_PROFILE:
+			break;
+		case NEUTRAL:
+			break;
+		case OPEN_LOOP:
+			break;
+		case OPEN_LOOP_DRIVER:
+			break;
+		case DEMO:
+			break;
+		default:
+			break;
+		}
 	}
 
-	public double getRightPosition() {
-		return (double) -R1.getSelectedSensorPosition(0) / 4096;
+	public synchronized void onStateExit(DriveState prevState) {
+		switch (prevState) {
+		case MOTION_MAGIC:
+			encoderDone();
+			break;
+		case MOTION_PROFILE:
+			break;
+		case NEUTRAL:
+			OI.rumble(CONTROLLER.BOTH, 0);
+			break;
+		case OPEN_LOOP:
+			OI.rumble(CONTROLLER.BOTH, 0);
+			break;
+		case OPEN_LOOP_DRIVER:
+			OI.rumble(CONTROLLER.BOTH, 0);
+			break;
+		case DEMO:
+			break;
+		default:
+			break;
+		}
 	}
 
-	public double getLeftSpeed() {
-		return (double) L1.getSelectedSensorVelocity(0) / 4096;
+	@Override
+	public synchronized void loop() {
+		in();
+		out();
+
+		switch (mState) {
+		case MOTION_MAGIC:
+
+			mIO.control_mode = ControlMode.MotionMagic;
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case MOTION_PROFILE:
+
+			mIO.control_mode = ControlMode.MotionProfile;
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case NEUTRAL:
+
+			mIO.control_mode = ControlMode.Disabled;
+			mIO.left_output = 0;
+			mIO.right_output = 0;
+
+			break;
+		case OPEN_LOOP:
+
+			mIO.control_mode = ControlMode.PercentOutput;
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case OPEN_LOOP_DRIVER:
+
+			arcade(OI.driverJoy);
+			mIO.control_mode = ControlMode.PercentOutput;
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case DEMO:
+
+			alternateArcade(OI.driverJoy);
+			mIO.control_mode = ControlMode.PercentOutput;
+			mIO.left_output = mIO.left_desired_output * kDemoMode.DRIVE_MODIFIER;
+			mIO.right_output = mIO.right_desired_output * kDemoMode.DRIVE_MODIFIER;
+
+			break;
+
+		default:
+			System.out.println("WARNING: Incorrect drive state " + mState + " reached.");
+			break;
+		}
+
 	}
 
-	public double getRightSpeed() {
-		return (double) -R1.getSelectedSensorVelocity(0) / 4096;
+	public static class IO {
+		// in
+		public double left_encoder_ticks = Double.NaN;
+		public double left_encoder_rotations = Double.NaN;
+		public double left_encoder_vel = Double.NaN;
+		public double left_encoder_speed = Double.NaN;
+
+		public double right_encoder_ticks = Double.NaN;
+		public double right_encoder_rotations = Double.NaN;
+		public double right_encoder_vel = Double.NaN;
+		public double right_encoder_speed = Double.NaN;
+
+		public double L1_amp = Double.NaN;
+		public double L2_amp = Double.NaN;
+		public double L3_amp = Double.NaN;
+		public double L4_amp = Double.NaN;
+		public double R1_amp = Double.NaN;
+		public double R2_amp = Double.NaN;
+		public double R3_amp = Double.NaN;
+		public double R4_amp = Double.NaN;
+
+		public double L1_volt = Double.NaN;
+		public double L2_volt = Double.NaN;
+		public double L3_volt = Double.NaN;
+		public double L4_volt = Double.NaN;
+		public double R1_volt = Double.NaN;
+		public double R2_volt = Double.NaN;
+		public double R3_volt = Double.NaN;
+		public double R4_volt = Double.NaN;
+
+		// out
+		private double left_output = 0;
+		public double left_desired_output = 0;
+
+		private double right_output = 0;
+		public double right_desired_output = 0;
+		ControlMode control_mode = ControlMode.PercentOutput;
+	}
+
+	@Override
+	protected synchronized void in() {
+		mIO.left_encoder_ticks = L1.getSelectedSensorPosition(0);
+		mIO.left_encoder_vel = L1.getSelectedSensorVelocity(0);
+		mIO.left_encoder_rotations = Units.ticks_to_rotations(mIO.left_encoder_ticks);
+		mIO.left_encoder_speed = Units.ticks_to_rotations(mIO.left_encoder_vel);
+
+		mIO.right_encoder_ticks = -R1.getSelectedSensorPosition(0);
+		mIO.right_encoder_vel = -R1.getSelectedSensorVelocity(0);
+		mIO.right_encoder_rotations = Units.ticks_to_rotations(mIO.right_encoder_ticks);
+		mIO.right_encoder_speed = Units.ticks_to_rotations(mIO.right_encoder_vel);
+
+		mIO.L1_amp = L1.getOutputCurrent();
+		mIO.L2_amp = L2.getOutputCurrent();
+		mIO.L3_amp = L3.getOutputCurrent();
+		mIO.L4_amp = L4.getOutputCurrent();
+		mIO.R1_amp = R1.getOutputCurrent();
+		mIO.R2_amp = R2.getOutputCurrent();
+		mIO.R3_amp = R3.getOutputCurrent();
+		mIO.R4_amp = R4.getOutputCurrent();
+
+		mIO.L1_volt = L1.getMotorOutputVoltage();
+		mIO.L2_volt = L2.getMotorOutputVoltage();
+		mIO.L3_volt = L3.getMotorOutputVoltage();
+		mIO.L4_volt = L4.getMotorOutputVoltage();
+		mIO.R1_volt = R1.getMotorOutputVoltage();
+		mIO.R2_volt = R2.getMotorOutputVoltage();
+		mIO.R3_volt = R3.getMotorOutputVoltage();
+		mIO.R4_volt = R4.getMotorOutputVoltage();
+	}
+
+	@Override
+	public void outputSmartDashboard() {
+		SmartDashboard.putNumber("NavX Angle", mGyro.getAngle());
+
+		SmartDashboard.putNumber("L1", mIO.left_encoder_rotations);
+		SmartDashboard.putNumber("R1", mIO.right_encoder_rotations);
+
+		SmartDashboard.putNumber("L1 Vel", mIO.left_encoder_vel);
+		SmartDashboard.putNumber("R1 Vel", mIO.right_encoder_vel);
+
+		SmartDashboard.putNumber("PercentageCompleted", getPercentageComplete());
+	}
+
+	public synchronized void arcade(GZJoystick joy) {
+		arcade(joy.getLeftAnalogY() * percentageModify,
+				(joy.getRightTrigger() - joy.getLeftTrigger()) * .8 * percentageModify);
+	}
+
+	public synchronized void alternateArcade(GZJoystick joy) {
+		arcade(joy.getLeftAnalogY(), (joy.getRightAnalogX() * .85));
+	}
+
+	public synchronized void arcade(double move, double rotate) {
+		double[] temp = arcadeToLR(move * Robot.elevator.getPercentageModify(),
+				rotate * (Robot.elevator.getPercentageModify() + .2));
+
+		mIO.left_desired_output = temp[0];
+		mIO.right_desired_output = temp[1];
+	}
+
+	// Modified from DifferentialDrive.java to produce double array, [0] being left
+	// motor value, [1] being right motor value
+	public synchronized double[] arcadeToLR(double xSpeed, double zRotation) {
+		xSpeed = Util.limit(xSpeed);
+		xSpeed = Util.applyDeadband(xSpeed, kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
+
+		zRotation = Util.limit(zRotation);
+		zRotation = Util.applyDeadband(zRotation, kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
+
+		double leftMotorOutput;
+		double rightMotorOutput;
+
+		double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed);
+
+		if (xSpeed >= 0.0) {
+			// First quadrant, else second quadrant
+			if (zRotation >= 0.0) {
+				leftMotorOutput = maxInput;
+				rightMotorOutput = xSpeed - zRotation;
+			} else {
+				leftMotorOutput = xSpeed + zRotation;
+				rightMotorOutput = maxInput;
+			}
+		} else {
+			// Third quadrant, else fourth quadrant
+			if (zRotation >= 0.0) {
+				leftMotorOutput = xSpeed + zRotation;
+				rightMotorOutput = maxInput;
+			} else {
+				leftMotorOutput = maxInput;
+				rightMotorOutput = xSpeed - zRotation;
+			}
+		}
+
+		double retval[] = { 0, 0 };
+		retval[0] = Util.limit(leftMotorOutput);
+		retval[1] = -Util.limit(rightMotorOutput);
+
+		return retval;
+	}
+
+	public synchronized void tank(double left, double right) {
+		setState(DriveState.OPEN_LOOP);
+		mIO.left_desired_output = left * Robot.elevator.getPercentageModify();
+		mIO.right_desired_output = right * Robot.elevator.getPercentageModify();
+	}
+
+	public synchronized void tank(GZJoystick joy) {
+		tank(joy.getLeftAnalogY(), joy.getRightAnalogY());
+	}
+
+	public synchronized void brake(NeutralMode mode) {
+		L1.setNeutralMode(mode);
+		L2.setNeutralMode(mode);
+		L3.setNeutralMode(mode);
+		L4.setNeutralMode(mode);
+		R1.setNeutralMode(mode);
+		R2.setNeutralMode(mode);
+		R3.setNeutralMode(mode);
+		R4.setNeutralMode(mode);
+	}
+
+	public synchronized void motionMagic(double leftRotations, double rightRotations, double leftAccel,
+			double rightAccel, double leftSpeed, double rightSpeed) {
+		double topspeed = 3941;
+
+		left_target = Units.rotations_to_ticks(leftRotations);
+		// = leftRotations * 4096 * 1;
+		right_target = Units.rotations_to_ticks(rightRotations);
+
+		percentageComplete = Math
+				.abs(((mIO.left_encoder_rotations / left_target) + (mIO.right_encoder_rotations / right_target)) / 2);
+
+		L1.configMotionAcceleration((int) (topspeed * leftAccel), 10);
+		R1.configMotionAcceleration((int) (topspeed * rightAccel), 10);
+
+		L1.configMotionCruiseVelocity((int) (topspeed * leftSpeed), 10);
+		R1.configMotionCruiseVelocity((int) (topspeed * rightSpeed), 10);
+
+		mIO.left_desired_output = left_target;
+		mIO.right_desired_output = right_target;
+	}
+
+	@Deprecated
+	public synchronized void encoder(double leftRotations, double rightRotations, double leftPercentageLimit,
+			double rightPercentageLimit) {
+		L1.configPeakOutputForward(leftPercentageLimit, 10);
+		L1.configPeakOutputReverse(-leftPercentageLimit, 10);
+		R1.configPeakOutputForward(rightPercentageLimit, 10);
+		R1.configPeakOutputReverse(-rightPercentageLimit, 10);
+
+		left_target = Units.rotations_to_ticks(leftRotations);
+		right_target = -Units.rotations_to_ticks(rightRotations);
+
+		percentageComplete = Math
+				.abs(((mIO.left_encoder_rotations / left_target) + (mIO.right_encoder_rotations / right_target)) / 2);
+
+		mIO.left_desired_output = left_target;
+		mIO.right_desired_output = right_target;
+	}
+
+	public synchronized boolean encoderSpeedIsUnder(double ticksPer100Ms) {
+		double l = Math.abs(mIO.left_encoder_vel);
+		double r = Math.abs(mIO.right_encoder_vel);
+
+		return l < ticksPer100Ms && r < ticksPer100Ms;
+	}
+
+	public synchronized void encoderDone() {
+		mIO.control_mode = ControlMode.PercentOutput;
+		mIO.left_desired_output = mIO.right_desired_output = 0;
+
+		processMotionProfileBuffer(3452);
+
+		L1.clearMotionProfileTrajectories();
+		R1.clearMotionProfileTrajectories();
+
+		R1.configPeakOutputForward(1, 0);
+		R1.configPeakOutputReverse(-1, 0);
+		L1.configPeakOutputForward(1, 0);
+		L1.configPeakOutputReverse(-1, 0);
+
+		left_target = 0;
+		right_target = 0;
+
+		percentageComplete = 3452;
+	}
+
+	public synchronized boolean encoderIsDone(double multiplier) {
+		return (mIO.left_encoder_ticks < left_target + 102 * multiplier)
+				&& (mIO.left_encoder_ticks > left_target - 102 * multiplier)
+				&& (mIO.right_encoder_ticks < right_target + 102 * multiplier)
+				&& (mIO.right_encoder_ticks > right_target - 102 * multiplier);
+	}
+
+	public synchronized boolean encoderIsDoneEither(double multiplier) {
+		return (mIO.left_encoder_ticks < left_target + 102 * multiplier
+				&& mIO.left_encoder_ticks > left_target - 102 * multiplier)
+				|| (mIO.right_encoder_ticks < right_target + 102 * multiplier
+						&& mIO.right_encoder_ticks > right_target - 102 * multiplier);
 	}
 
 	private class MotionProfileBuffer implements java.lang.Runnable {
@@ -221,11 +524,18 @@ public class Drivetrain extends Subsystem {
 	 * 
 	 * @param time double - if 3452, stops notifier
 	 */
-	public void processMotionProfileBuffer(double time) {
+	public synchronized void processMotionProfileBuffer(double time) {
 		if (time == 3452)
 			processMotionProfile.stop();
 		else
 			processMotionProfile.startPeriodic(time);
+	}
+
+	public synchronized void getMotionProfileStatus(Side side, MotionProfileStatus statusToFill) {
+		if (side == Side.LEFT)
+			L1.getMotionProfileStatus(statusToFill);
+		else if (side == Side.RIGHT)
+			R1.getMotionProfileStatus(statusToFill);
 	}
 
 	/**
@@ -233,7 +543,7 @@ public class Drivetrain extends Subsystem {
 	 * 
 	 * @since 4-22-2018
 	 */
-	public void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
+	public synchronized void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
 
 		if (mpL.length != mpR.length)
 			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + mpL.length + "\t\t" + mpR.length);
@@ -302,7 +612,7 @@ public class Drivetrain extends Subsystem {
 	 * @author max
 	 * @since 4-22-2018
 	 */
-	public void motionProfileToTalons() {
+	public synchronized void motionProfileToTalons() {
 		if (Robot.playback.mpL.size() != Robot.playback.mpR.size())
 			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + Robot.playback.mpL.size() + "\t\t"
 					+ Robot.playback.mpR.size());
@@ -367,7 +677,7 @@ public class Drivetrain extends Subsystem {
 	}
 
 	@SuppressWarnings("static-access")
-	private TrajectoryDuration GetTrajectoryDuration(int durationMs) {
+	private synchronized TrajectoryDuration GetTrajectoryDuration(int durationMs) {
 		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
 		retval = retval.valueOf(durationMs);
 
@@ -377,164 +687,124 @@ public class Drivetrain extends Subsystem {
 		return retval;
 	}
 
-	public void arcade(Joystick joy) {
-		// Arcade((joy.getRawAxis(3) - joy.getRawAxis(2) * m_modify),
-		// joy.getRawAxis(4) * m_modify);
-
-		// arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) -
-		// joy.getRawAxis(2)) * .635 * m_modify));
-
-		arcade(-joy.getRawAxis(1) * m_modify, ((joy.getRawAxis(3) - joy.getRawAxis(2)) * .8 * m_modify));
-		Robot.elevator.setDriveLimit();
+	public synchronized void enableFollower() {
+		for (GZSRX c : controllers) {
+			switch (c.getSide()) {
+			case LEFT:
+				c.follow(L1);
+				break;
+			case RIGHT:
+				c.follow(R1);
+				break;
+			case NO_INFO:
+				System.out.println("ERROR Drive talon " + c.getName() + " could not enter follower mode!");
+			}
+		}
 	}
 
-	public void alternateArcade(Joystick joy) {
-		arcade(-joy.getRawAxis(1) * m_modify, (joy.getRawAxis(4) * m_modify * .8));
-		Robot.elevator.setDriveLimit();
-		m_modify = .5;
-	}
-
-	public void arcade(double move, double rotate) {
-		robotDrive.arcadeDrive(move * m_elev_modify, rotate * (m_elev_modify + .2));
-	}
-
-	public void tank(double left, double right) {
-		robotDrive.tankDrive(left * m_elev_modify, right * m_elev_modify);
-	}
-
-	public void tank(Joystick joy) {
-		robotDrive.tankDrive(-joy.getRawAxis(1) * m_elev_modify, -joy.getRawAxis(5) * m_elev_modify);
-	}
-
-	public void brake(NeutralMode mode) {
-		L1.setNeutralMode(mode);
-		L2.setNeutralMode(mode);
-		L3.setNeutralMode(mode);
-		L4.setNeutralMode(mode);
-		R1.setNeutralMode(mode);
-		R2.setNeutralMode(mode);
-		R3.setNeutralMode(mode);
-		R4.setNeutralMode(mode);
-	}
-
-	public void motionMagic(double leftpos, double rightpos, double leftaccel, double rightaccel, double leftspeed,
-			double rightspeed) {
-
-		double topspeed = 3941;
-
-		robotDrive.setSafetyEnabled(false);
-
-		l_pos = leftpos * 4096 * 1;
-		r_pos = rightpos * 4096 * -1;
-
-		double lp_pos = Math.abs(L1.getSelectedSensorPosition(0) / (4096 * leftpos));
-		double rp_pos = Math.abs(R1.getSelectedSensorPosition(0) / (4096 * rightpos));
-
-		p_pos = (lp_pos + rp_pos) / 2;
-
-		L1.configMotionAcceleration((int) (topspeed * leftaccel), 10);
-		R1.configMotionAcceleration((int) (topspeed * rightaccel), 10);
-
-		L1.configMotionCruiseVelocity((int) (topspeed * leftspeed), 10);
-		R1.configMotionCruiseVelocity((int) (topspeed * rightspeed), 10);
-
-		L1.set(ControlMode.MotionMagic, l_pos);
-		R1.set(ControlMode.MotionMagic, r_pos);
-	}
-
-	@Deprecated
-	public void encoder(double leftpos, double rightpos, double leftspeed, double rightspeed) {
-		L1.configPeakOutputForward(leftspeed, 10);
-		L1.configPeakOutputReverse(-leftspeed, 10);
-		R1.configPeakOutputForward(rightspeed, 10);
-		R1.configPeakOutputReverse(-rightspeed, 10);
-
-		l_pos = leftpos * 4096;
-		r_pos = -rightpos * 4096;
-
-		p_pos = Math.abs(((L1.getSelectedSensorPosition(0) / (4096 * leftpos))
-				+ (R1.getSelectedSensorPosition(0) / (4096 * rightpos))) / 2);
-
-		L1.set(ControlMode.Position, l_pos);
-		R1.set(ControlMode.Position, r_pos);
-	}
-
-	public boolean encoderSpeedIsUnder(double value) {
-
-		double l = Math.abs(L1.getSelectedSensorVelocity(0));
-		double r = Math.abs(R1.getSelectedSensorVelocity(0));
-
-		return l < value && r < value;
-	}
-
-	/**
-	 * <li>Set control mode to PercentOutput.
-	 * <li>Turns off runnable for motion profiling.
-	 * <li>Clears motion profile trajectories
-	 * <li>Set drive train masters peak outputs to full.
-	 * <li>Percentage trackers to default.
-	 * 
-	 * @author max
-	 */
-	public void encoderDone() {
-		L1.set(ControlMode.PercentOutput, 0);
-		R1.set(ControlMode.PercentOutput, 0);
-
-		processMotionProfileBuffer(3452);
-
-		L1.clearMotionProfileTrajectories();
-		R1.clearMotionProfileTrajectories();
-
-		R1.configPeakOutputForward(1, 0);
-		R1.configPeakOutputReverse(-1, 0);
-		L1.configPeakOutputForward(1, 0);
-		L1.configPeakOutputReverse(-1, 0);
-
-		l_pos = 0;
-		r_pos = 0;
-
-		p_pos = 3452;
-	}
-
-	/**
-	 * If L and R are within 102*multiplier of target positions, return true
-	 * 
-	 * @author max
-	 * @param multiplier double
-	 * @return boolean
-	 */
-	public boolean encoderIsDone(double multiplier) {
-		return (L1.getSelectedSensorPosition(0) < (l_pos + (102 * multiplier))
-				&& L1.getSelectedSensorPosition(0) > (l_pos - (102 * multiplier)))
-				&& R1.getSelectedSensorPosition(0) < (r_pos + (102 * multiplier))
-				&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier));
-	}
-
-	/**
-	 * If L or R are within 102*multiplier of target positions, return true
-	 * 
-	 * @author max
-	 * @param multiplier double
-	 * @return boolean
-	 */
-	public boolean encoderIsDoneEither(double multiplier) {
-		return ((L1.getSelectedSensorPosition(0) < (l_pos + (102 * multiplier))
-				&& L1.getSelectedSensorPosition(0) > (l_pos - (102 * multiplier))))
-				|| (R1.getSelectedSensorPosition(0) < (r_pos + (102 * multiplier))
-						&& R1.getSelectedSensorPosition(0) > (r_pos - (102 * multiplier)));
-	}
-
-	/**
-	 * @author max
-	 */
-	public void zeroEncoders() {
+	public synchronized void zeroEncoders() {
 		L1.setSelectedSensorPosition(0, 0, 10);
 		R1.setSelectedSensorPosition(0, 0, 10);
 	}
 
-	@Override
-	public void initDefaultCommand() {
-		setDefaultCommand(new DriveTele());
+	public synchronized void zeroSensors() {
+		zeroEncoders();
+		zeroGyro();
 	}
 
+	public synchronized void zeroGyro() {
+		mGyro.reset();
+	}
+
+	public synchronized double getPDPChannelCurrent(int channel) {
+		return pdp.getCurrent(channel);
+	}
+
+	public synchronized double getPDPTemperature() {
+		return pdp.getTemperature();
+	}
+
+	public synchronized double getPDPTotalCurrent() {
+		return pdp.getTotalCurrent();
+	}
+
+	public synchronized double getPDPTotalEnergy() {
+		return pdp.getTotalEnergy();
+	}
+
+	public synchronized double getPDPTotalPower() {
+		return pdp.getTotalPower();
+	}
+
+	public synchronized double getPDPVoltage() {
+		return pdp.getVoltage();
+	}
+
+	public synchronized double getPercentageModify() {
+		return percentageModify;
+	}
+
+	public synchronized void setPercentageModify(double percentageModify) {
+		this.percentageModify = percentageModify;
+	}
+
+	public synchronized double getPercentageComplete() {
+		return percentageComplete;
+	}
+
+	public synchronized void setPercentageComplete(double percentageComplete) {
+		this.percentageComplete = percentageComplete;
+	}
+
+	public synchronized Timer getTimer() {
+		return timer;
+	}
+
+	public synchronized AHRS getGyro() {
+		return mGyro;
+	}
+
+	@Override
+	protected synchronized void out() {
+		L1.set(mIO.control_mode, mIO.left_output);
+		R1.set(mIO.control_mode, mIO.right_output);
+	}
+
+	public enum DriveState {
+		OPEN_LOOP, OPEN_LOOP_DRIVER, DEMO, NEUTRAL, MOTION_MAGIC, MOTION_PROFILE,
+	}
+
+	@Override
+	public synchronized void stop() {
+		setState(DriveState.NEUTRAL);
+	}
+
+	public synchronized void setState(DriveState wantedState) {
+		if (this.isDisabed()) {
+
+			onStateExit(mState);
+			mState = DriveState.NEUTRAL;
+			onStateStart(mState);
+
+		} else if (Robot.autonSelector.isDemo()) {
+			onStateExit(mState);
+			mState = DriveState.DEMO;
+			onStateStart(mState);
+		} else if (mState != wantedState) {
+			onStateExit(mState);
+			mState = wantedState;
+			onStateStart(mState);
+		}
+	}
+
+	public String getStateString() {
+		return mState.toString();
+	}
+
+	public DriveState getState() {
+		return mState;
+	}
+
+	protected void initDefaultCommand() {
+	}
 }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.Constants.kPlayback;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.Util;
 
@@ -147,12 +148,13 @@ public class Playback extends Subsystem {
 		public void run() {
 			try {
 				// populate position and speed values
-				double leftPos = (double) Robot.drive.L1.getSelectedSensorPosition(0) / 4096;
-				double leftSpeed = (double) Robot.drive.L1.getSelectedSensorVelocity(0) / 4096;
+				//WRITE PROFILES IN TICKS, 
+				double leftPos = Robot.drive.mIO.left_encoder_rotations;
+				double leftSpeed = Robot.drive.mIO.left_encoder_speed;
 
-				double rightPos = (double) Robot.drive.R1.getSelectedSensorPosition(0) / 4096;
-				double rightSpeed = (double) Robot.drive.R1.getSelectedSensorVelocity(0) / 4096;
-
+				double rightPos = -Robot.drive.mIO.right_encoder_rotations;
+				double rightSpeed = -Robot.drive.mIO.right_encoder_speed;
+				
 				// write values
 				bw.write(String.valueOf(leftPos + ","));
 				bw.write(String.valueOf(leftSpeed + ","));
@@ -190,7 +192,7 @@ public class Playback extends Subsystem {
 						+ "Elev_1-AMP,Elev_2-AMP," + "Elev_1-V,Elev_2-V," + "Intake_L-AMP,Intake_R-AMP,"
 						+ "Climber_1-AMP,Climber_2-AMP," + "BATTERY");
 				bw.write("\r\n");
-				logging.startPeriodic(0.125); // eighth of a second logging
+				logging.startPeriodic(kPlayback.LOGGING_SPEED);
 			} else {
 				logging.stop();
 			}
@@ -216,42 +218,42 @@ public class Playback extends Subsystem {
 				bw.write(String.valueOf(
 
 						// SPEED
-						Robot.drive.getLeftSpeed() + ","
-								+ Robot.drive.getRightSpeed() + "," +
+						Robot.drive.mIO.left_encoder_rotations + ","
+								+ Robot.drive.mIO.right_encoder_rotations + "," +
 
 								// LEFT CURRENT
-								Robot.drive.L1.getOutputCurrent() + "," + Robot.drive.L2.getOutputCurrent() + ","
-								+ Robot.drive.L3.getOutputCurrent() + "," + Robot.drive.L4.getOutputCurrent() + ","
+								Robot.drive.mIO.L1_amp + "," + Robot.drive.mIO.L2_amp + ","
+								+ Robot.drive.mIO.L3_amp + "," + Robot.drive.mIO.L4_amp + ","
 
 								// LEFT VOLTAGE
-								+ Robot.drive.L1.getMotorOutputVoltage() + "," + Robot.drive.L2.getMotorOutputVoltage()
-								+ "," + Robot.drive.L3.getMotorOutputVoltage() + ","
-								+ Robot.drive.L4.getMotorOutputVoltage() + ","
+								+ Robot.drive.mIO.L1_volt + "," + Robot.drive.mIO.L2_volt
+								+ "," + Robot.drive.mIO.L3_volt + ","
+								+ Robot.drive.mIO.L4_volt + ","
 
 								// RIGHT CURRENT
-								+ Robot.drive.R1.getOutputCurrent() + "," + Robot.drive.R2.getOutputCurrent() + ","
-								+ Robot.drive.R3.getOutputCurrent() + "," + Robot.drive.R4.getOutputCurrent() + ","
+								+ Robot.drive.mIO.R1_amp + "," + Robot.drive.mIO.R2_amp + ","
+								+ Robot.drive.mIO.R3_amp + "," + Robot.drive.mIO.R4_amp + ","
 
 								// RIGHT VOLTAGE
-								+ Robot.drive.R1.getMotorOutputVoltage() + "," + Robot.drive.R2.getMotorOutputVoltage()
-								+ "," + Robot.drive.R3.getMotorOutputVoltage() + ","
-								+ Robot.drive.R4.getMotorOutputVoltage() + ","
+								+ Robot.drive.mIO.R1_volt + "," + Robot.drive.mIO.R2_volt
+								+ "," + Robot.drive.mIO.R3_volt + ","
+								+ Robot.drive.mIO.R4_volt + ","
 
 								// ELEVATOR CURRENT
-								+ Robot.elevator.Elev_1.getOutputCurrent() + ","
-								+ Robot.elevator.Elev_2.getOutputCurrent() + ","
+								+ Robot.elevator.mIO.elevator_1_amp + ","
+								+ Robot.elevator.mIO.elevator_2_amp + ","
 
 								// ELEVATOR VOLTAGE
-								+ Robot.elevator.Elev_1.getMotorOutputVoltage() + ","
-								+ Robot.elevator.Elev_2.getMotorOutputVoltage() + ","
+								+ Robot.elevator.mIO.elevator_1_volt + ","
+								+ Robot.elevator.mIO.elevator_2_volt + ","
 
 								// INTAKE PDP SLOTS
-								+ Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) + ","
-								+ Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) + ","
+								+ Robot.drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_L) + ","
+								+ Robot.drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_R) + ","
 
 								// CLIMBER PDP SLOTS
-								+ Robot.drive.pdp.getCurrent(Constants.kPDP.CLIMBER_1) + ","
-								+ Robot.drive.pdp.getCurrent(Constants.kPDP.CLIMBER_2) + ","
+								+ Robot.drive.getPDPChannelCurrent(Constants.kPDP.CLIMBER_1) + ","
+								+ Robot.drive.getPDPChannelCurrent(Constants.kPDP.CLIMBER_2) + ","
 
 								// BATTERY
 								+ DriverStation.getInstance().getBatteryVoltage()));
@@ -357,11 +359,6 @@ public class Playback extends Subsystem {
 		case STARTUP:
 			switch (task) {
 			case Record:
-
-				Robot.drive.timer.stop();
-				Robot.drive.timer.reset();
-				Robot.drive.timer.start();
-
 				System.out.println("Opening Record: " + name + ".csv");
 				createFile(name, folder, fileState.WRITE, usb);
 				writeToProfile(true);
@@ -376,10 +373,6 @@ public class Playback extends Subsystem {
 				break;
 
 			case Log:
-				Robot.drive.timer.stop();
-				Robot.drive.timer.reset();
-				Robot.drive.timer.start();
-
 				System.out.println("Opening Log: " + loggingName(true) + ".csv");
 				createFile(loggingName(false), folder, fileState.WRITE, usb);
 				writeToLog(true);

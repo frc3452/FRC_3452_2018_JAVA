@@ -36,8 +36,8 @@ public class DriveToCube extends Command {
 		flag_2 = false;
 		timeoutSet = false;
 
-		i_lpos = Robot.drive.getLeftPosition();
-		i_rpos = Robot.drive.getRightPosition();
+		i_lpos = Robot.drive.mIO.left_encoder_rotations;
+		i_rpos = Robot.drive.mIO.right_encoder_rotations;
 
 		System.out.println(i_lpos);
 		System.out.println(i_rpos);
@@ -53,20 +53,20 @@ public class DriveToCube extends Command {
 
 		Robot.intake.manual(kIntake.Speeds.INTAKE);
 
-		if (Robot.drive.getLeftPosition() - i_lpos > m_rotation
-				|| Robot.drive.getRightPosition() - i_rpos > m_rotation)
+		if (Robot.drive.mIO.left_encoder_rotations - i_lpos > m_rotation
+				|| Robot.drive.mIO.right_encoder_rotations - i_rpos > m_rotation)
 			m_complete = true;
 
-		if (Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) > 12
-				|| Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) > 12)
+		if (Robot.drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_L) > 12
+				|| Robot.drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_R) > 12)
 			flag_1 = true;
 
-		if (flag_1 && (Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) < 7
-				|| Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) < 7))
+		if (flag_1 && (Robot.drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_L) < 7
+				|| Robot.drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_R) < 7))
 			flag_2 = true;
 
-		if (flag_2 && (Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_L) > 12
-				|| Robot.drive.pdp.getCurrent(Constants.kPDP.INTAKE_R) > 12)) {
+		if (flag_2 && (Robot.drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_L) > 12
+				|| Robot.drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_R) > 12)) {
 
 			if (!timeoutSet) {
 				setTimeout(timer.get() + .4);
@@ -82,8 +82,8 @@ public class DriveToCube extends Command {
 
 	@Override
 	protected void end() {
-		Robot.drive.arcade(0, 0);
-		Robot.intake.manual(0);
+		Robot.drive.stop();
+		Robot.intake.stop();
 	}
 
 	@Override
