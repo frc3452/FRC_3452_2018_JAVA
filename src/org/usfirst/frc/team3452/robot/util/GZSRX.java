@@ -37,7 +37,6 @@ public class GZSRX extends WPI_TalonSRX {
 		mBreaker = breaker;
 	}
 
-	//TODO 1C) DELETE?
  	public static void checkError(ErrorCode errorCode, String message) {
 		if (errorCode != ErrorCode.OK)
 			System.out.println("ERROR COULD NOT SET " + message + ":\t\t" + errorCode);

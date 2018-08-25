@@ -93,7 +93,7 @@ public class Drivetrain extends GZSubsystem {
 
 			s.setInverted((s.getSide() == Side.LEFT) ? kDrivetrain.L_INVERT : kDrivetrain.R_INVERT);
 
-			// TODO 1A) PULL BREAKER AND SEE OUTPUT IF GZSRX.CHECKERROR() IS NECCESARY
+			//TODO ISSUE #11
 			// CURRENT LIMIT
 			s.configContinuousCurrentLimit(
 					s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_LIMIT : kDrivetrain.AMP_30_LIMIT,

@@ -60,8 +60,8 @@ public class Elevator extends GZSubsystem {
 		elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10);
 		elevator_1.configClosedloopRamp(Constants.kElevator.CLOSED_RAMP_TIME, 10);
 
-		// TODO 1B) PULL BREAKER AND SEE OUTPUT IF GZSRX.CHECKERROR() IS NECCESARY
-
+		//TODO ISSUE #11
+		
 		// ENCODER
 		final ErrorCode encoderPresent = elevator_1
 				.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
@@ -227,7 +227,6 @@ public class Elevator extends GZSubsystem {
 	public synchronized void speedLimiting() {
 		double pos = mIO.encoder_rotations;
 
-		// TODO 1) CHECK AND MAKE SURE THIS MAKES SENSE
 		if (getState() != ElevatorState.DEMO && (getState() != ElevatorState.DEMO && !isOverriden())) {
 			if (pos < 2.08)
 				driveModifier = Constants.kElevator.SPEED_1;

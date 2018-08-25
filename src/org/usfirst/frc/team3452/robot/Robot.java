@@ -52,8 +52,6 @@ public class Robot extends TimedRobot {
 	private boolean logging = true, logToUsb = true;
 	private String loggingLocation = "Logging/Offseason";
 	
-	//TODO FIGURE OUT BETTER TASK MANAGEMENT THAN TODOS
-	
 	@Override
 	public void robotInit() {
 		mAutoTimer.stop();
