@@ -59,8 +59,8 @@ public class EncoderGyro extends Command {
 	}
 
 	protected void end() {
-		Robot.drive.encoderDone();
 		Robot.drive.stop();
+		Robot.drive.encoderDone();
 	}
 
 	protected void interrupted() {

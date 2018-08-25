@@ -11,6 +11,7 @@ public abstract class GZSubsystem extends Subsystem {
 	// IO class
 	// State
 	// void setState (State s)
+	// boolean currentStateIsNot(State s)
 	// State getState
 	// void onStateStart (State s)
 	// void onStateExit (State s)

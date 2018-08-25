@@ -3,6 +3,7 @@ package org.usfirst.frc.team3452.robot.commands.drive;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.DriveState;
 
 public class DriveToStop extends Command {
 	private double m_speed;
@@ -20,6 +21,7 @@ public class DriveToStop extends Command {
 
 	protected void initialize() {
 		setTimeout(10);
+		Robot.drive.setState(DriveState.OPEN_LOOP);
 	}
 
 	protected void execute() {
@@ -31,7 +33,7 @@ public class DriveToStop extends Command {
 	}
 
 	protected void end() {
-		Robot.drive.arcade(0, 0);
+		Robot.drive.stop();
 	}
 
 	protected void interrupted() {

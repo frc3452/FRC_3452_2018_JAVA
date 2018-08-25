@@ -34,7 +34,7 @@ public class Elevator extends GZSubsystem {
 
 	private double driveModifier = 0;
 	private double target = 0;
-	private boolean isOverriden = false;
+	private boolean mIsOverriden = false;
 
 	public Elevator() {
 		elevator_1 = new GZSRX(kElevator.E_1, Breaker.AMP_40);
@@ -51,7 +51,7 @@ public class Elevator extends GZSubsystem {
 		elevator_1.setInverted(Constants.kElevator.E_1_INVERT);
 		elevator_2.setInverted(Constants.kElevator.E_2_INVERT);
 
-		// F 0  P .08 I .000028 D 2.5
+		// F 0 P .08 I .000028 D 2.5
 		// PIDs
 		elevator_1.config_kF(0, 0, 10);
 		elevator_1.config_kP(0, 0.2, 10);
@@ -60,13 +60,14 @@ public class Elevator extends GZSubsystem {
 		elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10);
 		elevator_1.configClosedloopRamp(Constants.kElevator.CLOSED_RAMP_TIME, 10);
 
-		//TODO 1B) PULL BREAKER AND SEE OUTPUT IF GZSRX.CHECKERROR() IS NECCESARY
-		
+		// TODO 1B) PULL BREAKER AND SEE OUTPUT IF GZSRX.CHECKERROR() IS NECCESARY
+
 		// ENCODER
-		final ErrorCode encoderPresent = elevator_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		final ErrorCode encoderPresent = elevator_1
+				.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		if (encoderPresent != ErrorCode.OK)
 			System.out.println("ERROR ELEVATOR ENCODER NOT FOUND!");
-		
+
 		elevator_1.setSelectedSensorPosition(0, 0, 10);
 		elevator_1.setSensorPhase(Constants.kElevator.ENC_INVERT);
 
@@ -156,7 +157,6 @@ public class Elevator extends GZSubsystem {
 
 			break;
 		case POSITION:
-
 			mIO.control_mode = ControlMode.Position;
 			mIO.output = mIO.desired_output;
 			break;
@@ -171,24 +171,6 @@ public class Elevator extends GZSubsystem {
 		}
 
 		handleSpeedLimiting();
-	}
-
-	public void runElevatorManual(GZJoystick joy) {
-		double up = 0, down = 0, value;
-		if (mState == ElevatorState.DEMO) {
-			up = kElevator.DEMO_JOYSTICK_MODIFIER_UP;
-			down = kElevator.DEMO_JOYSTICK_MODIFIER_DOWN;
-		} else {
-			up = kElevator.JOYSTICK_MODIFIER_UP;
-			down = kElevator.JOYSTICK_MODIFIER_DOWN;
-		}
-
-		if (joy == OI.opJoy)
-			value = joy.getLeftAnalogY() * (joy.getLeftAnalogY() > 0 ? up : down);
-		else
-			value = joy.getRightAnalogY() * (joy.getRightAnalogY() > 0 ? up : down);
-
-		mIO.desired_output = value;
 	}
 
 	public static class IO {
@@ -245,23 +227,19 @@ public class Elevator extends GZSubsystem {
 	public synchronized void speedLimiting() {
 		double pos = mIO.encoder_rotations;
 
-		if (mState == ElevatorState.DEMO) {
-			if (isOverriden() == false) {
-				if (pos < 2.08)
-					driveModifier = Constants.kElevator.SPEED_1;
-				else if (pos < 2.93 && pos > 2.08)
-					driveModifier = Constants.kElevator.SPEED_2;
-				else if (pos < 3.66 && pos > 2.93)
-					driveModifier = Constants.kElevator.SPEED_3;
-				else if (pos < 6.1 && pos > 3.66)
-					driveModifier = Constants.kElevator.SPEED_4;
-				else if (pos > 6.1)
-					driveModifier = Constants.kElevator.SPEED_5;
-			} else {
-				driveModifier = 1;
-			}
-
-			// If not in demo, we are already slowing the drivetrain down somewhere else
+		// TODO 1) CHECK AND MAKE SURE THIS MAKES SENSE
+		if (getState() != ElevatorState.DEMO && (getState() != ElevatorState.DEMO && !isOverriden())) {
+			if (pos < 2.08)
+				driveModifier = Constants.kElevator.SPEED_1;
+			else if (pos < 2.93 && pos > 2.08)
+				driveModifier = Constants.kElevator.SPEED_2;
+			else if (pos < 3.66 && pos > 2.93)
+				driveModifier = Constants.kElevator.SPEED_3;
+			else if (pos < 6.1 && pos > 3.66)
+				driveModifier = Constants.kElevator.SPEED_4;
+			else if (pos > 6.1)
+				driveModifier = Constants.kElevator.SPEED_5;
+			// If not in demo, and not overriden
 		} else {
 			driveModifier = 1;
 		}
@@ -278,14 +256,12 @@ public class Elevator extends GZSubsystem {
 
 	public synchronized void encoder(double rotations) {
 		setState(ElevatorState.POSITION);
-
-		elevator_1.configPeakOutputForward(kElevator.CLOSED_DOWN_SPEED_LIMIT, 10);
-		elevator_1.configPeakOutputReverse(kElevator.CLOSED_UP_SPEED_LIMIT * -1, 10);
-
-		if (mState == ElevatorState.DEMO)
-			mIO.desired_output = 0;
-		else
+		if (mState != ElevatorState.DEMO) {
+			elevator_1.configPeakOutputForward(kElevator.CLOSED_DOWN_SPEED_LIMIT, 10);
+			elevator_1.configPeakOutputReverse(kElevator.CLOSED_UP_SPEED_LIMIT * -1, 10);
 			setTarget(mIO.desired_output = -Units.rotations_to_ticks(rotations));
+		} else
+			stop();
 	}
 
 	public synchronized boolean isDone(double multiplier) {
@@ -306,12 +282,12 @@ public class Elevator extends GZSubsystem {
 	public synchronized void manualJoystick(GZJoystick joy) {
 		double up, down;
 
-		if (getState() != ElevatorState.DEMO) {
-			up = kElevator.JOYSTICK_MODIFIER_UP;
-			down = kElevator.JOYSTICK_MODIFIER_DOWN;
-		} else {
+		if (getState() == ElevatorState.DEMO) {
 			up = kElevator.DEMO_JOYSTICK_MODIFIER_UP;
 			down = kElevator.DEMO_JOYSTICK_MODIFIER_DOWN;
+		} else {
+			up = kElevator.JOYSTICK_MODIFIER_UP;
+			down = kElevator.JOYSTICK_MODIFIER_DOWN;
 		}
 
 		if (joy == OI.opJoy)
@@ -327,7 +303,7 @@ public class Elevator extends GZSubsystem {
 		setState(ElevatorState.MANUAL);
 		mIO.desired_output = -percentage;
 	}
-
+	
 	public synchronized double getPercentageModify() {
 		return driveModifier;
 	}
@@ -335,13 +311,13 @@ public class Elevator extends GZSubsystem {
 	public synchronized void setSpeedLimitingOverride(ESO override) {
 		switch (override) {
 		case OFF:
-			setOverriden(false);
+			this.mIsOverriden = false;
 			break;
 		case ON:
-			setOverriden(true);
+			this.mIsOverriden = true;
 			break;
 		case TOGGLE:
-			setOverriden(!isOverriden());
+			this.mIsOverriden = !isOverriden();
 			break;
 		}
 	}
@@ -365,27 +341,35 @@ public class Elevator extends GZSubsystem {
 	}
 
 	public synchronized void setState(ElevatorState wantedState) {
-		if (this.isDisabed()) {
-			onStateStart(mState);
-			mState = ElevatorState.NEUTRAL;
-			onStateExit(mState);
+		if ((this.isDisabed() || wantedState == ElevatorState.NEUTRAL)) {
+
+			if (currentStateIsNot(ElevatorState.NEUTRAL)) {
+				onStateExit(mState);
+				mState = ElevatorState.NEUTRAL;
+				onStateStart(mState);
+			}
+
 		} else if (Robot.autonSelector.isDemo()) {
-			onStateStart(mState);
-			mState = ElevatorState.DEMO;
+
+			if (currentStateIsNot(ElevatorState.DEMO)) {
+				onStateExit(mState);
+				mState = ElevatorState.DEMO;
+				onStateStart(mState);
+			}
+
+		} else if (mState != wantedState) {
 			onStateExit(mState);
-		} else {
-			onStateStart(mState);
 			mState = wantedState;
-			onStateExit(mState);
+			onStateStart(mState);
 		}
 	}
 
-	public boolean isOverriden() {
-		return isOverriden;
+	private synchronized boolean currentStateIsNot(ElevatorState state) {
+		return mState != state;
 	}
 
-	public void setOverriden(boolean isOverriden) {
-		this.isOverriden = isOverriden;
+	public boolean isOverriden() {
+		return mIsOverriden;
 	}
 
 	public synchronized void checkPrevState() {

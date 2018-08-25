@@ -121,16 +121,23 @@ public class Intake extends GZSubsystem {
 
 	public synchronized void setState(IntakeState wantedState) {
 		// we dont need to worry about isDemo() here, we don't change anything
-		if (this.isDisabed()) {
-			onStateStart(mState);
-			mState = IntakeState.NEUTRAL;
-			onStateExit(mState);
-		} else {
+		if (this.isDisabed() || wantedState == IntakeState.NEUTRAL) {
+
+			if (currentStateIsNot(IntakeState.NEUTRAL)) {
+				onStateStart(mState);
+				mState = IntakeState.NEUTRAL;
+				onStateExit(mState);
+			}
+			
+		} else if (mState != wantedState) {
 			onStateStart(mState);
 			mState = wantedState;
 			onStateExit(mState);
-
 		}
+	}
+
+	private synchronized boolean currentStateIsNot(IntakeState state) {
+		return mState != state;
 	}
 
 	public String getStateString() {

@@ -12,7 +12,6 @@ public class Climber extends GZSubsystem {
 	private Spark climber_1;
 
 	private ClimberState mState = ClimberState.NEUTRAL;
-	private ClimberState prevState = mState;
 	public IO mIO = new IO();
 
 	private int climbCounter = 0;
@@ -105,23 +104,23 @@ public class Climber extends GZSubsystem {
 	}
 
 	public synchronized void setState(ClimberState wantedState) {
-		if (this.isDisabed() || Robot.autonSelector.isDemo()) {
-			onStateExit(mState);
-			mState = ClimberState.NEUTRAL;
-			onStateStart(mState);
-		} else {
+		if (this.isDisabed() || Robot.autonSelector.isDemo() || wantedState == ClimberState.NEUTRAL) {
+
+			if (currentStateIsNot(ClimberState.NEUTRAL)) {
+				onStateExit(mState);
+				mState = ClimberState.NEUTRAL;
+				onStateStart(mState);
+			}
+			
+		} else if (mState != wantedState){
 			onStateExit(mState);
 			mState = wantedState;
 			onStateStart(mState);
 		}
 	}
 
-	public synchronized void checkPrevState() {
-		if (mState != prevState) {
-			onStateExit(prevState);
-			onStateStart(mState);
-		}
-		prevState = mState;
+	private synchronized boolean currentStateIsNot(ClimberState state) {
+		return mState != state;
 	}
 
 	public String getStateString() {

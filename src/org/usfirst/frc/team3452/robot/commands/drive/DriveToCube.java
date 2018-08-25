@@ -7,6 +7,7 @@ import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
+import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.DriveState;
 
 public class DriveToCube extends Command {
 
@@ -45,6 +46,8 @@ public class DriveToCube extends Command {
 		timer.stop();
 		timer.reset();
 		timer.start();
+		
+		Robot.drive.setState(DriveState.OPEN_LOOP);
 	}
 
 	@Override

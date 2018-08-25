@@ -42,6 +42,7 @@ public class EncoderDrive extends Command {
 	}
 
 	protected void end() {
+		Robot.drive.stop();
 		Robot.drive.encoderDone();
 		System.out.println("Encoder drive completed.");
 	}

@@ -113,8 +113,8 @@ public class Drivetrain extends GZSubsystem {
 
 			if (s.getMaster() == Master.MASTER) {
 
-				final ErrorCode sensorPresent = s
-						.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT);
+				final ErrorCode sensorPresent = s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,
+						0, GZSRX.TIMEOUT);
 
 				if (sensorPresent != ErrorCode.OK)
 					System.out.println("ERROR DRIVETRAIN " + s.getSide() + " ENCODER NOT DETECTED.");
@@ -312,20 +312,26 @@ public class Drivetrain extends GZSubsystem {
 	}
 
 	public synchronized void arcade(GZJoystick joy) {
-		arcade(joy.getLeftAnalogY() * percentageModify,
-				(joy.getRightTrigger() - joy.getLeftTrigger()) * .8 * percentageModify);
+		setState(DriveState.OPEN_LOOP_DRIVER);
+		arcadeNoState(joy.getLeftAnalogY(), (joy.getRightTrigger() - joy.getLeftTrigger()) * .8);
 	}
 
 	public synchronized void alternateArcade(GZJoystick joy) {
-		arcade(joy.getLeftAnalogY(), (joy.getRightAnalogX() * .85));
+		setState(DriveState.DEMO);
+		arcadeNoState(joy.getLeftAnalogY(), (joy.getRightAnalogX() * .85));
+	}
+
+	private synchronized void arcadeNoState(double move, double rotate) {
+		double[] temp = arcadeToLR(move * Robot.elevator.getPercentageModify() * percentageModify,
+				rotate * Robot.elevator.getPercentageModify() * percentageModify);
+ 
+		mIO.left_desired_output = temp[0];
+		mIO.right_desired_output = temp[1];
 	}
 
 	public synchronized void arcade(double move, double rotate) {
-		double[] temp = arcadeToLR(move * Robot.elevator.getPercentageModify(),
-				rotate * (Robot.elevator.getPercentageModify() + .2));
-
-		mIO.left_desired_output = temp[0];
-		mIO.right_desired_output = temp[1];
+		setState(DriveState.OPEN_LOOP);
+		arcadeNoState(move, rotate);
 	}
 
 	// Modified from DifferentialDrive.java to produce double array, [0] being left
@@ -371,8 +377,8 @@ public class Drivetrain extends GZSubsystem {
 
 	public synchronized void tank(double left, double right) {
 		setState(DriveState.OPEN_LOOP);
-		mIO.left_desired_output = left * Robot.elevator.getPercentageModify();
-		mIO.right_desired_output = right * Robot.elevator.getPercentageModify();
+		mIO.left_desired_output = left * Robot.elevator.getPercentageModify() * percentageModify;
+		mIO.right_desired_output = right * Robot.elevator.getPercentageModify() * percentageModify;
 	}
 
 	public synchronized void tank(GZJoystick joy) {
@@ -385,10 +391,11 @@ public class Drivetrain extends GZSubsystem {
 
 	public synchronized void motionMagic(double leftRotations, double rightRotations, double leftAccel,
 			double rightAccel, double leftSpeed, double rightSpeed) {
+		setState(DriveState.MOTION_MAGIC);
+
 		double topspeed = 3941;
 
 		left_target = Units.rotations_to_ticks(leftRotations);
-		// = leftRotations * 4096 * 1;
 		right_target = Units.rotations_to_ticks(rightRotations);
 
 		percentageComplete = Math
@@ -404,24 +411,6 @@ public class Drivetrain extends GZSubsystem {
 		mIO.right_desired_output = right_target;
 	}
 
-	@Deprecated
-	public synchronized void encoder(double leftRotations, double rightRotations, double leftPercentageLimit,
-			double rightPercentageLimit) {
-		L1.configPeakOutputForward(leftPercentageLimit, 10);
-		L1.configPeakOutputReverse(-leftPercentageLimit, 10);
-		R1.configPeakOutputForward(rightPercentageLimit, 10);
-		R1.configPeakOutputReverse(-rightPercentageLimit, 10);
-
-		left_target = Units.rotations_to_ticks(leftRotations);
-		right_target = -Units.rotations_to_ticks(rightRotations);
-
-		percentageComplete = Math
-				.abs(((mIO.left_encoder_rotations / left_target) + (mIO.right_encoder_rotations / right_target)) / 2);
-
-		mIO.left_desired_output = left_target;
-		mIO.right_desired_output = right_target;
-	}
-
 	public synchronized boolean encoderSpeedIsUnder(double ticksPer100Ms) {
 		double l = Math.abs(mIO.left_encoder_vel);
 		double r = Math.abs(mIO.right_encoder_vel);
@@ -430,8 +419,7 @@ public class Drivetrain extends GZSubsystem {
 	}
 
 	public synchronized void encoderDone() {
-		mIO.control_mode = ControlMode.PercentOutput;
-		mIO.left_desired_output = mIO.right_desired_output = 0;
+		stop();
 
 		processMotionProfileBuffer(3452);
 
@@ -713,16 +701,14 @@ public class Drivetrain extends GZSubsystem {
 		this.percentageComplete = percentageComplete;
 	}
 
-	public synchronized double getGyroAngle()
-	{
+	public synchronized double getGyroAngle() {
 		return mGyro.getAngle();
 	}
 
-	public synchronized double getGyroFusedHeading()
-	{
+	public synchronized double getGyroFusedHeading() {
 		return mGyro.getFusedHeading();
 	}
-	
+
 	@Override
 	protected synchronized void out() {
 		L1.set(mIO.control_mode, mIO.left_output);
@@ -739,21 +725,31 @@ public class Drivetrain extends GZSubsystem {
 	}
 
 	public synchronized void setState(DriveState wantedState) {
-		if (this.isDisabed()) {
+		if ((this.isDisabed() || wantedState == DriveState.NEUTRAL)) {
 
-			onStateExit(mState);
-			mState = DriveState.NEUTRAL;
-			onStateStart(mState);
+			if (currentStateIsNot(DriveState.NEUTRAL)) {
+				onStateExit(mState);
+				mState = DriveState.NEUTRAL;
+				onStateStart(mState);
+			}
 
 		} else if (Robot.autonSelector.isDemo()) {
-			onStateExit(mState);
-			mState = DriveState.DEMO;
-			onStateStart(mState);
+
+			if (currentStateIsNot(DriveState.DEMO)) {
+				onStateExit(mState);
+				mState = DriveState.DEMO;
+				onStateStart(mState);
+			}
+
 		} else if (mState != wantedState) {
 			onStateExit(mState);
 			mState = wantedState;
 			onStateStart(mState);
 		}
+	}
+
+	private synchronized boolean currentStateIsNot(DriveState state) {
+		return mState != state;
 	}
 
 	public String getStateString() {
