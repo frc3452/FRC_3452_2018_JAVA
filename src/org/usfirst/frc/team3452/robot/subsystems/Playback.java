@@ -14,7 +14,6 @@ import org.usfirst.frc.team3452.robot.util.Util;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  * <b>Playback subsystem</b> Also used for file writing, logging, etc.
@@ -23,7 +22,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * @since 4-18-2018
  *
  */
-public class Playback extends Subsystem {
+public class Playback {
 	/**
 	 * variable for storing left values for motion profile
 	 */
@@ -449,8 +448,4 @@ public class Playback extends Subsystem {
 		Record, Log, Parse
 	}
 
-	@Override
-	public void initDefaultCommand() {
-		// setDefaultCommand(new Record("LOG", TASK.LOG));
-	}
 }

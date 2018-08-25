@@ -3,7 +3,6 @@ package org.usfirst.frc.team3452.robot.subsystems;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSink;
 import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  * <h1>Camera subsystem</h1> Handles camera exposure change and server switching
@@ -11,7 +10,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * @author max
  *
  */
-public class Camera extends Subsystem {
+public class Camera {
 	private UsbCamera mCamera0, mCamera1;
 	private VideoSink server;
 
@@ -58,7 +57,4 @@ public class Camera extends Subsystem {
 		}
 	}
 
-	@Override
-	public void initDefaultCommand() {
-	}
 }

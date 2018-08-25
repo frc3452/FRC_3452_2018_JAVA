@@ -10,9 +10,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class Lights extends Subsystem {
+public class Lights {
 	private static CANifier canifier;
 
 	public int m_hue = 225;
@@ -175,7 +174,6 @@ public class Lights extends Subsystem {
         if (pulseBrightness <= lowBounePoint) pulseDirection = true;
 
 		hsv(hue, saturation, pulseBrightness);
-
 		Robot.lights.m_hue = hue;
 	}
 
@@ -187,11 +185,6 @@ public class Lights extends Subsystem {
 			return f;
 		else
 			return "NOT";
-	}
-
-	@Override
-	public void initDefaultCommand() {
-		//		setDefaultCommand(new LightsCycle());
 	}
 
 }

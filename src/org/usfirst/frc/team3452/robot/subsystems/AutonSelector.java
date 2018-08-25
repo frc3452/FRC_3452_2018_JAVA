@@ -11,7 +11,6 @@ import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  * <h1>AutonSelector Subsystem</h1> Handles autonomous selector case statements
@@ -20,7 +19,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * @author max
  *
  */
-public class AutonSelector extends Subsystem {
+public class AutonSelector {
 
 	public AnalogInput as_A;
 	public AnalogInput as_B;
@@ -336,10 +335,6 @@ public class AutonSelector extends Subsystem {
 			// ERROR
 			return 3452;
 		}
-	}
-
-	@Override
-	public void initDefaultCommand() {
 	}
 
 	/**
