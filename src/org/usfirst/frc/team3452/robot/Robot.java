@@ -31,12 +31,12 @@ public class Robot extends TimedRobot {
 	public static final Elevator elevator = new Elevator();
 	public static final Intake intake = new Intake();
 	public static final Climber climber = new Climber();
+	
 	public static final AutonSelector autonSelector = new AutonSelector();
 	public static final Camera camera = new Camera();
 	public static final Lights lights = new Lights();
 	public static final Playback playback = new Playback();
 
-	// TODO STATE TESTING CONSTRUCTION
 	private static final GZSubsystemManager mSubsystems = new GZSubsystemManager(
 			Arrays.asList(drive, elevator, intake, climber));
 
@@ -51,7 +51,9 @@ public class Robot extends TimedRobot {
 	// LOGGING CONTROL
 	private boolean logging = true, logToUsb = true;
 	private String loggingLocation = "Logging/Offseason";
-
+	
+	//TODO FIGURE OUT BETTER TASK MANAGEMENT THAN TODOS
+	
 	@Override
 	public void robotInit() {
 		mAutoTimer.stop();
@@ -102,11 +104,13 @@ public class Robot extends TimedRobot {
 		mAutoTimer.reset();
 		mAutoTimer.start();
 
-		// keep overriding while game data bad
+		
+		//Loop while game data is bad and timer is acceptable
 		do {
 			Robot.autonSelector.gameMsg = Robot.lights.gsm();
 		} while ((Robot.autonSelector.gameMsg.equals("NOT") && mAutoTimer.get() < 3));
 
+		//Set autons, regardless of good game message
 		Robot.autonSelector.setAutons();
 
 		// SET COLOR ACCORDING TO ALLIANCE
@@ -151,14 +155,12 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		// TODO 4) FIND SOME WAY TO BETTER MANAGE TASKS THAN TODOS
 		if (!wasTest)
 			Scheduler.getInstance().run();
 	}
 
 	@Override
 	public void testInit() {
-		System.out.println("Entering test mode");
 		startLog();
 
 		wasTest = true;
@@ -210,7 +212,7 @@ public class Robot extends TimedRobot {
 						if (readyForMatch)
 							Robot.lights.pulse(258, 1, 0.1, .4, 0.025 / 3.5);
 						else
-							Robot.lights.pulse(330, 1, .1, .4, 0.025 / 3.5);
+							Robot.lights.pulse(330, 1, 0.1, .4, 0.025 / 3.5);
 
 					} else {
 						// IF NOT CONNECTED DO AGGRESSIVE RED PULSE

@@ -17,7 +17,7 @@ public class GyroReset extends Command {
 
 	protected void initialize() {
 		setTimeout(0.1);
-		Robot.drive.getGyro().reset();
+		Robot.drive.zeroGyro();
 	}
 	protected void execute() {
 		

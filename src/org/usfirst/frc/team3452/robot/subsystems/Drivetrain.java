@@ -3,8 +3,6 @@ package org.usfirst.frc.team3452.robot.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
-import org.usfirst.frc.team3452.robot.Constants;
-import org.usfirst.frc.team3452.robot.Constants.kDemoMode;
 import org.usfirst.frc.team3452.robot.Constants.kDrivetrain;
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
@@ -18,6 +16,7 @@ import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 import org.usfirst.frc.team3452.robot.util.Units;
 import org.usfirst.frc.team3452.robot.util.Util;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
@@ -25,13 +24,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drivetrain extends GZSubsystem {
@@ -52,20 +49,11 @@ public class Drivetrain extends GZSubsystem {
 	// GYRO
 	private AHRS mGyro;
 
-	// init timer
-	private Timer timer = new Timer();
-
 	private double percentageModify = 1;
 	private double percentageComplete;
 	private double left_target = 0, right_target = 0;
 
 	public Drivetrain() {
-
-		// init timer
-		timer.stop();
-		timer.reset();
-		timer.start();
-
 		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
 		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
 		L3 = new GZSRX(kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
@@ -82,11 +70,7 @@ public class Drivetrain extends GZSubsystem {
 
 		brake(NeutralMode.Coast);
 
-		// TODO 3) B - FINISH CONSTRUCTION
-		for (GZSRX t : controllers) {
-			t.configFactoryDefault();
-			talonInit(t);
-		}
+		talonInit(controllers);
 
 		pdp.setSubsystem("Drive train");
 
@@ -102,65 +86,56 @@ public class Drivetrain extends GZSubsystem {
 		mGyro.reset();
 	}
 
-	private void talonInit(WPI_TalonSRX talon) {
-		// ---All talons---\\
+	private void talonInit(List<GZSRX> srx) {
+		for (GZSRX s : srx) {
+//			String name = talon.getName();
+			s.configFactoryDefault(GZSRX.TIMEOUT);
 
-		int id = talon.getDeviceID();
-		boolean LorR;
+			s.setInverted((s.getSide() == Side.LEFT) ? kDrivetrain.L_INVERT : kDrivetrain.R_INVERT);
 
-		LorR = (id >= Constants.kDrivetrain.L1 && id <= Constants.kDrivetrain.L4);
+			// TODO 1A) PULL BREAKER AND SEE OUTPUT IF GZSRX.CHECKERROR() IS NECCESARY
+			// CURRENT LIMIT
+			s.configContinuousCurrentLimit(
+					s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_LIMIT : kDrivetrain.AMP_30_LIMIT,
+					GZSRX.TIMEOUT);
+			s.configPeakCurrentLimit(
+					s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_TRIGGER : kDrivetrain.AMP_30_TRIGGER,
+					GZSRX.TIMEOUT);
+			s.configPeakCurrentDuration(
+					s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_TIME : kDrivetrain.AMP_30_TIME,
+					GZSRX.TIMEOUT);
+			s.configOpenloopRamp(kDrivetrain.OPEN_LOOP_RAMP_TIME, GZSRX.TIMEOUT);
+			s.enableCurrentLimit(true);
 
-		talon.setInverted((LorR) ? Constants.kDrivetrain.L_INVERT : Constants.kDrivetrain.R_INVERT);
+			s.configNeutralDeadband(0.05, GZSRX.TIMEOUT);
 
-		talon.configPeakOutputForward(1);
-		talon.configPeakOutputReverse(-1);
-		talon.configNominalOutputForward(0, 10);
-		talon.configNominalOutputReverse(0, 10);
+			s.setSubsystem("Drive train");
 
-		// AMP LIMIT
-		// OUTER TALONS IN BLOCK = 40amp, INNER TALONS IN BLOCK = 30amp
-		talon.configContinuousCurrentLimit(Constants.kDrivetrain.AMP_40_LIMIT, 10);
-		talon.configPeakCurrentLimit(Constants.kDrivetrain.AMP_40_TRIGGER, 10);
-		talon.configPeakCurrentDuration(Constants.kDrivetrain.AMP_40_TIME, 10);
-		talon.configOpenloopRamp(Constants.kDrivetrain.RAMP_TIME, 10);
+			if (s.getMaster() == Master.MASTER) {
 
-		talon.enableCurrentLimit(true);
+				final ErrorCode sensorPresent = s
+						.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT);
 
-		talon.configNeutralDeadband(0.05, 10);
+				if (sensorPresent != ErrorCode.OK)
+					System.out.println("ERROR DRIVETRAIN " + s.getSide() + " ENCODER NOT DETECTED.");
 
-		talon.setSubsystem("Drive train");
+				s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT);
+				s.setSensorPhase(true);
 
-		// If Master
-		if (id == Constants.kDrivetrain.L1 || id == Constants.kDrivetrain.R1) {
-			// talon.selectProfileSlot(0, 10);
+				if (s.getSide() == Side.LEFT) {
+					s.config_kP(0, 0.425, GZSRX.TIMEOUT);
+					s.config_kI(0, 0, GZSRX.TIMEOUT);
+					s.config_kD(0, 4.25, GZSRX.TIMEOUT);
 
-			talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
-			talon.setSelectedSensorPosition(0, 0, 10);
-			talon.setSensorPhase(true);
-
-			// P .4 D 8,9
-			// P .13 D 1.3
-			// P (.1 {Amount of correction you want} * 1023) / 7635 ~ F (100% * 1023) / 3941
-			// P .425 D 20
-
-			talon.config_kF(0, .2379, 10);
-
-			// If left master
-			if (talon.getDeviceID() == Constants.kDrivetrain.L1) {
-				talon.config_kP(0, 0.425, 10);
-				talon.config_kI(0, 0, 10);
-				talon.config_kD(0, 4.25, 10);
-
+				} else {
+					s.config_kP(0, 0.425, GZSRX.TIMEOUT); // .8
+					s.config_kI(0, 0, GZSRX.TIMEOUT);
+					s.config_kD(0, 4.25, GZSRX.TIMEOUT);
+				}
 			} else {
-				// If right master
-				talon.config_kP(0, 0.425, 10); // .8
-				talon.config_kI(0, 0, 10);
-				talon.config_kD(0, 4.25, 10);
+				s.follow(s.getSide() == Side.LEFT ? L1 : R1);
 			}
 
-			// If Follower
-		} else {
-			talon.follow(LorR ? L1 : R1);
 		}
 	}
 
@@ -252,8 +227,8 @@ public class Drivetrain extends GZSubsystem {
 
 			alternateArcade(OI.driverJoy);
 			mIO.control_mode = ControlMode.PercentOutput;
-			mIO.left_output = mIO.left_desired_output * kDemoMode.DRIVE_MODIFIER;
-			mIO.right_output = mIO.right_desired_output * kDemoMode.DRIVE_MODIFIER;
+			mIO.left_output = mIO.left_desired_output * kDrivetrain.DEMO_DRIVE_MODIFIER;
+			mIO.right_output = mIO.right_desired_output * kDrivetrain.DEMO_DRIVE_MODIFIER;
 
 			break;
 
@@ -266,33 +241,22 @@ public class Drivetrain extends GZSubsystem {
 
 	public static class IO {
 		// in
-		public double left_encoder_ticks = Double.NaN;
-		public double left_encoder_rotations = Double.NaN;
-		public double left_encoder_vel = Double.NaN;
-		public double left_encoder_speed = Double.NaN;
 
-		public double right_encoder_ticks = Double.NaN;
-		public double right_encoder_rotations = Double.NaN;
-		public double right_encoder_vel = Double.NaN;
-		public double right_encoder_speed = Double.NaN;
+		// Left Encoder
+		public double left_encoder_ticks = Double.NaN, left_encoder_rotations = Double.NaN,
+				left_encoder_vel = Double.NaN, left_encoder_speed = Double.NaN;
 
-		public double L1_amp = Double.NaN;
-		public double L2_amp = Double.NaN;
-		public double L3_amp = Double.NaN;
-		public double L4_amp = Double.NaN;
-		public double R1_amp = Double.NaN;
-		public double R2_amp = Double.NaN;
-		public double R3_amp = Double.NaN;
-		public double R4_amp = Double.NaN;
+		// Right Encoder
+		public double right_encoder_ticks = Double.NaN, right_encoder_rotations = Double.NaN,
+				right_encoder_vel = Double.NaN, right_encoder_speed = Double.NaN;
 
-		public double L1_volt = Double.NaN;
-		public double L2_volt = Double.NaN;
-		public double L3_volt = Double.NaN;
-		public double L4_volt = Double.NaN;
-		public double R1_volt = Double.NaN;
-		public double R2_volt = Double.NaN;
-		public double R3_volt = Double.NaN;
-		public double R4_volt = Double.NaN;
+		// Amperage
+		public double L1_amp = Double.NaN, L2_amp = Double.NaN, L3_amp = Double.NaN, L4_amp = Double.NaN,
+				R1_amp = Double.NaN, R2_amp = Double.NaN, R3_amp = Double.NaN, R4_amp = Double.NaN;
+
+		// Voltage
+		public double L1_volt = Double.NaN, L2_volt = Double.NaN, L3_volt = Double.NaN, L4_volt = Double.NaN,
+				R1_volt = Double.NaN, R2_volt = Double.NaN, R3_volt = Double.NaN, R4_volt = Double.NaN;
 
 		// out
 		private double left_output = 0;
@@ -416,14 +380,7 @@ public class Drivetrain extends GZSubsystem {
 	}
 
 	public synchronized void brake(NeutralMode mode) {
-		L1.setNeutralMode(mode);
-		L2.setNeutralMode(mode);
-		L3.setNeutralMode(mode);
-		L4.setNeutralMode(mode);
-		R1.setNeutralMode(mode);
-		R2.setNeutralMode(mode);
-		R3.setNeutralMode(mode);
-		R4.setNeutralMode(mode);
+		controllers.forEach((s) -> s.setNeutralMode(mode));
 	}
 
 	public synchronized void motionMagic(double leftRotations, double rightRotations, double leftAccel,
@@ -756,14 +713,16 @@ public class Drivetrain extends GZSubsystem {
 		this.percentageComplete = percentageComplete;
 	}
 
-	public synchronized Timer getTimer() {
-		return timer;
+	public synchronized double getGyroAngle()
+	{
+		return mGyro.getAngle();
 	}
 
-	public synchronized AHRS getGyro() {
-		return mGyro;
+	public synchronized double getGyroFusedHeading()
+	{
+		return mGyro.getFusedHeading();
 	}
-
+	
 	@Override
 	protected synchronized void out() {
 		L1.set(mIO.control_mode, mIO.left_output);

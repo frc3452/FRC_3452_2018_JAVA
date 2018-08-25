@@ -8,14 +8,6 @@ package org.usfirst.frc.team3452.robot;
  */
 
 public class Constants {
-	public class kDemoMode {
-		public static final double DRIVE_MODIFIER = .5;
-		
-		public static final double ELEVATOR_JOYSTICK_MODIFIER_UP = .5;
-		public static final double ELEVATOR_JOYSTICK_MODIFIER_DOWN = .3;
-		
-	}
-	
     public class kAutonSelector {
     	public static final double CORRECTION = 0.025;
     	
@@ -90,7 +82,9 @@ public class Constants {
 
         public final static int AMP_30_TRIGGER = 45, AMP_30_LIMIT = 25, AMP_30_TIME = 3000;
 
-        public final static double RAMP_TIME = 0.125;
+        public final static double OPEN_LOOP_RAMP_TIME = 0.125;
+        
+		public static final double DEMO_DRIVE_MODIFIER = .5;
     }
 
     public class kPDP {
@@ -137,11 +131,20 @@ public class Constants {
         public static final int AMP_LIMIT = 40;
         public static final int AMP_TIME = 1000;
         
+        public static final double LOWER_SOFT_LIMIT = -1;
+        public static final double UPPER_SOFT_LIMIT = 5;
+        
+        public static final boolean USE_SOFT_LIMITS = false;
+        
+        public static final double DEMO_JOYSTICK_MODIFIER_DOWN = .3;
+        public static final double DEMO_JOYSTICK_MODIFIER_UP = .5;
+        
         public class Heights {
         	public static final double Floor = -15;
         	public static final double Switch = 2.8;
         	public static final double Scale = 8;
         }
+
     }
 
     public class kIntake {

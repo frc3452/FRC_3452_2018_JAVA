@@ -17,7 +17,7 @@ public class GyroPos extends Command {
 	public GyroPos(double targetangle, double speed, double precise) {
 		requires(Robot.drive);
 
-		m_gyro = Robot.drive.getGyro().getFusedHeading();
+		m_gyro = Robot.drive.getGyroFusedHeading();
 		m_target = targetangle;
 		m_speed = speed;
 		m_precise = precise;
@@ -28,7 +28,7 @@ public class GyroPos extends Command {
 	}
 
 	protected void execute() {
-		m_gyro = Robot.drive.getGyro().getFusedHeading();
+		m_gyro = Robot.drive.getGyroFusedHeading();
 
 		if (m_gyro < 360 && m_gyro > 180) {
 			if ((m_gyro < (m_target + 180)) && (m_gyro > m_target)) {

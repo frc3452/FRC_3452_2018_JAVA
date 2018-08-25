@@ -1,8 +1,9 @@
-
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.usfirst.frc.team3452.robot.Constants;
-import org.usfirst.frc.team3452.robot.Constants.kDemoMode;
 import org.usfirst.frc.team3452.robot.Constants.kElevator;
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
@@ -10,11 +11,10 @@ import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.GZJoystick;
 import org.usfirst.frc.team3452.robot.util.GZSRX;
 import org.usfirst.frc.team3452.robot.util.GZSRX.Breaker;
-import org.usfirst.frc.team3452.robot.util.GZSRX.Master;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 import org.usfirst.frc.team3452.robot.util.Units;
 
-import com.ctre.phoenix.ParamEnum;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -26,38 +26,23 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Elevator extends GZSubsystem {
 
 	private static GZSRX elevator_1, elevator_2;
+	private List<GZSRX> controllers;
 
 	private ElevatorState mState = ElevatorState.NEUTRAL;
 	private ElevatorState prevState = mState;
 	public IO mIO = new IO();
 
-	private double percentageModify = 0;
+	private double driveModifier = 0;
 	private double target = 0;
 	private boolean isOverriden = false;
 
 	public Elevator() {
-		elevator_1 = new GZSRX(Constants.kElevator.E_1, Breaker.AMP_40, Master.MASTER);
-		elevator_2 = new GZSRX(Constants.kElevator.E_2, Breaker.AMP_40, Master.FOLLOWER);
+		elevator_1 = new GZSRX(kElevator.E_1, Breaker.AMP_40);
+		elevator_2 = new GZSRX(kElevator.E_2, Breaker.AMP_40);
 
-		elevator_1.configFactoryDefault();
-		elevator_2.configFactoryDefault();
+		controllers = Arrays.asList(elevator_1, elevator_2);
 
-		elevator_1.setNeutralMode(NeutralMode.Brake);
-		elevator_2.setNeutralMode(NeutralMode.Brake);
-
-		elevator_1.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10);
-		elevator_1.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10);
-		elevator_1.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10);
-
-		elevator_2.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10);
-		elevator_2.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10);
-		elevator_2.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10);
-
-		elevator_1.enableCurrentLimit(true);
-		elevator_2.enableCurrentLimit(true);
-
-		elevator_1.setSubsystem("Elevator");
-		elevator_2.setSubsystem("Elevator");
+		talonInit(controllers);
 
 		// FOLLOWER
 		elevator_2.follow(elevator_1);
@@ -66,10 +51,7 @@ public class Elevator extends GZSubsystem {
 		elevator_1.setInverted(Constants.kElevator.E_1_INVERT);
 		elevator_2.setInverted(Constants.kElevator.E_2_INVERT);
 
-		// F 0
-		// P .08
-		// I .000028
-		// D 2.5
+		// F 0  P .08 I .000028 D 2.5
 		// PIDs
 		elevator_1.config_kF(0, 0, 10);
 		elevator_1.config_kP(0, 0.2, 10);
@@ -78,17 +60,19 @@ public class Elevator extends GZSubsystem {
 		elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10);
 		elevator_1.configClosedloopRamp(Constants.kElevator.CLOSED_RAMP_TIME, 10);
 
+		//TODO 1B) PULL BREAKER AND SEE OUTPUT IF GZSRX.CHECKERROR() IS NECCESARY
+		
 		// ENCODER
-		elevator_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		final ErrorCode encoderPresent = elevator_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		if (encoderPresent != ErrorCode.OK)
+			System.out.println("ERROR ELEVATOR ENCODER NOT FOUND!");
+		
 		elevator_1.setSelectedSensorPosition(0, 0, 10);
 		elevator_1.setSensorPhase(Constants.kElevator.ENC_INVERT);
 
 		// SOFT LIMITS FOR DEMO MODE
-		// TODO 1) CHECK POLARITY
-		// TODO 1) WRITE PHASE TO CONSTANT
-		// TODO 1) CREATE BOOLEAN FOR USE OUTSIDE LIMITS
-		elevator_1.configForwardSoftLimitThreshold(Units.rotations_to_ticks(1));
-		elevator_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-5));
+		elevator_1.configForwardSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.LOWER_SOFT_LIMIT));
+		elevator_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.UPPER_SOFT_LIMIT));
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
 		elevator_1.configClearPositionOnLimitF(true, 10);
@@ -104,6 +88,20 @@ public class Elevator extends GZSubsystem {
 
 	}
 
+	private synchronized void talonInit(List<GZSRX> srx) {
+		for (GZSRX s : srx) {
+			s.configFactoryDefault();
+			s.setNeutralMode(NeutralMode.Brake);
+
+			s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10);
+			s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10);
+			s.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10);
+			s.enableCurrentLimit(true);
+
+			s.setSubsystem("Elevator");
+		}
+	}
+
 	private synchronized void onStateStart(ElevatorState wantedState) {
 		switch (wantedState) {
 		case MANUAL:
@@ -114,7 +112,8 @@ public class Elevator extends GZSubsystem {
 			break;
 		case DEMO:
 
-			softLimits(true);
+			if (kElevator.USE_SOFT_LIMITS)
+				softLimits(true);
 
 			break;
 		default:
@@ -125,7 +124,6 @@ public class Elevator extends GZSubsystem {
 	private synchronized void onStateExit(ElevatorState prevState) {
 		switch (prevState) {
 		case MANUAL:
-
 			break;
 		case NEUTRAL:
 			break;
@@ -178,8 +176,8 @@ public class Elevator extends GZSubsystem {
 	public void runElevatorManual(GZJoystick joy) {
 		double up = 0, down = 0, value;
 		if (mState == ElevatorState.DEMO) {
-			up = kDemoMode.ELEVATOR_JOYSTICK_MODIFIER_UP;
-			down = kDemoMode.ELEVATOR_JOYSTICK_MODIFIER_DOWN;
+			up = kElevator.DEMO_JOYSTICK_MODIFIER_UP;
+			down = kElevator.DEMO_JOYSTICK_MODIFIER_DOWN;
 		} else {
 			up = kElevator.JOYSTICK_MODIFIER_UP;
 			down = kElevator.JOYSTICK_MODIFIER_DOWN;
@@ -195,22 +193,17 @@ public class Elevator extends GZSubsystem {
 
 	public static class IO {
 		// in
-		double encoder_ticks = Double.NaN;
-		double encoder_rotations = Double.NaN;
-		double encoder_vel = Double.NaN;
+		public double encoder_ticks = Double.NaN, encoder_rotations = Double.NaN, encoder_vel = Double.NaN;
 
-		public double elevator_1_amp = Double.NaN;
-		public double elevator_2_amp = Double.NaN;
+		public double elevator_1_amp = Double.NaN, elevator_2_amp = Double.NaN;
 
-		public double elevator_1_volt = Double.NaN;
-		public double elevator_2_volt = Double.NaN;
+		public double elevator_1_volt = Double.NaN, elevator_2_volt = Double.NaN;
 
-		public boolean elevator_fwd_lmt = false;
-		public boolean elevator_rev_lmt = false;
+		public boolean elevator_fwd_lmt = false, elevator_rev_lmt = false;
 
 		// out
 		private double output = 0;
-		private double desired_output = 0;
+		public double desired_output = 0;
 
 		ControlMode control_mode = ControlMode.PercentOutput;
 	}
@@ -255,22 +248,22 @@ public class Elevator extends GZSubsystem {
 		if (mState == ElevatorState.DEMO) {
 			if (isOverriden() == false) {
 				if (pos < 2.08)
-					percentageModify = Constants.kElevator.SPEED_1;
+					driveModifier = Constants.kElevator.SPEED_1;
 				else if (pos < 2.93 && pos > 2.08)
-					percentageModify = Constants.kElevator.SPEED_2;
+					driveModifier = Constants.kElevator.SPEED_2;
 				else if (pos < 3.66 && pos > 2.93)
-					percentageModify = Constants.kElevator.SPEED_3;
+					driveModifier = Constants.kElevator.SPEED_3;
 				else if (pos < 6.1 && pos > 3.66)
-					percentageModify = Constants.kElevator.SPEED_4;
+					driveModifier = Constants.kElevator.SPEED_4;
 				else if (pos > 6.1)
-					percentageModify = Constants.kElevator.SPEED_5;
+					driveModifier = Constants.kElevator.SPEED_5;
 			} else {
-				percentageModify = 1;
+				driveModifier = 1;
 			}
 
 			// If not in demo, we are already slowing the drivetrain down somewhere else
 		} else {
-			percentageModify = 1;
+			driveModifier = 1;
 		}
 	}
 
@@ -317,8 +310,8 @@ public class Elevator extends GZSubsystem {
 			up = kElevator.JOYSTICK_MODIFIER_UP;
 			down = kElevator.JOYSTICK_MODIFIER_DOWN;
 		} else {
-			up = kDemoMode.ELEVATOR_JOYSTICK_MODIFIER_UP;
-			down = kDemoMode.ELEVATOR_JOYSTICK_MODIFIER_DOWN;
+			up = kElevator.DEMO_JOYSTICK_MODIFIER_UP;
+			down = kElevator.DEMO_JOYSTICK_MODIFIER_DOWN;
 		}
 
 		if (joy == OI.opJoy)
@@ -336,7 +329,7 @@ public class Elevator extends GZSubsystem {
 	}
 
 	public synchronized double getPercentageModify() {
-		return percentageModify;
+		return driveModifier;
 	}
 
 	public synchronized void setSpeedLimitingOverride(ESO override) {
