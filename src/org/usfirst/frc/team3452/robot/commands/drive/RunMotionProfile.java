@@ -6,7 +6,6 @@ import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.DriveState;
 import org.usfirst.frc.team3452.robot.util.GZSRX.Side;
 
 import com.ctre.phoenix.motion.MotionProfileStatus;
-import com.ctre.phoenix.motion.SetValueMotionProfile;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -38,14 +37,11 @@ public class RunMotionProfile extends Command {
 
 	@Override
 	protected void execute() {
-		Robot.drive.setState(DriveState.MOTION_PROFILE);
 
-		if (lStat.btmBufferCnt > 5 && rStat.btmBufferCnt > 5) {
-			Robot.drive.mIO.left_desired_output = Robot.drive.mIO.right_desired_output = SetValueMotionProfile.Enable.value;
-		} else {
-			Robot.drive.mIO.left_desired_output = Robot.drive.mIO.right_desired_output = SetValueMotionProfile.Disable.value;
-
-		}
+		if (lStat.btmBufferCnt > 5 && rStat.btmBufferCnt > 5)
+			Robot.drive.setWantedState(DriveState.MOTION_PROFILE);
+		else
+			Robot.drive.stop();
 
 		Robot.drive.getMotionProfileStatus(Side.LEFT, lStat);
 		Robot.drive.getMotionProfileStatus(Side.RIGHT, rStat);
@@ -59,9 +55,8 @@ public class RunMotionProfile extends Command {
 
 	@Override
 	protected void end() {
-		System.out.println("Motion Profile Complete");
-		Robot.drive.encoderDone();
 		Robot.drive.stop();
+		System.out.println("Motion Profile Complete");
 	}
 
 	@Override

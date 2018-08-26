@@ -43,7 +43,6 @@ public class ElevatorPosition extends Command {
 
 	protected void end() {
 		Robot.elevator.stop();
-		Robot.elevator.encoderDone();
 	}
 
 	protected void interrupted() {

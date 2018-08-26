@@ -29,7 +29,7 @@ public class Elevator extends GZSubsystem {
 	private List<GZSRX> controllers;
 
 	private ElevatorState mState = ElevatorState.NEUTRAL;
-	private ElevatorState prevState = mState;
+	private ElevatorState mWantedState = mState;
 	public IO mIO = new IO();
 
 	private double driveModifier = 0;
@@ -60,8 +60,8 @@ public class Elevator extends GZSubsystem {
 		elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10);
 		elevator_1.configClosedloopRamp(Constants.kElevator.CLOSED_RAMP_TIME, 10);
 
-		//TODO ISSUE #11
-		
+		// TODO ISSUE #11
+
 		// ENCODER
 		final ErrorCode encoderPresent = elevator_1
 				.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
@@ -129,6 +129,7 @@ public class Elevator extends GZSubsystem {
 		case NEUTRAL:
 			break;
 		case POSITION:
+			encoderDone();
 			break;
 		case DEMO:
 			softLimits(false);
@@ -140,6 +141,7 @@ public class Elevator extends GZSubsystem {
 
 	@Override
 	public synchronized void loop() {
+		handleStates();
 		in();
 		out();
 
@@ -254,8 +256,8 @@ public class Elevator extends GZSubsystem {
 	}
 
 	public synchronized void encoder(double rotations) {
-		setState(ElevatorState.POSITION);
 		if (mState != ElevatorState.DEMO) {
+			setWantedState(ElevatorState.POSITION);
 			elevator_1.configPeakOutputForward(kElevator.CLOSED_DOWN_SPEED_LIMIT, 10);
 			elevator_1.configPeakOutputReverse(kElevator.CLOSED_UP_SPEED_LIMIT * -1, 10);
 			setTarget(mIO.desired_output = -Units.rotations_to_ticks(rotations));
@@ -269,7 +271,6 @@ public class Elevator extends GZSubsystem {
 	}
 
 	public synchronized void encoderDone() {
-		stop();
 		mIO.desired_output = 0;
 
 		elevator_1.configPeakOutputForward(1, 10);
@@ -299,10 +300,10 @@ public class Elevator extends GZSubsystem {
 	}
 
 	public synchronized void manual(double percentage) {
-		setState(ElevatorState.MANUAL);
+		setWantedState(ElevatorState.MANUAL);
 		mIO.desired_output = -percentage;
 	}
-	
+
 	public synchronized double getPercentageModify() {
 		return driveModifier;
 	}
@@ -336,11 +337,15 @@ public class Elevator extends GZSubsystem {
 
 	@Override
 	public synchronized void stop() {
-		setState(ElevatorState.NEUTRAL);
+		setWantedState(ElevatorState.NEUTRAL);
 	}
 
-	public synchronized void setState(ElevatorState wantedState) {
-		if ((this.isDisabed() || wantedState == ElevatorState.NEUTRAL)) {
+	public synchronized void setWantedState(ElevatorState wantedState) {
+		this.mWantedState = wantedState;
+	}
+
+	private synchronized void handleStates() {
+		if ((this.isDisabed() || mWantedState == ElevatorState.NEUTRAL)) {
 
 			if (currentStateIsNot(ElevatorState.NEUTRAL)) {
 				onStateExit(mState);
@@ -356,9 +361,9 @@ public class Elevator extends GZSubsystem {
 				onStateStart(mState);
 			}
 
-		} else if (mState != wantedState) {
+		} else if (mState != mWantedState) {
 			onStateExit(mState);
-			mState = wantedState;
+			mState = mWantedState;
 			onStateStart(mState);
 		}
 	}
@@ -369,14 +374,6 @@ public class Elevator extends GZSubsystem {
 
 	public boolean isOverriden() {
 		return mIsOverriden;
-	}
-
-	public synchronized void checkPrevState() {
-		if (mState != prevState) {
-			onStateExit(prevState);
-			onStateStart(mState);
-		}
-		prevState = mState;
 	}
 
 	public synchronized String getStateString() {

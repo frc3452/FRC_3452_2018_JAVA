@@ -21,7 +21,7 @@ public class DriveToStop extends Command {
 
 	protected void initialize() {
 		setTimeout(10);
-		Robot.drive.setState(DriveState.OPEN_LOOP);
+		Robot.drive.setWantedState(DriveState.OPEN_LOOP);
 	}
 
 	protected void execute() {

@@ -47,7 +47,7 @@ public class DriveToCube extends Command {
 		timer.reset();
 		timer.start();
 		
-		Robot.drive.setState(DriveState.OPEN_LOOP);
+		Robot.drive.setWantedState(DriveState.OPEN_LOOP);
 	}
 
 	@Override

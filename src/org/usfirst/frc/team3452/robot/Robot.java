@@ -137,7 +137,7 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		startLog();
 		
-		Robot.drive.setState(DriveState.OPEN_LOOP_DRIVER);
+		Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
 
 		// GREEN LOW BRIGHTNESS
 		Robot.lights.hsv(250, 1, .5);

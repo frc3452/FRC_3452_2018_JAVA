@@ -50,7 +50,6 @@ public class ElevatorWhileDrive extends Command {
 
 	@Override
 	protected void end() {
-		Robot.elevator.encoderDone();
 		Robot.elevator.stop();
 		System.out.println("Elevator position completed.");
 	}

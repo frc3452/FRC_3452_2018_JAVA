@@ -14,9 +14,12 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	/** Example motor */
 	private Spark example_motor;
 
-	/** Current state of subsystem */
+	/** Current state of subsystem and wanted state of subsystem*/
 	private ExampleState mState = ExampleState.NEUTRAL;
-	private ExampleState prevState = mState;
+	private ExampleState mWantedState = mState;
+
+	//Input & output object.
+	public IO mIO = new IO();
 
 	/**
 	 * This is a constructor, this runs when you create the object in Robot.java.
@@ -63,24 +66,28 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * desired_output (what we want the motor to do), with our output (what the
 	 * motor is allowed to do). In manual, we allow the motor to run at what we
 	 * want. But, in neutral we dont allow the motor to run at what we want, we
-	 * force it to stop moving. this.inputOutput() call is running the two functions
-	 * below, in() and out(). Read into GZSubsystem and in() and out() to learn
-	 * more.
+	 * force it to stop moving. read into handleStates(), in(), and out() to learn
+	 * about those functions.
 	 */
 	@Override
 	public void loop() {
+		handleStates();
+		in();
+		out();
+
 		switch (mState) {
 		case MANUAL:
 
-			IO.output = IO.desired_output;
+			mIO.output = mIO.desired_output;
 
 			break;
 		case NEUTRAL:
 
-			IO.output = 0;
+			mIO.output = 0;
 			break;
 
 		case DEMO:
+			break;
 
 		default:
 			System.out.println("WARNING: Incorrect ExampleSubsystem state " + mState + " reached.");
@@ -105,14 +112,14 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * anything to be able to change what the subsystem is trying to do, but nothing
 	 * but the subsystem itself to change what it is actually doing.
 	 */
-	public static class IO {
+	static class IO {
 		// In
-		static double speed = -1;
-		static double position = -1;
+		public double speed = -1;
+		public double position = -1;
 
 		// out
-		static private double output = 0;
-		static double desired_output = 0;
+		private double output = 0;
+		public double desired_output = 0;
 	}
 
 	/**
@@ -121,11 +128,9 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 */
 	@Override
 	protected void in() {
-		IO.speed = example_motor.getSpeed();
-		IO.position = example_motor.getPosition();
+		mIO.speed = example_motor.getSpeed();
+		mIO.position = example_motor.getPosition();
 	}
-
-	// Put methods you need to create here!
 
 	/**
 	 * For example, in this method we will set the state to manual and the desired
@@ -133,14 +138,14 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * this method is.
 	 */
 	public void exampleMethodRunMotorWithJoystick(GZJoystick joy) {
-		setState(ExampleState.MANUAL);
-		IO.desired_output = joy.getLeftAnalogY();
+		setWantedState(ExampleState.MANUAL);
+		mIO.desired_output = joy.getLeftAnalogY();
 	}
 
 	/** Set our motor values to what they should be */
 	@Override
 	protected void out() {
-		example_motor.set(IO.output);
+		example_motor.set(mIO.output);
 	}
 
 	/**
@@ -151,10 +156,10 @@ public class ExampleGZSubsystem extends GZSubsystem {
 		NEUTRAL, MANUAL, DEMO
 	}
 
-	/** Set the state of the subsystem to NEUTRAL */
+	/** Set the desired state of the subsystem to NEUTRAL */
 	@Override
 	public void stop() {
-		setState(ExampleState.NEUTRAL);
+		setWantedState(ExampleState.NEUTRAL);
 	}
 
 	/**
@@ -177,43 +182,75 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	}
 
 	/**
+	 * This is the central control for each subsystem. This sets the wanted state to
+	 * whatever we please. mWantedState will be used in the next method.
+	 */
+	public void setWantedState(ExampleState wantedState) {
+		this.mWantedState = wantedState;
+	}
+
+	/**
 	 * This is the method we use to control the state of the subsystem. We do this
 	 * instead of just changing the mState variable because this is what keeps the
 	 * robot locked in a disabled state if we call .disable(true) on the subsystem.
 	 * This also calls onStateExit and onStateStart for the current and new state.
 	 * 
-	 * First, we check if it's disabled, thats our first priority. If it is, we put
-	 * the system in neutral. If it isn't, we check if its in demo. Either we set it
-	 * to demo. Then, if we aren't in demo or disabled, which means were safe to switch 
-	 * to any state, we do that.
+	 * First, we check if it's disabled or wanting to be stopped, thats our first
+	 * priority. If it is, we put the system in neutral. If it isn't, we check if
+	 * its in demo. If so, set the current state to demo. Then, if we aren't in demo
+	 * or disabled, which means were safe to switch to any state, we do that.
+	 * 
+	 * The 'if currentStateIsNot()' block is used to call the exit and start
+	 * functions of each state, but only the first time we go into that state. To
+	 * come from the previous example, maybe we zero a sensor when we first go into
+	 * a certain state. We don't want to continually zero that sensor, we only want
+	 * to do it once.
+	 * 
+	 * <b> Keep in mind, among the if statements (on lines with 'AAAA'), only one of
+	 * these can be true at any given time. By writing it this way, it lets us have
+	 * a hierarchy of what we need the subsystem to be controlled by. (Saftey first)
 	 */
-	public synchronized void setState(ExampleState wantedState) {
-		if (this.isDisabed())
-			mState = ExampleState.NEUTRAL;
-		else if (Robot.autonSelector.isDemo())
-			mState = ExampleState.DEMO;
-		else
-			mState = wantedState;
-	}
-	
-	/** This is the runner for onStateExit and onStateStart. */
-	public synchronized void checkPrevState()
-	{
-		if (mState != prevState)
-		{
-			onStateExit(prevState);
+	private synchronized void handleStates() {
+
+		if (this.isDisabed() || mWantedState == ExampleState.NEUTRAL) { /* AAAA **/
+
+			if (currentStateIsNot(ExampleState.NEUTRAL)) {
+				onStateExit(mState);
+				mState = ExampleState.NEUTRAL;
+				onStateStart(mState);
+			}
+
+		} else if (Robot.autonSelector.isDemo()) { /* AAAA **/
+
+			if (currentStateIsNot(ExampleState.DEMO)) {
+				onStateExit(mState);
+				mState = ExampleState.DEMO;
+				onStateStart(mState);
+			}
+
+		} else if (mWantedState != mState) { /* AAAA **/
+			onStateExit(mState);
+			mState = mWantedState;
 			onStateStart(mState);
 		}
-		prevState = mState;
+
 	}
-	
+
 	/**
-	 * This is used with subsystems that use CAN bus and following.
-	 * When entering Test mode, the robot will take every motor out of follower mode, unless this is called.
+	 * This method returns if a given state is NOT what the current state is. we use
+	 * this in handleStates().
 	 */
-	public synchronized void enableFollower()
-	{
-		//controller_2.follow(controller_1);
+	private synchronized boolean currentStateIsNot(ExampleState state) {
+		return mState != state;
+	}
+
+	/**
+	 * This is used with subsystems that use CAN bus and following. When entering
+	 * Test mode, the robot will take every motor out of follower mode, unless this
+	 * is called.
+	 */
+	public synchronized void enableFollower() {
+		// controller_2.follow(controller_1);
 	}
 
 	/**

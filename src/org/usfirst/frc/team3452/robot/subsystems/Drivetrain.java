@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.usfirst.frc.team3452.robot.Constants.kDrivetrain;
 import org.usfirst.frc.team3452.robot.OI;
-import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.GZJoystick;
 import org.usfirst.frc.team3452.robot.util.GZSRX;
@@ -18,6 +17,7 @@ import org.usfirst.frc.team3452.robot.util.Util;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.MotionProfileStatus;
+import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Drivetrain extends GZSubsystem {
 
 	private DriveState mState = DriveState.NEUTRAL;
+	private DriveState mWantedState = mState;
 	public IO mIO = new IO();
 
 	// PDP
@@ -42,9 +43,6 @@ public class Drivetrain extends GZSubsystem {
 	// DRIVETRAIN
 	private GZSRX L1, L2, L3, L4, R1, R2, R3, R4;
 	private List<GZSRX> controllers;
-
-	// ROBOT DRIVE OBJECT
-//	private DifferentialDrive robotDrive;
 
 	// GYRO
 	private AHRS mGyro;
@@ -93,7 +91,7 @@ public class Drivetrain extends GZSubsystem {
 
 			s.setInverted((s.getSide() == Side.LEFT) ? kDrivetrain.L_INVERT : kDrivetrain.R_INVERT);
 
-			//TODO ISSUE #11
+			// TODO ISSUE #11
 			// CURRENT LIMIT
 			s.configContinuousCurrentLimit(
 					s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_LIMIT : kDrivetrain.AMP_30_LIMIT,
@@ -166,13 +164,10 @@ public class Drivetrain extends GZSubsystem {
 		case MOTION_PROFILE:
 			break;
 		case NEUTRAL:
-			OI.rumble(CONTROLLER.BOTH, 0);
 			break;
 		case OPEN_LOOP:
-			OI.rumble(CONTROLLER.BOTH, 0);
 			break;
 		case OPEN_LOOP_DRIVER:
-			OI.rumble(CONTROLLER.BOTH, 0);
 			break;
 		case DEMO:
 			break;
@@ -183,6 +178,7 @@ public class Drivetrain extends GZSubsystem {
 
 	@Override
 	public synchronized void loop() {
+		handleStates();
 		in();
 		out();
 
@@ -197,6 +193,8 @@ public class Drivetrain extends GZSubsystem {
 		case MOTION_PROFILE:
 
 			mIO.control_mode = ControlMode.MotionProfile;
+			mIO.left_desired_output = mIO.right_desired_output = SetValueMotionProfile.Enable.value;
+			
 			mIO.left_output = mIO.left_desired_output;
 			mIO.right_output = mIO.right_desired_output;
 
@@ -311,31 +309,32 @@ public class Drivetrain extends GZSubsystem {
 		SmartDashboard.putNumber("PercentageCompleted", getPercentageComplete());
 	}
 
-	public synchronized void arcade(GZJoystick joy) {
-		setState(DriveState.OPEN_LOOP_DRIVER);
+	// called in OPEN_LOOP_DRIVER state
+	private synchronized void arcade(GZJoystick joy) {
 		arcadeNoState(joy.getLeftAnalogY(), (joy.getRightTrigger() - joy.getLeftTrigger()) * .8);
 	}
 
-	public synchronized void alternateArcade(GZJoystick joy) {
-		setState(DriveState.DEMO);
+	// called in DEMO state
+	private synchronized void alternateArcade(GZJoystick joy) {
 		arcadeNoState(joy.getLeftAnalogY(), (joy.getRightAnalogX() * .85));
 	}
 
 	/**
 	 * WARNING, TO ONLY BE CALLED BY METHOD THAT CALLS setState!!!!!!!!!
+	 * 
 	 * @param move
 	 * @param rotate
 	 */
 	private synchronized void arcadeNoState(double move, double rotate) {
 		double[] temp = arcadeToLR(move * Robot.elevator.getPercentageModify() * percentageModify,
 				rotate * Robot.elevator.getPercentageModify() * percentageModify);
- 
+
 		mIO.left_desired_output = temp[0];
 		mIO.right_desired_output = temp[1];
 	}
 
 	public synchronized void arcade(double move, double rotate) {
-		setState(DriveState.OPEN_LOOP);
+		setWantedState(DriveState.OPEN_LOOP);
 		arcadeNoState(move, rotate);
 	}
 
@@ -381,7 +380,7 @@ public class Drivetrain extends GZSubsystem {
 	}
 
 	public synchronized void tank(double left, double right) {
-		setState(DriveState.OPEN_LOOP);
+		setWantedState(DriveState.OPEN_LOOP);
 		mIO.left_desired_output = left * Robot.elevator.getPercentageModify() * percentageModify;
 		mIO.right_desired_output = right * Robot.elevator.getPercentageModify() * percentageModify;
 	}
@@ -396,7 +395,7 @@ public class Drivetrain extends GZSubsystem {
 
 	public synchronized void motionMagic(double leftRotations, double rightRotations, double leftAccel,
 			double rightAccel, double leftSpeed, double rightSpeed) {
-		setState(DriveState.MOTION_MAGIC);
+		setWantedState(DriveState.MOTION_MAGIC);
 
 		double topspeed = 3941;
 
@@ -726,11 +725,15 @@ public class Drivetrain extends GZSubsystem {
 
 	@Override
 	public synchronized void stop() {
-		setState(DriveState.NEUTRAL);
+		setWantedState(DriveState.NEUTRAL);
 	}
 
-	public synchronized void setState(DriveState wantedState) {
-		if ((this.isDisabed() || wantedState == DriveState.NEUTRAL)) {
+	public synchronized void setWantedState(DriveState wantedState) {
+		this.mWantedState = wantedState;
+	}
+
+	private synchronized void handleStates() {
+		if ((this.isDisabed() || mWantedState == DriveState.NEUTRAL)) {
 
 			if (currentStateIsNot(DriveState.NEUTRAL)) {
 				onStateExit(mState);
@@ -746,9 +749,9 @@ public class Drivetrain extends GZSubsystem {
 				onStateStart(mState);
 			}
 
-		} else if (mState != wantedState) {
+		} else if (mState != mWantedState) {
 			onStateExit(mState);
-			mState = wantedState;
+			mState = mWantedState;
 			onStateStart(mState);
 		}
 	}

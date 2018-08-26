@@ -2,6 +2,8 @@ package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.Constants.kPDP;
+import org.usfirst.frc.team3452.robot.OI;
+import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 
@@ -12,6 +14,7 @@ public class Intake extends GZSubsystem {
 	private static Spark left_intake, right_intake;
 
 	private IntakeState mState = IntakeState.NEUTRAL;
+	private IntakeState mWantedState = mState;
 	public IO mIO = new IO();
 
 	// Construction
@@ -32,6 +35,7 @@ public class Intake extends GZSubsystem {
 	private synchronized void onStateStart(IntakeState wantedState) {
 		switch (wantedState) {
 		case MANUAL:
+			OI.rumble(CONTROLLER.BOTH, 0.4);
 			break;
 		case NEUTRAL:
 			break;
@@ -43,6 +47,7 @@ public class Intake extends GZSubsystem {
 	private synchronized void onStateExit(IntakeState prevState) {
 		switch (prevState) {
 		case MANUAL:
+			OI.rumble(CONTROLLER.BOTH, 0);
 			break;
 		case NEUTRAL:
 			break;
@@ -53,6 +58,7 @@ public class Intake extends GZSubsystem {
 	}
 
 	public synchronized void loop() {
+		handleStates();
 		in();
 		out();
 
@@ -75,7 +81,24 @@ public class Intake extends GZSubsystem {
 		}
 	}
 
-	public static class IO {
+	private void handleStates() {
+		// we dont need to worry about isDemo() here
+		if (this.isDisabed() || mWantedState == IntakeState.NEUTRAL) {
+
+			if (currentStateIsNot(IntakeState.NEUTRAL)) {
+				onStateExit(mState);
+				mState = IntakeState.NEUTRAL;
+				onStateStart(mState);
+			}
+
+		} else if (mState != mWantedState) {
+			onStateExit(mState);
+			mState = mWantedState;
+			onStateStart(mState);
+		}
+	}
+
+	static class IO {
 		// in
 		static double left_amperage = Double.NaN, right_amperage = Double.NaN;
 
@@ -94,12 +117,16 @@ public class Intake extends GZSubsystem {
 	}
 
 	public void manual(double percentage) {
-		setState(IntakeState.MANUAL);
+		setWantedState(IntakeState.MANUAL);
 		IO.left_desired_output = IO.right_desired_output = percentage;
 	}
 
+	private void setWantedState(IntakeState wantedState) {
+		this.mWantedState = wantedState;
+	}
+
 	public void spin(double percentage, boolean clockwise) {
-		setState(IntakeState.MANUAL);
+		setWantedState(IntakeState.MANUAL);
 		IO.left_desired_output = percentage * (clockwise ? -1 : 1);
 		IO.right_desired_output = percentage * (clockwise ? 1 : -1);
 	}
@@ -116,24 +143,7 @@ public class Intake extends GZSubsystem {
 
 	@Override
 	public synchronized void stop() {
-		setState(IntakeState.NEUTRAL);
-	}
-
-	public synchronized void setState(IntakeState wantedState) {
-		// we dont need to worry about isDemo() here, we don't change anything
-		if (this.isDisabed() || wantedState == IntakeState.NEUTRAL) {
-
-			if (currentStateIsNot(IntakeState.NEUTRAL)) {
-				onStateStart(mState);
-				mState = IntakeState.NEUTRAL;
-				onStateExit(mState);
-			}
-			
-		} else if (mState != wantedState) {
-			onStateStart(mState);
-			mState = wantedState;
-			onStateExit(mState);
-		}
+		setWantedState(IntakeState.NEUTRAL);
 	}
 
 	private synchronized boolean currentStateIsNot(IntakeState state) {

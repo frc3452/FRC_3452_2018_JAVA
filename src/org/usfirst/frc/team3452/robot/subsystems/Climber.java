@@ -12,6 +12,7 @@ public class Climber extends GZSubsystem {
 	private Spark climber_1;
 
 	private ClimberState mState = ClimberState.NEUTRAL;
+	private ClimberState mWantedState = mState;
 	public IO mIO = new IO();
 
 	private int climbCounter = 0;
@@ -49,6 +50,7 @@ public class Climber extends GZSubsystem {
 
 	@Override
 	public synchronized void loop() {
+		handleStates();
 		in();
 		out();
 
@@ -68,7 +70,7 @@ public class Climber extends GZSubsystem {
 		}
 	}
 
-	public static class IO {
+	static class IO {
 		// in
 		double climber_1_amperage = Double.NaN;
 		double climber_2_amperage = Double.NaN;
@@ -79,7 +81,7 @@ public class Climber extends GZSubsystem {
 	}
 
 	public void manual(double percentage) {
-		setState(ClimberState.MANUAL);
+		setWantedState(ClimberState.MANUAL);
 		mIO.climber_desired_output = percentage;
 	}
 
@@ -100,21 +102,25 @@ public class Climber extends GZSubsystem {
 
 	@Override
 	public synchronized void stop() {
-		setState(ClimberState.NEUTRAL);
+		setWantedState(ClimberState.NEUTRAL);
 	}
 
-	public synchronized void setState(ClimberState wantedState) {
-		if (this.isDisabed() || Robot.autonSelector.isDemo() || wantedState == ClimberState.NEUTRAL) {
+	public synchronized void setWantedState(ClimberState wantedState) {
+		this.mWantedState = wantedState;
+	}
+
+	private synchronized void handleStates() {
+		if (this.isDisabed() || Robot.autonSelector.isDemo() || mWantedState == ClimberState.NEUTRAL) {
 
 			if (currentStateIsNot(ClimberState.NEUTRAL)) {
 				onStateExit(mState);
 				mState = ClimberState.NEUTRAL;
 				onStateStart(mState);
 			}
-			
-		} else if (mState != wantedState){
+
+		} else if (mState != mWantedState) {
 			onStateExit(mState);
-			mState = wantedState;
+			mState = mWantedState;
 			onStateStart(mState);
 		}
 	}

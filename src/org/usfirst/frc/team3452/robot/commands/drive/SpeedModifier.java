@@ -21,7 +21,7 @@ public class SpeedModifier extends InstantCommand {
 
 	protected void initialize() {
 
-		if (Robot.drive.getState() == DriveState.DEMO) {
+		if (Robot.drive.getState() != DriveState.DEMO) {
 			if (m_modify == -1) {
 				if (Robot.drive.getPercentageModify() == 1)
 					Robot.drive.setPercentageModify(.75);
