@@ -23,16 +23,15 @@ import edu.wpi.first.wpilibj.Notifier;
  *
  */
 public class Playback {
-	/**
-	 * variable for storing left values for motion profile
-	 */
+
 	public ArrayList<ArrayList<Double>> mpL = new ArrayList<>();
+	public ArrayList<ArrayList<Double>> mpR = new ArrayList<>();
+	public int mpDur = 0;
+	
 	private FileWriter fw;
 
 	private FileReader fr;
 	private Scanner scnr;
-	public ArrayList<ArrayList<Double>> mpR = new ArrayList<>();
-	int mpDur = 0;
 	private BufferedWriter bw;
 
 	/**
@@ -186,6 +185,7 @@ public class Playback {
 		try {
 			// ON STARTUP, PRINT NAMES
 			if (startup) {
+				//TODO ISSUE #13
 				bw.write(Util.dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP,"
 						+ "L1-V,L2-V,L3-V,L4-V," + "R1-AMP,R2-AMP,R3-AMP,R4-AMP," + "R1-V,R2-V,R3-V,R4-V,"
 						+ "Elev_1-AMP,Elev_2-AMP," + "Elev_1-V,Elev_2-V," + "Intake_L-AMP,Intake_R-AMP,"
@@ -216,6 +216,8 @@ public class Playback {
 				bw.write(Util.dateTime(true) + ",");
 				bw.write(String.valueOf(
 
+						//TODO ISSUE #13
+						
 						// SPEED
 						Robot.drive.mIO.left_encoder_rotations + ","
 								+ Robot.drive.mIO.right_encoder_rotations + "," +
