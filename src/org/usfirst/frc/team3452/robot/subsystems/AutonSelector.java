@@ -1,6 +1,8 @@
 
 package org.usfirst.frc.team3452.robot.subsystems;
 
+import java.util.Arrays;
+
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Constants.kAutonSelector;
 import org.usfirst.frc.team3452.robot.OI;
@@ -54,12 +56,8 @@ public class AutonSelector {
 		as_A.setName("Selector A");
 		as_B.setName("Selector B");
 
-		for (int i = 0; i < 41; i++)
-		{
-			autoCommandName[i] = "NO COMMAND";
-			autoCommand[i] = null;
-		}
-		
+		Arrays.fill(autoCommandName, "NO COMMAND");
+		Arrays.fill(autoCommand, null);
 			
 		setAutonNames();
 	}
