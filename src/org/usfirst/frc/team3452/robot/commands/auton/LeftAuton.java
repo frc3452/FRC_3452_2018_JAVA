@@ -3,7 +3,7 @@ package org.usfirst.frc.team3452.robot.commands.auton;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.Constants.kAutonSelector;
+import org.usfirst.frc.team3452.robot.Constants.kAuton;
 import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.commands.drive.*;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
@@ -11,9 +11,9 @@ import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeWhileDrive;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
+import org.usfirst.frc.team3452.robot.subsystems.Auton;
+import org.usfirst.frc.team3452.robot.subsystems.Auton.AO;
+import org.usfirst.frc.team3452.robot.subsystems.Auton.AV;
 
 public class LeftAuton extends CommandGroup {
 
@@ -21,39 +21,39 @@ public class LeftAuton extends CommandGroup {
      * @param option AO
      * @param switchVersion AV
      * @param scaleVersion AV
-	 * @see AutonSelector
+	 * @see Auton
 	 */
 	public LeftAuton(AO option, AV switchVersion, AV scaleVersion) {
 		addSequential(new ZeroEncoders());
 		addSequential(new GyroReset());
 
 		//IF DATA FOUND
-        if (!Robot.autonSelector.gameMsg.equals("NOT")) {
+        if (!Robot.auton.gameMsg.equals("NOT")) {
 
 			switch (option) {
 			case SWITCH:
 
-				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
+				if (Robot.auton.gameMsg.charAt(0) == 'L') {
 					switchL(switchVersion);
 
-				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
+				} else if (Robot.auton.gameMsg.charAt(0) == 'R') {
 					switchR(switchVersion);
 				}
 
 				break;
 			case SCALE:
-				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
+				if (Robot.auton.gameMsg.charAt(1) == 'L') {
 					scaleL(scaleVersion);
 
-				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
+				} else if (Robot.auton.gameMsg.charAt(1) == 'R') {
 					scaleR(scaleVersion);
 				}
 				break;
 			case SWITCH_PRIORITY_NO_CROSS:
 
-				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
+				if (Robot.auton.gameMsg.charAt(0) == 'L') {
 					switchL(switchVersion);
-				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
+				} else if (Robot.auton.gameMsg.charAt(1) == 'L') {
 					scaleL(scaleVersion);
 				} else {
 					defaultAuton();
@@ -62,9 +62,9 @@ public class LeftAuton extends CommandGroup {
 				break;
 			case SCALE_PRIORITY_NO_CROSS:
 
-				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
+				if (Robot.auton.gameMsg.charAt(1) == 'L') {
 					scaleL(scaleVersion);
-				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
+				} else if (Robot.auton.gameMsg.charAt(0) == 'L') {
 					switchL(switchVersion);
 				} else {
 					defaultAuton();
@@ -73,7 +73,7 @@ public class LeftAuton extends CommandGroup {
 				break;
 			case SCALE_ONLY:
 
-				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
+				if (Robot.auton.gameMsg.charAt(1) == 'L') {
 					scaleL(scaleVersion);
 				} else {
 					defaultAuton();
@@ -82,7 +82,7 @@ public class LeftAuton extends CommandGroup {
 				break;
 			case SWITCH_ONLY:
 
-				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
+				if (Robot.auton.gameMsg.charAt(0) == 'L') {
 					switchL(switchVersion);
 				} else {
 					defaultAuton();
@@ -235,7 +235,7 @@ public class LeftAuton extends CommandGroup {
 			//Drive to scale 
 			
 			//15.27
-			addSequential(new EncoderGyro(15.8, 15.8, .6, .6, .7, 0, kAutonSelector.CORRECTION));
+			addSequential(new EncoderGyro(15.8, 15.8, .6, .6, .7, 0, kAuton.CORRECTION));
 			//TURN CHANGED FINALS 3
 			addSequential(new EncoderFrom(1.5, -1.15, .6, .6, .6)); 
 
@@ -255,7 +255,7 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
 			addSequential(new ElevatorTime(.75, .25));
-			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, kAutonSelector.CORRECTION)); // drive to far side of switch
+			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, kAuton.CORRECTION)); // drive to far side of switch
 
 			addSequential(new EncoderFrom(.2, -.4, .4, .4, .5)); //turn to switch
 			addSequential(new ElevatorPosition(15)); //raise and forward
@@ -283,13 +283,13 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
-			addSequential(new EncoderGyro(11.7, 11.7, .6, .6, .65, 0, kAutonSelector.CORRECTION)); // drive to side of switch
+			addSequential(new EncoderGyro(11.7, 11.7, .6, .6, .65, 0, kAuton.CORRECTION)); // drive to side of switch
 
 			addParallel(new ElevatorPosition(2)); //raise
 			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
 
 			addSequential(new ZeroEncoders());
-			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, kAutonSelector.CORRECTION)); //drive front of scale
+			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, kAuton.CORRECTION)); //drive front of scale
 
 			addSequential(new EncoderFrom(-1.5, .75, .5, .5, .5));
 
@@ -313,13 +313,13 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
-			addSequential(new EncoderGyro(11.7, 11.7, .6, .6, .65, 0, kAutonSelector.CORRECTION)); // drive to side of switch
+			addSequential(new EncoderGyro(11.7, 11.7, .6, .6, .65, 0, kAuton.CORRECTION)); // drive to side of switch
 
 			addParallel(new ElevatorPosition(2)); //raise
 			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
 
 			addSequential(new ZeroEncoders());
-			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, kAutonSelector.CORRECTION)); //drive front of scale
+			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, kAuton.CORRECTION)); //drive front of scale
 
 			addSequential(new EncoderFrom(-1.5, .75, .5, .5, .5));
 
@@ -341,7 +341,7 @@ public class LeftAuton extends CommandGroup {
 		addSequential(new ElevatorTime(.5, .1725));
 		addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
-		addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, kAutonSelector.CORRECTION)); // drive to side of switch
+		addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, kAuton.CORRECTION)); // drive to side of switch
 		addSequential(new ElevatorPosition(3.5)); // raise arm
 	}
 

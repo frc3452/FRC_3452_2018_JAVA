@@ -8,7 +8,7 @@ package org.usfirst.frc.team3452.robot;
  */
 
 public class Constants {
-	public class kAutonSelector {
+	public class kAuton {
 		public static final double CORRECTION = 0.025;
 
 		public static final int SAFTEY_SWITCH = 96;
@@ -170,9 +170,10 @@ public class Constants {
 		public static final int CANIFIER_ID = 0;
 	}
 
-	public class kPlayback {
+	public class kFileManagement {
 		public final static int RECORDING_MOTION_PROFILE_MS = 100; // 20
 		public final static double LOGGING_SPEED = .125;
+		public final static String DEFAULT_LOG_VALUE = "N/A";
 	}
 
 }

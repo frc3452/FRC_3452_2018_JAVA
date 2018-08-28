@@ -1,6 +1,6 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
-import org.usfirst.frc.team3452.robot.Constants.kAutonSelector;
+import org.usfirst.frc.team3452.robot.Constants.kAuton;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
 import org.usfirst.frc.team3452.robot.commands.drive.DriveToStop;
@@ -13,9 +13,9 @@ import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
+import org.usfirst.frc.team3452.robot.subsystems.Auton;
+import org.usfirst.frc.team3452.robot.subsystems.Auton.AO;
+import org.usfirst.frc.team3452.robot.subsystems.Auton.AV;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -28,41 +28,41 @@ public class RightAuton extends CommandGroup {
 	 *            AV
 	 * @param scaleVersion
 	 *            AV
-	 * @see AutonSelector
+	 * @see Auton
 	 */
 	public RightAuton(AO option, AV switchVersion, AV scaleVersion) {
 		addSequential(new GyroReset());
 		addSequential(new ZeroEncoders());
 
 		// IF DATA FOUND
-		if (!Robot.autonSelector.gameMsg.equals("NOT")) {
+		if (!Robot.auton.gameMsg.equals("NOT")) {
 
 			switch (option) {
 			case SWITCH:
 
-				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
+				if (Robot.auton.gameMsg.charAt(0) == 'L') {
 					switchL(switchVersion);
 
-				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
+				} else if (Robot.auton.gameMsg.charAt(0) == 'R') {
 					switchR(scaleVersion);
 				}
 
 				break;
 			case SCALE:
 
-				if (Robot.autonSelector.gameMsg.charAt(1) == 'L') {
+				if (Robot.auton.gameMsg.charAt(1) == 'L') {
 					scaleL(scaleVersion);
 
-				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
+				} else if (Robot.auton.gameMsg.charAt(1) == 'R') {
 					scaleR(scaleVersion);
 				}
 
 				break;
 			case SWITCH_PRIORITY_NO_CROSS:
 
-				if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
+				if (Robot.auton.gameMsg.charAt(0) == 'R') {
 					switchR(switchVersion);
-				} else if (Robot.autonSelector.gameMsg.charAt(1) == 'R') {
+				} else if (Robot.auton.gameMsg.charAt(1) == 'R') {
 					scaleR(scaleVersion);
 				} else {
 					defaultAuton();
@@ -71,9 +71,9 @@ public class RightAuton extends CommandGroup {
 				break;
 			case SCALE_PRIORITY_NO_CROSS:
 
-				if (Robot.autonSelector.gameMsg.charAt(1) == 'R')
+				if (Robot.auton.gameMsg.charAt(1) == 'R')
 					scaleR(scaleVersion);
-				else if (Robot.autonSelector.gameMsg.charAt(0) == 'R')
+				else if (Robot.auton.gameMsg.charAt(0) == 'R')
 					switchR(switchVersion);
 				else
 					defaultAuton();
@@ -81,7 +81,7 @@ public class RightAuton extends CommandGroup {
 				break;
 			case SWITCH_ONLY:
 
-				if (Robot.autonSelector.gameMsg.charAt(0) == 'R')
+				if (Robot.auton.gameMsg.charAt(0) == 'R')
 					switchR(switchVersion);
 				else
 					defaultAuton();
@@ -89,7 +89,7 @@ public class RightAuton extends CommandGroup {
 				break;
 			case SCALE_ONLY:
 
-				if (Robot.autonSelector.gameMsg.charAt(1) == 'R')
+				if (Robot.auton.gameMsg.charAt(1) == 'R')
 					switchR(scaleVersion);
 				else
 					defaultAuton();
@@ -124,7 +124,7 @@ public class RightAuton extends CommandGroup {
 															// arm
 
 			// add .3?
-			addSequential(new EncoderGyro(11, 11, .4, .4, .5, 0, kAutonSelector.CORRECTION)); // drive
+			addSequential(new EncoderGyro(11, 11, .4, .4, .5, 0, kAuton.CORRECTION)); // drive
 			// to
 			// side
 			// of
@@ -137,7 +137,7 @@ public class RightAuton extends CommandGroup {
 			addSequential(new CommandGroup() {
 				{
 					addParallel(new ElevatorWhileDrive(3.5, .6));
-					addSequential(new EncoderGyro(10.5, 10.5, .5, .5, .6, 180, kAutonSelector.CORRECTION)); // drive
+					addSequential(new EncoderGyro(10.5, 10.5, .5, .5, .6, 180, kAuton.CORRECTION)); // drive
 					// back
 					// of
 					// switch
@@ -162,7 +162,7 @@ public class RightAuton extends CommandGroup {
 															// backwards to drop
 															// arm
 
-			addSequential(new EncoderGyro(11.2, 11.2, .4, .4, .4, 0, kAutonSelector.CORRECTION)); // drive
+			addSequential(new EncoderGyro(11.2, 11.2, .4, .4, .4, 0, kAuton.CORRECTION)); // drive
 			// to
 			// side
 			// of
@@ -173,7 +173,7 @@ public class RightAuton extends CommandGroup {
 			addParallel(new ElevatorPosition(2)); // raise
 
 			addSequential(new ZeroEncoders());
-			addSequential(new EncoderGyro(6.95, 6.95, .4, .4, .4, -90, kAutonSelector.CORRECTION)); // drive
+			addSequential(new EncoderGyro(6.95, 6.95, .4, .4, .4, -90, kAuton.CORRECTION)); // drive
 			// back
 			// of
 			// switch
@@ -206,7 +206,7 @@ public class RightAuton extends CommandGroup {
 			addSequential(new CommandGroup() {
 				{
 					addParallel(new ElevatorWhileDrive(3.5, .7));
-					addSequential(new EncoderGyro(7.91, 7.91, .6, .6, .7, 0, kAutonSelector.CORRECTION)); // drive
+					addSequential(new EncoderGyro(7.91, 7.91, .6, .6, .7, 0, kAuton.CORRECTION)); // drive
 					// to
 					// side
 					// of
@@ -230,7 +230,7 @@ public class RightAuton extends CommandGroup {
 															// backwards to drop
 															// arm
 
-			addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, kAutonSelector.CORRECTION)); // drive
+			addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, kAuton.CORRECTION)); // drive
 			// to
 			// side
 			// of
@@ -260,7 +260,7 @@ public class RightAuton extends CommandGroup {
 															// backwards to drop
 															// arm
 
-			addSequential(new EncoderGyro(11.5, 11.5, .6, .6, .65, 0, kAutonSelector.CORRECTION)); // drive
+			addSequential(new EncoderGyro(11.5, 11.5, .6, .6, .65, 0, kAuton.CORRECTION)); // drive
 			// to
 			// side
 			// of
@@ -273,7 +273,7 @@ public class RightAuton extends CommandGroup {
 			addSequential(new ZeroEncoders());
 			// addSequential(new EncoderGyro(10.6, 10.6, .5, .5, .5, -90,
 			// kAutonSelector.CORRECTION)); // drive front of scale
-			addSequential(new EncoderGyro(10.6 / 3, 10.6 / 3, .5, .5, .5, -90, kAutonSelector.CORRECTION));
+			addSequential(new EncoderGyro(10.6 / 3, 10.6 / 3, .5, .5, .5, -90, kAuton.CORRECTION));
 
 			/**
 			 * addSequential(new EncoderFrom(.75, -1.5, .5, .5, .5));
@@ -299,7 +299,7 @@ public class RightAuton extends CommandGroup {
 															// backwards to drop
 															// arm
 
-			addSequential(new EncoderGyro(11.5, 11.5, .6, .6, .65, 0, kAutonSelector.CORRECTION)); // drive
+			addSequential(new EncoderGyro(11.5, 11.5, .6, .6, .65, 0, kAuton.CORRECTION)); // drive
 			// to
 			// side
 			// of
@@ -310,7 +310,7 @@ public class RightAuton extends CommandGroup {
 																	// switch
 
 			addSequential(new ZeroEncoders());
-			addSequential(new EncoderGyro(10.6, 10.6, .5, .5, .5, -90, kAutonSelector.CORRECTION)); // drive
+			addSequential(new EncoderGyro(10.6, 10.6, .5, .5, .5, -90, kAuton.CORRECTION)); // drive
 			// front
 			// of
 			// scale
@@ -339,7 +339,7 @@ public class RightAuton extends CommandGroup {
 															// arm
 
 			// Drive to scale
-			addSequential(new EncoderGyro(15.27, 15.27, .6, .6, .7, 0, kAutonSelector.CORRECTION));
+			addSequential(new EncoderGyro(15.27, 15.27, .6, .6, .7, 0, kAuton.CORRECTION));
 			// TURN CHANGED FINALS 3
 			addSequential(new EncoderFrom(-1.15, 1.5, .6, .6, .6)); // turn to
 																	// switch
@@ -361,7 +361,7 @@ public class RightAuton extends CommandGroup {
 															// arm
 
 			addParallel(new ElevatorPosition(1)); // lift for drive
-			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, kAutonSelector.CORRECTION)); // drive
+			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, kAuton.CORRECTION)); // drive
 			// to
 			// far
 			// side
@@ -393,7 +393,7 @@ public class RightAuton extends CommandGroup {
 		addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to
 														// drop arm
 
-		addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, kAutonSelector.CORRECTION)); // drive
+		addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, kAuton.CORRECTION)); // drive
 		// to
 		// side
 		// of

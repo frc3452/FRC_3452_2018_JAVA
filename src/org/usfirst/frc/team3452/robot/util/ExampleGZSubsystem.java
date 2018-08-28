@@ -220,7 +220,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 				onStateStart(mState);
 			}
 
-		} else if (Robot.autonSelector.isDemo()) { /* AAAA **/
+		} else if (Robot.auton.isDemo()) { /* AAAA **/
 
 			if (currentStateIsNot(ExampleState.DEMO)) {
 				onStateExit(mState);

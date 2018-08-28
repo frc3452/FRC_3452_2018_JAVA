@@ -2,9 +2,9 @@ package org.usfirst.frc.team3452.robot;
 
 import java.util.Arrays;
 
-import org.usfirst.frc.team3452.robot.Constants.kAutonSelector;
+import org.usfirst.frc.team3452.robot.Constants.kAuton;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
+import org.usfirst.frc.team3452.robot.subsystems.Auton;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
@@ -12,9 +12,9 @@ import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.DriveState;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
-import org.usfirst.frc.team3452.robot.subsystems.Playback;
-import org.usfirst.frc.team3452.robot.subsystems.Playback.STATE;
-import org.usfirst.frc.team3452.robot.subsystems.Playback.TASK;
+import org.usfirst.frc.team3452.robot.subsystems.FileManagement;
+import org.usfirst.frc.team3452.robot.subsystems.FileManagement.STATE;
+import org.usfirst.frc.team3452.robot.subsystems.FileManagement.TASK;
 import org.usfirst.frc.team3452.robot.util.GZSubsystemManager;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -32,10 +32,10 @@ public class Robot extends TimedRobot {
 	public static final Intake intake = new Intake();
 	public static final Climber climber = new Climber();
 	
-	public static final AutonSelector autonSelector = new AutonSelector();
+	public static final Auton auton = new Auton();
 	public static final Camera camera = new Camera();
 	public static final Lights lights = new Lights();
-	public static final Playback playback = new Playback();
+	public static final FileManagement playback = new FileManagement();
 
 	private static final GZSubsystemManager mSubsystems = new GZSubsystemManager(
 			Arrays.asList(drive, elevator, intake, climber));
@@ -82,8 +82,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic() {
-		Robot.autonSelector.autonChooser();
-		Robot.autonSelector.printSelected();
+		Robot.auton.autonChooser();
+		Robot.auton.printSelected();
 
 		if (wasTest)
 			OI.rumble(CONTROLLER.BOTH, 1);
@@ -105,11 +105,11 @@ public class Robot extends TimedRobot {
 		
 		//Loop while game data is bad and timer is acceptable
 		do {
-			Robot.autonSelector.gameMsg = Robot.lights.gsm();
-		} while ((Robot.autonSelector.gameMsg.equals("NOT") && mAutoTimer.get() < 3));
+			Robot.auton.gameMsg = Robot.lights.gsm();
+		} while ((Robot.auton.gameMsg.equals("NOT") && mAutoTimer.get() < 3));
 
 		//Set autons, regardless of good game message
-		Robot.autonSelector.setAutons();
+		Robot.auton.setAutons();
 
 		// SET COLOR ACCORDING TO ALLIANCE
 		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
@@ -120,11 +120,11 @@ public class Robot extends TimedRobot {
 		// BRAKE MODE DURING AUTO
 		Robot.drive.brake(NeutralMode.Brake);
 
-		Robot.autonSelector.autonChooser();
-		Robot.autonSelector.printSelected();
+		Robot.auton.autonChooser();
+		Robot.auton.printSelected();
 
-		if (Robot.autonSelector.autonomousCommand != null)
-			Robot.autonSelector.autonomousCommand.start();
+		if (Robot.auton.autonomousCommand != null)
+			Robot.auton.autonomousCommand.start();
 
 	}
 
@@ -144,8 +144,8 @@ public class Robot extends TimedRobot {
 
 		Robot.drive.brake(NeutralMode.Coast);
 
-		if (Robot.autonSelector.autonomousCommand != null) {
-			Robot.autonSelector.autonomousCommand.cancel();
+		if (Robot.auton.autonomousCommand != null) {
+			Robot.auton.autonomousCommand.cancel();
 		}
 
 		wasTele = true;
@@ -176,7 +176,7 @@ public class Robot extends TimedRobot {
 		if (wasTest) {
 			Robot.lights.pulse(55, 1, .2, .8, .1);
 		} else {
-			switch (Robot.autonSelector.uglyAnalog()) {
+			switch (Robot.auton.uglyAnalog()) {
 			case 100:
 
 				// OFF
@@ -184,7 +184,7 @@ public class Robot extends TimedRobot {
 
 				break;
 
-			case kAutonSelector.SAFTEY_SWITCH:
+			case kAuton.SAFTEY_SWITCH:
 
 				// FADE
 				Robot.lights.hsv(Robot.lights.m_hue, 1, .25);

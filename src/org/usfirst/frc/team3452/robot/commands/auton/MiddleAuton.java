@@ -6,30 +6,30 @@ import org.usfirst.frc.team3452.robot.commands.drive.*;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AO;
-import org.usfirst.frc.team3452.robot.subsystems.AutonSelector.AV;
+import org.usfirst.frc.team3452.robot.subsystems.Auton;
+import org.usfirst.frc.team3452.robot.subsystems.Auton.AO;
+import org.usfirst.frc.team3452.robot.subsystems.Auton.AV;
 
 public class MiddleAuton extends CommandGroup {
 
 	/**
 	 * @param option AO
 	 * @param switchVersion AV
-	 * @see AutonSelector
+	 * @see Auton
 	 */
 	public MiddleAuton(AO option, AV switchVersion) {
 		addSequential(new ZeroEncoders());
 		addSequential(new GyroReset());
 
 		//IF DATA FOUND
-		if (!Robot.autonSelector.gameMsg.equals("NOT")) {
+		if (!Robot.auton.gameMsg.equals("NOT")) {
 
 			switch (option) {
 			case SWITCH:
 
-				if (Robot.autonSelector.gameMsg.charAt(0) == 'L') {
+				if (Robot.auton.gameMsg.charAt(0) == 'L') {
 					switchL(switchVersion);
-				} else if (Robot.autonSelector.gameMsg.charAt(0) == 'R') {
+				} else if (Robot.auton.gameMsg.charAt(0) == 'R') {
 					switchR(switchVersion);
 				} else {
 					defaultAuton();
