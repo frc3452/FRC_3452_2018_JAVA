@@ -5,15 +5,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import org.usfirst.frc.team3452.robot.Constants;
+import org.usfirst.frc.team3452.robot.Constants.kPDP;
 import org.usfirst.frc.team3452.robot.Constants.kPlayback;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.Util;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * <b>Playback subsystem</b> Also used for file writing, logging, etc.
@@ -27,7 +31,7 @@ public class Playback {
 	public ArrayList<ArrayList<Double>> mpL = new ArrayList<>();
 	public ArrayList<ArrayList<Double>> mpR = new ArrayList<>();
 	public int mpDur = 0;
-	
+
 	private FileWriter fw;
 
 	private FileReader fr;
@@ -37,7 +41,7 @@ public class Playback {
 	/**
 	 * Time string converted to numbers for parsing
 	 */
-	private String prevDateTimeString = "Empty";
+	private String prevLog = "Empty";
 
 	private boolean hasPrintedLogFailed = false;
 	private boolean hasPrintedProfileRecordFailed = false;
@@ -114,8 +118,7 @@ public class Playback {
 	 * write time + L and R drivetrain speeds to file
 	 * 
 	 * @author max
-	 * @param isStartup
-	 *            startup
+	 * @param isStartup startup
 	 */
 	private void writeToProfile(boolean isStartup) {
 		try {
@@ -146,13 +149,13 @@ public class Playback {
 		public void run() {
 			try {
 				// populate position and speed values
-				//WRITE PROFILES IN TICKS, 
+				// WRITE PROFILES IN TICKS,
 				double leftPos = Robot.drive.mIO.left_encoder_rotations;
 				double leftSpeed = Robot.drive.mIO.left_encoder_speed;
 
 				double rightPos = -Robot.drive.mIO.right_encoder_rotations;
 				double rightSpeed = -Robot.drive.mIO.right_encoder_speed;
-				
+
 				// write values
 				bw.write(String.valueOf(leftPos + ","));
 				bw.write(String.valueOf(leftSpeed + ","));
@@ -178,18 +181,20 @@ public class Playback {
 	 * logging system
 	 * 
 	 * @author max
-	 * @param startup
-	 *            boolean
+	 * @param startup boolean
 	 */
 	private void writeToLog(boolean startup) {
 		try {
 			// ON STARTUP, PRINT NAMES
 			if (startup) {
-				//TODO ISSUE #13
-				bw.write(Util.dateTime(false) + "," + "L-RPM,R-RPM," + "L1-AMP,L2-AMP,L3-AMP,L4-AMP,"
-						+ "L1-V,L2-V,L3-V,L4-V," + "R1-AMP,R2-AMP,R3-AMP,R4-AMP," + "R1-V,R2-V,R3-V,R4-V,"
-						+ "Elev_1-AMP,Elev_2-AMP," + "Elev_1-V,Elev_2-V," + "Intake_L-AMP,Intake_R-AMP,"
-						+ "Climber_1-AMP,Climber_2-AMP," + "BATTERY");
+				// TODO ISSUE #13
+
+				// 1st column is time
+				String header = Util.dateTime(false);
+
+				header += getLogs(true);
+
+				bw.write(header);
 				bw.write("\r\n");
 				logging.startPeriodic(kPlayback.LOGGING_SPEED);
 			} else {
@@ -209,57 +214,13 @@ public class Playback {
 	 * @since 5/22/2018
 	 */
 	private class loggingRunnable implements java.lang.Runnable {
-		@SuppressWarnings("deprecation")
 		@Override
 		public void run() {
 			try {
-				bw.write(Util.dateTime(true) + ",");
-				bw.write(String.valueOf(
-
-						//TODO ISSUE #13
-						
-						// SPEED
-						Robot.drive.mIO.left_encoder_rotations + ","
-								+ Robot.drive.mIO.right_encoder_rotations + "," +
-
-								// LEFT CURRENT
-								Robot.drive.mIO.L1_amp + "," + Robot.drive.mIO.L2_amp + ","
-								+ Robot.drive.mIO.L3_amp + "," + Robot.drive.mIO.L4_amp + ","
-
-								// LEFT VOLTAGE
-								+ Robot.drive.mIO.L1_volt + "," + Robot.drive.mIO.L2_volt
-								+ "," + Robot.drive.mIO.L3_volt + ","
-								+ Robot.drive.mIO.L4_volt + ","
-
-								// RIGHT CURRENT
-								+ Robot.drive.mIO.R1_amp + "," + Robot.drive.mIO.R2_amp + ","
-								+ Robot.drive.mIO.R3_amp + "," + Robot.drive.mIO.R4_amp + ","
-
-								// RIGHT VOLTAGE
-								+ Robot.drive.mIO.R1_volt + "," + Robot.drive.mIO.R2_volt
-								+ "," + Robot.drive.mIO.R3_volt + ","
-								+ Robot.drive.mIO.R4_volt + ","
-
-								// ELEVATOR CURRENT
-								+ Robot.elevator.mIO.elevator_1_amp + ","
-								+ Robot.elevator.mIO.elevator_2_amp + ","
-
-								// ELEVATOR VOLTAGE
-								+ Robot.elevator.mIO.elevator_1_volt + ","
-								+ Robot.elevator.mIO.elevator_2_volt + ","
-
-								// INTAKE PDP SLOTS
-								+ Robot.drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_L) + ","
-								+ Robot.drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_R) + ","
-
-								// CLIMBER PDP SLOTS
-								+ Robot.drive.getPDPChannelCurrent(Constants.kPDP.CLIMBER_1) + ","
-								+ Robot.drive.getPDPChannelCurrent(Constants.kPDP.CLIMBER_2) + ","
-
-								// BATTERY
-								+ DriverStation.getInstance().getBatteryVoltage()));
+				//ISSUE #13
+				bw.write(Util.dateTime(true) + getLogs(false));
 				bw.write("\r\n");
-				
+
 			} catch (Exception e) {
 				if (!hasPrintedLogFailed) {
 					System.out.println("Logging writing failed!");
@@ -270,6 +231,63 @@ public class Playback {
 		}
 	}
 
+	private synchronized String getLogs(boolean header) {
+		String[] left_speed = { "L-RPM", Robot.drive.mIO.left_encoder_speed.toString() };
+		String[] right_speed = { "R-RPM", Robot.drive.mIO.right_encoder_speed.toString() };
+		String[] l1_amp = { "L1-AMP", Robot.drive.mIO.L1_amp.toString() };
+		String[] l2_amp = { "L2-AMP", Robot.drive.mIO.L2_amp.toString() };
+		String[] l3_amp = { "L3-AMP", Robot.drive.mIO.L3_amp.toString() };
+		String[] l4_amp = { "L4-AMP", Robot.drive.mIO.L4_amp.toString() };
+		String[] r1_amp = { "R1-AMP", Robot.drive.mIO.R1_amp.toString() };
+		String[] r2_amp = { "R2-AMP", Robot.drive.mIO.R2_amp.toString() };
+		String[] r3_amp = { "R3-AMP", Robot.drive.mIO.R3_amp.toString() };
+		String[] r4_amp = { "R4-AMP", Robot.drive.mIO.R4_amp.toString() };
+		String[] l1_volt = { "L1-VOLT", Robot.drive.mIO.L1_volt.toString() };
+		String[] l2_volt = { "L2-VOLT", Robot.drive.mIO.L2_volt.toString() };
+		String[] l3_volt = { "L3-VOLT", Robot.drive.mIO.L3_volt.toString() };
+		String[] l4_volt = { "L4-VOLT", Robot.drive.mIO.L4_volt.toString() };
+		String[] r1_volt = { "R1-VOLT", Robot.drive.mIO.R1_volt.toString() };
+		String[] r2_volt = { "R2-VOLT", Robot.drive.mIO.R2_volt.toString() };
+		String[] r3_volt = { "R3-VOLT", Robot.drive.mIO.R3_volt.toString() };
+		String[] r4_volt = { "R4-VOLT", Robot.drive.mIO.R4_volt.toString() };
+		String[] elev_1_amp = { "ELEV-1-AMP", Robot.elevator.mIO.elevator_1_amp.toString() };
+		String[] elev_2_amp = { "ELEV-2-AMP", Robot.elevator.mIO.elevator_2_amp.toString() };
+		String[] elev_1_volt = { "ELEV-1-VOLT", Robot.elevator.mIO.elevator_1_volt.toString() };
+		String[] elev_2_volt = { "ELEV-2-VOLT", Robot.elevator.mIO.elevator_2_volt.toString() };
+		String[] elev_fwd_limit = { "ELEV-FWD-LMT", Robot.elevator.mIO.elevator_fwd_lmt.toString() };
+		String[] elev_rev_limit = { "ELEV-REV-LMT", Robot.elevator.mIO.elevator_rev_lmt.toString() };
+		String[] elev_height = { "ELEV-HEIGHT", Robot.elevator.mIO.encoder_rotations.toString() };
+		String[] elev_speed = { "ELEV-SPEED", Robot.elevator.mIO.encoder_speed.toString() };
+		String[] intake_l_amp = { "INTAKE-L-AMP", Robot.drive.getPDPChannelCurrent(kPDP.INTAKE_L).toString() };
+		String[] intake_r_amp = { "INTAKE-R-AMP", Robot.drive.getPDPChannelCurrent(kPDP.INTAKE_R).toString() };
+		String[] climb_1_amp = { "CLIMBER-1-AMP", Robot.drive.getPDPChannelCurrent(kPDP.CLIMBER_1).toString() };
+		String[] climb_2_amp = { "CLIMBER-2-AMP", Robot.drive.getPDPChannelCurrent(kPDP.CLIMBER_2).toString() };
+		String[] battery_voltage = { "BATTERY-VOLTAGE", String.valueOf(RobotController.getBatteryVoltage()) };
+		String[] pdp_temp = { "PDP-TEMP", Robot.drive.getPDPTemperature().toString() };
+		String[] pdp_current = { "PDP-CURRENT", Robot.drive.getPDPTotalCurrent().toString() };
+		String[] pdp_volt = { "PDP-VOLT", Robot.drive.getPDPVoltage().toString() };
+		String[] state_drive = { "DRIVE-STATE", Robot.drive.isDisabed() + "-" + Robot.drive.getStateString() };
+		String[] state_elevator = { "ELEV-STATE", Robot.elevator.isDisabed() + "-" + Robot.elevator.getStateString() };
+		String[] state_intake = { "INTAKE-STATE", Robot.intake.isDisabed() + "-" + Robot.intake.getStateString() };
+		String[] state_climber = { "CLIMBER-STATE", Robot.climber.isDisabed() + "-" + Robot.climber.getStateString() };
+
+		int i = header ? 0 : 1;
+		List<String> values = Arrays.asList(left_speed[i], right_speed[i], l1_amp[i], l2_amp[i], l3_amp[i], l4_amp[i],
+				r1_amp[i], r2_amp[i], r3_amp[i], r4_amp[i], l1_volt[i], l2_volt[i], l3_volt[i], l4_volt[i], r1_volt[i],
+				r2_volt[i], r3_volt[i], r4_volt[i], elev_1_amp[i], elev_2_amp[i], elev_1_volt[i], elev_2_volt[i],
+				elev_fwd_limit[i], elev_rev_limit[i], elev_height[i], elev_speed[i], intake_l_amp[i], intake_r_amp[i],
+				climb_1_amp[i], climb_2_amp[i], battery_voltage[i], pdp_temp[i], pdp_current[i], pdp_volt[i],
+				state_drive[i], state_elevator[i], state_intake[i], state_climber[i]);
+
+		String retval = "";
+		for (String valueToAdd : values) {
+			retval += valueToAdd;
+			retval += ",";
+		}
+
+		return retval;
+	}
+
 	/**
 	 * notifier object for running profile recorder
 	 */
@@ -277,12 +295,9 @@ public class Playback {
 
 	/**
 	 * @author max
-	 * @param fileName
-	 *            String
-	 * @param readwrite
-	 *            fileState
-	 * @param usb
-	 *            boolean
+	 * @param fileName  String
+	 * @param readwrite fileState
+	 * @param usb       boolean
 	 */
 	private void createFile(String fileName, String folder, fileState readwrite, boolean usb) {
 		try {
@@ -320,8 +335,7 @@ public class Playback {
 
 	/**
 	 * @author max
-	 * @param readwrite
-	 *            fileState
+	 * @param readwrite fileState
 	 */
 	private void closeFile(fileState readwrite) {
 		try {
@@ -346,10 +360,8 @@ public class Playback {
 	 * Used to control file writing.
 	 * 
 	 * @author max
-	 * @param name
-	 *            file name
-	 * @param usb
-	 *            true|false for writing to usb
+	 * @param name  file name
+	 * @param usb   true|false for writing to usb
 	 * @param task
 	 * @param state
 	 * @see TASK
@@ -363,7 +375,7 @@ public class Playback {
 				System.out.println("Opening Record: " + name + ".csv");
 				createFile(name, folder, fileState.WRITE, usb);
 				writeToProfile(true);
-				
+
 				break;
 
 			case Parse:
@@ -415,10 +427,10 @@ public class Playback {
 	private String loggingName(boolean returnCurrent) {
 		if (returnCurrent) {
 			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Util.dateTime(false);
-			prevDateTimeString = retval;
+			prevLog = retval;
 			return retval;
 		} else {
-			return prevDateTimeString;
+			return prevLog;
 		}
 	}
 

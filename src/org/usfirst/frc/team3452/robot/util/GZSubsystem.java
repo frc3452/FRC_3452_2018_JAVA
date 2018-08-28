@@ -27,7 +27,7 @@ public abstract class GZSubsystem extends Subsystem {
 	}
 
 	// Return if subsystem is disabled or not.
-	public boolean isDisabed() {
+	public Boolean isDisabed() {
 		return isDisabled;
 	}
 

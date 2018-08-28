@@ -241,19 +241,19 @@ public class Drivetrain extends GZSubsystem {
 		// in
 
 		// Left Encoder
-		public double left_encoder_ticks = Double.NaN, left_encoder_rotations = Double.NaN,
+		public Double left_encoder_ticks = Double.NaN, left_encoder_rotations = Double.NaN,
 				left_encoder_vel = Double.NaN, left_encoder_speed = Double.NaN;
 
 		// Right Encoder
-		public double right_encoder_ticks = Double.NaN, right_encoder_rotations = Double.NaN,
+		public Double right_encoder_ticks = Double.NaN, right_encoder_rotations = Double.NaN,
 				right_encoder_vel = Double.NaN, right_encoder_speed = Double.NaN;
 
 		// Amperage
-		public double L1_amp = Double.NaN, L2_amp = Double.NaN, L3_amp = Double.NaN, L4_amp = Double.NaN,
+		public Double L1_amp = Double.NaN, L2_amp = Double.NaN, L3_amp = Double.NaN, L4_amp = Double.NaN,
 				R1_amp = Double.NaN, R2_amp = Double.NaN, R3_amp = Double.NaN, R4_amp = Double.NaN;
 
 		// Voltage
-		public double L1_volt = Double.NaN, L2_volt = Double.NaN, L3_volt = Double.NaN, L4_volt = Double.NaN,
+		public Double L1_volt = Double.NaN, L2_volt = Double.NaN, L3_volt = Double.NaN, L4_volt = Double.NaN,
 				R1_volt = Double.NaN, R2_volt = Double.NaN, R3_volt = Double.NaN, R4_volt = Double.NaN;
 
 		// out
@@ -267,13 +267,13 @@ public class Drivetrain extends GZSubsystem {
 
 	@Override
 	protected synchronized void in() {
-		mIO.left_encoder_ticks = L1.getSelectedSensorPosition(0);
-		mIO.left_encoder_vel = L1.getSelectedSensorVelocity(0);
+		mIO.left_encoder_ticks = (double) L1.getSelectedSensorPosition(0);
+		mIO.left_encoder_vel = (double) L1.getSelectedSensorVelocity(0);
 		mIO.left_encoder_rotations = Units.ticks_to_rotations(mIO.left_encoder_ticks);
 		mIO.left_encoder_speed = Units.ticks_to_rotations(mIO.left_encoder_vel);
 
-		mIO.right_encoder_ticks = -R1.getSelectedSensorPosition(0);
-		mIO.right_encoder_vel = -R1.getSelectedSensorVelocity(0);
+		mIO.right_encoder_ticks = (double) -R1.getSelectedSensorPosition(0);
+		mIO.right_encoder_vel = (double) -R1.getSelectedSensorVelocity(0);
 		mIO.right_encoder_rotations = Units.ticks_to_rotations(mIO.right_encoder_ticks);
 		mIO.right_encoder_speed = Units.ticks_to_rotations(mIO.right_encoder_vel);
 
@@ -665,27 +665,19 @@ public class Drivetrain extends GZSubsystem {
 		mGyro.reset();
 	}
 
-	public synchronized double getPDPChannelCurrent(int channel) {
+	public synchronized Double getPDPChannelCurrent(int channel) {
 		return pdp.getCurrent(channel);
 	}
 
-	public synchronized double getPDPTemperature() {
+	public synchronized Double getPDPTemperature() {
 		return pdp.getTemperature();
 	}
 
-	public synchronized double getPDPTotalCurrent() {
+	public synchronized Double getPDPTotalCurrent() {
 		return pdp.getTotalCurrent();
 	}
 
-	public synchronized double getPDPTotalEnergy() {
-		return pdp.getTotalEnergy();
-	}
-
-	public synchronized double getPDPTotalPower() {
-		return pdp.getTotalPower();
-	}
-
-	public synchronized double getPDPVoltage() {
+	public synchronized Double getPDPVoltage() {
 		return pdp.getVoltage();
 	}
 
