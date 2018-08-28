@@ -177,7 +177,8 @@ public class Elevator extends GZSubsystem {
 
 	public static class IO {
 		// in
-		public Double encoder_ticks = Double.NaN, encoder_rotations = Double.NaN, encoder_vel = Double.NaN, encoder_speed = Double.NaN;
+		public Double encoder_ticks = Double.NaN, encoder_rotations = Double.NaN, encoder_vel = Double.NaN,
+				encoder_speed = Double.NaN;
 
 		public Double elevator_1_amp = Double.NaN, elevator_2_amp = Double.NaN;
 
@@ -198,7 +199,7 @@ public class Elevator extends GZSubsystem {
 		mIO.encoder_rotations = Units.ticks_to_rotations(mIO.encoder_ticks);
 		mIO.encoder_vel = (double) elevator_1.getSelectedSensorVelocity(0);
 		mIO.encoder_speed = Units.ticks_to_rotations(mIO.encoder_vel);
-		
+
 		mIO.elevator_1_amp = elevator_1.getOutputCurrent();
 		mIO.elevator_2_amp = elevator_2.getOutputCurrent();
 
@@ -207,6 +208,50 @@ public class Elevator extends GZSubsystem {
 
 		mIO.elevator_fwd_lmt = elevator_2.getSensorCollection().isFwdLimitSwitchClosed();
 		mIO.elevator_rev_lmt = elevator_2.getSensorCollection().isRevLimitSwitchClosed();
+	}
+
+	@Override
+	protected synchronized void out() {
+		elevator_1.set(mIO.control_mode, mIO.output);
+	}
+
+	public enum ElevatorState {
+		NEUTRAL, MANUAL, DEMO, POSITION
+	}
+
+	@Override
+	public synchronized void stop() {
+		setWantedState(ElevatorState.NEUTRAL);
+	}
+
+	public synchronized void setWantedState(ElevatorState wantedState) {
+		this.mWantedState = wantedState;
+	}
+
+	private synchronized void handleStates() {
+		//Dont allow Disabled or Demo while on the field
+		
+		if (((this.isDisabed() && !Robot.auton.isFMS()) || mWantedState == ElevatorState.NEUTRAL)) {
+
+			if (currentStateIsNot(ElevatorState.NEUTRAL)) {
+				onStateExit(mState);
+				mState = ElevatorState.NEUTRAL;
+				onStateStart(mState);
+			}
+
+		} else if (Robot.auton.isDemo() && !Robot.auton.isFMS()) {
+
+			if (currentStateIsNot(ElevatorState.DEMO)) {
+				onStateExit(mState);
+				mState = ElevatorState.DEMO;
+				onStateStart(mState);
+			}
+
+		} else if (mState != mWantedState) {
+			onStateExit(mState);
+			mState = mWantedState;
+			onStateStart(mState);
+		}
 	}
 
 	public synchronized void outputSmartDashboard() {
@@ -230,8 +275,8 @@ public class Elevator extends GZSubsystem {
 	public synchronized void speedLimiting() {
 		double pos = mIO.encoder_rotations;
 
-		//if demo, dont limit
-		//if not in demo and not overriding, limit
+		// if demo, dont limit
+		// if not in demo and not overriding, limit
 		if (getState() != ElevatorState.DEMO && (getState() != ElevatorState.DEMO && !isOverriden())) {
 			if (pos < 2.08)
 				driveModifier = Constants.kElevator.SPEED_1;
@@ -327,48 +372,6 @@ public class Elevator extends GZSubsystem {
 
 	public enum ESO {
 		TOGGLE, ON, OFF
-	}
-
-	@Override
-	protected synchronized void out() {
-		elevator_1.set(mIO.control_mode, mIO.output);
-	}
-
-	public enum ElevatorState {
-		NEUTRAL, MANUAL, DEMO, POSITION
-	}
-
-	@Override
-	public synchronized void stop() {
-		setWantedState(ElevatorState.NEUTRAL);
-	}
-
-	public synchronized void setWantedState(ElevatorState wantedState) {
-		this.mWantedState = wantedState;
-	}
-
-	private synchronized void handleStates() {
-		if ((this.isDisabed() || mWantedState == ElevatorState.NEUTRAL)) {
-
-			if (currentStateIsNot(ElevatorState.NEUTRAL)) {
-				onStateExit(mState);
-				mState = ElevatorState.NEUTRAL;
-				onStateStart(mState);
-			}
-
-		} else if (Robot.autonSelector.isDemo()) {
-
-			if (currentStateIsNot(ElevatorState.DEMO)) {
-				onStateExit(mState);
-				mState = ElevatorState.DEMO;
-				onStateStart(mState);
-			}
-
-		} else if (mState != mWantedState) {
-			onStateExit(mState);
-			mState = mWantedState;
-			onStateStart(mState);
-		}
 	}
 
 	private synchronized boolean currentStateIsNot(ElevatorState state) {

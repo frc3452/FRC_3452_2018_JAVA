@@ -84,6 +84,51 @@ public class Drivetrain extends GZSubsystem {
 		mGyro.reset();
 	}
 
+	@Override
+	protected synchronized void out() {
+		L1.set(mIO.control_mode, mIO.left_output);
+		R1.set(mIO.control_mode, mIO.right_output);
+	}
+
+	public enum DriveState {
+		OPEN_LOOP, OPEN_LOOP_DRIVER, DEMO, NEUTRAL, MOTION_MAGIC, MOTION_PROFILE,
+	}
+
+	@Override
+	public synchronized void stop() {
+		setWantedState(DriveState.NEUTRAL);
+	}
+
+	public synchronized void setWantedState(DriveState wantedState) {
+		this.mWantedState = wantedState;
+	}
+
+	private synchronized void handleStates() {
+		
+		//Do not allow .disable() while connected to the field.
+		if (((this.isDisabed() && !Robot.auton.isFMS()) || mWantedState == DriveState.NEUTRAL)) {
+
+			if (currentStateIsNot(DriveState.NEUTRAL)) {
+				onStateExit(mState);
+				mState = DriveState.NEUTRAL;
+				onStateStart(mState);
+			}
+
+		} else if (Robot.auton.isDemo()) {
+
+			if (currentStateIsNot(DriveState.DEMO)) {
+				onStateExit(mState);
+				mState = DriveState.DEMO;
+				onStateStart(mState);
+			}
+
+		} else if (mState != mWantedState) {
+			onStateExit(mState);
+			mState = mWantedState;
+			onStateStart(mState);
+		}
+	}
+	
 	private void talonInit(List<GZSRX> srx) {
 		for (GZSRX s : srx) {
 //			String name = talon.getName();
@@ -705,48 +750,6 @@ public class Drivetrain extends GZSubsystem {
 		return mGyro.getFusedHeading();
 	}
 
-	@Override
-	protected synchronized void out() {
-		L1.set(mIO.control_mode, mIO.left_output);
-		R1.set(mIO.control_mode, mIO.right_output);
-	}
-
-	public enum DriveState {
-		OPEN_LOOP, OPEN_LOOP_DRIVER, DEMO, NEUTRAL, MOTION_MAGIC, MOTION_PROFILE,
-	}
-
-	@Override
-	public synchronized void stop() {
-		setWantedState(DriveState.NEUTRAL);
-	}
-
-	public synchronized void setWantedState(DriveState wantedState) {
-		this.mWantedState = wantedState;
-	}
-
-	private synchronized void handleStates() {
-		if ((this.isDisabed() || mWantedState == DriveState.NEUTRAL)) {
-
-			if (currentStateIsNot(DriveState.NEUTRAL)) {
-				onStateExit(mState);
-				mState = DriveState.NEUTRAL;
-				onStateStart(mState);
-			}
-
-		} else if (Robot.autonSelector.isDemo()) {
-
-			if (currentStateIsNot(DriveState.DEMO)) {
-				onStateExit(mState);
-				mState = DriveState.DEMO;
-				onStateStart(mState);
-			}
-
-		} else if (mState != mWantedState) {
-			onStateExit(mState);
-			mState = mWantedState;
-			onStateStart(mState);
-		}
-	}
 
 	private synchronized boolean currentStateIsNot(DriveState state) {
 		return mState != state;
