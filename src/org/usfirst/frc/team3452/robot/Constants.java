@@ -59,6 +59,8 @@ public class Constants {
 
 		public static final int AUTO_10_L = AUTO_10 - AUTO_VARIANCE;
 		public static final int AUTO_10_H = AUTO_10 + AUTO_VARIANCE;
+		
+		public static final String DEFAULT_NAME = "NO COMMAND";
 	}
 
 	public class kCamera {

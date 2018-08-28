@@ -57,7 +57,7 @@ public class Auton {
 		as_A.setName("Selector A");
 		as_B.setName("Selector B");
 
-		Arrays.fill(autoCommandName, "NO COMMAND");
+		Arrays.fill(autoCommandName, kAuton.DEFAULT_NAME);
 		Arrays.fill(autoCommand, null);
 			
 		setAutonNames();
@@ -181,6 +181,7 @@ public class Auton {
 
 	public void setAutons()
 	{
+		//TODO ISSUE #16
 		autoCommand[1] = (new MiddleAuton(AO.SWITCH, AV.CURRENT));
 		autoCommand[2] = (new LeftAuton(AO.SWITCH, AV.CURRENT, AV.CURRENT));
 		autoCommand[3] = (new LeftAuton(AO.SCALE, AV.CURRENT, AV.CURRENT));
