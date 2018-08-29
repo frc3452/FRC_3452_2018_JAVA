@@ -64,8 +64,6 @@ public class GZLog {
 				elev_1_volt, elev_2_volt, elev_fwd_limit, elev_rev_limit, elev_height, elev_speed, intake_l_amp,
 				intake_r_amp, climb_1_amp, climb_2_amp, battery_voltage, pdp_temp, pdp_current, pdp_volt, state_drive,
 				state_elevator, state_intake, state_climber);
-		
-		values.forEach((s) -> s.setValue(kFileManagement.DEFAULT_LOG_VALUE));
 	}
 
 	public void update() {
@@ -137,5 +135,28 @@ public class GZLog {
 			retval += "," + item.getValue();
 		
 		return retval;
+	}
+
+	private class GZLogItem {
+
+		private String mName = "";
+		private String mValue = kFileManagement.DEFAULT_LOG_VALUE;
+
+		public GZLogItem(String header) {
+			this.mName = header;
+		}
+
+		public String getHeader() {
+			return mName;
+		}
+
+		public void setValue(String value) {
+			this.mValue = value;
+		}
+
+		public String getValue() {
+			return mValue;
+		}
+
 	}
 }
