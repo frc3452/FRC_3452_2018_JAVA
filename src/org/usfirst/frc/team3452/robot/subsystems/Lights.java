@@ -65,6 +65,11 @@ public class Lights {
     private int visionLength() {
 		return centerX.getDoubleArray(tempArray).length;
 	}
+    
+    public void off()
+    {
+    	hsv(0,0,0);
+    }
 
 	public void hsv(double hDegrees, double saturation, double value) {
 		double R, G, B;

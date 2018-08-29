@@ -31,12 +31,12 @@ public class PlaybackControl extends Command {
 
 	@Override
 	protected void initialize() {
-		Robot.playback.control(m_name, m_folder, m_usb, m_task, STATE.STARTUP);
+		Robot.fileManager.control(m_name, m_folder, m_usb, m_task, STATE.STARTUP);
 	}
 
 	@Override
 	protected void execute() {
-		Robot.playback.control(m_name, m_folder, m_usb, m_task, STATE.RUNTIME);
+		Robot.fileManager.control(m_name, m_folder, m_usb, m_task, STATE.RUNTIME);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class PlaybackControl extends Command {
 
 	@Override
 	protected void end() {
-		Robot.playback.control(m_name, m_folder, m_usb, m_task, STATE.FINISH);
+		Robot.fileManager.control(m_name, m_folder, m_usb, m_task, STATE.FINISH);
 	}
 
 	@Override

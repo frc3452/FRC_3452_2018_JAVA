@@ -3,6 +3,7 @@ package org.usfirst.frc.team3452.robot;
 import java.util.Arrays;
 
 import org.usfirst.frc.team3452.robot.Constants.kAuton;
+import org.usfirst.frc.team3452.robot.Constants.kLights;
 import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.subsystems.Auton;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
@@ -10,19 +11,17 @@ import org.usfirst.frc.team3452.robot.subsystems.Climber;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.DriveState;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
-import org.usfirst.frc.team3452.robot.subsystems.Intake;
-import org.usfirst.frc.team3452.robot.subsystems.Lights;
 import org.usfirst.frc.team3452.robot.subsystems.FileManagement;
 import org.usfirst.frc.team3452.robot.subsystems.FileManagement.STATE;
 import org.usfirst.frc.team3452.robot.subsystems.FileManagement.TASK;
+import org.usfirst.frc.team3452.robot.subsystems.Intake;
+import org.usfirst.frc.team3452.robot.subsystems.Lights;
 import org.usfirst.frc.team3452.robot.util.GZSubsystemManager;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
@@ -31,11 +30,11 @@ public class Robot extends TimedRobot {
 	public static final Elevator elevator = new Elevator();
 	public static final Intake intake = new Intake();
 	public static final Climber climber = new Climber();
-	
+
 	public static final Auton auton = new Auton();
 	public static final Camera camera = new Camera();
 	public static final Lights lights = new Lights();
-	public static final FileManagement playback = new FileManagement();
+	public static final FileManagement fileManager = new FileManagement();
 
 	private static final GZSubsystemManager mSubsystems = new GZSubsystemManager(
 			Arrays.asList(drive, elevator, intake, climber));
@@ -43,38 +42,29 @@ public class Robot extends TimedRobot {
 	@SuppressWarnings("unused")
 	private static final OI oi = new OI();
 
-	private Timer mAutoTimer = new Timer();
-
 	// Flags
-	private boolean wasTele = false, readyForMatch = false, wasTest = false, safeToLog = false;
+	private boolean wasTele = false, readyForMatch = false, wasTest = false;
 
 	// LOGGING CONTROL
 	private boolean logging = true, logToUsb = true;
 	private String loggingLocation = "Logging/Offseason";
-	
+
 	@Override
 	public void robotInit() {
-		mAutoTimer.stop();
-		mAutoTimer.reset();
-		mAutoTimer.start();
 	}
 
 	@Override
 	public void robotPeriodic() {
-		mSubsystems.stop(); 
-		
+		mSubsystems.loop();
+
 		handleLEDs();
-		// LOGGING FLAG SET IN AUTOINIT, TELEINIT, TESTINIT
-		// LOOPED HERE
-		if (safeToLog && logging)
-			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.RUNTIME);
 	}
 
 	@Override
 	public void disabledInit() {
 		mSubsystems.stop();
 
-		endLog();
+		log(false);
 
 		Robot.drive.brake((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
 		// Robot.drive.brake(NeutralMode.Coast);
@@ -95,27 +85,22 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		startLog();
+		log(true);
 
 		// timer start
-		mAutoTimer.stop();
-		mAutoTimer.reset();
-		mAutoTimer.start();
+		Robot.auton.resetAutonTimer();
+		Robot.auton.startAutonTimer();
 
-		
-		//Loop while game data is bad and timer is acceptable
+		// Loop while game data is bad and timer is acceptable
 		do {
 			Robot.auton.gameMsg = Robot.lights.gsm();
-		} while ((Robot.auton.gameMsg.equals("NOT") && mAutoTimer.get() < 3));
+		} while ((Robot.auton.gameMsg.equals("NOT") && Robot.auton.getAutonTimer() < 3));
 
-		//Set autons, regardless of good game message
+		// Set autons, regardless of good game message
 		Robot.auton.setAutons();
 
 		// SET COLOR ACCORDING TO ALLIANCE
-		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
-			Robot.lights.hsv(0, 1, .5);
-		else
-			Robot.lights.hsv(120, 1, .5);
+		Robot.lights.hsv(Robot.auton.isRed() ? kLights.RED : kLights.BLUE, 1, .5);
 
 		// BRAKE MODE DURING AUTO
 		Robot.drive.brake(NeutralMode.Brake);
@@ -135,12 +120,11 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-		startLog();
-		
+		log(true);
+
 		Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
 
-		// GREEN LOW BRIGHTNESS
-		Robot.lights.hsv(250, 1, .5);
+		Robot.lights.hsv(kLights.GREEN, 1, .5);
 
 		Robot.drive.brake(NeutralMode.Coast);
 
@@ -159,7 +143,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testInit() {
-		startLog();
+		log(true);
 
 		wasTest = true;
 	}
@@ -174,13 +158,13 @@ public class Robot extends TimedRobot {
 			readyForMatch = true;
 
 		if (wasTest) {
-			Robot.lights.pulse(55, 1, .2, .8, .1);
+			Robot.lights.pulse(kLights.PURPLE, 1, .2, .8, .1);
 		} else {
 			switch (Robot.auton.uglyAnalog()) {
 			case 100:
 
 				// OFF
-				Robot.lights.hsv(0, 0, 0);
+				Robot.lights.off();
 
 				break;
 
@@ -195,9 +179,9 @@ public class Robot extends TimedRobot {
 
 				// POLICE
 				if (Robot.lights.m_hue > 180)
-					Robot.lights.hsv(0, 1, 1);
+					Robot.lights.hsv(kLights.RED, 1, 1);
 				else
-					Robot.lights.hsv(120, 1, 1);
+					Robot.lights.hsv(kLights.BLUE, 1, 1);
 				Robot.lights.m_hue += 30;
 
 				break;
@@ -208,13 +192,13 @@ public class Robot extends TimedRobot {
 					if (DriverStation.getInstance().isDSAttached()) {
 
 						if (readyForMatch)
-							Robot.lights.pulse(258, 1, 0.1, .4, 0.025 / 3.5);
+							Robot.lights.pulse(kLights.GREEN, 1, 0.1, .4, 0.025 / 3.5);
 						else
-							Robot.lights.pulse(330, 1, 0.1, .4, 0.025 / 3.5);
+							Robot.lights.pulse(kLights.YELLOW, 1, 0.1, .4, 0.025 / 3.5);
 
 					} else {
 						// IF NOT CONNECTED DO AGGRESSIVE RED PULSE
-						Robot.lights.pulse(0, 1, 0.2, .8, 0.15 / 10 * (mAutoTimer.get()) / 100);
+						Robot.lights.pulse(0, 1, 0.2, .8, 0);
 					}
 				}
 				break;
@@ -222,17 +206,9 @@ public class Robot extends TimedRobot {
 		}
 	}
 
-	private void startLog() {
-		if (!safeToLog && logging) {
-			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.STARTUP);
-			safeToLog = true;
-		}
-	}
-
-	private void endLog() {
-		if (safeToLog && logging) {
-			safeToLog = false;
-			Robot.playback.control("Log", loggingLocation, logToUsb, TASK.Log, STATE.FINISH);
-		}
+	private void log(boolean start) {
+		if (logging)
+			Robot.fileManager.control("Log", loggingLocation, logToUsb, TASK.Log,
+					(start) ? STATE.STARTUP : STATE.FINISH);
 	}
 }

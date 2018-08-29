@@ -191,9 +191,8 @@ public class FileManagement {
 				bw.write(mLog.getHeader());
 				bw.write("\r\n");
 				logging.startPeriodic(kFileManagement.LOGGING_SPEED);
-			} else {
+			} else
 				logging.stop();
-			}
 
 		} catch (Exception e) {
 			e.printStackTrace();

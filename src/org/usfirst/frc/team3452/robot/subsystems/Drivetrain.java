@@ -607,36 +607,36 @@ public class Drivetrain extends GZSubsystem {
 	 * @since 4-22-2018
 	 */
 	public synchronized void motionProfileToTalons() {
-		if (Robot.playback.mpL.size() != Robot.playback.mpR.size())
-			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + Robot.playback.mpL.size() + "\t\t"
-					+ Robot.playback.mpR.size());
+		if (Robot.fileManager.mpL.size() != Robot.fileManager.mpR.size())
+			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + Robot.fileManager.mpL.size() + "\t\t"
+					+ Robot.fileManager.mpR.size());
 
-		processMotionProfileBuffer((double) Robot.playback.mpDur / (1000 * 2));
+		processMotionProfileBuffer((double) Robot.fileManager.mpDur / (1000 * 2));
 
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
 
 		// set talon srx
-		L1.configMotionProfileTrajectoryPeriod(Robot.playback.mpDur, 10);
-		R1.configMotionProfileTrajectoryPeriod(Robot.playback.mpDur, 10);
-		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Robot.playback.mpDur, 10);
-		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Robot.playback.mpDur, 10);
+		L1.configMotionProfileTrajectoryPeriod(Robot.fileManager.mpDur, 10);
+		R1.configMotionProfileTrajectoryPeriod(Robot.fileManager.mpDur, 10);
+		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Robot.fileManager.mpDur, 10);
+		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Robot.fileManager.mpDur, 10);
 
 		L1.clearMotionProfileTrajectories();
 		R1.clearMotionProfileTrajectories();
 
 		// generate and push each mp point
-		for (int i = 0; i < (Robot.playback.mpL.size() <= Robot.playback.mpR.size() ? Robot.playback.mpL.size()
-				: Robot.playback.mpR.size()); i++) {
+		for (int i = 0; i < (Robot.fileManager.mpL.size() <= Robot.fileManager.mpR.size() ? Robot.fileManager.mpL.size()
+				: Robot.fileManager.mpR.size()); i++) {
 
-			leftPoint.position = Robot.playback.mpL.get(i).get(0) * 4096;
-			leftPoint.velocity = Robot.playback.mpL.get(i).get(1) * 4096;
+			leftPoint.position = Robot.fileManager.mpL.get(i).get(0) * 4096;
+			leftPoint.velocity = Robot.fileManager.mpL.get(i).get(1) * 4096;
 
-			rightPoint.position = Robot.playback.mpR.get(i).get(0) * 4096;
-			rightPoint.velocity = Robot.playback.mpR.get(i).get(1) * 4096;
+			rightPoint.position = Robot.fileManager.mpR.get(i).get(0) * 4096;
+			rightPoint.velocity = Robot.fileManager.mpR.get(i).get(1) * 4096;
 
-			leftPoint.timeDur = GetTrajectoryDuration(Robot.playback.mpDur);
-			rightPoint.timeDur = GetTrajectoryDuration(Robot.playback.mpDur);
+			leftPoint.timeDur = GetTrajectoryDuration(Robot.fileManager.mpDur);
+			rightPoint.timeDur = GetTrajectoryDuration(Robot.fileManager.mpDur);
 
 			leftPoint.headingDeg = 0;
 			rightPoint.headingDeg = 0;
@@ -658,7 +658,7 @@ public class Drivetrain extends GZSubsystem {
 			leftPoint.isLastPoint = false;
 			rightPoint.isLastPoint = false;
 
-			if ((i + 1) == Robot.playback.mpL.size()) {
+			if ((i + 1) == Robot.fileManager.mpL.size()) {
 				leftPoint.isLastPoint = true;
 				rightPoint.isLastPoint = true;
 			}

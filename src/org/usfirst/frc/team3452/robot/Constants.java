@@ -59,7 +59,7 @@ public class Constants {
 
 		public static final int AUTO_10_L = AUTO_10 - AUTO_VARIANCE;
 		public static final int AUTO_10_H = AUTO_10 + AUTO_VARIANCE;
-		
+
 		public static final String DEFAULT_NAME = "NO COMMAND";
 	}
 
@@ -117,7 +117,7 @@ public class Constants {
 
 		public static final double JOYSTICK_MODIFIER_UP = 1;
 		public static final double JOYSTICK_MODIFIER_DOWN = .6;
-		
+
 		public static final double DEMO_JOYSTICK_MODIFIER_DOWN = .3;
 		public static final double DEMO_JOYSTICK_MODIFIER_UP = .5;
 
@@ -142,9 +142,8 @@ public class Constants {
 
 		public static final boolean USE_SOFT_LIMITS = false;
 
-
 		public class Heights {
-			public static final double Floor = -15; //below 0 to counter possible encoder drift
+			public static final double Floor = -15; // below 0 to counter possible encoder drift
 			public static final double Switch = 2.8;
 			public static final double Scale = 8;
 		}
@@ -170,6 +169,12 @@ public class Constants {
 
 	public class kLights {
 		public static final int CANIFIER_ID = 0;
+
+		public static final int RED = 0;
+		public static final int BLUE = 120;
+		public static final int PURPLE = 55;
+		public static final int GREEN = 254; //;)
+		public static final int YELLOW = 330;
 	}
 
 	public class kFileManagement {

@@ -10,9 +10,12 @@ import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
+import org.usfirst.frc.team3452.robot.util.GZCommand;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -30,11 +33,10 @@ public class Auton {
 	private int m_prev_as1, m_prev_as2;
 	private int m_asA, m_asB;
 
-	public String autoCommandName[] = new String[41];
-	public Command autoCommand[] = new Command[41];
+	public GZCommand autoCommand[] = new GZCommand[41];
 	public Command autonomousCommand = null;
 	public Command defaultCommand = null;
-	
+
 	public boolean controllerOverride = false;
 
 	public int overrideValue = 1;
@@ -42,7 +44,8 @@ public class Auton {
 	public String overrideString = "", autonString = "";
 	public String gameMsg = "NOT";
 
-
+	private Timer mAutoTimer = new Timer();
+	
 	/**
 	 * hardware initialization
 	 * 
@@ -57,10 +60,23 @@ public class Auton {
 		as_A.setName("Selector A");
 		as_B.setName("Selector B");
 
-		Arrays.fill(autoCommandName, kAuton.DEFAULT_NAME);
 		Arrays.fill(autoCommand, null);
-			
-		setAutonNames();
+	}
+	
+	public void startAutonTimer()
+	{
+		mAutoTimer.start();
+	}
+	
+	public Double getAutonTimer()
+	{
+		return mAutoTimer.get();
+	}
+	
+	public void resetAutonTimer()
+	{
+		mAutoTimer.stop();
+		mAutoTimer.reset();
 	}
 
 	public void autonChooser() {
@@ -71,13 +87,13 @@ public class Auton {
 
 			// If selector feedback nominal
 			if (uglyAnalog() <= 40 && uglyAnalog() >= 1) {
-				autonomousCommand = autoCommand[Robot.auton.uglyAnalog()];
+				autonomousCommand = autoCommand[Robot.auton.uglyAnalog()].getCommand();
 			} else {
 				autonomousCommand = defaultCommand;
 			}
 		}
 	}
-	
+
 	private void controllerChooser() {
 		// if LB & RB
 		if (OI.driverJoy.getRawButton(5) && OI.driverJoy.getRawButton(6)) {
@@ -85,48 +101,42 @@ public class Auton {
 			// A BUTTON
 			if (OI.driverJoy.getRawButton(1)) {
 				overrideValue = 2;
-				overrideString = "Controller override 1:\t"
-						+ autoCommandName[2];
+				overrideString = "Controller override 1:\t" + autoCommand[2].getName();
 				controllerOverride = true;
 			}
 
 			// B BUTTON
 			else if (OI.driverJoy.getRawButton(2)) {
 				overrideValue = 3;
-				overrideString = "Controller override 2:\t"
-						+ autoCommandName[3];
+				overrideString = "Controller override 2:\t" + autoCommand[3].getName();
 				controllerOverride = true;
 			}
 
 			// X BUTTON
 			else if (OI.driverJoy.getRawButton(3)) {
 				overrideValue = 4;
-				overrideString = "Controller override 3:\t"
-						+ autoCommandName[4];
+				overrideString = "Controller override 3:\t" + autoCommand[3].getName();
 				controllerOverride = true;
 			}
 
 			// Y BUTTON
 			else if (OI.driverJoy.getRawButton(4)) {
 				overrideValue = 5;
-				overrideString = "Controller override 4:\t"
-						+ autoCommandName[5];
+				overrideString = "Controller override 4:\t" + autoCommand[5].getName();
 				controllerOverride = true;
 			}
 
 			// BACK BUTTON
 			else if (OI.driverJoy.getRawButton(7)) {
 				overrideValue = 13;
-				overrideString = "Controller override 5:\t"
-						+ autoCommandName[13];
+				overrideString = "Controller override 5:\t" + autoCommand[13].getName();
 				controllerOverride = true;
 			}
 
 			// START BUTTON
 			else if (OI.driverJoy.getRawButton(8)) {
 				overrideValue = 17;
-				overrideString = "Controller override 6:\t"
-						+ autoCommandName[17];
+				overrideString = "Controller override 6:\t" + autoCommand[17].getName();
 				controllerOverride = true;
 			}
 
@@ -145,86 +155,54 @@ public class Auton {
 		}
 
 	}
-	
-	public void setAutonNames() {
-		// naming for commands
-		autoCommandName[1] = "Middle - Switch";
-		autoCommandName[2] = "Left - Switch";
-		autoCommandName[3] = "Left - Scale";
-		autoCommandName[4] = "Right - Switch";
-		autoCommandName[5] = "Right - Scale";
 
-		autoCommandName[11] = "Left Only - Switch Priority";
-		autoCommandName[12] = "Left Only - Scale Priority";
-		autoCommandName[13] = "Left Only - Switch Only";
-		autoCommandName[14] = "Left Only - Scale Only";
+	public void setAutons() {
+		autoCommand[1] = new GZCommand("Middle - Switch", new MiddleAuton(AO.SWITCH, AV.CURRENT));
+		autoCommand[2] = new GZCommand("Left - Switch", new LeftAuton(AO.SWITCH, AV.CURRENT, AV.CURRENT));
+		autoCommand[3] = new GZCommand("Left - Scale", new LeftAuton(AO.SCALE, AV.CURRENT, AV.CURRENT));
+		autoCommand[4] = new GZCommand("Right - Switch", new RightAuton(AO.SWITCH, AV.CURRENT, AV.CURRENT));
+		autoCommand[5] = new GZCommand("Right - Scale", new RightAuton(AO.SCALE, AV.CURRENT, AV.CURRENT));
 
-		autoCommandName[15] = "Right Only - Switch Priority";
-		autoCommandName[16] = "Right Only - Scale Priority";
-		autoCommandName[17] = "Right Only - Switch Only";
-		autoCommandName[18] = "Right Only - Scale Only";
+		autoCommand[11] = new GZCommand("Left Only - Switch Priority",
+				new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
+		autoCommand[12] = new GZCommand("Left Only - Scale Priority",
+				new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
+		autoCommand[13] = new GZCommand("Left Only - Switch Only",
+				new LeftAuton(AO.SWITCH_ONLY, AV.CURRENT, AV.CURRENT));
+		autoCommand[14] = new GZCommand("Left Only - Scale Only", new LeftAuton(AO.SCALE_ONLY, AV.CURRENT, AV.CURRENT));
 
-		autoCommandName[19] = "Left - Default";
-		autoCommandName[20] = "Right - Default";
+		autoCommand[15] = new GZCommand("Right Only - Switch Priority",
+				new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
+		autoCommand[16] = new GZCommand("Right Only - Switch Priority",
+				new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
+		autoCommand[17] = new GZCommand("Right Only - Switch Only",
+				new RightAuton(AO.SWITCH_ONLY, AV.CURRENT, AV.CURRENT));
+		autoCommand[18] = new GZCommand("Right Only - Scale Only",
+				new RightAuton(AO.SCALE_ONLY, AV.CURRENT, AV.CURRENT));
 
-		autoCommandName[21] = "(MIFOR) Middle - Switch";
-		autoCommandName[22] = "(MIFOR) Left - Switch";
-		autoCommandName[23] = "(MIFOR) Left - Scale";
-		autoCommandName[24] = "(MIFOR) Right - Switch";
-		autoCommandName[25] = "(MIFOR) Right - Scale";
+		autoCommand[19] = new GZCommand("Left - Default", new LeftAuton(AO.DEFAULT, AV.CURRENT, AV.CURRENT));
+		autoCommand[20] = new GZCommand("Right - Default", new RightAuton(AO.DEFAULT, AV.CURRENT, AV.CURRENT));
 
-		autoCommandName[26] = "(MIFOR) Left Only - Switch Priority";
-		autoCommandName[27] = "(MIFOR) Left Only - Scale Priority";
-		autoCommandName[28] = "(MIFOR) Right Only - Switch Priority";
-		autoCommandName[29] = "(MIFOR) Right Only - Scale Priority";
-	}
-
-	public void setAutons()
-	{
-		//TODO ISSUE #16
-		autoCommand[1] = (new MiddleAuton(AO.SWITCH, AV.CURRENT));
-		autoCommand[2] = (new LeftAuton(AO.SWITCH, AV.CURRENT, AV.CURRENT));
-		autoCommand[3] = (new LeftAuton(AO.SCALE, AV.CURRENT, AV.CURRENT));
-		autoCommand[4] = (new RightAuton(AO.SWITCH, AV.CURRENT, AV.CURRENT));
-		autoCommand[5] = (new RightAuton(AO.SCALE, AV.CURRENT, AV.CURRENT));
-		
-		autoCommand[11] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
-		autoCommand[12] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
-		autoCommand[13] = (new LeftAuton(AO.SWITCH_ONLY, AV.CURRENT, AV.CURRENT));
-		autoCommand[14] = (new LeftAuton(AO.SCALE_ONLY, AV.CURRENT, AV.CURRENT));
-		
-		autoCommand[15] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
-		autoCommand[16] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
-		autoCommand[17] = (new RightAuton(AO.SWITCH_ONLY, AV.CURRENT, AV.CURRENT));
-		autoCommand[18] = (new RightAuton(AO.SCALE_ONLY, AV.CURRENT, AV.CURRENT));
-		
-		autoCommand[19] = (new LeftAuton(AO.DEFAULT, AV.CURRENT, AV.CURRENT));
-		autoCommand[20] = (new RightAuton(AO.DEFAULT, AV.CURRENT, AV.CURRENT));
-		
-		autoCommand[21] = (new MiddleAuton(AO.SWITCH, AV.FOREST_HILLS));
-		autoCommand[22] = (new LeftAuton(AO.SWITCH, AV.FOREST_HILLS, AV.CURRENT));
-		autoCommand[23] = (new LeftAuton(AO.SCALE, AV.FOREST_HILLS, AV.CURRENT));
-		autoCommand[24] = (new RightAuton(AO.SWITCH, AV.FOREST_HILLS, AV.CURRENT));
-		autoCommand[25] = (new RightAuton(AO.SCALE, AV.FOREST_HILLS, AV.CURRENT));
-		
-		autoCommand[26] = (new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.FOREST_HILLS, AV.CURRENT));
-		autoCommand[27] = (new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.FOREST_HILLS, AV.CURRENT));
-		autoCommand[28] = (new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.FOREST_HILLS, AV.CURRENT));
-		autoCommand[29] = (new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.FOREST_HILLS, AV.CURRENT));
-		
 		if (Robot.auton.controllerOverride)
-			autonomousCommand = autoCommand[Robot.auton.overrideValue];
+			autonomousCommand = autoCommand[Robot.auton.overrideValue].getCommand();
 	}
-	
+
 	public boolean isDemo() {
 		return uglyAnalog() == kAuton.SAFTEY_SWITCH;
 	}
-	
-	public boolean isFMS()
-	{
+
+	public boolean isFMS() {
 		return DriverStation.getInstance().isFMSAttached();
 	}
 
+	public boolean isRed()
+	{
+		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
+			return true;
+
+		return false;
+	}
+	
 	public void printSelected() {
 		m_asA = as_A.getValue();
 		m_asB = as_B.getValue();
@@ -239,16 +217,17 @@ public class Auton {
 				|| (m_asB + 8 < m_prev_as2 || m_prev_as2 < m_asB - 8))) {
 
 			if ((uglyAnalog() >= 1) && (uglyAnalog() <= 10)) {
-				autonString = "A / " + uglyAnalog() + ": " + autoCommandName[uglyAnalog()];
+				autonString = "A / " + uglyAnalog() + ": " + autoCommand[uglyAnalog()].getName();
 			} else if ((uglyAnalog() >= 11) && (uglyAnalog() <= 20)) {
-				autonString = "B / " + (uglyAnalog() - 10) + ": " + autoCommandName[uglyAnalog()] + " - "
-						+ uglyAnalog();
+				autonString = "B / " + (uglyAnalog() - 10) + ": " + autoCommand[uglyAnalog()].getName() + " ("
+						+ uglyAnalog() + ")";
 			} else if ((uglyAnalog() >= 21) && (uglyAnalog() <= 30)) {
-				autonString = "C / " + (uglyAnalog() - 20) + ": " + autoCommandName[uglyAnalog()] + " - "
-						+ uglyAnalog();
+				autonString = "C / " + (uglyAnalog() - 20) + ": " + autoCommand[uglyAnalog()].getName() + " ("
+						+ uglyAnalog() + ")";
+
 			} else if ((uglyAnalog() >= 31) && (uglyAnalog() <= 40)) {
-				autonString = "D / " + (uglyAnalog() - 30) + ": " + autoCommandName[uglyAnalog()] + " - "
-						+ uglyAnalog();
+				autonString = "D / " + (uglyAnalog() - 30) + ": " + autoCommand[uglyAnalog()].getName() + " ("
+						+ uglyAnalog() + ")";
 			} else {
 				autonString = "AUTON NOT SELECTED: " + uglyAnalog();
 			}
