@@ -7,6 +7,7 @@ import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Constants.kAuton;
 import org.usfirst.frc.team3452.robot.OI;
 import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
 import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
@@ -34,12 +35,12 @@ public class Auton {
 	private int m_asA, m_asB;
 
 	public GZCommand autoCommand[] = new GZCommand[41];
+	private GZCommand defaultCommand = null;
 	public Command autonomousCommand = null;
-	public Command defaultCommand = null;
 
 	public boolean controllerOverride = false;
 
-	public int overrideValue = 1;
+	private int overrideValue = 1;
 	private String overrideStringPrevious = "";
 	public String overrideString = "", autonString = "";
 	public String gameMsg = "NOT";
@@ -61,6 +62,8 @@ public class Auton {
 		as_B.setName("Selector B");
 
 		Arrays.fill(autoCommand, null);
+		
+		setAutons();
 	}
 	
 	public void startAutonTimer()
@@ -79,21 +82,28 @@ public class Auton {
 		mAutoTimer.reset();
 	}
 
+	
 	public void autonChooser() {
 		controllerChooser();
 
 		// if not overriden
 		if (!controllerOverride) {
 
-			// If selector feedback nominal
-			if (uglyAnalog() <= 40 && uglyAnalog() >= 1) {
+			// Check if auton selectors are returning what they should be
+			if (uglyAnalog() <= 100 && uglyAnalog() >= 1) {
 				autonomousCommand = autoCommand[Robot.auton.uglyAnalog()].getCommand();
 			} else {
-				autonomousCommand = defaultCommand;
+				autonomousCommand = defaultCommand.getCommand();
 			}
+			
 		}
+		
+		printSelected();
 	}
 
+	/**
+	 * Sets the names for the override and the value of the array in which to override 
+	 */
 	private void controllerChooser() {
 		// if LB & RB
 		if (OI.driverJoy.getRawButton(5) && OI.driverJoy.getRawButton(6)) {
@@ -101,48 +111,48 @@ public class Auton {
 			// A BUTTON
 			if (OI.driverJoy.getRawButton(1)) {
 				overrideValue = 2;
-				overrideString = "Controller override 1:\t" + autoCommand[2].getName();
+				overrideString = "Controller override 1:\t" + autoCommand[overrideValue].getName();
 				controllerOverride = true;
 			}
 
 			// B BUTTON
 			else if (OI.driverJoy.getRawButton(2)) {
 				overrideValue = 3;
-				overrideString = "Controller override 2:\t" + autoCommand[3].getName();
+				overrideString = "Controller override 2:\t" + autoCommand[overrideValue].getName();
 				controllerOverride = true;
 			}
 
 			// X BUTTON
 			else if (OI.driverJoy.getRawButton(3)) {
 				overrideValue = 4;
-				overrideString = "Controller override 3:\t" + autoCommand[3].getName();
+				overrideString = "Controller override 3:\t" + autoCommand[overrideValue].getName();
 				controllerOverride = true;
 			}
 
 			// Y BUTTON
 			else if (OI.driverJoy.getRawButton(4)) {
 				overrideValue = 5;
-				overrideString = "Controller override 4:\t" + autoCommand[5].getName();
+				overrideString = "Controller override 4:\t" + autoCommand[overrideValue].getName();
 				controllerOverride = true;
 			}
 
 			// BACK BUTTON
 			else if (OI.driverJoy.getRawButton(7)) {
 				overrideValue = 13;
-				overrideString = "Controller override 5:\t" + autoCommand[13].getName();
+				overrideString = "Controller override 5:\t" + autoCommand[overrideValue].getName();
 				controllerOverride = true;
 			}
 
 			// START BUTTON
 			else if (OI.driverJoy.getRawButton(8)) {
 				overrideValue = 17;
-				overrideString = "Controller override 6:\t" + autoCommand[17].getName();
+				overrideString = "Controller override 6:\t" + autoCommand[overrideValue].getName();
 				controllerOverride = true;
 			}
 
 			// LEFT CLICK
 			else if (OI.driverJoy.getRawButton(9)) {
-				autonomousCommand = defaultCommand;
+				autonomousCommand = defaultCommand.getCommand();
 				overrideString = "Controller override: DEFAULT AUTO SELECTED";
 				controllerOverride = true;
 			}
@@ -157,6 +167,8 @@ public class Auton {
 	}
 
 	public void setAutons() {
+		defaultCommand = new GZCommand("DEFAULT", new DefaultAutonomous());
+		
 		autoCommand[1] = new GZCommand("Middle - Switch", new MiddleAuton(AO.SWITCH, AV.CURRENT));
 		autoCommand[2] = new GZCommand("Left - Switch", new LeftAuton(AO.SWITCH, AV.CURRENT, AV.CURRENT));
 		autoCommand[3] = new GZCommand("Left - Scale", new LeftAuton(AO.SCALE, AV.CURRENT, AV.CURRENT));
@@ -203,11 +215,9 @@ public class Auton {
 		return false;
 	}
 	
-	public void printSelected() {
+	private void printSelected() {
 		m_asA = as_A.getValue();
 		m_asB = as_B.getValue();
-
-		// System.out.println(as_A.getValue() + "\t\t\t" + as_B.getValue());
 
 		// If overriden, print overide
 		if (controllerOverride && (!overrideString.equals(overrideStringPrevious)))

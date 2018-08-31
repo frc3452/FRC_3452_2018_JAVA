@@ -73,7 +73,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		Robot.auton.autonChooser();
-		Robot.auton.printSelected();
 
 		if (wasTest)
 			OI.rumble(CONTROLLER.BOTH, 1);
@@ -106,7 +105,6 @@ public class Robot extends TimedRobot {
 		Robot.drive.brake(NeutralMode.Brake);
 
 		Robot.auton.autonChooser();
-		Robot.auton.printSelected();
 
 		if (Robot.auton.autonomousCommand != null)
 			Robot.auton.autonomousCommand.start();
