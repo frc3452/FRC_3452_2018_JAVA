@@ -16,6 +16,7 @@ import org.usfirst.frc.team3452.robot.subsystems.FileManagement.STATE;
 import org.usfirst.frc.team3452.robot.subsystems.FileManagement.TASK;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
+import org.usfirst.frc.team3452.robot.util.GZJoystick.Buttons;
 import org.usfirst.frc.team3452.robot.util.GZSubsystemManager;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -87,7 +88,6 @@ public class Robot extends TimedRobot {
 		log(true);
 
 		// timer start
-		Robot.auton.resetAutonTimer();
 		Robot.auton.startAutonTimer();
 
 		// Loop while game data is bad and timer is acceptable
@@ -95,16 +95,13 @@ public class Robot extends TimedRobot {
 			Robot.auton.gameMsg = Robot.lights.gsm();
 		} while ((Robot.auton.gameMsg.equals("NOT") && Robot.auton.getAutonTimer() < 3));
 
-		// Set autons, regardless of good game message
+		// Fill auton array and set values, regardless of good game message
 		Robot.auton.setAutons();
 
-		// SET COLOR ACCORDING TO ALLIANCE
+		// Set color according to alliance
 		Robot.lights.hsv(Robot.auton.isRed() ? kLights.RED : kLights.BLUE, 1, .5);
 
-		// BRAKE MODE DURING AUTO
 		Robot.drive.brake(NeutralMode.Brake);
-
-		Robot.auton.autonChooser();
 
 		if (Robot.auton.autonomousCommand != null)
 			Robot.auton.autonomousCommand.start();
@@ -120,15 +117,14 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		log(true);
 
-		Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
-
-		Robot.lights.hsv(kLights.GREEN, 1, .5);
-
-		Robot.drive.brake(NeutralMode.Coast);
-
 		if (Robot.auton.autonomousCommand != null) {
 			Robot.auton.autonomousCommand.cancel();
 		}
+
+		Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
+		Robot.drive.brake(NeutralMode.Coast);
+
+		Robot.lights.hsv(kLights.GREEN, 1, .5);
 
 		wasTele = true;
 	}
@@ -148,11 +144,10 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testPeriodic() {
-//		Robot.climber.control(-.35);
 	}
 
 	private void handleLEDs() {
-		if (OI.driverJoy.getRawButton(2) && OI.driverJoy.getRawButton(7) && OI.driverJoy.getRawButton(8))
+		if (OI.driverJoy.areButtonsPressed(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
 			readyForMatch = true;
 
 		if (wasTest) {

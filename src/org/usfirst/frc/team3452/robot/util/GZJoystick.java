@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3452.robot.util;
 
+import java.util.List;
+
 import edu.wpi.first.wpilibj.Joystick;
 
 public class GZJoystick extends Joystick {
@@ -32,6 +34,16 @@ public class GZJoystick extends Joystick {
 	public double getRightTrigger()
 	{
 		return this.getRawAxis(Axises.RIGHT_TRIGGER);
+	}
+	
+	public boolean areButtonsPressed(List<Integer> buttons)
+	{
+		boolean retval = true;
+		
+		for (Integer b : buttons)
+			retval &= this.getRawButton(b);
+		
+		return retval;
 	}
 
 	public static class Axises {
