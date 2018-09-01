@@ -3,27 +3,23 @@
 # Functions:
 
 ### Physical autonomous selectors
-[Handling](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/c3ab023258caa93ba7efd366bbb7bb83a5273bb9/src/org/usfirst/frc/team3452/robot/subsystems/AutonSelector.java#L92)
+[Handling](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/63682faa1663f147e58e6ccdb7ff3d9a31c46cd6/src/org/usfirst/frc/team3452/robot/subsystems/Auton.java#L255)
 
-[Implementation](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/cf03da1f2c9cb28fc4ecc657a663aaef37c95faf/src/org/usfirst/frc/team3452/robot/Robot.java#L365)
+[Implementation](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/63682faa1663f147e58e6ccdb7ff3d9a31c46cd6/src/org/usfirst/frc/team3452/robot/subsystems/Auton.java#L85)
 
 [Where to buy](https://www.robotshop.com/ca/en/gravity-rotary-encoder-module-v1.html) 
 
 ### CSV File writing for logging and creation of motion profiles
 
-[Command](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/commands/playback/PlaybackControl.java)
+[Control Method](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/63682faa1663f147e58e6ccdb7ff3d9a31c46cd6/src/org/usfirst/frc/team3452/robot/subsystems/FileManagement.java#L296)
 
-[Subsystem](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/subsystems/Playback.java)
+[Logging (Control Method)](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/63682faa1663f147e58e6ccdb7ff3d9a31c46cd6/src/org/usfirst/frc/team3452/robot/subsystems/FileManagement.java#L186)
 
-### Drive train speed limiting based off elevator positioning along with override
-[Handling](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/subsystems/Elevator.java)
+[Logging (Object)](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/611763dd5e3e5a8405ffa2855a0601135bd8226d/src/org/usfirst/frc/team3452/robot/util/GZLog.java#L12)
 
-[Implementation](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/subsystems/Drivetrain.java)
 
-[Override](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/commands/elevator/OverrideSet.java)
+### Drive train speed limiting based off elevator positioning w/ override
+[Limit](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/611763dd5e3e5a8405ffa2855a0601135bd8226d/src/org/usfirst/frc/team3452/robot/subsystems/Elevator.java#L275)
 
 ### TalonSRX Amperage limiting
-[Implementation](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/subsystems/Drivetrain.java)
-
-### Closed loop TalonSRX Motion Magic control with NavX gyro assist
-[Command](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/master/src/org/usfirst/frc/team3452/robot/commands/drive/EncoderGyro.java)
+[Implementation](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/476dd6bfca50e61e827876b788bf40f1574cae67/src/org/usfirst/frc/team3452/robot/subsystems/Drivetrain.java#L141)
