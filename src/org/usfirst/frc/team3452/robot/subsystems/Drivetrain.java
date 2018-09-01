@@ -364,12 +364,6 @@ public class Drivetrain extends GZSubsystem {
 		arcadeNoState(joy.getLeftAnalogY(), (joy.getRightAnalogX() * .85));
 	}
 
-	/**
-	 * WARNING, TO ONLY BE CALLED BY METHOD THAT CALLS setState!!!!!!!!!
-	 * 
-	 * @param move
-	 * @param rotate
-	 */
 	private synchronized void arcadeNoState(double move, double rotate) {
 		double[] temp = arcadeToLR(move * Robot.elevator.getPercentageModify() * percentageModify,
 				rotate * Robot.elevator.getPercentageModify() * percentageModify);
