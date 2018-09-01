@@ -210,7 +210,6 @@ public class FileManagement {
 		@Override
 		public void run() {
 			try {
-				//ISSUE #13
 				bw.write(mLog.getLog());
 				bw.write("\r\n");
 
