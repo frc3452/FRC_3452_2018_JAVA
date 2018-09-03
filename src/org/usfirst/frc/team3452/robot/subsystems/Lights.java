@@ -252,7 +252,7 @@ public class Lights extends GZSubsystem {
 	}
 
 	public String getStateString() {
-		return super.getName() + " no state.";
+		return "NA";
 	}
 
 	protected void in() {

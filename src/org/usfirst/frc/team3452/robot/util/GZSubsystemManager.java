@@ -17,6 +17,8 @@ public class GZSubsystemManager {
 	public void loop() {
 		allSystems.forEach((s) -> s.loop());
 	}
+	
+	//TODO ISSUE #14, notifier for loop()
 
 	public void outputSmartDashboard() {
 		allSystems.forEach((s) -> s.outputSmartDashboard());

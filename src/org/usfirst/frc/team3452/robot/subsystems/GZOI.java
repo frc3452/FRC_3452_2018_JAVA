@@ -116,7 +116,7 @@ public class GZOI extends GZSubsystem {
 
 	@Override
 	public String getStateString() {
-		return super.getName() + " no state.";
+		return "NA";
 	}
 
 	public void stop() {
