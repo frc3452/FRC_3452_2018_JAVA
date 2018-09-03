@@ -12,7 +12,6 @@ public class GZCommand {
 		this.mCommand = command;
 	}
 	
-	
 	public String getName()
 	{
 		return mName;

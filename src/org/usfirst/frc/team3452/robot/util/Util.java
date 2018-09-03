@@ -88,4 +88,8 @@ public class Util {
 		}
 	}
 
+	
+	public static enum Directions {
+		UP, DOWN, LEFT, RIGHT
+	}
 }

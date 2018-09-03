@@ -183,4 +183,11 @@ public class Constants {
 		public final static String DEFAULT_LOG_VALUE = "N/A";
 	}
 
+	public class kOI {
+		public static final double INTAKE = .3;
+		public static final double ELEVATOR_OVERRIDE_DRIVE = .45;
+		public static final double ELEVATOR_OVERRIDE_OP = ELEVATOR_OVERRIDE_DRIVE - .2;
+		public static final double ENDGAME = .6;
+	}
+	
 }

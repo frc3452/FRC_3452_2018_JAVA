@@ -114,7 +114,7 @@ public class Climber extends GZSubsystem {
 		if (((this.isDisabed() || Robot.auton.isDemo()) && !Robot.auton.isFMS())
 				|| mWantedState == ClimberState.NEUTRAL) {
 
-			if (currentStateIsNot(ClimberState.NEUTRAL)) {
+			if (stateNot(ClimberState.NEUTRAL)) {
 				onStateExit(mState);
 				mState = ClimberState.NEUTRAL;
 				onStateStart(mState);
@@ -127,7 +127,7 @@ public class Climber extends GZSubsystem {
 		}
 	}
 
-	private synchronized boolean currentStateIsNot(ClimberState state) {
+	private synchronized boolean stateNot(ClimberState state) {
 		return mState != state;
 	}
 

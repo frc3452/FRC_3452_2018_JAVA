@@ -2,12 +2,37 @@ package org.usfirst.frc.team3452.robot.util;
 
 import java.util.List;
 
+import org.usfirst.frc.team3452.robot.util.Util.Directions;
+
 import edu.wpi.first.wpilibj.Joystick;
 
 public class GZJoystick extends Joystick {
 
+	DPad mUp, mDown, mRight, mLeft;
+
 	public GZJoystick(int port) {
 		super(port);
+
+		mUp = new DPad(this, 0);
+		mDown = new DPad(this, 180);
+		mLeft = new DPad(this, 270);
+		mRight = new DPad(this, 90);
+	}
+
+	public boolean getDPad(Directions d) {
+		switch (d) {
+		case DOWN:
+			return mDown.get();
+		case LEFT:
+			return mLeft.get();
+		case RIGHT:
+			return mRight.get();
+		case UP:
+			return mRight.get();
+		default:
+			System.out.println("DEFAULT CASE REACHED FOR " + new Throwable().getStackTrace()[0].getMethodName() + " OF " + this.getClass() + "!!!");
+			return false;
+		}
 	}
 
 	public double getLeftAnalogY() {
@@ -25,24 +50,21 @@ public class GZJoystick extends Joystick {
 	public double getRightAnalogX() {
 		return this.getRawAxis(Axises.RIGHT_ANALOG_X);
 	}
-	
-	public double getLeftTrigger()
-	{
+
+	public double getLeftTrigger() {
 		return this.getRawAxis(Axises.LEFT_TRIGGER);
 	}
-	
-	public double getRightTrigger()
-	{
+
+	public double getRightTrigger() {
 		return this.getRawAxis(Axises.RIGHT_TRIGGER);
 	}
-	
-	public boolean areButtonsPressed(List<Integer> buttons)
-	{
+
+	public boolean areButtonsPressed(List<Integer> buttons) {
 		boolean retval = true;
-		
+
 		for (Integer b : buttons)
 			retval &= this.getRawButton(b);
-		
+
 		return retval;
 	}
 
@@ -67,9 +89,8 @@ public class GZJoystick extends Joystick {
 		public static int LEFT_CLICK = 9;
 		public static int RIGHT_CLICK = 10;
 	}
-	
-	public void rumble(double intensity)
-	{
+
+	public void rumble(double intensity) {
 		this.setRumble(RumbleType.kLeftRumble, intensity);
 		this.setRumble(RumbleType.kRightRumble, intensity);
 	}

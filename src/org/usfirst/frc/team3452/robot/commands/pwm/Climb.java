@@ -1,15 +1,13 @@
 package org.usfirst.frc.team3452.robot.commands.pwm;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator.ElevatorState;
 
+import edu.wpi.first.wpilibj.command.Command;
+
 public class Climb extends Command {
 	private double m_speed;
-
-	private Timer timer = new Timer();
 
 	/**
 	 * @author macco
@@ -23,9 +21,6 @@ public class Climb extends Command {
 	}
 
 	protected void initialize() {
-		timer.stop();
-		timer.reset();
-		timer.start();
 	}
 
 	protected void execute() {
@@ -42,7 +37,6 @@ public class Climb extends Command {
 	}
 
 	protected void end() {
-		timer.stop();
 		Robot.climber.stop();
 		Robot.climber.addClimberCounter();
 	}

@@ -108,7 +108,7 @@ public class Drivetrain extends GZSubsystem {
 		//Do not allow .disable() while connected to the field.
 		if (((this.isDisabed() && !Robot.auton.isFMS()) || mWantedState == DriveState.NEUTRAL)) {
 
-			if (currentStateIsNot(DriveState.NEUTRAL)) {
+			if (stateNot(DriveState.NEUTRAL)) {
 				onStateExit(mState);
 				mState = DriveState.NEUTRAL;
 				onStateStart(mState);
@@ -116,7 +116,7 @@ public class Drivetrain extends GZSubsystem {
 
 		} else if (Robot.auton.isDemo()) {
 
-			if (currentStateIsNot(DriveState.DEMO)) {
+			if (stateNot(DriveState.DEMO)) {
 				onStateExit(mState);
 				mState = DriveState.DEMO;
 				onStateStart(mState);
@@ -745,7 +745,7 @@ public class Drivetrain extends GZSubsystem {
 	}
 
 
-	private synchronized boolean currentStateIsNot(DriveState state) {
+	private synchronized boolean stateNot(DriveState state) {
 		return mState != state;
 	}
 

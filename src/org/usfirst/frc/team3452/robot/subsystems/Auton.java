@@ -13,11 +13,11 @@ import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.RightAuton;
 import org.usfirst.frc.team3452.robot.util.GZCommand;
 import org.usfirst.frc.team3452.robot.util.GZJoystick.Buttons;
+import org.usfirst.frc.team3452.robot.util.GZTimer;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -46,7 +46,7 @@ public class Auton {
 	private String overrideString = "", autonString = "";
 	public String gameMsg = "NOT";
 
-	private Timer mAutoTimer = new Timer();
+	public GZTimer matchTimer = new GZTimer();
 	
 	/**
 	 * hardware initialization
@@ -67,18 +67,6 @@ public class Auton {
 		setAutons();
 	}
 	
-	public void startAutonTimer()
-	{
-		mAutoTimer.stop();
-		mAutoTimer.reset();
-		mAutoTimer.start();
-	}
-	
-	public Double getAutonTimer()
-	{
-		return mAutoTimer.get();
-	}
-
 	/**
 	 * Used to pre-populate values for what auto is to be selected before and after commands are loaded
 	 */

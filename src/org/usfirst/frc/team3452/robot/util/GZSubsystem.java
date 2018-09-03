@@ -9,27 +9,29 @@ public abstract class GZSubsystem extends Subsystem {
 	public abstract void stop();
 
 	// IO class
-	// State
-	// void setState (State s)
+	// State enum
+	// void setWantedState (State s)
 	// boolean currentStateIsNot(State s)
 	// State getState
 	// void onStateStart (State s)
 	// void onStateExit (State s)
 
 	// Saftey
-	private boolean isDisabled = false;
+	private boolean mIsDisabled = false;
 
 	// Record subsystem locked out and stop subsystem.
 	public void disable(boolean toDisable) {
-		isDisabled = toDisable;
+		mIsDisabled = toDisable;
 		if (toDisable)
 			stop();
 	}
 
 	// Return if subsystem is disabled or not.
 	public Boolean isDisabed() {
-		return isDisabled;
+		return mIsDisabled;
 	}
+	
+	public abstract void loop();
 
 	public void enableFollower() {
 	}
@@ -37,9 +39,6 @@ public abstract class GZSubsystem extends Subsystem {
 	// Each subsystem is able to report its current state as a string
 	public abstract String getStateString();
 
-	// Main loop
-	public abstract void loop();
-	
 	// Read all inputs
 	protected abstract void in();
 

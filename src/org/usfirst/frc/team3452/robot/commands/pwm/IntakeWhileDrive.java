@@ -10,7 +10,7 @@ public class IntakeWhileDrive extends Command {
 	private double m_value, m_percent, m_timeout;
 	private boolean timeoutSet = false;
 
-	public Timer timer = new Timer();
+	private Timer timer = new Timer();
 
 	/**
 	 * @author macco
@@ -34,11 +34,12 @@ public class IntakeWhileDrive extends Command {
 	}
 
 	protected void execute() {
+		//If drivetrain is certain percentage through movement, turn on intake for time
+		
 		if (Robot.drive.getPercentageComplete() > m_percent) {
 			Robot.intake.manual(m_value);
 
 			if (timeoutSet == false) {
-				System.out.println("timeout set");
 				setTimeout(m_timeout + timer.get());
 				timeoutSet = true;
 			}

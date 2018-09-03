@@ -6,7 +6,6 @@ import java.util.List;
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Constants.kElevator;
 import org.usfirst.frc.team3452.robot.OI;
-import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.GZJoystick;
 import org.usfirst.frc.team3452.robot.util.GZSRX;
@@ -172,7 +171,7 @@ public class Elevator extends GZSubsystem {
 			break;
 		}
 
-		handleSpeedLimiting();
+		speedLimiting();
 	}
 
 	public static class IO {
@@ -233,7 +232,7 @@ public class Elevator extends GZSubsystem {
 		
 		if (((this.isDisabed() && !Robot.auton.isFMS()) || mWantedState == ElevatorState.NEUTRAL)) {
 
-			if (currentStateIsNot(ElevatorState.NEUTRAL)) {
+			if (stateNot(ElevatorState.NEUTRAL)) {
 				onStateExit(mState);
 				mState = ElevatorState.NEUTRAL;
 				onStateStart(mState);
@@ -241,7 +240,7 @@ public class Elevator extends GZSubsystem {
 
 		} else if (Robot.auton.isDemo() && !Robot.auton.isFMS()) {
 
-			if (currentStateIsNot(ElevatorState.DEMO)) {
+			if (stateNot(ElevatorState.DEMO)) {
 				onStateExit(mState);
 				mState = ElevatorState.DEMO;
 				onStateStart(mState);
@@ -261,15 +260,6 @@ public class Elevator extends GZSubsystem {
 
 	@Override
 	protected void initDefaultCommand() {
-	}
-
-	private synchronized void handleSpeedLimiting() {
-		speedLimiting();
-
-		if (isOverriden())
-			OI.rumble(CONTROLLER.DRIVER, .45);
-		else
-			OI.rumble(CONTROLLER.DRIVER, 0);
 	}
 
 	public synchronized void speedLimiting() {
@@ -374,7 +364,7 @@ public class Elevator extends GZSubsystem {
 		TOGGLE, ON, OFF
 	}
 
-	private synchronized boolean currentStateIsNot(ElevatorState state) {
+	private synchronized boolean stateNot(ElevatorState state) {
 		return mState != state;
 	}
 

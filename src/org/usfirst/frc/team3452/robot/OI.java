@@ -14,7 +14,6 @@ import org.usfirst.frc.team3452.robot.triggers.DriveSafteyOverriden;
 import org.usfirst.frc.team3452.robot.util.DPad;
 import org.usfirst.frc.team3452.robot.util.GZJoystick;
 
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
@@ -112,26 +111,5 @@ public class OI {
 		opDown = new DPad(opJoy, 180);
 		opLeft = new DPad(opJoy, 270);
 		opRight = new DPad(opJoy, 90);
-	}
-
-	public static void rumble(CONTROLLER joy, double intensity) {
-		switch (joy) {
-		case DRIVER:
-			driverJoy.setRumble(RumbleType.kLeftRumble, intensity);
-			driverJoy.setRumble(RumbleType.kRightRumble, intensity);
-			break;
-		case OPERATOR:
-			opJoy.setRumble(RumbleType.kLeftRumble, intensity);
-			opJoy.setRumble(RumbleType.kRightRumble, intensity);
-			break;
-		case BOTH:
-			rumble(CONTROLLER.DRIVER, intensity);
-			rumble(CONTROLLER.OPERATOR, intensity);
-			break;
-		}
-	}
-
-	public enum CONTROLLER {
-		DRIVER, OPERATOR, BOTH
 	}
 }

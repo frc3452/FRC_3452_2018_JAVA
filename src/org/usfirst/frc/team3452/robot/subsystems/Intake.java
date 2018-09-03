@@ -2,8 +2,6 @@ package org.usfirst.frc.team3452.robot.subsystems;
 
 import org.usfirst.frc.team3452.robot.Constants.kIntake;
 import org.usfirst.frc.team3452.robot.Constants.kPDP;
-import org.usfirst.frc.team3452.robot.OI;
-import org.usfirst.frc.team3452.robot.OI.CONTROLLER;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 
@@ -35,7 +33,6 @@ public class Intake extends GZSubsystem {
 	private synchronized void onStateStart(IntakeState wantedState) {
 		switch (wantedState) {
 		case MANUAL:
-			OI.rumble(CONTROLLER.BOTH, 0.4);
 			break;
 		case NEUTRAL:
 			break;
@@ -47,7 +44,6 @@ public class Intake extends GZSubsystem {
 	private synchronized void onStateExit(IntakeState prevState) {
 		switch (prevState) {
 		case MANUAL:
-			OI.rumble(CONTROLLER.BOTH, 0);
 			break;
 		case NEUTRAL:
 			break;
@@ -86,7 +82,7 @@ public class Intake extends GZSubsystem {
 		//Dont allow disable on the field
 		if ((this.isDisabed() && !Robot.auton.isFMS())|| mWantedState == IntakeState.NEUTRAL) {
 
-			if (currentStateIsNot(IntakeState.NEUTRAL)) {
+			if (stateNot(IntakeState.NEUTRAL)) {
 				onStateExit(mState);
 				mState = IntakeState.NEUTRAL;
 				onStateStart(mState);
@@ -147,7 +143,7 @@ public class Intake extends GZSubsystem {
 		setWantedState(IntakeState.NEUTRAL);
 	}
 
-	private synchronized boolean currentStateIsNot(IntakeState state) {
+	public synchronized boolean stateNot(IntakeState state) {
 		return mState != state;
 	}
 

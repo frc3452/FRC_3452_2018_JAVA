@@ -195,12 +195,12 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * robot locked in a disabled state if we call .disable(true) on the subsystem.
 	 * This also calls onStateExit and onStateStart for the current and new state.
 	 * 
-	 * First, we check if it's disabled or wanting to be stopped, thats our first
-	 * priority. If it is, we put the system in neutral. If it isn't, we check if
+	 * First, we check if it's disabled and not connected to the field, or wanting to be stopped,
+	 *  thats our first priority. If it is, we put the system in neutral. If it isn't, we check if
 	 * its in demo. If so, set the current state to demo. Then, if we aren't in demo
 	 * or disabled, which means were safe to switch to any state, we do that.
 	 * 
-	 * The 'if currentStateIsNot()' block is used to call the exit and start
+	 * The 'if stateNot()' block is used to call the exit and start
 	 * functions of each state, but only the first time we go into that state. To
 	 * come from the previous example, maybe we zero a sensor when we first go into
 	 * a certain state. We don't want to continually zero that sensor, we only want
@@ -212,9 +212,9 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 */
 	private synchronized void handleStates() {
 
-		if (this.isDisabed() || mWantedState == ExampleState.NEUTRAL) { /* AAAA **/
+		if ((this.isDisabed() && !Robot.auton.isFMS()) || mWantedState == ExampleState.NEUTRAL) { /* AAAA **/
 
-			if (currentStateIsNot(ExampleState.NEUTRAL)) {
+			if (stateNot(ExampleState.NEUTRAL)) {
 				onStateExit(mState);
 				mState = ExampleState.NEUTRAL;
 				onStateStart(mState);
@@ -222,7 +222,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 
 		} else if (Robot.auton.isDemo()) { /* AAAA **/
 
-			if (currentStateIsNot(ExampleState.DEMO)) {
+			if (stateNot(ExampleState.DEMO)) {
 				onStateExit(mState);
 				mState = ExampleState.DEMO;
 				onStateStart(mState);
@@ -240,7 +240,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * This method returns if a given state is NOT what the current state is. we use
 	 * this in handleStates().
 	 */
-	private synchronized boolean currentStateIsNot(ExampleState state) {
+	private synchronized boolean stateNot(ExampleState state) {
 		return mState != state;
 	}
 
