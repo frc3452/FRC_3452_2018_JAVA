@@ -187,7 +187,6 @@ public class FileManagement {
 		try {
 			// ON STARTUP, PRINT NAMES
 			if (startup) {
-				// TODO ISSUE #13
 				bw.write(mLog.getHeader());
 				bw.write("\r\n");
 				logging.startPeriodic(kFileManagement.LOGGING_SPEED);

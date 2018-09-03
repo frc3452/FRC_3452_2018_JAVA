@@ -34,6 +34,15 @@ public class GZJoystick extends Joystick {
 			return false;
 		}
 	}
+	
+	public boolean areButtonsPressed(List<Integer> buttons) {
+		boolean retval = true;
+
+		for (Integer b : buttons)
+			retval &= this.getRawButton(b);
+
+		return retval;
+	}
 
 	public double getLeftAnalogY() {
 		return -this.getRawAxis(Axises.LEFT_ANALOG_Y);
@@ -57,15 +66,6 @@ public class GZJoystick extends Joystick {
 
 	public double getRightTrigger() {
 		return this.getRawAxis(Axises.RIGHT_TRIGGER);
-	}
-
-	public boolean areButtonsPressed(List<Integer> buttons) {
-		boolean retval = true;
-
-		for (Integer b : buttons)
-			retval &= this.getRawButton(b);
-
-		return retval;
 	}
 
 	public static class Axises {

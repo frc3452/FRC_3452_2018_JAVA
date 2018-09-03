@@ -106,7 +106,7 @@ public class Drivetrain extends GZSubsystem {
 	private synchronized void handleStates() {
 		
 		//Do not allow .disable() while connected to the field.
-		if (((this.isDisabed() && !Robot.auton.isFMS()) || mWantedState == DriveState.NEUTRAL)) {
+		if (((this.isDisabed() && !Robot.gzOI.isFMS()) || mWantedState == DriveState.NEUTRAL)) {
 
 			if (stateNot(DriveState.NEUTRAL)) {
 				onStateExit(mState);
@@ -185,16 +185,22 @@ public class Drivetrain extends GZSubsystem {
 	private synchronized void onStateStart(DriveState newState) {
 		switch (newState) {
 		case MOTION_MAGIC:
+			brake(NeutralMode.Brake);
 			break;
 		case MOTION_PROFILE:
+			brake(NeutralMode.Brake);
 			break;
 		case NEUTRAL:
+			brake(Robot.gzOI.wasTele() ? NeutralMode.Brake : NeutralMode.Coast);
 			break;
 		case OPEN_LOOP:
+			brake(NeutralMode.Brake);
 			break;
 		case OPEN_LOOP_DRIVER:
+			brake(NeutralMode.Coast);
 			break;
 		case DEMO:
+			brake(NeutralMode.Coast);
 			break;
 		default:
 			break;
@@ -207,6 +213,7 @@ public class Drivetrain extends GZSubsystem {
 			encoderDone();
 			break;
 		case MOTION_PROFILE:
+			encoderDone();
 			break;
 		case NEUTRAL:
 			break;
@@ -428,7 +435,7 @@ public class Drivetrain extends GZSubsystem {
 		tank(joy.getLeftAnalogY(), joy.getRightAnalogY());
 	}
 
-	public synchronized void brake(NeutralMode mode) {
+	private synchronized void brake(NeutralMode mode) {
 		controllers.forEach((s) -> s.setNeutralMode(mode));
 	}
 

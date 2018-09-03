@@ -80,7 +80,7 @@ public class Intake extends GZSubsystem {
 	private void handleStates() {
 		// we dont need to worry about isDemo() here
 		//Dont allow disable on the field
-		if ((this.isDisabed() && !Robot.auton.isFMS())|| mWantedState == IntakeState.NEUTRAL) {
+		if ((this.isDisabed() && !Robot.gzOI.isFMS())|| mWantedState == IntakeState.NEUTRAL) {
 
 			if (stateNot(IntakeState.NEUTRAL)) {
 				onStateExit(mState);

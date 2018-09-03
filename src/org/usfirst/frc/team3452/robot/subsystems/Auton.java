@@ -17,7 +17,6 @@ import org.usfirst.frc.team3452.robot.util.GZTimer;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -187,18 +186,6 @@ public class Auton {
 	public boolean isDemo() {
 		return uglyAnalog() == kAuton.SAFTEY_SWITCH;
 	}
-
-	public boolean isFMS() {
-		return DriverStation.getInstance().isFMSAttached();
-	}
-
-	public boolean isRed()
-	{
-		if (DriverStation.getInstance().getAlliance() == Alliance.Red)
-			return true;
-
-		return false;
-	}
 	
 	private void printSelected() {
 		m_asA = as_A.getValue();
@@ -314,6 +301,16 @@ public class Auton {
 		}
 	}
 
+	public void gsm() {
+		String f;
+		f = DriverStation.getInstance().getGameSpecificMessage();
+
+		if (f.length() > 0)
+			gameMsg = f;
+		else
+			gameMsg = "NOT";
+	}
+	
 	/**
 	 * Autonomous versions enum
 	 * 

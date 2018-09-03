@@ -212,7 +212,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 */
 	private synchronized void handleStates() {
 
-		if ((this.isDisabed() && !Robot.auton.isFMS()) || mWantedState == ExampleState.NEUTRAL) { /* AAAA **/
+		if ((this.isDisabed() && !Robot.gzOI.isFMS()) || mWantedState == ExampleState.NEUTRAL) { /* AAAA **/
 
 			if (stateNot(ExampleState.NEUTRAL)) {
 				onStateExit(mState);

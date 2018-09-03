@@ -11,6 +11,9 @@ public class GZSubsystemManager {
 		allSystems = allSubsystems;
 	}
 
+	/**
+	 * Run .loop() for each of the subsystems in the subsystem manager.
+	 */
 	public void loop() {
 		allSystems.forEach((s) -> s.loop());
 	}

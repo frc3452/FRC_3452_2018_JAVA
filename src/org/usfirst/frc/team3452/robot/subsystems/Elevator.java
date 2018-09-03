@@ -60,7 +60,6 @@ public class Elevator extends GZSubsystem {
 		elevator_1.configClosedloopRamp(Constants.kElevator.CLOSED_RAMP_TIME, 10);
 
 		// TODO ISSUE #11
-
 		// ENCODER
 		final ErrorCode encoderPresent = elevator_1
 				.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
@@ -230,7 +229,7 @@ public class Elevator extends GZSubsystem {
 	private synchronized void handleStates() {
 		//Dont allow Disabled or Demo while on the field
 		
-		if (((this.isDisabed() && !Robot.auton.isFMS()) || mWantedState == ElevatorState.NEUTRAL)) {
+		if (((this.isDisabed() && !Robot.gzOI.isFMS()) || mWantedState == ElevatorState.NEUTRAL)) {
 
 			if (stateNot(ElevatorState.NEUTRAL)) {
 				onStateExit(mState);
@@ -238,7 +237,7 @@ public class Elevator extends GZSubsystem {
 				onStateStart(mState);
 			}
 
-		} else if (Robot.auton.isDemo() && !Robot.auton.isFMS()) {
+		} else if (Robot.auton.isDemo() && !Robot.gzOI.isFMS()) {
 
 			if (stateNot(ElevatorState.DEMO)) {
 				onStateExit(mState);

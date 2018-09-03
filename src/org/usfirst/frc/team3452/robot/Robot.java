@@ -11,12 +11,12 @@ import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
 import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.DriveState;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import org.usfirst.frc.team3452.robot.subsystems.FileManagement;
+import org.usfirst.frc.team3452.robot.subsystems.GZOI;
 import org.usfirst.frc.team3452.robot.subsystems.FileManagement.STATE;
 import org.usfirst.frc.team3452.robot.subsystems.FileManagement.TASK;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
 import org.usfirst.frc.team3452.robot.util.GZJoystick.Buttons;
-import org.usfirst.frc.team3452.robot.util.GZOI;
 import org.usfirst.frc.team3452.robot.util.GZSubsystemManager;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -34,8 +34,8 @@ public class Robot extends TimedRobot {
 
 	public static final Auton auton = new Auton();
 	public static final GZOI gzOI = new GZOI();
-	public static final Camera camera = new Camera();
 	public static final Lights lights = new Lights();
+	public static final Camera camera = new Camera();
 	public static final FileManagement fileManager = new FileManagement();
 
 	private static final GZSubsystemManager mSubsystems = new GZSubsystemManager(
@@ -44,7 +44,6 @@ public class Robot extends TimedRobot {
 	private static final OI oi = new OI();
 
 	// Flags
-	private boolean wasTele = false, readyForMatch = false;
 
 	// LOGGING CONTROL
 	private boolean logging = true, logToUsb = true;
@@ -57,8 +56,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotPeriodic() {
 		mSubsystems.loop();
-
-		handleLEDs();
 	}
 
 	@Override
@@ -66,14 +63,12 @@ public class Robot extends TimedRobot {
 		mSubsystems.stop();
 
 		log(false);
-
-		Robot.drive.brake((!wasTele) ? NeutralMode.Coast : NeutralMode.Brake);
-		// Robot.drive.brake(NeutralMode.Coast);
 	}
 
 	@Override
 	public void disabledPeriodic() {
 		Robot.auton.autonChooser();
+		Robot.lights.loop();
 
 		Scheduler.getInstance().run();
 	}
@@ -83,24 +78,18 @@ public class Robot extends TimedRobot {
 		log(true);
 
 		// timer start
-		Robot.auton.matchTimer.onlyStart();
+		Robot.auton.matchTimer.oneTimeStart();
 
 		// Loop while game data is bad and timer is acceptable
 		do {
-			Robot.auton.gameMsg = Robot.lights.gsm();
+			Robot.auton.gsm();
 		} while ((Robot.auton.gameMsg.equals("NOT") && Robot.auton.matchTimer.get() < 3));
 
 		// Fill auton array and set values, regardless of good game message
 		Robot.auton.setAutons();
 
-		// Set color according to alliance
-		Robot.lights.hsv(Robot.auton.isRed() ? kLights.RED : kLights.BLUE, 1, .5);
-
-		Robot.drive.brake(NeutralMode.Brake);
-
 		if (Robot.auton.autonomousCommand != null)
 			Robot.auton.autonomousCommand.start();
-
 	}
 
 	@Override
@@ -117,17 +106,12 @@ public class Robot extends TimedRobot {
 		if (Robot.auton.autonomousCommand != null) {
 			Robot.auton.autonomousCommand.cancel();
 		}
-
-		Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
-		Robot.drive.brake(NeutralMode.Coast);
-
-		Robot.lights.hsv(kLights.GREEN, 1, .5);
-
-		wasTele = true;
 	}
 
 	@Override
 	public void teleopPeriodic() {
+		//TODO ISSUE #19
+		Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
 		Scheduler.getInstance().run();
 	}
 
@@ -138,55 +122,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testPeriodic() {
-	}
-
-	private void handleLEDs() {
-		if (OI.driverJoy.areButtonsPressed(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
-			readyForMatch = true;
-
-		switch (Robot.auton.uglyAnalog()) {
-		case 100:
-
-			// OFF
-			Robot.lights.off();
-
-			break;
-
-		case kAuton.SAFTEY_SWITCH:
-
-			// FADE
-			Robot.lights.hsv(Robot.lights.m_hue, 1, .25);
-			Robot.lights.m_hue++;
-
-			break;
-		case 97:
-
-			// POLICE
-			if (Robot.lights.m_hue > 180)
-				Robot.lights.hsv(kLights.RED, 1, 1);
-			else
-				Robot.lights.hsv(kLights.BLUE, 1, 1);
-			Robot.lights.m_hue += 30;
-
-			break;
-		default:
-
-			if (DriverStation.getInstance().isDisabled()) {
-				// IF CONNECTED LOW GREEN
-				if (DriverStation.getInstance().isDSAttached()) {
-
-					if (readyForMatch)
-						Robot.lights.pulse(kLights.GREEN, 1, 0.1, .4, 0.025 / 3.5);
-					else
-						Robot.lights.pulse(kLights.YELLOW, 1, 0.1, .4, 0.025 / 3.5);
-
-				} else {
-					// IF NOT CONNECTED DO AGGRESSIVE RED PULSE
-					Robot.lights.pulse(0, 1, 0.2, .8, 0);
-				}
-			}
-			break;
-		}
 	}
 
 	private void log(boolean start) {

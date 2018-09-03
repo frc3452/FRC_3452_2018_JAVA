@@ -16,6 +16,14 @@ public class Util {
 		}
 		return value;
 	}
+	
+	public static boolean between(double value, double low, double high)
+	{
+		if (value >= low && value <= high)
+			return true;
+		
+		return false;
+	}
 
 	public static double applyDeadband(double value, double deadband) {
 		if (Math.abs(value) > deadband) {

@@ -19,7 +19,7 @@ public class GZTimer extends Timer {
 			System.out.println("Cannot start " + this.getClass().getName() + ".");
 	}
 	
-	public void onlyStart()
+	public void oneTimeStart()
 	{
 		hasStarted = true;
 		this.stop();

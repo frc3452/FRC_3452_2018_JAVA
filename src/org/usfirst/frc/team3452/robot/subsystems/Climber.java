@@ -111,7 +111,7 @@ public class Climber extends GZSubsystem {
 
 	private synchronized void handleStates() {
 		//if trying to disable or run demo mode while not connected to field
-		if (((this.isDisabed() || Robot.auton.isDemo()) && !Robot.auton.isFMS())
+		if (((this.isDisabed() || Robot.auton.isDemo()) && !Robot.gzOI.isFMS())
 				|| mWantedState == ClimberState.NEUTRAL) {
 
 			if (stateNot(ClimberState.NEUTRAL)) {
