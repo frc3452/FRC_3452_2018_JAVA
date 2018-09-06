@@ -36,7 +36,7 @@ public class FileManagement {
 	private BufferedWriter bw;
 
 	private GZLog mLog;
-	
+
 	/**
 	 * Time string converted to numbers for parsing
 	 */
@@ -54,12 +54,7 @@ public class FileManagement {
 		mLog = new GZLog();
 	}
 
-	/**
-	 * parse file and convert to array
-	 * 
-	 * @author max
-	 */
-	private void parseFile() {
+	private void parseMotionProfileCSV() {
 		String st;
 
 		mpL.clear();
@@ -150,11 +145,11 @@ public class FileManagement {
 			try {
 				// populate position and speed values
 				// WRITE PROFILES IN TICKS,
-				double leftPos = Robot.drive.mIO.left_encoder_rotations;
-				double leftSpeed = Robot.drive.mIO.left_encoder_speed;
+				double leftPos = Robot.drive.getLeftRotations();
+				double leftSpeed = Robot.drive.getLeftVel();
 
-				double rightPos = -Robot.drive.mIO.right_encoder_rotations;
-				double rightSpeed = -Robot.drive.mIO.right_encoder_speed;
+				double rightPos = Robot.drive.getRightRotations();
+				double rightSpeed = Robot.drive.getRightVel();
 
 				// write values
 				bw.write(String.valueOf(leftPos + ","));
@@ -291,9 +286,8 @@ public class FileManagement {
 	 * @see TASK
 	 * @see STATE
 	 */
-	public void control(String name, String folder, boolean usb, TASK task, STATE state) {
-		switch (state) {
-		case STARTUP:
+	public void control(String name, String folder, boolean usb, TASK task, boolean startup) {
+		if (startup) {
 			switch (task) {
 			case Record:
 				System.out.println("Opening Record: " + name + ".csv");
@@ -305,7 +299,7 @@ public class FileManagement {
 			case Parse:
 				System.out.println("Opening Parse: " + name + ".csv");
 				createFile(name, folder, fileState.READ, usb);
-				parseFile();
+				parseMotionProfileCSV();
 				// printValues();
 				break;
 
@@ -316,18 +310,7 @@ public class FileManagement {
 
 				break;
 			}
-			break;
-		case RUNTIME:
-			switch (task) {
-			case Record:
-				break;
-			case Parse:
-				break;
-			case Log:
-				break;
-			}
-			break;
-		case FINISH:
+		} else { //not startup
 			switch (task) {
 			case Record:
 				System.out.println("Closing " + task + ": " + name + ".csv");
@@ -344,7 +327,6 @@ public class FileManagement {
 				closeFile(fileState.WRITE);
 				break;
 			}
-			break;
 		}
 	}
 
@@ -366,15 +348,6 @@ public class FileManagement {
 	 */
 	public enum fileState {
 		READ, WRITE
-	}
-
-	/**
-	 * startup, runtime, finish
-	 * 
-	 * @author max
-	 */
-	public enum STATE {
-		STARTUP, RUNTIME, FINISH
 	}
 
 	/**

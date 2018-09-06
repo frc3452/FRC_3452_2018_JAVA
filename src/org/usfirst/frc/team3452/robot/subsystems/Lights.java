@@ -57,6 +57,7 @@ public class Lights extends GZSubsystem {
 	}
 
 	public void loop() {
+		
 		if (OI.driverJoy.areButtonsPressed(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
 			readyForMatch = true;
 

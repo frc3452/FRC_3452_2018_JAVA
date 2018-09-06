@@ -175,8 +175,7 @@ public class Elevator extends GZSubsystem {
 
 	public static class IO {
 		// in
-		public Double encoder_ticks = Double.NaN, encoder_rotations = Double.NaN, encoder_vel = Double.NaN,
-				encoder_speed = Double.NaN;
+		public Double encoder_ticks = Double.NaN,  encoder_vel = Double.NaN;
 
 		public Double elevator_1_amp = Double.NaN, elevator_2_amp = Double.NaN;
 
@@ -191,12 +190,20 @@ public class Elevator extends GZSubsystem {
 		ControlMode control_mode = ControlMode.PercentOutput;
 	}
 
+	public Double getRotations()
+	{
+		return Units.ticks_to_rotations(mIO.encoder_ticks);
+	}
+	
+	public Double getSpeed()
+	{
+		return Units.ticks_to_rotations(mIO.encoder_vel);
+	}
+	
 	@Override
 	protected synchronized void in() {
 		mIO.encoder_ticks = (double) elevator_1.getSelectedSensorPosition(0);
-		mIO.encoder_rotations = Units.ticks_to_rotations(mIO.encoder_ticks);
 		mIO.encoder_vel = (double) elevator_1.getSelectedSensorVelocity(0);
-		mIO.encoder_speed = Units.ticks_to_rotations(mIO.encoder_vel);
 
 		mIO.elevator_1_amp = elevator_1.getOutputCurrent();
 		mIO.elevator_2_amp = elevator_2.getOutputCurrent();
@@ -253,7 +260,7 @@ public class Elevator extends GZSubsystem {
 	}
 
 	public synchronized void outputSmartDashboard() {
-		SmartDashboard.putNumber("Elevator Rotations", mIO.encoder_rotations);
+		SmartDashboard.putNumber("Elevator Rotations", getRotations());
 		SmartDashboard.putNumber("Elevator Vel", mIO.encoder_vel);
 	}
 
@@ -262,7 +269,7 @@ public class Elevator extends GZSubsystem {
 	}
 
 	public synchronized void speedLimiting() {
-		double pos = mIO.encoder_rotations;
+		double pos = getRotations();
 
 		// if demo, dont limit
 		// if not in demo and not overriding, limit

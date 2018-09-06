@@ -6,7 +6,6 @@ import java.util.Arrays;
 import org.usfirst.frc.team3452.robot.Constants;
 import org.usfirst.frc.team3452.robot.Constants.kAuton;
 import org.usfirst.frc.team3452.robot.OI;
-import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.commands.auton.DefaultAutonomous;
 import org.usfirst.frc.team3452.robot.commands.auton.LeftAuton;
 import org.usfirst.frc.team3452.robot.commands.auton.MiddleAuton;
@@ -45,8 +44,8 @@ public class Auton {
 	private String overrideString = "", autonString = "";
 	public String gameMsg = "NOT";
 
-	public GZTimer matchTimer = new GZTimer();
-	
+	public GZTimer matchTimer = new GZTimer("matchTimer");
+
 	/**
 	 * hardware initialization
 	 * 
@@ -62,32 +61,34 @@ public class Auton {
 		as_B.setName("Selector B");
 
 		Arrays.fill(commandArray, null);
-		
-		setAutons();
+
+		fillAutonArray();
 	}
-	
+
 	/**
-	 * Used to pre-populate values for what auto is to be selected before and after commands are loaded
+	 * Used to pre-populate values for what auto is to be selected before and after
+	 * commands are loaded
 	 */
 	public void autonChooser() {
 		controllerChooser();
 
-		// if not overriden
-		if (!controllerOverride) {
-
+		if (controllerOverride) {
+			autonomousCommand = commandArray[overrideValue].getCommand();
+		} else {
 			// Check if auton selectors are returning what they should be
 			if (uglyAnalog() <= 100 && uglyAnalog() >= 1) {
-				autonomousCommand = commandArray[Robot.auton.uglyAnalog()].getCommand();
+				autonomousCommand = commandArray[uglyAnalog()].getCommand();
 			} else {
 				autonomousCommand = defaultCommand.getCommand();
 			}
 		}
-		
+
 		printSelected();
 	}
 
 	/**
-	 * Sets the names for the override and the value of the array in which to override 
+	 * Sets the names for the override and the value of the array in which to
+	 * override
 	 */
 	private void controllerChooser() {
 		if (OI.driverJoy.getRawButton(Buttons.LB) && OI.driverJoy.getRawButton(Buttons.RB)) {
@@ -148,9 +149,9 @@ public class Auton {
 
 	}
 
-	public void setAutons() {
+	public void fillAutonArray() {
 		defaultCommand = new GZCommand("DEFAULT", new DefaultAutonomous());
-		
+
 		commandArray[1] = new GZCommand("Middle - Switch", new MiddleAuton(AO.SWITCH, AV.CURRENT));
 		commandArray[2] = new GZCommand("Left - Switch", new LeftAuton(AO.SWITCH, AV.CURRENT, AV.CURRENT));
 		commandArray[3] = new GZCommand("Left - Scale", new LeftAuton(AO.SCALE, AV.CURRENT, AV.CURRENT));
@@ -163,7 +164,8 @@ public class Auton {
 				new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
 		commandArray[13] = new GZCommand("Left Only - Switch Only",
 				new LeftAuton(AO.SWITCH_ONLY, AV.CURRENT, AV.CURRENT));
-		commandArray[14] = new GZCommand("Left Only - Scale Only", new LeftAuton(AO.SCALE_ONLY, AV.CURRENT, AV.CURRENT));
+		commandArray[14] = new GZCommand("Left Only - Scale Only",
+				new LeftAuton(AO.SCALE_ONLY, AV.CURRENT, AV.CURRENT));
 
 		commandArray[15] = new GZCommand("Right Only - Switch Priority",
 				new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.CURRENT, AV.CURRENT));
@@ -177,16 +179,21 @@ public class Auton {
 		commandArray[19] = new GZCommand("Left - Default", new LeftAuton(AO.DEFAULT, AV.CURRENT, AV.CURRENT));
 		commandArray[20] = new GZCommand("Right - Default", new RightAuton(AO.DEFAULT, AV.CURRENT, AV.CURRENT));
 
-		if (Robot.auton.controllerOverride)
-			autonomousCommand = commandArray[Robot.auton.overrideValue].getCommand();
-		
 		autonChooser();
+	}
+
+	public void startAuton()
+	{
+		fillAutonArray();
+		
+		if (autonomousCommand != null)
+			autonomousCommand.start();
 	}
 
 	public boolean isDemo() {
 		return uglyAnalog() == kAuton.SAFTEY_SWITCH;
 	}
-	
+
 	private void printSelected() {
 		m_asA = as_A.getValue();
 		m_asB = as_B.getValue();
@@ -310,7 +317,7 @@ public class Auton {
 		else
 			gameMsg = "NOT";
 	}
-	
+
 	/**
 	 * Autonomous versions enum
 	 * 

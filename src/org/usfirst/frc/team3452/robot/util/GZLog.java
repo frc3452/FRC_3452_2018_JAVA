@@ -67,8 +67,8 @@ public class GZLog {
 	}
 
 	public void update() {
-		left_speed.setValue(Robot.drive.mIO.left_encoder_speed.toString());
-		right_speed.setValue(Robot.drive.mIO.right_encoder_speed.toString());
+		left_speed.setValue(Robot.drive.getLeftVel().toString());
+		right_speed.setValue(Robot.drive.getRightVel().toString());
 
 		l1_amp.setValue(Robot.drive.mIO.L1_amp.toString());
 		l2_amp.setValue(Robot.drive.mIO.L2_amp.toString());
@@ -95,8 +95,8 @@ public class GZLog {
 
 		elev_fwd_limit.setValue(Robot.elevator.mIO.elevator_fwd_lmt.toString());
 		elev_rev_limit.setValue(Robot.elevator.mIO.elevator_rev_lmt.toString());
-		elev_height.setValue(Robot.elevator.mIO.encoder_rotations.toString());
-		elev_speed.setValue(Robot.elevator.mIO.encoder_speed.toString());
+		elev_height.setValue(Robot.elevator.getRotations().toString());
+		elev_speed.setValue(Robot.elevator.getSpeed().toString());
 
 		intake_l_amp.setValue(Robot.drive.getPDPChannelCurrent(kPDP.INTAKE_L).toString());
 		intake_r_amp.setValue(Robot.drive.getPDPChannelCurrent(kPDP.INTAKE_R).toString());

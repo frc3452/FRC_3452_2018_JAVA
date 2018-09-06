@@ -104,8 +104,8 @@ public class Drivetrain extends GZSubsystem {
 	}
 
 	private synchronized void handleStates() {
-		
-		//Do not allow .disable() while connected to the field.
+
+		// Do not allow .disable() while connected to the field.
 		if (((this.isDisabed() && !Robot.gzOI.isFMS()) || mWantedState == DriveState.NEUTRAL)) {
 
 			if (stateNot(DriveState.NEUTRAL)) {
@@ -128,7 +128,7 @@ public class Drivetrain extends GZSubsystem {
 			onStateStart(mState);
 		}
 	}
-	
+
 	private void talonInit(List<GZSRX> srx) {
 		for (GZSRX s : srx) {
 //			String name = talon.getName();
@@ -246,7 +246,7 @@ public class Drivetrain extends GZSubsystem {
 
 			mIO.control_mode = ControlMode.MotionProfile;
 			mIO.left_desired_output = mIO.right_desired_output = SetValueMotionProfile.Enable.value;
-			
+
 			mIO.left_output = mIO.left_desired_output;
 			mIO.right_output = mIO.right_desired_output;
 
@@ -292,19 +292,13 @@ public class Drivetrain extends GZSubsystem {
 	public static class IO {
 		// in
 
-		// Left Encoder
-		public Double left_encoder_ticks = Double.NaN, left_encoder_rotations = Double.NaN,
-				left_encoder_vel = Double.NaN, left_encoder_speed = Double.NaN;
+		public Double left_encoder_ticks = Double.NaN, left_encoder_vel = Double.NaN;
 
-		// Right Encoder
-		public Double right_encoder_ticks = Double.NaN, right_encoder_rotations = Double.NaN,
-				right_encoder_vel = Double.NaN, right_encoder_speed = Double.NaN;
+		public Double right_encoder_ticks = Double.NaN, right_encoder_vel = Double.NaN;
 
-		// Amperage
 		public Double L1_amp = Double.NaN, L2_amp = Double.NaN, L3_amp = Double.NaN, L4_amp = Double.NaN,
 				R1_amp = Double.NaN, R2_amp = Double.NaN, R3_amp = Double.NaN, R4_amp = Double.NaN;
 
-		// Voltage
 		public Double L1_volt = Double.NaN, L2_volt = Double.NaN, L3_volt = Double.NaN, L4_volt = Double.NaN,
 				R1_volt = Double.NaN, R2_volt = Double.NaN, R3_volt = Double.NaN, R4_volt = Double.NaN;
 
@@ -317,17 +311,30 @@ public class Drivetrain extends GZSubsystem {
 		ControlMode control_mode = ControlMode.PercentOutput;
 	}
 
+	public Double getLeftRotations() {
+		return Units.ticks_to_rotations(mIO.left_encoder_ticks);
+	}
+
+	public Double getLeftVel() {
+		return Units.ticks_to_rotations(mIO.left_encoder_vel);
+	}
+
+	public Double getRightRotations() {
+		return -Units.ticks_to_rotations(mIO.right_encoder_ticks);
+	}
+
+	public Double getRightVel() {
+		return -Units.ticks_to_rotations(mIO.right_encoder_vel);
+
+	}
+
 	@Override
 	protected synchronized void in() {
 		mIO.left_encoder_ticks = (double) L1.getSelectedSensorPosition(0);
 		mIO.left_encoder_vel = (double) L1.getSelectedSensorVelocity(0);
-		mIO.left_encoder_rotations = Units.ticks_to_rotations(mIO.left_encoder_ticks);
-		mIO.left_encoder_speed = Units.ticks_to_rotations(mIO.left_encoder_vel);
 
-		mIO.right_encoder_ticks = (double) -R1.getSelectedSensorPosition(0);
-		mIO.right_encoder_vel = (double) -R1.getSelectedSensorVelocity(0);
-		mIO.right_encoder_rotations = Units.ticks_to_rotations(mIO.right_encoder_ticks);
-		mIO.right_encoder_speed = Units.ticks_to_rotations(mIO.right_encoder_vel);
+		mIO.right_encoder_ticks = (double) R1.getSelectedSensorPosition(0);
+		mIO.right_encoder_vel = (double) R1.getSelectedSensorVelocity(0);
 
 		mIO.L1_amp = L1.getOutputCurrent();
 		mIO.L2_amp = L2.getOutputCurrent();
@@ -352,8 +359,8 @@ public class Drivetrain extends GZSubsystem {
 	public void outputSmartDashboard() {
 		SmartDashboard.putNumber("NavX Angle", mGyro.getAngle());
 
-		SmartDashboard.putNumber("L1", mIO.left_encoder_rotations);
-		SmartDashboard.putNumber("R1", mIO.right_encoder_rotations);
+		SmartDashboard.putNumber("L1", getLeftRotations());
+		SmartDashboard.putNumber("R1", getRightRotations());
 
 		SmartDashboard.putNumber("L1 Vel", mIO.left_encoder_vel);
 		SmartDashboard.putNumber("R1 Vel", mIO.right_encoder_vel);
@@ -448,8 +455,7 @@ public class Drivetrain extends GZSubsystem {
 		left_target = Units.rotations_to_ticks(leftRotations);
 		right_target = Units.rotations_to_ticks(rightRotations);
 
-		percentageComplete = Math
-				.abs(((mIO.left_encoder_rotations / left_target) + (mIO.right_encoder_rotations / right_target)) / 2);
+		percentageComplete = Math.abs(((getLeftRotations() / left_target) + (getRightRotations() / right_target)) / 2);
 
 		L1.configMotionAcceleration((int) (topspeed * leftAccel), 10);
 		R1.configMotionAcceleration((int) (topspeed * rightAccel), 10);
@@ -558,47 +564,50 @@ public class Drivetrain extends GZSubsystem {
 		R1.clearMotionProfileTrajectories();
 
 		// generate and push each mp point
-		for (int i = 0; i < ((mpL.length <= mpR.length) ? mpL.length : mpR.length); i++) {
+		if (mpL.length == mpR.length) {
+			for (int i = 0; i < mpL.length; i++) {
 
-			leftPoint.position = mpL[i][0] * 4096;
-			leftPoint.velocity = mpL[i][1] * 4096;
+				leftPoint.position = mpL[i][0] * 4096;
+				leftPoint.velocity = mpL[i][1] * 4096;
 
-			rightPoint.position = mpR[i][0] * 4096;
-			rightPoint.velocity = mpR[i][1] * 4096;
+				rightPoint.position = mpR[i][0] * -4096;
+				rightPoint.velocity = mpR[i][1] * -4096;
 
-			leftPoint.timeDur = GetTrajectoryDuration(mpDur);
-			rightPoint.timeDur = GetTrajectoryDuration(mpDur);
+				leftPoint.timeDur = GetTrajectoryDuration(mpDur);
+				rightPoint.timeDur = GetTrajectoryDuration(mpDur);
 
-			leftPoint.headingDeg = 0;
-			rightPoint.headingDeg = 0;
+				leftPoint.headingDeg = 0;
+				rightPoint.headingDeg = 0;
 
-			leftPoint.profileSlotSelect0 = 0;
-			rightPoint.profileSlotSelect0 = 0;
+				leftPoint.profileSlotSelect0 = 0;
+				rightPoint.profileSlotSelect0 = 0;
 
-			leftPoint.profileSlotSelect1 = 0;
-			rightPoint.profileSlotSelect1 = 0;
+				leftPoint.profileSlotSelect1 = 0;
+				rightPoint.profileSlotSelect1 = 0;
 
-			leftPoint.zeroPos = false;
-			rightPoint.zeroPos = false;
+				leftPoint.zeroPos = false;
+				rightPoint.zeroPos = false;
 
-			if (i == 0) {
-				leftPoint.zeroPos = true;
-				rightPoint.zeroPos = true;
+				if (i == 0) {
+					leftPoint.zeroPos = true;
+					rightPoint.zeroPos = true;
+				}
+
+				leftPoint.isLastPoint = false;
+				rightPoint.isLastPoint = false;
+
+				if ((i + 1) == mpL.length) {
+					leftPoint.isLastPoint = true;
+					rightPoint.isLastPoint = true;
+				}
+
+				L1.pushMotionProfileTrajectory(leftPoint);
+				R1.pushMotionProfileTrajectory(rightPoint);
 			}
-
-			leftPoint.isLastPoint = false;
-			rightPoint.isLastPoint = false;
-
-			if ((i + 1) == mpL.length) {
-				leftPoint.isLastPoint = true;
-				rightPoint.isLastPoint = true;
-			}
-
-			L1.pushMotionProfileTrajectory(leftPoint);
-			R1.pushMotionProfileTrajectory(rightPoint);
+			System.out.println("Motion profile pushed to Talons");
+		} else {
+			System.out.println("Motion profile lists not same size!!!");
 		}
-
-		System.out.println("Motion profile pushed to Talons");
 	}
 
 	/**
@@ -627,48 +636,51 @@ public class Drivetrain extends GZSubsystem {
 		R1.clearMotionProfileTrajectories();
 
 		// generate and push each mp point
-		for (int i = 0; i < (Robot.fileManager.mpL.size() <= Robot.fileManager.mpR.size() ? Robot.fileManager.mpL.size()
-				: Robot.fileManager.mpR.size()); i++) {
+		if (Robot.fileManager.mpL.size() == Robot.fileManager.mpR.size()) {
+			for (int i = 0; i < Robot.fileManager.mpL.size(); i++) {
 
-			leftPoint.position = Robot.fileManager.mpL.get(i).get(0) * 4096;
-			leftPoint.velocity = Robot.fileManager.mpL.get(i).get(1) * 4096;
+				leftPoint.position = Robot.fileManager.mpL.get(i).get(0) * 4096;
+				leftPoint.velocity = Robot.fileManager.mpL.get(i).get(1) * 4096;
 
-			rightPoint.position = Robot.fileManager.mpR.get(i).get(0) * 4096;
-			rightPoint.velocity = Robot.fileManager.mpR.get(i).get(1) * 4096;
+				rightPoint.position = Robot.fileManager.mpR.get(i).get(0) * -4096;
+				rightPoint.velocity = Robot.fileManager.mpR.get(i).get(1) * -4096;
 
-			leftPoint.timeDur = GetTrajectoryDuration(Robot.fileManager.mpDur);
-			rightPoint.timeDur = GetTrajectoryDuration(Robot.fileManager.mpDur);
+				leftPoint.timeDur = GetTrajectoryDuration(Robot.fileManager.mpDur);
+				rightPoint.timeDur = GetTrajectoryDuration(Robot.fileManager.mpDur);
 
-			leftPoint.headingDeg = 0;
-			rightPoint.headingDeg = 0;
+				leftPoint.headingDeg = 0;
+				rightPoint.headingDeg = 0;
 
-			leftPoint.profileSlotSelect0 = 0;
-			rightPoint.profileSlotSelect0 = 0;
+				leftPoint.profileSlotSelect0 = 0;
+				rightPoint.profileSlotSelect0 = 0;
 
-			leftPoint.profileSlotSelect1 = 0;
-			rightPoint.profileSlotSelect1 = 0;
+				leftPoint.profileSlotSelect1 = 0;
+				rightPoint.profileSlotSelect1 = 0;
 
-			leftPoint.zeroPos = false;
-			rightPoint.zeroPos = false;
+				leftPoint.zeroPos = false;
+				rightPoint.zeroPos = false;
 
-			if (i == 0) {
-				leftPoint.zeroPos = true;
-				rightPoint.zeroPos = true;
+				if (i == 0) {
+					leftPoint.zeroPos = true;
+					rightPoint.zeroPos = true;
+				}
+
+				leftPoint.isLastPoint = false;
+				rightPoint.isLastPoint = false;
+
+				if ((i + 1) == Robot.fileManager.mpL.size()) {
+					leftPoint.isLastPoint = true;
+					rightPoint.isLastPoint = true;
+				}
+
+				L1.pushMotionProfileTrajectory(leftPoint);
+				R1.pushMotionProfileTrajectory(rightPoint);
 			}
-
-			leftPoint.isLastPoint = false;
-			rightPoint.isLastPoint = false;
-
-			if ((i + 1) == Robot.fileManager.mpL.size()) {
-				leftPoint.isLastPoint = true;
-				rightPoint.isLastPoint = true;
-			}
-
-			L1.pushMotionProfileTrajectory(leftPoint);
-			R1.pushMotionProfileTrajectory(rightPoint);
+			System.out.println("Motion profile pushed to Talons");
+		} else {
+			System.out.println("Motion profile lists not same size!!!");
 		}
 
-		System.out.println("Motion profile pushed to Talons");
 	}
 
 	@SuppressWarnings("static-access")
@@ -750,7 +762,6 @@ public class Drivetrain extends GZSubsystem {
 	public synchronized double getGyroFusedHeading() {
 		return mGyro.getFusedHeading();
 	}
-
 
 	private synchronized boolean stateNot(DriveState state) {
 		return mState != state;

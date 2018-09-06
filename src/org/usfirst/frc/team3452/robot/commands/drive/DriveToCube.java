@@ -37,8 +37,8 @@ public class DriveToCube extends Command {
 		flag_2 = false;
 		timeoutSet = false;
 
-		i_lpos = Robot.drive.mIO.left_encoder_rotations;
-		i_rpos = Robot.drive.mIO.right_encoder_rotations;
+		i_lpos = Robot.drive.getLeftRotations();
+		i_rpos = Robot.drive.getRightRotations();
 
 		System.out.println(i_lpos);
 		System.out.println(i_rpos);
@@ -56,8 +56,8 @@ public class DriveToCube extends Command {
 
 		Robot.intake.manual(kIntake.Speeds.INTAKE);
 
-		if (Robot.drive.mIO.left_encoder_rotations - i_lpos > m_rotation
-				|| Robot.drive.mIO.right_encoder_rotations - i_rpos > m_rotation)
+		if (Robot.drive.getLeftRotations() - i_lpos > m_rotation
+				|| Robot.drive.getRightRotations() - i_rpos > m_rotation)
 			m_complete = true;
 
 		if (Robot.drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_L) > 12

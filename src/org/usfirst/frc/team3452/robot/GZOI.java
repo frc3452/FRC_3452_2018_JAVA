@@ -1,7 +1,6 @@
-package org.usfirst.frc.team3452.robot.subsystems;
+package org.usfirst.frc.team3452.robot;
 
 import org.usfirst.frc.team3452.robot.Constants.kOI;
-import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Intake.IntakeState;
 import org.usfirst.frc.team3452.robot.util.GZJoystick;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
