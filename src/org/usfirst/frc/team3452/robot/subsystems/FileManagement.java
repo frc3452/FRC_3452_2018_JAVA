@@ -45,6 +45,8 @@ public class FileManagement {
 	private boolean hasPrintedLogFailed = false;
 	private boolean hasPrintedProfileRecordFailed = false;
 
+	private boolean isLogging = false;
+
 	/**
 	 * hardware initialization
 	 * 
@@ -185,8 +187,11 @@ public class FileManagement {
 				bw.write(mLog.getHeader());
 				bw.write("\r\n");
 				logging.startPeriodic(kFileManagement.LOGGING_SPEED);
-			} else
+				isLogging = true;
+			} else {
 				logging.stop();
+				isLogging = false;
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -304,13 +309,16 @@ public class FileManagement {
 				break;
 
 			case Log:
-				System.out.println("Opening Log: " + loggingName(true) + ".csv");
-				createFile(loggingName(false), folder, fileState.WRITE, usb);
-				writeToLog(true);
+
+				if (isLogging == false) {
+					System.out.println("Opening Log: " + loggingName(true) + ".csv");
+					createFile(loggingName(false), folder, fileState.WRITE, usb);
+					writeToLog(true);
+				}
 
 				break;
 			}
-		} else { //not startup
+		} else { // not startup
 			switch (task) {
 			case Record:
 				System.out.println("Closing " + task + ": " + name + ".csv");
@@ -322,9 +330,11 @@ public class FileManagement {
 				closeFile(fileState.READ);
 				break;
 			case Log:
-				System.out.println("Closing " + task + ": " + loggingName(false) + ".csv");
-				writeToLog(false);
-				closeFile(fileState.WRITE);
+				if (isLogging) {
+					System.out.println("Closing " + task + ": " + loggingName(false) + ".csv");
+					writeToLog(false);
+					closeFile(fileState.WRITE);
+				}
 				break;
 			}
 		}
@@ -340,6 +350,10 @@ public class FileManagement {
 		}
 	}
 
+	public void writeHealth()
+	{
+	}
+	
 	/**
 	 * reading or writing
 	 * 

@@ -28,32 +28,32 @@ public class LeftAuton extends CommandGroup {
 		addSequential(new GyroReset());
 
 		//IF DATA FOUND
-        if (!Robot.auton.gameMsg.equals("NOT")) {
+        if (!Robot.auton.gsm().equals("NOT")) {
 
 			switch (option) {
 			case SWITCH:
 
-				if (Robot.auton.gameMsg.charAt(0) == 'L') {
+				if (Robot.auton.gsm().charAt(0) == 'L') {
 					switchL(switchVersion);
 
-				} else if (Robot.auton.gameMsg.charAt(0) == 'R') {
+				} else if (Robot.auton.gsm().charAt(0) == 'R') {
 					switchR(switchVersion);
 				}
 
 				break;
 			case SCALE:
-				if (Robot.auton.gameMsg.charAt(1) == 'L') {
+				if (Robot.auton.gsm().charAt(1) == 'L') {
 					scaleL(scaleVersion);
 
-				} else if (Robot.auton.gameMsg.charAt(1) == 'R') {
+				} else if (Robot.auton.gsm().charAt(1) == 'R') {
 					scaleR(scaleVersion);
 				}
 				break;
 			case SWITCH_PRIORITY_NO_CROSS:
 
-				if (Robot.auton.gameMsg.charAt(0) == 'L') {
+				if (Robot.auton.gsm().charAt(0) == 'L') {
 					switchL(switchVersion);
-				} else if (Robot.auton.gameMsg.charAt(1) == 'L') {
+				} else if (Robot.auton.gsm().charAt(1) == 'L') {
 					scaleL(scaleVersion);
 				} else {
 					defaultAuton();
@@ -62,9 +62,9 @@ public class LeftAuton extends CommandGroup {
 				break;
 			case SCALE_PRIORITY_NO_CROSS:
 
-				if (Robot.auton.gameMsg.charAt(1) == 'L') {
+				if (Robot.auton.gsm().charAt(1) == 'L') {
 					scaleL(scaleVersion);
-				} else if (Robot.auton.gameMsg.charAt(0) == 'L') {
+				} else if (Robot.auton.gsm().charAt(0) == 'L') {
 					switchL(switchVersion);
 				} else {
 					defaultAuton();
@@ -73,7 +73,7 @@ public class LeftAuton extends CommandGroup {
 				break;
 			case SCALE_ONLY:
 
-				if (Robot.auton.gameMsg.charAt(1) == 'L') {
+				if (Robot.auton.gsm().charAt(1) == 'L') {
 					scaleL(scaleVersion);
 				} else {
 					defaultAuton();
@@ -82,7 +82,7 @@ public class LeftAuton extends CommandGroup {
 				break;
 			case SWITCH_ONLY:
 
-				if (Robot.auton.gameMsg.charAt(0) == 'L') {
+				if (Robot.auton.gsm().charAt(0) == 'L') {
 					switchL(switchVersion);
 				} else {
 					defaultAuton();

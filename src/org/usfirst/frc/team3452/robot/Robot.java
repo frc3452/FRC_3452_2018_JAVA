@@ -24,13 +24,13 @@ public class Robot extends TimedRobot {
 	public static final Intake intake = new Intake();
 	public static final Climber climber = new Climber();
 
+	public static final Lights lights = new Lights();
+	public static final FileManagement fileManager = new FileManagement();
 	public static final Auton auton = new Auton();
 	public static final GZOI gzOI = new GZOI();
-	public static final Lights lights = new Lights();
 	public static final Camera camera = new Camera();
-	public static final FileManagement fileManager = new FileManagement();
 
-	private static final GZSubsystemManager mSubsystems = new GZSubsystemManager(
+	public static final GZSubsystemManager mSubsystems = new GZSubsystemManager(
 			Arrays.asList(gzOI, drive, elevator, intake, climber, lights));
 
 	private static final OI oi = new OI();
@@ -38,11 +38,13 @@ public class Robot extends TimedRobot {
 	// Flags
 
 	// LOGGING CONTROL
-	private boolean logging = true, logToUsb = true;
+	private boolean logging = false, logToUsb = true;
 	private String loggingLocation = "Logging/Offseason";
 
 	@Override
 	public void robotInit() {
+		Robot.auton.fillAutonArray();
+
 		// TODO ISSUE #14
 	}
 
@@ -74,8 +76,7 @@ public class Robot extends TimedRobot {
 
 		// Loop while game data is bad and timer is acceptable
 		do {
-			Robot.auton.gsm();
-		} while ((Robot.auton.gameMsg.equals("NOT") && Robot.auton.matchTimer.get() < 3));
+		} while ((Robot.auton.gsm().equals("NOT") && Robot.auton.matchTimer.get() < 3));
 
 		// Fill auton array and set values, regardless of good game message
 		Robot.auton.startAuton();

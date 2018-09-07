@@ -33,7 +33,8 @@ public class Auton {
 	private int m_prev_as1, m_prev_as2;
 	private int m_asA, m_asB;
 
-	public GZCommand commandArray[] = new GZCommand[41];
+	public GZCommand commandArray[] = new GZCommand[kAuton.COMMAND_ARRAY_SIZE];
+	
 	private GZCommand defaultCommand = null;
 	public Command autonomousCommand = null;
 
@@ -42,7 +43,7 @@ public class Auton {
 	private int overrideValue = 1;
 	private String overrideStringPrevious = "";
 	private String overrideString = "", autonString = "";
-	public String gameMsg = "NOT";
+	private String gameMsg = "NOT";
 
 	public GZTimer matchTimer = new GZTimer("matchTimer");
 
@@ -61,8 +62,7 @@ public class Auton {
 		as_B.setName("Selector B");
 
 		Arrays.fill(commandArray, null);
-
-		fillAutonArray();
+//		fillAutonArray();
 	}
 
 	/**
@@ -76,13 +76,13 @@ public class Auton {
 			autonomousCommand = commandArray[overrideValue].getCommand();
 		} else {
 			// Check if auton selectors are returning what they should be
-			if (uglyAnalog() <= 100 && uglyAnalog() >= 1) {
+			if (uglyAnalog() <= kAuton.COMMAND_ARRAY_SIZE && uglyAnalog() >= 1) {
 				autonomousCommand = commandArray[uglyAnalog()].getCommand();
 			} else {
 				autonomousCommand = defaultCommand.getCommand();
 			}
 		}
-
+		
 		printSelected();
 	}
 
@@ -308,7 +308,7 @@ public class Auton {
 		}
 	}
 
-	public void gsm() {
+	public String gsm() {
 		String f;
 		f = DriverStation.getInstance().getGameSpecificMessage();
 
@@ -316,6 +316,8 @@ public class Auton {
 			gameMsg = f;
 		else
 			gameMsg = "NOT";
+		
+		return gameMsg;
 	}
 
 	/**

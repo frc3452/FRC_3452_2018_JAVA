@@ -31,16 +31,15 @@ public class GZOI extends GZSubsystem {
 			mWasTest = true;
 		
 		//TODO ISSUE #19
-		
-		
+
 		// controller rumble
 		if (Util.between(getMatchTime(), 28, 30))
-			rumble(Controller.BOTH, kOI.ENDGAME);
+			rumble(Controller.BOTH, kOI.Rumble.ENDGAME);
 		else if (Robot.elevator.isOverriden()) {
-			rumble(Controller.DRIVE, kOI.ELEVATOR_OVERRIDE_DRIVE);
-			rumble(Controller.OP, kOI.ELEVATOR_OVERRIDE_OP);
+			rumble(Controller.DRIVE, kOI.Rumble.ELEVATOR_OVERRIDE_DRIVE);
+			rumble(Controller.OP, kOI.Rumble.ELEVATOR_OVERRIDE_OP);
 		} else if (Robot.intake.stateNot(IntakeState.NEUTRAL))
-			rumble(Controller.BOTH, kOI.INTAKE);
+			rumble(Controller.BOTH, kOI.Rumble.INTAKE);
 		else
 			rumble(Controller.BOTH, 0);
 	}
@@ -90,7 +89,7 @@ public class GZOI extends GZSubsystem {
 	}
 
 	public boolean isTele() {
-		return DriverStation.getInstance().isOperatorControl();
+		return DriverStation.getInstance().isEnabled() && !DriverStation.getInstance().isAutonomous() && !DriverStation.getInstance().isTest();
 	}
 	
 	public boolean isTest()

@@ -9,6 +9,8 @@ package org.usfirst.frc.team3452.robot;
 
 public class Constants {
 	public class kAuton {
+		public static final int COMMAND_ARRAY_SIZE = 41;
+
 		public static final double CORRECTION = 0.025;
 
 		public static final int SAFTEY_SWITCH = 96;
@@ -173,7 +175,7 @@ public class Constants {
 		public static final int RED = 0;
 		public static final int BLUE = 120;
 		public static final int PURPLE = 55;
-		public static final int GREEN = 254; //;)
+		public static final int GREEN = 254; // ;)
 		public static final int YELLOW = 330;
 	}
 
@@ -184,10 +186,14 @@ public class Constants {
 	}
 
 	public class kOI {
-		public static final double INTAKE = .3;
-		public static final double ELEVATOR_OVERRIDE_DRIVE = .45;
-		public static final double ELEVATOR_OVERRIDE_OP = ELEVATOR_OVERRIDE_DRIVE - .2;
-		public static final double ENDGAME = .6;
+		public class Rumble {
+
+			public final static double INTAKE = .3;
+			public final static double ELEVATOR_OVERRIDE_DRIVE = .45;
+			public final static double ELEVATOR_OVERRIDE_OP = ELEVATOR_OVERRIDE_DRIVE - .2;
+			public final static double ENDGAME = .6;
+
+		}
 	}
-	
+
 }
