@@ -34,6 +34,9 @@ public class Health {
 	public void generateHealth() {
 		String htmlString = base_file;
 		String body = "";
+		//make array for errors per subsystem
+		//find highest AlertLevel, store
+		//For loop, 
 		//if( Arrays.asList("a","b","c").contains("a") )
 	}
 
