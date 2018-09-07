@@ -74,6 +74,23 @@ public class Constants {
 	}
 
 	public class kDrivetrain {
+
+		public class PID {
+			public class LEFT {
+				public final static double P = .425;
+				public final static double I = 0;
+				public final static double D = 4.25;
+				public static final double F = 0;
+			}
+
+			public class RIGHT {
+				public final static double P = .425;
+				public final static double I = 0;
+				public final static double D = 4.25;
+				public static final double F = 0;
+			}
+		}
+
 		public final static int L1 = 1, L2 = 2, L3 = 3, L4 = 4;
 		public final static int R1 = 5, R2 = 6, R3 = 7, R4 = 8;
 
@@ -106,6 +123,13 @@ public class Constants {
 	}
 
 	public class kElevator {
+		public class PID {
+			public static final double F = 0;
+			public static final double P = .2;
+			public static final double I = 0.000028;
+			public static final double D = 2.5;
+		}
+		
 		public static final int E_1 = 9;
 		public static final int E_2 = 10;
 

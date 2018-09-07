@@ -25,6 +25,10 @@ public class Util {
 		return false;
 	}
 
+	public static enum AlertLevel {
+		WARNING, ERROR, NONE
+	}
+	
 	public static double applyDeadband(double value, double deadband) {
 		if (Math.abs(value) > deadband) {
 			if (value > 0.0) {

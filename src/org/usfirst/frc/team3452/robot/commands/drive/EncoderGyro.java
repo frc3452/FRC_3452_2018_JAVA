@@ -2,7 +2,7 @@ package org.usfirst.frc.team3452.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
+import org.usfirst.frc.team3452.robot.subsystems.Drive;
 
 public class EncoderGyro extends Command {
 
@@ -19,7 +19,7 @@ public class EncoderGyro extends Command {
 	 * @param speed
 	 * @param angle
 	 * @param constant
-	 * @see Drivetrain
+	 * @see Drive
 	 */
 	public EncoderGyro(double leftpos, double rightpos, double leftaccel, double rightaccel, double speed, double angle,
 			double constant) {

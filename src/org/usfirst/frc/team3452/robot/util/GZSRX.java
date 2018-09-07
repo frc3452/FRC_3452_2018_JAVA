@@ -1,5 +1,8 @@
 package org.usfirst.frc.team3452.robot.util;
 
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.util.Util.AlertLevel;
+
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -8,7 +11,6 @@ public class GZSRX extends WPI_TalonSRX {
 	private Breaker mBreaker = Breaker.NO_INFO;
 	private Side mSide = Side.NO_INFO;
 	private Master mMaster = Master.NO_INFO;
-	private boolean mIsInverted;
 
 	public final static int TIMEOUT = 10;
 
@@ -22,12 +24,11 @@ public class GZSRX extends WPI_TalonSRX {
 	}
 
 	// Other subsystem
-	public GZSRX(int deviceNumber, Breaker breaker, boolean isInverted, Master master) {
+	public GZSRX(int deviceNumber, Breaker breaker, Master master) {
 		super(deviceNumber);
 
 		mBreaker = breaker;
 		mMaster = master;
-		mIsInverted = isInverted;
 	}
 
 	// Basic
@@ -37,9 +38,9 @@ public class GZSRX extends WPI_TalonSRX {
 		mBreaker = breaker;
 	}
 
- 	public static void checkError(ErrorCode errorCode, String message) {
+	public static void logError(ErrorCode errorCode, AlertLevel level, GZSubsystem subsystem, String message) {
 		if (errorCode != ErrorCode.OK)
-			System.out.println("ERROR COULD NOT SET " + message + ":\t\t" + errorCode);
+			Robot.health.addAlert(level, subsystem, message);
 	}
 
 	public Breaker getBreakerSize() {
@@ -52,10 +53,6 @@ public class GZSRX extends WPI_TalonSRX {
 
 	public Master getMaster() {
 		return mMaster;
-	}
-
-	public boolean isInverted() {
-		return mIsInverted;
 	}
 
 	public enum Side {

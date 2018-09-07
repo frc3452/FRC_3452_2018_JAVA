@@ -9,7 +9,7 @@ public abstract class GZSubsystem extends Subsystem {
 	public abstract void stop();
 
 	// IO class
-	// State enum
+	// enum State
 	// void setWantedState (State s)
 	// boolean currentStateIsNot(State s)
 	// State getState
@@ -25,6 +25,8 @@ public abstract class GZSubsystem extends Subsystem {
 		if (toDisable)
 			stop();
 	}
+	
+//	public abstract void checkHealth();
 
 	// Return if subsystem is disabled or not.
 	public Boolean isDisabed() {

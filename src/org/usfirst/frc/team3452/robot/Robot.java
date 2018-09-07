@@ -5,11 +5,12 @@ import java.util.Arrays;
 import org.usfirst.frc.team3452.robot.subsystems.Auton;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.DriveState;
+import org.usfirst.frc.team3452.robot.subsystems.Drive;
+import org.usfirst.frc.team3452.robot.subsystems.Drive.DriveState;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import org.usfirst.frc.team3452.robot.subsystems.FileManagement;
 import org.usfirst.frc.team3452.robot.subsystems.FileManagement.TASK;
+import org.usfirst.frc.team3452.robot.subsystems.Health;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
 import org.usfirst.frc.team3452.robot.util.GZSubsystemManager;
@@ -18,17 +19,18 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
-
-	public static final Drivetrain drive = new Drivetrain();
+	public static final Health health = new Health();
+	public static final FileManagement fileManager = new FileManagement();
+	
+	public static final Drive drive = new Drive();
 	public static final Elevator elevator = new Elevator();
 	public static final Intake intake = new Intake();
 	public static final Climber climber = new Climber();
 
 	public static final Lights lights = new Lights();
-	public static final FileManagement fileManager = new FileManagement();
 	public static final Auton auton = new Auton();
-	public static final GZOI gzOI = new GZOI();
 	public static final Camera camera = new Camera();
+	public static final GZOI gzOI = new GZOI();
 
 	public static final GZSubsystemManager mSubsystems = new GZSubsystemManager(
 			Arrays.asList(gzOI, drive, elevator, intake, climber, lights));
@@ -116,6 +118,6 @@ public class Robot extends TimedRobot {
 
 	private void log(boolean startup) {
 		if (logging)
-			Robot.fileManager.control("Log", loggingLocation, logToUsb, TASK.Log, startup);
+			Robot.fileManager.csvControl("Log", loggingLocation, logToUsb, TASK.Log, startup);
 	}
 }

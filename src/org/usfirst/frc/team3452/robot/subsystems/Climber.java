@@ -108,6 +108,11 @@ public class Climber extends GZSubsystem {
 	public synchronized void setWantedState(ClimberState wantedState) {
 		this.mWantedState = wantedState;
 	}
+	
+	public synchronized void checkHealth()
+	{
+		
+	}
 
 	private synchronized void handleStates() {
 		//if trying to disable or run demo mode while not connected to field

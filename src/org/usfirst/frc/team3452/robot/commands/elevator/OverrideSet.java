@@ -1,7 +1,7 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
+import org.usfirst.frc.team3452.robot.subsystems.Drive;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator.ESO;
 
@@ -14,7 +14,7 @@ public class OverrideSet extends InstantCommand {
 	/**
 	 * @author macco
 	 * @param override
-	 * @see Drivetrain
+	 * @see Drive
 	 * @see Elevator
 	 * @see ESO
 	 */

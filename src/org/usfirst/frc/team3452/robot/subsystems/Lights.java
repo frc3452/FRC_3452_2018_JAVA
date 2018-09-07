@@ -8,6 +8,8 @@ import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.Constants.kAuton;
 import org.usfirst.frc.team3452.robot.Constants.kLights;
 import org.usfirst.frc.team3452.robot.util.GZJoystick.Buttons;
+import org.usfirst.frc.team3452.robot.util.Util.AlertLevel;
+import org.usfirst.frc.team3452.robot.util.GZSRX;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 
 import com.ctre.phoenix.CANifier;
@@ -44,6 +46,7 @@ public class Lights extends GZSubsystem {
 			tempArray[i] = 3452;
 
 		canifier = new CANifier(Constants.kLights.CANIFIER_ID);
+		GZSRX.logError(canifier.configFactoryDefault(), AlertLevel.WARNING, this, "CANIFIER NOT FOUND");
 
 		lightTimer.stop();
 		lightTimer.reset();
@@ -56,20 +59,21 @@ public class Lights extends GZSubsystem {
 		centerY = table.getEntry("centerY");
 	}
 
+	@Override
 	public void loop() {
 		if (OI.driverJoy.areButtonsPressed(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
 			readyForMatch = true;
 
 		if (Robot.gzOI.isTele()) {
-			
+
 			hsv(kLights.GREEN, 1, .5);
-			
+
 		} else if (Robot.gzOI.isAuto()) {
-			
+
 			hsv(Robot.gzOI.isRed() ? kLights.RED : kLights.BLUE, 1, .5);
-			
+
 		} else if (Robot.gzOI.isDisabled()) {
-			
+
 			switch (Robot.auton.uglyAnalog()) {
 			case 100:
 

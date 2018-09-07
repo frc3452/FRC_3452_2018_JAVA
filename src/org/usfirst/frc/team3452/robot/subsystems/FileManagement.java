@@ -99,7 +99,7 @@ public class FileManagement {
 	 * @author max
 	 */
 	@SuppressWarnings("unused")
-	private void printValues() {
+	private void printListValues() {
 		try {
 			for (int i = 0; i < mpL.size(); i++) {
 				System.out.println(mpL.get(i).get(0) + "\t" + mpL.get(i).get(1) + "\t" + mpR.get(i).get(0) + "\t"
@@ -227,7 +227,7 @@ public class FileManagement {
 	 */
 	private Notifier logging = new Notifier(new loggingRunnable());
 
-	private void createFile(String fileName, String folder, fileState readwrite, boolean usb) {
+	private void createCSVFile(String fileName, String folder, fileState readwrite, boolean usb) {
 		try {
 			switch (readwrite) {
 			case READ:
@@ -261,7 +261,7 @@ public class FileManagement {
 		}
 	}
 
-	private void closeFile(fileState readwrite) {
+	private void closeCSVFile(fileState readwrite) {
 		try {
 			switch (readwrite) {
 			case READ:
@@ -291,19 +291,19 @@ public class FileManagement {
 	 * @see TASK
 	 * @see STATE
 	 */
-	public void control(String name, String folder, boolean usb, TASK task, boolean startup) {
+	public void csvControl(String name, String folder, boolean usb, TASK task, boolean startup) {
 		if (startup) {
 			switch (task) {
 			case Record:
 				System.out.println("Opening Record: " + name + ".csv");
-				createFile(name, folder, fileState.WRITE, usb);
+				createCSVFile(name, folder, fileState.WRITE, usb);
 				writeToProfile(true);
 
 				break;
 
 			case Parse:
 				System.out.println("Opening Parse: " + name + ".csv");
-				createFile(name, folder, fileState.READ, usb);
+				createCSVFile(name, folder, fileState.READ, usb);
 				parseMotionProfileCSV();
 				// printValues();
 				break;
@@ -312,7 +312,7 @@ public class FileManagement {
 
 				if (isLogging == false) {
 					System.out.println("Opening Log: " + loggingName(true) + ".csv");
-					createFile(loggingName(false), folder, fileState.WRITE, usb);
+					createCSVFile(loggingName(false), folder, fileState.WRITE, usb);
 					writeToLog(true);
 				}
 
@@ -323,23 +323,23 @@ public class FileManagement {
 			case Record:
 				System.out.println("Closing " + task + ": " + name + ".csv");
 				writeToProfile(false);
-				closeFile(fileState.WRITE);
+				closeCSVFile(fileState.WRITE);
 				break;
 			case Parse:
 				System.out.println("Closing " + task + ": " + name + ".csv");
-				closeFile(fileState.READ);
+				closeCSVFile(fileState.READ);
 				break;
 			case Log:
 				if (isLogging) {
 					System.out.println("Closing " + task + ": " + loggingName(false) + ".csv");
 					writeToLog(false);
-					closeFile(fileState.WRITE);
+					closeCSVFile(fileState.WRITE);
 				}
 				break;
 			}
 		}
 	}
-
+	
 	private String loggingName(boolean returnCurrent) {
 		if (returnCurrent) {
 			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Util.dateTime(false);
@@ -350,10 +350,6 @@ public class FileManagement {
 		}
 	}
 
-	public void writeHealth()
-	{
-	}
-	
 	/**
 	 * reading or writing
 	 * 

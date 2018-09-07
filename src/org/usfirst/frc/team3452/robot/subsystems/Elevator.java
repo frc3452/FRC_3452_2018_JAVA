@@ -10,10 +10,11 @@ import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.util.GZJoystick;
 import org.usfirst.frc.team3452.robot.util.GZSRX;
 import org.usfirst.frc.team3452.robot.util.GZSRX.Breaker;
+import org.usfirst.frc.team3452.robot.util.GZSRX.Master;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 import org.usfirst.frc.team3452.robot.util.Units;
+import org.usfirst.frc.team3452.robot.util.Util.AlertLevel;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -36,8 +37,8 @@ public class Elevator extends GZSubsystem {
 	private boolean mIsOverriden = false;
 
 	public Elevator() {
-		elevator_1 = new GZSRX(kElevator.E_1, Breaker.AMP_40);
-		elevator_2 = new GZSRX(kElevator.E_2, Breaker.AMP_40);
+		elevator_1 = new GZSRX(kElevator.E_1, Breaker.AMP_40, Master.MASTER);
+		elevator_2 = new GZSRX(kElevator.E_2, Breaker.AMP_40, Master.FOLLOWER);
 
 		controllers = Arrays.asList(elevator_1, elevator_2);
 
@@ -50,37 +51,49 @@ public class Elevator extends GZSubsystem {
 		elevator_1.setInverted(Constants.kElevator.E_1_INVERT);
 		elevator_2.setInverted(Constants.kElevator.E_2_INVERT);
 
-		// F 0 P .08 I .000028 D 2.5
-		// PIDs
-		elevator_1.config_kF(0, 0, 10);
-		elevator_1.config_kP(0, 0.2, 10);
-		elevator_1.config_kI(0, 0.000028, 10);
-		elevator_1.config_kD(0, 2.5, 10);
-		elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10);
-		elevator_1.configClosedloopRamp(Constants.kElevator.CLOSED_RAMP_TIME, 10);
+		GZSRX.logError(elevator_1.config_kF(0, kElevator.PID.F, 10), AlertLevel.WARNING, this,
+				"COULD NOT SET 'F' GAIN");
+		GZSRX.logError(elevator_1.config_kP(0, kElevator.PID.P, 10), AlertLevel.WARNING, this,
+				"COULD NOT SET 'P' GAIN");
+		GZSRX.logError(elevator_1.config_kI(0, kElevator.PID.I, 10), AlertLevel.WARNING, this,
+				"COULD NOT SET 'I' GAIN");
+		GZSRX.logError(elevator_1.config_kD(0, kElevator.PID.D, 10), AlertLevel.WARNING, this,
+				"COULD NOT SET 'D' GAIN");
+		GZSRX.logError(elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10), AlertLevel.WARNING, this,
+				"COULD NOT SET OPEN LOOP RAMP");
+		GZSRX.logError(elevator_1.configClosedloopRamp(Constants.kElevator.CLOSED_RAMP_TIME, 10), AlertLevel.WARNING,
+				this, "COULD NOT SET CLOSED LOOP RAMP");
 
 		// TODO ISSUE #11
 		// ENCODER
-		final ErrorCode encoderPresent = elevator_1
-				.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
-		if (encoderPresent != ErrorCode.OK)
-			System.out.println("ERROR ELEVATOR ENCODER NOT FOUND!");
+		GZSRX.logError(elevator_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10),
+				AlertLevel.ERROR, this, "COULD NOT FIND ELEVATOR ENCODER");
 
-		elevator_1.setSelectedSensorPosition(0, 0, 10);
+		GZSRX.logError(elevator_1.setSelectedSensorPosition(0, 0, 10), AlertLevel.WARNING, this,
+				"COULD NOT ZERO ELEVATOR ENCODER");
 		elevator_1.setSensorPhase(Constants.kElevator.ENC_INVERT);
 
 		// SOFT LIMITS FOR DEMO MODE
-		elevator_1.configForwardSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.LOWER_SOFT_LIMIT));
-		elevator_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.UPPER_SOFT_LIMIT));
+		GZSRX.logError(
+				elevator_1.configForwardSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.LOWER_SOFT_LIMIT)),
+				AlertLevel.WARNING, this, "COULD NOT SET LOWER SOFT LIMIT");
+		GZSRX.logError(
+				elevator_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.UPPER_SOFT_LIMIT)),
+				AlertLevel.WARNING, this, "COULD NOT SET UPPER SOFT LIMIT");
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
-		elevator_1.configClearPositionOnLimitF(true, 10);
+		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), AlertLevel.ERROR, this,
+				"COULD NOT SET ELEVATOR ENCODER ZERO ON BOTTOM LIMIT");
 
 		// REMOTE LIMIT SWITCHES
-		elevator_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
-				LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10);
-		elevator_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
-				LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10);
+		GZSRX.logError(
+				elevator_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
+						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
+				AlertLevel.ERROR, this, "COULD NOT SET FORWARD LIMIT SWITCH");
+		GZSRX.logError(
+				elevator_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
+						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
+				AlertLevel.ERROR, this, "COULD NOT SET REVERSE LIMIT SWITCH");
 
 		elevator_1.setName("Elev 1");
 		elevator_2.setName("Elev 2");
@@ -89,12 +102,17 @@ public class Elevator extends GZSubsystem {
 
 	private synchronized void talonInit(List<GZSRX> srx) {
 		for (GZSRX s : srx) {
-			s.configFactoryDefault();
+			GZSRX.logError(s.configFactoryDefault(), AlertLevel.ERROR, this,
+					"COULD NOT FACTORY RESET " + s.getMaster());
+
 			s.setNeutralMode(NeutralMode.Brake);
 
-			s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10);
-			s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10);
-			s.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10);
+			GZSRX.logError(s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10), AlertLevel.WARNING, this,
+					"COULD NOT SET CURRENT LIMIT FOR " + s.getMaster());
+			GZSRX.logError(s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10), AlertLevel.WARNING, this,
+					"COULD NOT SET CURRENT TRIGGER FOR " + s.getMaster());
+			GZSRX.logError(s.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10), AlertLevel.WARNING, this,
+					"COULD NOT SET CURRENT TRIGGER FOR " + s.getMaster());
 			s.enableCurrentLimit(true);
 
 			s.setSubsystem("Elevator");
@@ -175,7 +193,7 @@ public class Elevator extends GZSubsystem {
 
 	public static class IO {
 		// in
-		public Double encoder_ticks = Double.NaN,  encoder_vel = Double.NaN;
+		public Double encoder_ticks = Double.NaN, encoder_vel = Double.NaN;
 
 		public Double elevator_1_amp = Double.NaN, elevator_2_amp = Double.NaN;
 
@@ -190,16 +208,14 @@ public class Elevator extends GZSubsystem {
 		ControlMode control_mode = ControlMode.PercentOutput;
 	}
 
-	public Double getRotations()
-	{
+	public Double getRotations() {
 		return Units.ticks_to_rotations(mIO.encoder_ticks);
 	}
-	
-	public Double getSpeed()
-	{
+
+	public Double getSpeed() {
 		return Units.ticks_to_rotations(mIO.encoder_vel);
 	}
-	
+
 	@Override
 	protected synchronized void in() {
 		mIO.encoder_ticks = (double) elevator_1.getSelectedSensorPosition(0);
@@ -234,8 +250,8 @@ public class Elevator extends GZSubsystem {
 	}
 
 	private synchronized void handleStates() {
-		//Dont allow Disabled or Demo while on the field
-		
+		// Dont allow Disabled or Demo while on the field
+
 		if (((this.isDisabed() && !Robot.gzOI.isFMS()) || mWantedState == ElevatorState.NEUTRAL)) {
 
 			if (stateNot(ElevatorState.NEUTRAL)) {

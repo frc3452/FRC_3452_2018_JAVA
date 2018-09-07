@@ -14,8 +14,8 @@ import org.usfirst.frc.team3452.robot.util.GZSRX.Side;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 import org.usfirst.frc.team3452.robot.util.Units;
 import org.usfirst.frc.team3452.robot.util.Util;
+import org.usfirst.frc.team3452.robot.util.Util.AlertLevel;
 
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motion.TrajectoryPoint;
@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class Drivetrain extends GZSubsystem {
+public class Drive extends GZSubsystem {
 
 	private DriveState mState = DriveState.NEUTRAL;
 	private DriveState mWantedState = mState;
@@ -51,7 +51,7 @@ public class Drivetrain extends GZSubsystem {
 	private double percentageComplete;
 	private double left_target = 0, right_target = 0;
 
-	public Drivetrain() {
+	public Drive() {
 		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
 		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
 		L3 = new GZSRX(kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
@@ -131,49 +131,71 @@ public class Drivetrain extends GZSubsystem {
 
 	private void talonInit(List<GZSRX> srx) {
 		for (GZSRX s : srx) {
-//			String name = talon.getName();
-			s.configFactoryDefault(GZSRX.TIMEOUT);
+
+			int id = s.getDeviceID();
+
+			GZSRX.logError(s.configFactoryDefault(GZSRX.TIMEOUT), AlertLevel.ERROR, this,
+					"COULD NOT RESET FACTORY DEFAULT FOR TALON " + id);
 
 			s.setInverted((s.getSide() == Side.LEFT) ? kDrivetrain.L_INVERT : kDrivetrain.R_INVERT);
 
 			// TODO ISSUE #11
 			// CURRENT LIMIT
-			s.configContinuousCurrentLimit(
+			GZSRX.logError(s.configContinuousCurrentLimit(
 					s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_LIMIT : kDrivetrain.AMP_30_LIMIT,
-					GZSRX.TIMEOUT);
-			s.configPeakCurrentLimit(
-					s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_TRIGGER : kDrivetrain.AMP_30_TRIGGER,
-					GZSRX.TIMEOUT);
-			s.configPeakCurrentDuration(
-					s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_TIME : kDrivetrain.AMP_30_TIME,
-					GZSRX.TIMEOUT);
-			s.configOpenloopRamp(kDrivetrain.OPEN_LOOP_RAMP_TIME, GZSRX.TIMEOUT);
+					GZSRX.TIMEOUT), AlertLevel.WARNING, this, "COULD NOT SET CURRENT LIMIT FOR TALON " + id);
+
+			GZSRX.logError(
+					s.configPeakCurrentLimit(s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_TRIGGER
+							: kDrivetrain.AMP_30_TRIGGER, GZSRX.TIMEOUT),
+					AlertLevel.WARNING, this, "COULD NOT SET CURRENT LIMIT TRIGGER FOR TALON " + id);
+
+			GZSRX.logError(
+					s.configPeakCurrentDuration(
+							s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_TIME : kDrivetrain.AMP_30_TIME,
+							GZSRX.TIMEOUT),
+					AlertLevel.WARNING, this, "COULD NOT SET CURRENT LIMIT TIME FOR TALON " + id);
+
 			s.enableCurrentLimit(true);
 
-			s.configNeutralDeadband(0.05, GZSRX.TIMEOUT);
+			GZSRX.logError(s.configOpenloopRamp(kDrivetrain.OPEN_LOOP_RAMP_TIME, GZSRX.TIMEOUT), AlertLevel.WARNING,
+					this, "COULD NOT SET OPEN LOOP RAMP TIME FOR TALON " + id);
+
+			GZSRX.logError(s.configNeutralDeadband(0.05, GZSRX.TIMEOUT), AlertLevel.WARNING, this,
+					"COULD NOT SET NEUTRAL DEADBAND" + id);
 
 			s.setSubsystem("Drive train");
 
 			if (s.getMaster() == Master.MASTER) {
 
-				final ErrorCode sensorPresent = s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,
-						0, GZSRX.TIMEOUT);
+				GZSRX.logError(
+						s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT),
+						AlertLevel.ERROR, this, "COULD NOT DETECT " + s.getSide() + " ENCODER");
 
-				if (sensorPresent != ErrorCode.OK)
-					System.out.println("ERROR DRIVETRAIN " + s.getSide() + " ENCODER NOT DETECTED.");
+				GZSRX.logError(s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT), AlertLevel.WARNING, this,
+						"COULD NOT ZERO " + s.getSide() + " ENCODER");
 
-				s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT);
 				s.setSensorPhase(true);
 
 				if (s.getSide() == Side.LEFT) {
-					s.config_kP(0, 0.425, GZSRX.TIMEOUT);
-					s.config_kI(0, 0, GZSRX.TIMEOUT);
-					s.config_kD(0, 4.25, GZSRX.TIMEOUT);
+					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.LEFT.P, GZSRX.TIMEOUT), AlertLevel.WARNING, this,
+							"COULD NOT SET " + s.getSide() + " 'P' GAIN");
+					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.LEFT.I, GZSRX.TIMEOUT), AlertLevel.WARNING, this,
+							"COULD NOT SET " + s.getSide() + " 'I' GAIN");
+					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.LEFT.D, GZSRX.TIMEOUT), AlertLevel.WARNING, this,
+							"COULD NOT SET " + s.getSide() + " 'D' GAIN");
+					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), AlertLevel.WARNING, this,
+							"COULD NOT SET " + s.getSide() + " 'F' GAIN");
 
 				} else {
-					s.config_kP(0, 0.425, GZSRX.TIMEOUT); // .8
-					s.config_kI(0, 0, GZSRX.TIMEOUT);
-					s.config_kD(0, 4.25, GZSRX.TIMEOUT);
+					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), AlertLevel.WARNING, this,
+							"COULD NOT SET " + s.getSide() + " 'P' GAIN");
+					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.RIGHT.I, GZSRX.TIMEOUT), AlertLevel.WARNING, this,
+							"COULD NOT SET " + s.getSide() + " 'I' GAIN");
+					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.RIGHT.D, GZSRX.TIMEOUT), AlertLevel.WARNING, this,
+							"COULD NOT SET " + s.getSide() + " 'D' GAIN");
+					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.RIGHT.F, GZSRX.TIMEOUT), AlertLevel.WARNING, this,
+							"COULD NOT SET " + s.getSide() + " 'F' GAIN");
 				}
 			} else {
 				s.follow(s.getSide() == Side.LEFT ? L1 : R1);
@@ -636,7 +658,9 @@ public class Drivetrain extends GZSubsystem {
 		R1.clearMotionProfileTrajectories();
 
 		// generate and push each mp point
-		if (Robot.fileManager.mpL.size() == Robot.fileManager.mpR.size()) {
+		if (Robot.fileManager.mpL.size() != Robot.fileManager.mpR.size()) {
+			System.out.println("Motion profile lists not same size!!!");
+		} else {
 			for (int i = 0; i < Robot.fileManager.mpL.size(); i++) {
 
 				leftPoint.position = Robot.fileManager.mpL.get(i).get(0) * 4096;
@@ -677,8 +701,6 @@ public class Drivetrain extends GZSubsystem {
 				R1.pushMotionProfileTrajectory(rightPoint);
 			}
 			System.out.println("Motion profile pushed to Talons");
-		} else {
-			System.out.println("Motion profile lists not same size!!!");
 		}
 
 	}

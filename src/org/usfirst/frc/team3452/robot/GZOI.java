@@ -89,7 +89,7 @@ public class GZOI extends GZSubsystem {
 	}
 
 	public boolean isTele() {
-		return DriverStation.getInstance().isEnabled() && !DriverStation.getInstance().isAutonomous() && !DriverStation.getInstance().isTest();
+		return DriverStation.getInstance().isEnabled() && !isAuto() && !isTest();
 	}
 	
 	public boolean isTest()
