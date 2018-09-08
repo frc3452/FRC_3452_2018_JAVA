@@ -19,6 +19,10 @@ public class Climber extends GZSubsystem {
 
 	// Construction
 	public Climber() {
+	}
+	
+	public synchronized void construct()
+	{
 		climber_1 = new Spark(kClimber.CLIMBER_1);
 		climber_1.setInverted(kClimber.CLIMBER_1_INVERT);
 

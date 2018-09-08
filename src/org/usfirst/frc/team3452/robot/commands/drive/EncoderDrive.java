@@ -1,8 +1,9 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
-import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Drive;
+
+import edu.wpi.first.wpilibj.command.Command;
 
 public class EncoderDrive extends Command {
 	private double m_left, m_right, m_laccel, m_raccel, m_topspeed;

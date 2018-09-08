@@ -1,9 +1,10 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Drive;
 import org.usfirst.frc.team3452.robot.subsystems.Drive.DriveState;
+
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class SpeedModifier extends InstantCommand {
 	private double m_modify;

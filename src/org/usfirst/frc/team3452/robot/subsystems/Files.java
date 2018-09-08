@@ -23,13 +23,11 @@ import edu.wpi.first.wpilibj.Notifier;
  * @since 4-18-2018
  *
  */
-public class FileManagement {
+public class Files {
 
 	public ArrayList<ArrayList<Double>> mpL = new ArrayList<>();
 	public ArrayList<ArrayList<Double>> mpR = new ArrayList<>();
 	public int mpDur = 0;
-
-	private FileWriter fw;
 
 	private FileReader fr;
 	private Scanner scnr;
@@ -52,7 +50,7 @@ public class FileManagement {
 	 * 
 	 * @author max
 	 */
-	public FileManagement() {
+	public Files() {
 		mLog = new GZLog();
 	}
 
@@ -251,8 +249,7 @@ public class FileManagement {
 					f.createNewFile();
 
 				// create file writing vars
-				fw = new FileWriter(f);
-				bw = new BufferedWriter(fw);
+				bw = new BufferedWriter(new FileWriter(f));
 			}
 
 		} catch (Exception e) {
@@ -265,14 +262,11 @@ public class FileManagement {
 		try {
 			switch (readwrite) {
 			case READ:
-				// CLOSE READING
 				scnr.close();
 				fr.close();
 				break;
 			case WRITE:
-				// CLOSE WRITING
 				bw.close();
-				fw.close();
 				break;
 			}
 		} catch (Exception e) {
@@ -339,7 +333,7 @@ public class FileManagement {
 			}
 		}
 	}
-	
+
 	private String loggingName(boolean returnCurrent) {
 		if (returnCurrent) {
 			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Util.dateTime(false);
@@ -368,5 +362,4 @@ public class FileManagement {
 	public enum TASK {
 		Record, Log, Parse
 	}
-
 }

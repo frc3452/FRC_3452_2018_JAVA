@@ -21,11 +21,16 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	//Input & output object.
 	public IO mIO = new IO();
 
-	/**
-	 * This is a constructor, this runs when you create the object in Robot.java.
-	 * Use this for initialization
-	 */
+	
 	public ExampleGZSubsystem() {
+		
+	}
+	
+	/**
+	 *  
+	 */
+	public synchronized void construct()
+	{
 		example_motor = new Spark(1);
 	}
 

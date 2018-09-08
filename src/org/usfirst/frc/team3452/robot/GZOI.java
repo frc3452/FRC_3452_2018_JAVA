@@ -17,6 +17,11 @@ public class GZOI extends GZSubsystem {
 	private boolean mWasTele = false, mWasAuto = false, mWasTest = false;
 	
 	public GZOI() {
+	
+	}
+	
+	public synchronized void construct()
+	{
 		driverJoy = new GZJoystick(0);
 		opJoy = new GZJoystick(1);
 	}

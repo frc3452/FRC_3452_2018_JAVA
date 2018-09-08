@@ -1,7 +1,7 @@
 package org.usfirst.frc.team3452.robot.util;
 
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.util.Util.AlertLevel;
+import org.usfirst.frc.team3452.robot.subsystems.Health.AlertLevel;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -38,9 +38,9 @@ public class GZSRX extends WPI_TalonSRX {
 		mBreaker = breaker;
 	}
 
-	public static void logError(ErrorCode errorCode, AlertLevel level, GZSubsystem subsystem, String message) {
+	public static void logError(ErrorCode errorCode, GZSubsystem subsystem, AlertLevel level, String message) {
 		if (errorCode != ErrorCode.OK)
-			Robot.health.addAlert(level, subsystem, message);
+			Robot.health.addAlert(subsystem, level, message);
 	}
 
 	public Breaker getBreakerSize() {

@@ -1,11 +1,16 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
-
-import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.Constants.kAuton;
 import org.usfirst.frc.team3452.robot.Constants.kIntake;
-import org.usfirst.frc.team3452.robot.commands.drive.*;
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
+import org.usfirst.frc.team3452.robot.commands.drive.DriveToCube;
+import org.usfirst.frc.team3452.robot.commands.drive.DriveToStop;
+import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
+import org.usfirst.frc.team3452.robot.commands.drive.EncoderGyro;
+import org.usfirst.frc.team3452.robot.commands.drive.GyroPos;
+import org.usfirst.frc.team3452.robot.commands.drive.GyroReset;
+import org.usfirst.frc.team3452.robot.commands.drive.ZeroEncoders;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorPosition;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
@@ -14,6 +19,8 @@ import org.usfirst.frc.team3452.robot.commands.pwm.IntakeWhileDrive;
 import org.usfirst.frc.team3452.robot.subsystems.Auton;
 import org.usfirst.frc.team3452.robot.subsystems.Auton.AO;
 import org.usfirst.frc.team3452.robot.subsystems.Auton.AV;
+
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class LeftAuton extends CommandGroup {
 

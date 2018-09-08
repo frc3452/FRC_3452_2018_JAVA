@@ -3,12 +3,12 @@ package org.usfirst.frc.team3452.robot.subsystems;
 import java.util.Arrays;
 
 import org.usfirst.frc.team3452.robot.Constants;
-import org.usfirst.frc.team3452.robot.OI;
-import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.Constants.kAuton;
 import org.usfirst.frc.team3452.robot.Constants.kLights;
+import org.usfirst.frc.team3452.robot.OI;
+import org.usfirst.frc.team3452.robot.Robot;
+import org.usfirst.frc.team3452.robot.subsystems.Health.AlertLevel;
 import org.usfirst.frc.team3452.robot.util.GZJoystick.Buttons;
-import org.usfirst.frc.team3452.robot.util.Util.AlertLevel;
 import org.usfirst.frc.team3452.robot.util.GZSRX;
 import org.usfirst.frc.team3452.robot.util.GZSubsystem;
 
@@ -42,11 +42,16 @@ public class Lights extends GZSubsystem {
 	 * @author max
 	 */
 	public Lights() {
+		
+	}
+	
+	public synchronized void construct()
+	{
 		for (int i = 0; i < 10; i++)
 			tempArray[i] = 3452;
 
 		canifier = new CANifier(Constants.kLights.CANIFIER_ID);
-		GZSRX.logError(canifier.configFactoryDefault(), AlertLevel.WARNING, this, "CANIFIER NOT FOUND");
+		GZSRX.logError(canifier.configFactoryDefault(), this, AlertLevel.WARNING, "CANIFIER NOT FOUND");
 
 		lightTimer.stop();
 		lightTimer.reset();

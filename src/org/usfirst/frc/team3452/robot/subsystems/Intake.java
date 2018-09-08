@@ -17,6 +17,10 @@ public class Intake extends GZSubsystem {
 
 	// Construction
 	public Intake() {
+	}
+	
+	public synchronized void construct()
+	{
 		left_intake = new Spark(kIntake.INTAKE_L);
 		right_intake = new Spark(kIntake.INTAKE_R);
 

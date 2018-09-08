@@ -1,5 +1,9 @@
 package org.usfirst.frc.team3452.robot.util;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -16,19 +20,14 @@ public class Util {
 		}
 		return value;
 	}
-	
-	public static boolean between(double value, double low, double high)
-	{
+
+	public static boolean between(double value, double low, double high) {
 		if (value >= low && value <= high)
 			return true;
-		
+
 		return false;
 	}
 
-	public static enum AlertLevel {
-		WARNING, ERROR, NONE
-	}
-	
 	public static double applyDeadband(double value, double deadband) {
 		if (Math.abs(value) > deadband) {
 			if (value > 0.0) {
@@ -100,7 +99,6 @@ public class Util {
 		}
 	}
 
-	
 	public static enum Directions {
 		UP, DOWN, LEFT, RIGHT
 	}
