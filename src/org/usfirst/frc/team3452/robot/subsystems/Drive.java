@@ -72,7 +72,8 @@ public class Drive extends GZSubsystem {
 
 		brake(NeutralMode.Coast);
 
-		talonInit(controllers);
+		talonInit();
+		enableFollower();
 
 		pdp.setSubsystem("Drive train");
 
@@ -134,13 +135,13 @@ public class Drive extends GZSubsystem {
 		}
 	}
 
-	private void talonInit(List<GZSRX> srx) {
-		for (GZSRX s : srx) {
+	private void talonInit() {
+		for (GZSRX s : controllers) {
 
 			int id = s.getDeviceID();
 
 			GZSRX.logError(s.configFactoryDefault(GZSRX.TIMEOUT), this, AlertLevel.ERROR,
-					"COULD NOT RESET FACTORY DEFAULT FOR TALON " + id);
+					"Could not factory reset talon " + id);
 
 			s.setInverted((s.getSide() == Side.LEFT) ? kDrivetrain.L_INVERT : kDrivetrain.R_INVERT);
 
@@ -148,64 +149,61 @@ public class Drive extends GZSubsystem {
 			// CURRENT LIMIT
 			GZSRX.logError(s.configContinuousCurrentLimit(
 					s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_LIMIT : kDrivetrain.AMP_30_LIMIT,
-					GZSRX.TIMEOUT), this, AlertLevel.WARNING, "COULD NOT SET CURRENT LIMIT FOR TALON " + id);
+					GZSRX.TIMEOUT), this, AlertLevel.WARNING, "Could not set current limit for talon " + id);
 
 			GZSRX.logError(
 					s.configPeakCurrentLimit(s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_TRIGGER
 							: kDrivetrain.AMP_30_TRIGGER, GZSRX.TIMEOUT),
-					this, AlertLevel.WARNING, "COULD NOT SET CURRENT LIMIT TRIGGER FOR TALON " + id);
+					this, AlertLevel.WARNING, "Could not set current limit trigger for talon " + id);
 
 			GZSRX.logError(
 					s.configPeakCurrentDuration(
 							s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_TIME : kDrivetrain.AMP_30_TIME,
 							GZSRX.TIMEOUT),
-					this, AlertLevel.WARNING, "COULD NOT SET CURRENT LIMIT TIME FOR TALON " + id);
+					this, AlertLevel.WARNING, "Could not set current limit time for talon " + id);
 
 			s.enableCurrentLimit(true);
 
 			GZSRX.logError(s.configOpenloopRamp(kDrivetrain.OPEN_LOOP_RAMP_TIME, GZSRX.TIMEOUT), this,
-					AlertLevel.WARNING, "COULD NOT SET OPEN LOOP RAMP TIME FOR TALON " + id);
+					AlertLevel.WARNING, "Could not set open loop ramp time for Talon " + id);
 
 			GZSRX.logError(s.configNeutralDeadband(0.05, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-					"COULD NOT SET NEUTRAL DEADBAND" + id);
+					"Could not set Neutral Deadband for talon " + id);
 
 			s.setSubsystem("Drive train");
 
 			if (s.getMaster() == Master.MASTER) {
 
 				GZSRX.logError(
-						s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT),
-						this, AlertLevel.ERROR, "COULD NOT DETECT " + s.getSide() + " ENCODER");
+						s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT), this,
+						AlertLevel.ERROR, "Could not detect " + s.getSide() + " encoder");
 
 				GZSRX.logError(s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-						"COULD NOT ZERO " + s.getSide() + " ENCODER");
+						"Could not zero " + s.getSide() + " encoder");
 
 				s.setSensorPhase(true);
 
 				if (s.getSide() == Side.LEFT) {
 					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.LEFT.P, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"COULD NOT SET " + s.getSide() + " 'P' GAIN");
+							"Could not set " + s.getSide() + " 'P' gain");
 					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.LEFT.I, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"COULD NOT SET " + s.getSide() + " 'I' GAIN");
+							"Could not set " + s.getSide() + " 'I' gain");
 					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.LEFT.D, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"COULD NOT SET " + s.getSide() + " 'D' GAIN");
+							"Could not set " + s.getSide() + " 'D' gain");
 					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"COULD NOT SET " + s.getSide() + " 'F' GAIN");
+							"Could not set " + s.getSide() + " 'F' gain");
 
 				} else {
 					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"COULD NOT SET " + s.getSide() + " 'P' GAIN");
+							"Could not set " + s.getSide() + " 'P' gain");
 					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.RIGHT.I, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"COULD NOT SET " + s.getSide() + " 'I' GAIN");
+							"Could not set " + s.getSide() + " 'I' gain");
 					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.RIGHT.D, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"COULD NOT SET " + s.getSide() + " 'D' GAIN");
+							"Could not set " + s.getSide() + " 'D' gain");
 					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.RIGHT.F, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"COULD NOT SET " + s.getSide() + " 'F' GAIN");
+							"Could not set " + s.getSide() + " 'F' gain");
 				}
-			} else {
-				s.follow(s.getSide() == Side.LEFT ? L1 : R1);
 			}
-
 		}
 	}
 
