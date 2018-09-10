@@ -11,8 +11,9 @@ public class Intake extends GZSubsystem {
 
 	private static Spark left_intake, right_intake;
 
-	private IntakeState mState = IntakeState.NEUTRAL;
-	private IntakeState mWantedState = mState;
+	//Force switch state to neutral on start up
+	private IntakeState mState = IntakeState.MANUAL;
+	private IntakeState mWantedState = IntakeState.NEUTRAL;
 	public IO mIO = new IO();
 
 	// Construction

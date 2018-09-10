@@ -11,8 +11,8 @@ public class Climber extends GZSubsystem {
 
 	private Spark climber_1;
 
-	private ClimberState mState = ClimberState.NEUTRAL;
-	private ClimberState mWantedState = mState;
+	private ClimberState mState = ClimberState.MANUAL;
+	private ClimberState mWantedState = ClimberState.NEUTRAL;
 	public IO mIO = new IO();
 
 	private int climbCounter = 0;

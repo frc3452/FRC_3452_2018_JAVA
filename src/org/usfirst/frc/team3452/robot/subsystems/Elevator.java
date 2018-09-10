@@ -28,8 +28,10 @@ public class Elevator extends GZSubsystem {
 	private static GZSRX elevator_1, elevator_2;
 	private List<GZSRX> controllers;
 
-	private ElevatorState mState = ElevatorState.NEUTRAL;
-	private ElevatorState mWantedState = mState;
+	
+	//Force switch state to neutral on start up
+	private ElevatorState mState = ElevatorState.MANUAL;
+	private ElevatorState mWantedState = ElevatorState.NEUTRAL;
 	public IO mIO = new IO();
 
 	private double driveModifier = 0;

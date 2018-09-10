@@ -33,8 +33,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive extends GZSubsystem {
 
-	private DriveState mState = DriveState.NEUTRAL;
-	private DriveState mWantedState = mState;
+	//Force switch state to neutral on start up
+	private DriveState mState = DriveState.OPEN_LOOP;
+	private DriveState mWantedState = DriveState.NEUTRAL;
 	public IO mIO = new IO();
 
 	// PDP
