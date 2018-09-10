@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
 
 	public static final Health health = new Health();
 	
+	@SuppressWarnings("unused")
 	private static final OI oi = new OI();
 
 	// LOGGING CONTROL
