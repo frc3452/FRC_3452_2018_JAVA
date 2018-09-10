@@ -25,6 +25,7 @@ public class MiddleAuton extends CommandGroup {
 	 * @see Auton
 	 */
 	public MiddleAuton(AO option, AV switchVersion) {
+		//Test commit
 		addSequential(new ZeroEncoders());
 		addSequential(new GyroReset());
 
