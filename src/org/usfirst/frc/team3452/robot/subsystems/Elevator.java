@@ -28,8 +28,7 @@ public class Elevator extends GZSubsystem {
 	private static GZSRX elevator_1, elevator_2;
 	private List<GZSRX> controllers;
 
-	
-	//Force switch state to neutral on start up
+	// Force switch state to neutral on start up
 	private ElevatorState mState = ElevatorState.MANUAL;
 	private ElevatorState mWantedState = ElevatorState.NEUTRAL;
 	public IO mIO = new IO();
@@ -56,16 +55,16 @@ public class Elevator extends GZSubsystem {
 		elevator_1.setInverted(Constants.kElevator.E_1_INVERT);
 		elevator_2.setInverted(Constants.kElevator.E_2_INVERT);
 
-		GZSRX.logError(elevator_1.config_kF(0, kElevator.PID.F, 10), this, AlertLevel.WARNING,
-				"Could not set 'F' gain");
-		GZSRX.logError(elevator_1.config_kP(0, kElevator.PID.P, 10), this, AlertLevel.WARNING,
-				"Could not set 'P' gain");
-		GZSRX.logError(elevator_1.config_kI(0, kElevator.PID.I, 10), this, AlertLevel.WARNING,
-				"Could not set 'I' gain");
-		GZSRX.logError(elevator_1.config_kD(0, kElevator.PID.D, 10), this, AlertLevel.WARNING,
-				"Could not set 'D' gain");
-		GZSRX.logError(elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10), this, AlertLevel.WARNING,
-				"Could not set open loop ramp");
+		GZSRX.logError(elevator_1.config_kF(0, kElevator.PID.F, 10), this,
+				AlertLevel.WARNING, "Could not set 'F' gain");
+		GZSRX.logError(elevator_1.config_kP(0, kElevator.PID.P, 10), this,
+				AlertLevel.WARNING, "Could not set 'P' gain");
+		GZSRX.logError(elevator_1.config_kI(0, kElevator.PID.I, 10), this,
+				AlertLevel.WARNING, "Could not set 'I' gain");
+		GZSRX.logError(elevator_1.config_kD(0, kElevator.PID.D, 10), this,
+				AlertLevel.WARNING, "Could not set 'D' gain");
+		GZSRX.logError(elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10), Robot.elevator,
+				AlertLevel.WARNING, "Could not set open loop ramp");
 		GZSRX.logError(elevator_1.configClosedloopRamp(Constants.kElevator.CLOSED_RAMP_TIME, 10), this,
 				AlertLevel.WARNING, "Could not set closed loop ramp");
 
@@ -74,8 +73,8 @@ public class Elevator extends GZSubsystem {
 		GZSRX.logError(elevator_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10), this,
 				AlertLevel.ERROR, "Could not find encoder");
 
-		GZSRX.logError(elevator_1.setSelectedSensorPosition(0, 0, 10), this, AlertLevel.WARNING,
-				"Could not zero encoder");
+		GZSRX.logError(elevator_1.setSelectedSensorPosition(0, 0, 10), this,
+				AlertLevel.WARNING, "Could not zero encoder");
 		elevator_1.setSensorPhase(Constants.kElevator.ENC_INVERT);
 
 		// SOFT LIMITS FOR DEMO MODE
@@ -87,8 +86,8 @@ public class Elevator extends GZSubsystem {
 				AlertLevel.WARNING, "Could not set upper soft limit");
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
-		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), this, AlertLevel.ERROR,
-				"Could not set encoder zero on bottom limit");
+		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), this,
+				AlertLevel.ERROR, "Could not set encoder zero on bottom limit");
 
 		// REMOTE LIMIT SWITCHES
 		GZSRX.logError(
@@ -114,12 +113,12 @@ public class Elevator extends GZSubsystem {
 
 			s.setNeutralMode(NeutralMode.Brake);
 
-			GZSRX.logError(s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10), this, AlertLevel.WARNING,
-					"Could not set current-limit limit for " + s.getMaster());
-			GZSRX.logError(s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10), this, AlertLevel.WARNING,
-					"Could not set current-limit trigger for " + s.getMaster());
-			GZSRX.logError(s.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10), this, AlertLevel.WARNING,
-					"Could not set current-limit duration for " + s.getMaster());
+			GZSRX.logError(s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10), Robot.elevator,
+					AlertLevel.WARNING, "Could not set current-limit limit for " + s.getMaster());
+			GZSRX.logError(s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10), Robot.elevator,
+					AlertLevel.WARNING, "Could not set current-limit trigger for " + s.getMaster());
+			GZSRX.logError(s.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10), Robot.elevator,
+					AlertLevel.WARNING, "Could not set current-limit duration for " + s.getMaster());
 			s.enableCurrentLimit(true);
 
 			s.setSubsystem("Elevator");
@@ -321,7 +320,7 @@ public class Elevator extends GZSubsystem {
 		GZSRX.logError(elevator_1.configForwardSoftLimitEnable(enableSoftLimit), this,
 				(enableSoftLimit) ? AlertLevel.WARNING : AlertLevel.ERROR,
 				"Could not " + (enableSoftLimit ? "enable" : "disable") + " forward soft limit");
-		
+
 		GZSRX.logError(elevator_1.configReverseSoftLimitEnable(enableSoftLimit), this,
 				(enableSoftLimit) ? AlertLevel.WARNING : AlertLevel.ERROR,
 				"Could not " + (enableSoftLimit ? "enable" : "disable") + " reverse soft limit");

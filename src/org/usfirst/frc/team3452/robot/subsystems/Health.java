@@ -13,19 +13,19 @@ import org.usfirst.frc.team3452.robot.util.Util;
 
 public class Health {
 
-	private Map<GZSubsystem, ArrayList<ArrayList<String>>> map = new HashMap<>();
+	public Map<GZSubsystem, ArrayList<ArrayList<String>>> map = new HashMap<>();
 
 	public Health() {
+		for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
+			ArrayList<String> temp1 = new ArrayList<>();
+			temp1.add(AlertLevel.NONE.toString());
+			temp1.add("NA");
 
-		ArrayList<String> temp1 = new ArrayList<>();
-		temp1.add(AlertLevel.NONE.toString());
-		temp1.add("NA");
+			ArrayList<ArrayList<String>> temp2 = new ArrayList<ArrayList<String>>();
+			temp2.add(temp1);
 
-		ArrayList<ArrayList<String>> temp2 = new ArrayList<ArrayList<String>>();
-		temp2.add(temp1);
-
-		for (GZSubsystem s : Robot.allSubsystems.getSubsystems())
 			map.put(s, temp2);
+		}
 	}
 
 	public void addAlert(GZSubsystem subsystem, AlertLevel level, String message) {
@@ -41,6 +41,7 @@ public class Health {
 			String body = "", table = "";
 
 			// Find highest alert level per subsystem
+
 			// Loop through each subsystem
 			for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
 				// Loop through all errors
@@ -69,10 +70,10 @@ public class Health {
 				table += tableRow(
 						tableCell(s.getClass().getSimpleName() + tableCell("", s.getHighestAlert().toString(), true)));
 
-			//Put table tags around values
+			// Put table tags around values
 			table = table(table);
-			
-			//Add table to body.
+
+			// Add table to body.
 			body += table;
 
 			body += header("Alerts:");
@@ -83,6 +84,9 @@ public class Health {
 				// If errors are present
 				if (s.getHighestAlert() != AlertLevel.NONE) {
 
+					//Print subsystem name
+					body += header(s.getClass().getSimpleName(), 3);
+
 					// Loop through errors
 					for (int i = 0; i < map.get(s).size(); i++) {
 
@@ -92,13 +96,13 @@ public class Health {
 						// If error = ERROR, do bold and red. If warning, paragraph
 						if (error.get(0).equals(AlertLevel.ERROR.toString()))
 							body += bold(error.get(1), "red");
-						else
+						else if (error.get(0).equals(AlertLevel.WARNING.toString()))
 							body += paragraph(error.get(1));
 					}
 				}
 			}
 
-			htmlString.replace("$BODY", body);
+			htmlString = htmlString.replace("$BODY", body);
 
 			try {
 				File newHtmlFile = new File("/home/lvuser/Health.html");
@@ -109,31 +113,39 @@ public class Health {
 				System.out.println("Could not write health file!");
 				e.printStackTrace();
 			}
-			
+
 		} catch (Exception e) {
 			System.out.println("Could not generate health file!");
 			e.printStackTrace();
 		}
 	}
 
+	public String header(String f, int headernumber) {
+		return newLine("<h" + headernumber + ">" + f + "</h" + headernumber + ">");
+	}
+
 	public String header(String f) {
-		return "<h1>" + f + "</h1>";
+		return header(f, 1);
 	}
 
 	public String table(String f) {
-		return "<table>" + f + "</table";
+		return newLine("<table>" + f + "</table>");
 	}
 
 	public String paragraph(String f) {
-		return "<p>" + f + "</p";
+		return newLine("<p>" + f + "</p>");
 	}
 
 	public String tableHeader(String f) {
-		return "<th>" + f + "</th";
+		return newLine("<th>" + f + "</th>");
+	}
+
+	public String newLine(String f) {
+		return f + "\n";
 	}
 
 	public String tableRow(String f) {
-		return "<tr>" + f + "</tr";
+		return newLine("<tr>" + f + "</tr>");
 	}
 
 	public String tableCell(String f, String color, boolean celll_is_color) {
@@ -141,12 +153,12 @@ public class Health {
 		if (celll_is_color)
 			temp = "<td style=\"background-color:" + color + "; color: " + color + "\">" + f + "</td>";
 		else
-			temp = "td style=\"background-color:" + color + ";\">" + f + "</td>";
+			temp = "<td style=\"background-color:" + color + ";\">" + f + "</td>";
 		return temp;
 	}
 
 	public String tableCell(String f) {
-		return "<td" + f + "</td";
+		return "<td>" + f + "</td>";
 	}
 
 	public String bold(String f, String color) {

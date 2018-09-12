@@ -25,7 +25,7 @@ public class Climber extends GZSubsystem {
 	{
 		climber_1 = new Spark(kClimber.CLIMBER_1);
 		climber_1.setInverted(kClimber.CLIMBER_1_INVERT);
-
+		
 		climber_1.setSubsystem(Climber.class.getName());
 		climber_1.setName("climber_1");
 	}

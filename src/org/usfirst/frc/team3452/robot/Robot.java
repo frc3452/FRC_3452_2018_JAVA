@@ -48,7 +48,6 @@ public class Robot extends TimedRobot {
 		allSubsystems.construct();
 		auton.fillAutonArray();
 		health.generateHealth();
-
 		// TODO ISSUE #14
 	}
 

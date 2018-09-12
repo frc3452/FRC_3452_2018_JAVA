@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive extends GZSubsystem {
 
-	//Force switch state to neutral on start up
+	// Force switch state to neutral on start up
 	private DriveState mState = DriveState.OPEN_LOOP;
 	private DriveState mWantedState = DriveState.NEUTRAL;
 	public IO mIO = new IO();
@@ -185,24 +185,23 @@ public class Drive extends GZSubsystem {
 				s.setSensorPhase(true);
 
 				if (s.getSide() == Side.LEFT) {
-					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.LEFT.P, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'P' gain");
-					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.LEFT.I, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'I' gain");
-					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.LEFT.D, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'D' gain");
-					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'F' gain");
-
+					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.LEFT.P, GZSRX.TIMEOUT), Robot.drive,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'P' gain");
+					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.LEFT.I, GZSRX.TIMEOUT), Robot.drive,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'I' gain");
+					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.LEFT.D, GZSRX.TIMEOUT), Robot.drive,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
+					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), Robot.drive,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
 				} else {
-					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'P' gain");
-					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.RIGHT.I, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'I' gain");
-					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.RIGHT.D, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'D' gain");
-					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.RIGHT.F, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'F' gain");
+					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), Robot.drive,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'P' gain");
+					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.RIGHT.I, GZSRX.TIMEOUT), Robot.drive,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'I' gain");
+					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.RIGHT.D, GZSRX.TIMEOUT), Robot.drive,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
+					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.RIGHT.F, GZSRX.TIMEOUT), Robot.drive,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
 				}
 			}
 		}
@@ -781,7 +780,7 @@ public class Drive extends GZSubsystem {
 		this.percentageComplete = percentageComplete;
 	}
 
-	public synchronized double getGyroAngle() {
+	public synchronized Double getGyroAngle() {
 		return mGyro.getAngle();
 	}
 
