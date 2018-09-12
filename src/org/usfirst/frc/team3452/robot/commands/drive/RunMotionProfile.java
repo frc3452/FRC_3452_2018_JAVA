@@ -2,7 +2,7 @@ package org.usfirst.frc.team3452.robot.commands.drive;
 
 import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.motionprofiles.Path;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.DriveState;
+import org.usfirst.frc.team3452.robot.subsystems.Drive.DriveState;
 import org.usfirst.frc.team3452.robot.util.GZSRX.Side;
 
 import com.ctre.phoenix.motion.MotionProfileStatus;

@@ -9,6 +9,8 @@ package org.usfirst.frc.team3452.robot;
 
 public class Constants {
 	public class kAuton {
+		public static final int COMMAND_ARRAY_SIZE = 41;
+
 		public static final double CORRECTION = 0.025;
 
 		public static final int SAFTEY_SWITCH = 96;
@@ -72,6 +74,23 @@ public class Constants {
 	}
 
 	public class kDrivetrain {
+
+		public class PID {
+			public class LEFT {
+				public final static double P = .425;
+				public final static double I = 0;
+				public final static double D = 4.25;
+				public static final double F = 0;
+			}
+
+			public class RIGHT {
+				public final static double P = .425;
+				public final static double I = 0;
+				public final static double D = 4.25;
+				public static final double F = 0;
+			}
+		}
+
 		public final static int L1 = 1, L2 = 2, L3 = 3, L4 = 4;
 		public final static int R1 = 5, R2 = 6, R3 = 7, R4 = 8;
 
@@ -104,6 +123,13 @@ public class Constants {
 	}
 
 	public class kElevator {
+		public class PID {
+			public static final double F = 0;
+			public static final double P = .2;
+			public static final double I = 0.000028;
+			public static final double D = 2.5;
+		}
+		
 		public static final int E_1 = 9;
 		public static final int E_2 = 10;
 
@@ -173,7 +199,7 @@ public class Constants {
 		public static final int RED = 0;
 		public static final int BLUE = 120;
 		public static final int PURPLE = 55;
-		public static final int GREEN = 254; //;)
+		public static final int GREEN = 254; // ;)
 		public static final int YELLOW = 330;
 	}
 
@@ -184,10 +210,14 @@ public class Constants {
 	}
 
 	public class kOI {
-		public static final double INTAKE = .3;
-		public static final double ELEVATOR_OVERRIDE_DRIVE = .45;
-		public static final double ELEVATOR_OVERRIDE_OP = ELEVATOR_OVERRIDE_DRIVE - .2;
-		public static final double ENDGAME = .6;
+		public class Rumble {
+
+			public final static double INTAKE = .3;
+			public final static double ELEVATOR_OVERRIDE_DRIVE = .45;
+			public final static double ELEVATOR_OVERRIDE_OP = ELEVATOR_OVERRIDE_DRIVE - .2;
+			public final static double ENDGAME = .6;
+
+		}
 	}
-	
+
 }

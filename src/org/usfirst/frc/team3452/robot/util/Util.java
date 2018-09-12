@@ -16,12 +16,11 @@ public class Util {
 		}
 		return value;
 	}
-	
-	public static boolean between(double value, double low, double high)
-	{
+
+	public static boolean between(double value, double low, double high) {
 		if (value >= low && value <= high)
 			return true;
-		
+
 		return false;
 	}
 
@@ -96,7 +95,6 @@ public class Util {
 		}
 	}
 
-	
 	public static enum Directions {
 		UP, DOWN, LEFT, RIGHT
 	}

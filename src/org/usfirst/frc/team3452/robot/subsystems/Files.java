@@ -23,13 +23,11 @@ import edu.wpi.first.wpilibj.Notifier;
  * @since 4-18-2018
  *
  */
-public class FileManagement {
+public class Files {
 
 	public ArrayList<ArrayList<Double>> mpL = new ArrayList<>();
 	public ArrayList<ArrayList<Double>> mpR = new ArrayList<>();
 	public int mpDur = 0;
-
-	private FileWriter fw;
 
 	private FileReader fr;
 	private Scanner scnr;
@@ -45,12 +43,14 @@ public class FileManagement {
 	private boolean hasPrintedLogFailed = false;
 	private boolean hasPrintedProfileRecordFailed = false;
 
+	private boolean isLogging = false;
+
 	/**
 	 * hardware initialization
 	 * 
 	 * @author max
 	 */
-	public FileManagement() {
+	public Files() {
 		mLog = new GZLog();
 	}
 
@@ -97,7 +97,7 @@ public class FileManagement {
 	 * @author max
 	 */
 	@SuppressWarnings("unused")
-	private void printValues() {
+	private void printListValues() {
 		try {
 			for (int i = 0; i < mpL.size(); i++) {
 				System.out.println(mpL.get(i).get(0) + "\t" + mpL.get(i).get(1) + "\t" + mpR.get(i).get(0) + "\t"
@@ -185,8 +185,11 @@ public class FileManagement {
 				bw.write(mLog.getHeader());
 				bw.write("\r\n");
 				logging.startPeriodic(kFileManagement.LOGGING_SPEED);
-			} else
+				isLogging = true;
+			} else {
 				logging.stop();
+				isLogging = false;
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -222,7 +225,7 @@ public class FileManagement {
 	 */
 	private Notifier logging = new Notifier(new loggingRunnable());
 
-	private void createFile(String fileName, String folder, fileState readwrite, boolean usb) {
+	private void createCSVFile(String fileName, String folder, fileState readwrite, boolean usb) {
 		try {
 			switch (readwrite) {
 			case READ:
@@ -246,8 +249,7 @@ public class FileManagement {
 					f.createNewFile();
 
 				// create file writing vars
-				fw = new FileWriter(f);
-				bw = new BufferedWriter(fw);
+				bw = new BufferedWriter(new FileWriter(f));
 			}
 
 		} catch (Exception e) {
@@ -256,18 +258,15 @@ public class FileManagement {
 		}
 	}
 
-	private void closeFile(fileState readwrite) {
+	private void closeCSVFile(fileState readwrite) {
 		try {
 			switch (readwrite) {
 			case READ:
-				// CLOSE READING
 				scnr.close();
 				fr.close();
 				break;
 			case WRITE:
-				// CLOSE WRITING
 				bw.close();
-				fw.close();
 				break;
 			}
 		} catch (Exception e) {
@@ -286,45 +285,50 @@ public class FileManagement {
 	 * @see TASK
 	 * @see STATE
 	 */
-	public void control(String name, String folder, boolean usb, TASK task, boolean startup) {
+	public void csvControl(String name, String folder, boolean usb, TASK task, boolean startup) {
 		if (startup) {
 			switch (task) {
 			case Record:
 				System.out.println("Opening Record: " + name + ".csv");
-				createFile(name, folder, fileState.WRITE, usb);
+				createCSVFile(name, folder, fileState.WRITE, usb);
 				writeToProfile(true);
 
 				break;
 
 			case Parse:
 				System.out.println("Opening Parse: " + name + ".csv");
-				createFile(name, folder, fileState.READ, usb);
+				createCSVFile(name, folder, fileState.READ, usb);
 				parseMotionProfileCSV();
 				// printValues();
 				break;
 
 			case Log:
-				System.out.println("Opening Log: " + loggingName(true) + ".csv");
-				createFile(loggingName(false), folder, fileState.WRITE, usb);
-				writeToLog(true);
+
+				if (isLogging == false) {
+					System.out.println("Opening Log: " + loggingName(true) + ".csv");
+					createCSVFile(loggingName(false), folder, fileState.WRITE, usb);
+					writeToLog(true);
+				}
 
 				break;
 			}
-		} else { //not startup
+		} else { // not startup
 			switch (task) {
 			case Record:
 				System.out.println("Closing " + task + ": " + name + ".csv");
 				writeToProfile(false);
-				closeFile(fileState.WRITE);
+				closeCSVFile(fileState.WRITE);
 				break;
 			case Parse:
 				System.out.println("Closing " + task + ": " + name + ".csv");
-				closeFile(fileState.READ);
+				closeCSVFile(fileState.READ);
 				break;
 			case Log:
-				System.out.println("Closing " + task + ": " + loggingName(false) + ".csv");
-				writeToLog(false);
-				closeFile(fileState.WRITE);
+				if (isLogging) {
+					System.out.println("Closing " + task + ": " + loggingName(false) + ".csv");
+					writeToLog(false);
+					closeCSVFile(fileState.WRITE);
+				}
 				break;
 			}
 		}
@@ -358,5 +362,4 @@ public class FileManagement {
 	public enum TASK {
 		Record, Log, Parse
 	}
-
 }

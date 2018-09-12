@@ -11,17 +11,21 @@ public class Climber extends GZSubsystem {
 
 	private Spark climber_1;
 
-	private ClimberState mState = ClimberState.NEUTRAL;
-	private ClimberState mWantedState = mState;
+	private ClimberState mState = ClimberState.MANUAL;
+	private ClimberState mWantedState = ClimberState.NEUTRAL;
 	public IO mIO = new IO();
 
 	private int climbCounter = 0;
 
 	// Construction
 	public Climber() {
+	}
+	
+	public synchronized void construct()
+	{
 		climber_1 = new Spark(kClimber.CLIMBER_1);
 		climber_1.setInverted(kClimber.CLIMBER_1_INVERT);
-
+		
 		climber_1.setSubsystem(Climber.class.getName());
 		climber_1.setName("climber_1");
 	}
@@ -107,6 +111,11 @@ public class Climber extends GZSubsystem {
 
 	public synchronized void setWantedState(ClimberState wantedState) {
 		this.mWantedState = wantedState;
+	}
+	
+	public synchronized void checkHealth()
+	{
+		
 	}
 
 	private synchronized void handleStates() {

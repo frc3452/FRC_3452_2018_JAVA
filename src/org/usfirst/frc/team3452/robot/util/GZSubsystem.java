@@ -1,5 +1,7 @@
 package org.usfirst.frc.team3452.robot.util;
 
+import org.usfirst.frc.team3452.robot.subsystems.Health.AlertLevel;
+
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 //thx 254
@@ -8,8 +10,19 @@ public abstract class GZSubsystem extends Subsystem {
 	// Set to neutral
 	public abstract void stop();
 
+	public abstract void construct();
+
+	private AlertLevel mHighestAlert = AlertLevel.NONE;
+	public void setHighestAlert(AlertLevel level) {
+		mHighestAlert = level;
+	}
+
+	public AlertLevel getHighestAlert() {
+		return mHighestAlert;
+	}
+
 	// IO class
-	// State enum
+	// enum State
 	// void setWantedState (State s)
 	// boolean currentStateIsNot(State s)
 	// State getState
@@ -26,11 +39,13 @@ public abstract class GZSubsystem extends Subsystem {
 			stop();
 	}
 
+//	public abstract void checkHealth();
+
 	// Return if subsystem is disabled or not.
 	public Boolean isDisabed() {
 		return mIsDisabled;
 	}
-	
+
 	public abstract void loop();
 
 	public void enableFollower() {

@@ -1,9 +1,10 @@
 package org.usfirst.frc.team3452.robot.commands.elevator;
 
-import edu.wpi.first.wpilibj.command.Command;
-import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.Constants.kElevator;
+import org.usfirst.frc.team3452.robot.Robot;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
+
+import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevatorPosition extends Command {
 

@@ -1,14 +1,21 @@
 package org.usfirst.frc.team3452.robot.commands.auton;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.commands.drive.*;
+import org.usfirst.frc.team3452.robot.commands.drive.DriveTime;
+import org.usfirst.frc.team3452.robot.commands.drive.DriveToCube;
+import org.usfirst.frc.team3452.robot.commands.drive.DriveToStop;
+import org.usfirst.frc.team3452.robot.commands.drive.EncoderDrive;
+import org.usfirst.frc.team3452.robot.commands.drive.EncoderFrom;
+import org.usfirst.frc.team3452.robot.commands.drive.GyroReset;
+import org.usfirst.frc.team3452.robot.commands.drive.ZeroEncoders;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorTime;
 import org.usfirst.frc.team3452.robot.commands.elevator.ElevatorWhileDrive;
 import org.usfirst.frc.team3452.robot.commands.pwm.IntakeTime;
 import org.usfirst.frc.team3452.robot.subsystems.Auton;
 import org.usfirst.frc.team3452.robot.subsystems.Auton.AO;
 import org.usfirst.frc.team3452.robot.subsystems.Auton.AV;
+
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class MiddleAuton extends CommandGroup {
 
@@ -22,14 +29,14 @@ public class MiddleAuton extends CommandGroup {
 		addSequential(new GyroReset());
 
 		//IF DATA FOUND
-		if (!Robot.auton.gameMsg.equals("NOT")) {
+		if (!Robot.auton.gsm().equals("NOT")) {
 
 			switch (option) {
 			case SWITCH:
 
-				if (Robot.auton.gameMsg.charAt(0) == 'L') {
+				if (Robot.auton.gsm().charAt(0) == 'L') {
 					switchL(switchVersion);
-				} else if (Robot.auton.gameMsg.charAt(0) == 'R') {
+				} else if (Robot.auton.gsm().charAt(0) == 'R') {
 					switchR(switchVersion);
 				} else {
 					defaultAuton();

@@ -1,9 +1,10 @@
 package org.usfirst.frc.team3452.robot.commands.drive;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
 import org.usfirst.frc.team3452.robot.Robot;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.DriveState;
+import org.usfirst.frc.team3452.robot.subsystems.Drive;
+import org.usfirst.frc.team3452.robot.subsystems.Drive.DriveState;
+
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class SpeedModifier extends InstantCommand {
 	private double m_modify;
@@ -12,7 +13,7 @@ public class SpeedModifier extends InstantCommand {
 	 * <h1>Drivetrain speed modifier</h1>
 	 * 
 	 * @param value -1 = toggle from full to 60%, else is set
-	 * @see Drivetrain
+	 * @see Drive
 	 */
 	public SpeedModifier(double value) {
 		super();

@@ -5,11 +5,12 @@ import java.util.Arrays;
 import org.usfirst.frc.team3452.robot.subsystems.Auton;
 import org.usfirst.frc.team3452.robot.subsystems.Camera;
 import org.usfirst.frc.team3452.robot.subsystems.Climber;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain;
-import org.usfirst.frc.team3452.robot.subsystems.Drivetrain.DriveState;
+import org.usfirst.frc.team3452.robot.subsystems.Drive;
+import org.usfirst.frc.team3452.robot.subsystems.Drive.DriveState;
 import org.usfirst.frc.team3452.robot.subsystems.Elevator;
-import org.usfirst.frc.team3452.robot.subsystems.FileManagement;
-import org.usfirst.frc.team3452.robot.subsystems.FileManagement.TASK;
+import org.usfirst.frc.team3452.robot.subsystems.Files;
+import org.usfirst.frc.team3452.robot.subsystems.Files.TASK;
+import org.usfirst.frc.team3452.robot.subsystems.Health;
 import org.usfirst.frc.team3452.robot.subsystems.Intake;
 import org.usfirst.frc.team3452.robot.subsystems.Lights;
 import org.usfirst.frc.team3452.robot.util.GZSubsystemManager;
@@ -18,49 +19,53 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
+	public static final Files files = new Files();
 
-	public static final Drivetrain drive = new Drivetrain();
+	public static final Drive drive = new Drive();
 	public static final Elevator elevator = new Elevator();
 	public static final Intake intake = new Intake();
 	public static final Climber climber = new Climber();
 
-	public static final Auton auton = new Auton();
-	public static final GZOI gzOI = new GZOI();
 	public static final Lights lights = new Lights();
+	public static final Auton auton = new Auton();
 	public static final Camera camera = new Camera();
-	public static final FileManagement fileManager = new FileManagement();
+	public static final GZOI gzOI = new GZOI();
 
-	private static final GZSubsystemManager mSubsystems = new GZSubsystemManager(
-			Arrays.asList(gzOI, drive, elevator, intake, climber, lights));
+	public static final GZSubsystemManager allSubsystems = new GZSubsystemManager(
+			Arrays.asList(drive, elevator, intake, climber, lights, gzOI));
 
+	public static final Health health = new Health();
+	
+	@SuppressWarnings("unused")
 	private static final OI oi = new OI();
 
-	// Flags
-
 	// LOGGING CONTROL
-	private boolean logging = true, logToUsb = true;
+	private boolean logging = false, logToUsb = true;
 	private String loggingLocation = "Logging/Offseason";
 
 	@Override
 	public void robotInit() {
+		allSubsystems.construct();
+		auton.fillAutonArray();
+		health.generateHealth();
 		// TODO ISSUE #14
 	}
 
 	@Override
 	public void robotPeriodic() {
-		mSubsystems.loop();
+		allSubsystems.loop();
 	}
 
 	@Override
 	public void disabledInit() {
-		mSubsystems.stop();
+		allSubsystems.stop();
 
 		log(false);
 	}
 
 	@Override
 	public void disabledPeriodic() {
-		Robot.auton.autonChooser();
+		auton.autonChooser();
 
 		Scheduler.getInstance().run();
 	}
@@ -70,15 +75,14 @@ public class Robot extends TimedRobot {
 		log(true);
 
 		// timer start
-		Robot.auton.matchTimer.oneTimeStart();
+		auton.matchTimer.oneTimeStart();
 
 		// Loop while game data is bad and timer is acceptable
 		do {
-			Robot.auton.gsm();
-		} while ((Robot.auton.gameMsg.equals("NOT") && Robot.auton.matchTimer.get() < 3));
+		} while ((auton.gsm().equals("NOT") && auton.matchTimer.get() < 3));
 
 		// Fill auton array and set values, regardless of good game message
-		Robot.auton.startAuton();
+		auton.startAuton();
 	}
 
 	@Override
@@ -88,19 +92,19 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-		mSubsystems.enableFollower();
+		allSubsystems.enableFollower();
 
 		log(true);
 
-		if (Robot.auton.autonomousCommand != null) {
-			Robot.auton.autonomousCommand.cancel();
+		if (auton.autonomousCommand != null) {
+			auton.autonomousCommand.cancel();
 		}
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		// TODO ISSUE #19
-		Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
+		drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
 		Scheduler.getInstance().run();
 	}
 
@@ -115,6 +119,6 @@ public class Robot extends TimedRobot {
 
 	private void log(boolean startup) {
 		if (logging)
-			Robot.fileManager.control("Log", loggingLocation, logToUsb, TASK.Log, startup);
+			files.csvControl("Log", loggingLocation, logToUsb, TASK.Log, startup);
 	}
 }
