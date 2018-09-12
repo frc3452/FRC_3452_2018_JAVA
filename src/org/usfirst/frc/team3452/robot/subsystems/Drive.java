@@ -138,11 +138,10 @@ public class Drive extends GZSubsystem {
 
 	private void talonInit() {
 		for (GZSRX s : controllers) {
-
-			int id = s.getDeviceID();
+			String name = s.getSide() + " (" + s.getDeviceID() + ")";
 
 			GZSRX.logError(s.configFactoryDefault(GZSRX.TIMEOUT), this, AlertLevel.ERROR,
-					"Could not factory reset talon " + id);
+					"Could not factory reset Talon " + name);
 
 			s.setInverted((s.getSide() == Side.LEFT) ? kDrivetrain.L_INVERT : kDrivetrain.R_INVERT);
 
@@ -150,26 +149,26 @@ public class Drive extends GZSubsystem {
 			// CURRENT LIMIT
 			GZSRX.logError(s.configContinuousCurrentLimit(
 					s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_LIMIT : kDrivetrain.AMP_30_LIMIT,
-					GZSRX.TIMEOUT), this, AlertLevel.WARNING, "Could not set current limit for talon " + id);
+					GZSRX.TIMEOUT), this, AlertLevel.WARNING, "Could not set current limit for Talon " + name);
 
 			GZSRX.logError(
 					s.configPeakCurrentLimit(s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_TRIGGER
 							: kDrivetrain.AMP_30_TRIGGER, GZSRX.TIMEOUT),
-					this, AlertLevel.WARNING, "Could not set current limit trigger for talon " + id);
+					this, AlertLevel.WARNING, "Could not set current limit trigger for Talon " + name);
 
 			GZSRX.logError(
 					s.configPeakCurrentDuration(
 							s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_TIME : kDrivetrain.AMP_30_TIME,
 							GZSRX.TIMEOUT),
-					this, AlertLevel.WARNING, "Could not set current limit time for talon " + id);
+					this, AlertLevel.WARNING, "Could not set current limit time for Talon " + name);
 
 			s.enableCurrentLimit(true);
 
 			GZSRX.logError(s.configOpenloopRamp(kDrivetrain.OPEN_LOOP_RAMP_TIME, GZSRX.TIMEOUT), this,
-					AlertLevel.WARNING, "Could not set open loop ramp time for Talon " + id);
+					AlertLevel.WARNING, "Could not set open loop ramp time for Talon " + name);
 
 			GZSRX.logError(s.configNeutralDeadband(0.05, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-					"Could not set Neutral Deadband for talon " + id);
+					"Could not set Neutral Deadband for Talon " + name);
 
 			s.setSubsystem("Drive train");
 
