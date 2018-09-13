@@ -39,10 +39,10 @@ public class ElevatorWhileDrive extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		if (Robot.elevator.mIO.elevator_rev_lmt && m_value > 0)
+		if (Robot.elevator.getUpLmtSwitch() && m_value > 0)
 			return true;
 
-		if (Robot.elevator.mIO.elevator_fwd_lmt && m_value < 0)
+		if (Robot.elevator.getDownLmtSwitch() && m_value < 0)
 			return true;
 
 		return Robot.elevator.isDone(kElevator.CLOSED_COMPLETION) || isTimedOut();

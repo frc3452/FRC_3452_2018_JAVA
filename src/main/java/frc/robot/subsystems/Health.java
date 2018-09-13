@@ -16,6 +16,7 @@ public class Health {
 	public Map<GZSubsystem, ArrayList<ArrayList<String>>> map = new HashMap<>();
 
 	public Health() {
+		
 		for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
 			ArrayList<String> temp1 = new ArrayList<>();
 			temp1.add(AlertLevel.NONE.toString());
