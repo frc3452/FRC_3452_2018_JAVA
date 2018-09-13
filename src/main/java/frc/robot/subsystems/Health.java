@@ -13,7 +13,7 @@ import frc.robot.util.Util;
 
 public class Health {
 
-	public Map<GZSubsystem, ArrayList<ArrayList<String>>> map = new HashMap<>();
+	private Map<GZSubsystem, ArrayList<ArrayList<String>>> map = new HashMap<>();
 
 	public Health() {
 		
