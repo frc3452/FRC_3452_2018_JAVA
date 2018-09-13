@@ -15,7 +15,7 @@ public class GZLog {
 
 	LogItem left_speed, right_speed, l1_amp, l2_amp, l3_amp, l4_amp, r1_amp, r2_amp, r3_amp, r4_amp, l1_volt, l2_volt,
 			l3_volt, l4_volt, r1_volt, r2_volt, r3_volt, r4_volt, elev_1_amp, elev_2_amp, elev_1_volt, elev_2_volt,
-			elev_fwd_limit, elev_rev_limit, elev_height, elev_speed, intake_l_amp, intake_r_amp, climb_1_amp,
+			elev_up_limit, elev_down_limit, elev_rotations, elev_speed, intake_l_amp, intake_r_amp, climb_1_amp,
 			climb_2_amp, battery_voltage, pdp_temp, pdp_current, pdp_volt, state_drive, state_elevator, state_intake,
 			state_climber;
 
@@ -42,9 +42,9 @@ public class GZLog {
 		elev_2_amp = new LogItem("ELEV-2-AMP");
 		elev_1_volt = new LogItem("ELEV-1-VOLT");
 		elev_2_volt = new LogItem("ELEV-2-VOLT");
-		elev_fwd_limit = new LogItem("ELEV-FWD-LMT");
-		elev_rev_limit = new LogItem("ELEV-REV-LMT");
-		elev_height = new LogItem("ELEV-HEIGHT");
+		elev_up_limit = new LogItem("ELEV-UP-LMT");
+		elev_down_limit = new LogItem("ELEV-DOWN-LMT");
+		elev_rotations = new LogItem("ELEV-ROT");
 		elev_speed = new LogItem("ELEV-SPEED");
 		intake_l_amp = new LogItem("INTAKE-L-AMP");
 		intake_r_amp = new LogItem("INTAKE-R-AMP");
@@ -61,7 +61,7 @@ public class GZLog {
 
 		values = Arrays.asList(left_speed, right_speed, l1_amp, l2_amp, l3_amp, l4_amp, r1_amp, r2_amp, r3_amp, r4_amp,
 				l1_volt, l2_volt, l3_volt, l4_volt, r1_volt, r2_volt, r3_volt, r4_volt, elev_1_amp, elev_2_amp,
-				elev_1_volt, elev_2_volt, elev_fwd_limit, elev_rev_limit, elev_height, elev_speed, intake_l_amp,
+				elev_1_volt, elev_2_volt, elev_up_limit, elev_down_limit, elev_rotations, elev_speed, intake_l_amp,
 				intake_r_amp, climb_1_amp, climb_2_amp, battery_voltage, pdp_temp, pdp_current, pdp_volt, state_drive,
 				state_elevator, state_intake, state_climber);
 	}
@@ -93,9 +93,9 @@ public class GZLog {
 		elev_1_volt.setValue(Robot.elevator.mIO.elevator_1_volt.toString());
 		elev_2_volt.setValue(Robot.elevator.mIO.elevator_2_volt.toString());
 
-		elev_fwd_limit.setValue(Robot.elevator.mIO.elevator_fwd_lmt.toString());
-		elev_rev_limit.setValue(Robot.elevator.mIO.elevator_rev_lmt.toString());
-		elev_height.setValue(Robot.elevator.getRotations().toString());
+		elev_up_limit.setValue(Robot.elevator.getUpLmtSwitch().toString());
+		elev_down_limit.setValue(Robot.elevator.getDownLmtSwitch().toString());
+		elev_rotations.setValue(Robot.elevator.getRotations().toString());
 		elev_speed.setValue(Robot.elevator.getSpeed().toString());
 
 		intake_l_amp.setValue(Robot.drive.getPDPChannelCurrent(kPDP.INTAKE_L).toString());
@@ -108,6 +108,7 @@ public class GZLog {
 		pdp_temp.setValue(Robot.drive.getPDPTemperature().toString());
 		pdp_current.setValue(Robot.drive.getPDPTotalCurrent().toString());
 		pdp_volt.setValue(Robot.drive.getPDPVoltage().toString());
+		
 		state_drive.setValue(Robot.drive.getStateString() + "-" + Robot.drive.isDisabed());
 		state_elevator.setValue(Robot.elevator.getStateString() + "-" + Robot.elevator.isDisabed());
 		state_intake.setValue(Robot.intake.getStateString() + "-" + Robot.intake.isDisabed());
