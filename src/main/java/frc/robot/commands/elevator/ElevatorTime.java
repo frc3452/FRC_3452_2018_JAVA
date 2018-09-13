@@ -33,10 +33,10 @@ public class ElevatorTime extends Command {
 	}
 
 	protected boolean isFinished() {
-		if (Robot.elevator.mIO.elevator_rev_lmt && m_speed > 0)
+		if (Robot.elevator.getUpLmtSwitch() && m_speed > 0)
 			return true;
 
-		if (Robot.elevator.mIO.elevator_fwd_lmt && m_speed < 0)
+		if (Robot.elevator.getDownLmtSwitch() && m_speed < 0)
 			return true;
 
 		return isTimedOut();

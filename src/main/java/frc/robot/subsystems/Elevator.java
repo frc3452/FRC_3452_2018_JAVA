@@ -92,13 +92,19 @@ public class Elevator extends GZSubsystem {
 		// REMOTE LIMIT SWITCHES
 		GZSRX.logError(
 				elevator_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
-						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
+						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set forward limit switch");
 		GZSRX.logError(
 				elevator_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
-						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
+						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set reverse limit switch");
-
+		
+		in();
+		if (getUpLmtLimit() && getDownLmtSwitch())
+			Robot.health.addAlert(this, AlertLevel.ERROR, "Both limit switches tripped");
+		if (!getDownLmtLimit())
+			Robot.health.addAlert(this, AlertLevel.WARNING, "Bottom limit not tripped.")
+		
 		softLimits(false);
 
 		elevator_1.setName("Elev 1");
@@ -235,6 +241,16 @@ public class Elevator extends GZSubsystem {
 
 		mIO.elevator_fwd_lmt = elevator_2.getSensorCollection().isFwdLimitSwitchClosed();
 		mIO.elevator_rev_lmt = elevator_2.getSensorCollection().isRevLimitSwitchClosed();
+	}
+
+	public synchronized Boolean getUpLmtLimit()
+	{
+		return mIO.elevator_fwd_lmt;
+	}
+
+	public synchronized Boolean getDownLmtSwitch()
+	{
+		return mIO.elevator_rev_lmt;
 	}
 
 	@Override
