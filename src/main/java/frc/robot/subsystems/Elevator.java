@@ -103,7 +103,7 @@ public class Elevator extends GZSubsystem {
 		if (getUpLmtLimit() && getDownLmtSwitch())
 			Robot.health.addAlert(this, AlertLevel.ERROR, "Both limit switches tripped");
 		if (!getDownLmtLimit())
-			Robot.health.addAlert(this, AlertLevel.WARNING, "Bottom limit not tripped.")
+			Robot.health.addAlert(this, AlertLevel.WARNING, "Bottom limit not tripped.");
 		
 		softLimits(false);
 
