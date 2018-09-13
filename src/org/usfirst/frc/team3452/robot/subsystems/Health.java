@@ -95,7 +95,9 @@ public class Health {
 
 						// If error = ERROR, do bold and red. If warning, paragraph
 						if (error.get(0).equals(AlertLevel.ERROR.toString()))
-							body += bold(error.get(1), "red");
+							
+							body += bold(error.get(1), AlertLevel.ERROR.toString());
+						
 						else if (error.get(0).equals(AlertLevel.WARNING.toString()))
 							body += paragraph(error.get(1));
 					}
@@ -171,6 +173,11 @@ public class Health {
 			+ "    padding: 5px;\r\n" + "    text-align: center;\r\n" + "}\r\n" + "  \r\n" + "</style>\r\n"
 			+ "</head>\r\n" + "<body>\r\n" + "\r\n" + "$BODY\r\n" + "\r\n" + "</body>\r\n" + "</html>";
 
+	
+	/**
+	 * Enum is created like this so we can still use it with an ArrayList<String> by calling AlertLevel.NONE.toString()
+	 * @author maxdr
+	 */
 	public enum AlertLevel {
 		WARNING("yellow"), ERROR("red"), NONE("green");
 

@@ -13,13 +13,6 @@ public abstract class GZSubsystem extends Subsystem {
 	public abstract void construct();
 
 	private AlertLevel mHighestAlert = AlertLevel.NONE;
-	public void setHighestAlert(AlertLevel level) {
-		mHighestAlert = level;
-	}
-
-	public AlertLevel getHighestAlert() {
-		return mHighestAlert;
-	}
 
 	// IO class
 	// enum State
@@ -54,6 +47,14 @@ public abstract class GZSubsystem extends Subsystem {
 	// Each subsystem is able to report its current state as a string
 	public abstract String getStateString();
 
+	public void setHighestAlert(AlertLevel level) {
+		mHighestAlert = level;
+	}
+
+	public AlertLevel getHighestAlert() {
+		return mHighestAlert;
+	}
+	
 	// Read all inputs
 	protected abstract void in();
 
