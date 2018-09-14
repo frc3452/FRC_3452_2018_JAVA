@@ -3,19 +3,6 @@ package frc.robot.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
-import frc.robot.Constants.kDrivetrain;
-import frc.robot.OI;
-import frc.robot.Robot;
-import frc.robot.subsystems.Health.AlertLevel;
-import frc.robot.util.GZJoystick;
-import frc.robot.util.GZSRX;
-import frc.robot.util.GZSRX.Breaker;
-import frc.robot.util.GZSRX.Master;
-import frc.robot.util.GZSRX.Side;
-import frc.robot.util.GZSubsystem;
-import frc.robot.util.Units;
-import frc.robot.util.Util;
-
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motion.TrajectoryPoint;
@@ -30,6 +17,18 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.kDrivetrain;
+import frc.robot.OI;
+import frc.robot.Robot;
+import frc.robot.subsystems.Health.AlertLevel;
+import frc.robot.util.GZJoystick;
+import frc.robot.util.GZSRX;
+import frc.robot.util.GZSRX.Breaker;
+import frc.robot.util.GZSRX.Master;
+import frc.robot.util.GZSRX.Side;
+import frc.robot.util.GZSubsystem;
+import frc.robot.util.Units;
+import frc.robot.util.Util;
 
 public class Drive extends GZSubsystem {
 
