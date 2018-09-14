@@ -27,7 +27,7 @@ deploy {
 }
 
 wpi {
-    ctreVersion = "5.7.1.0"
+    // ctreVersion = "5.7.1.0"
 }
 
 // Defining my dependencies. In this case, WPILib (+ friends), CTRE Toolsuite (Talon SRX)

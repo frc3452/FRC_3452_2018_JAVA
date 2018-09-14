@@ -79,10 +79,10 @@ public class Elevator extends GZSubsystem {
 
 		// SOFT LIMITS FOR DEMO MODE
 		GZSRX.logError(
-				elevator_1.configForwardSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.LOWER_SOFT_LIMIT)), this,
+				elevator_1.configForwardSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.LOWER_SOFT_LIMIT), GZSRX.TIMEOUT), this,
 				AlertLevel.WARNING, "Could not set lower soft limit");
 		GZSRX.logError(
-				elevator_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.UPPER_SOFT_LIMIT)), this,
+				elevator_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.UPPER_SOFT_LIMIT), GZSRX.TIMEOUT), this,
 				AlertLevel.WARNING, "Could not set upper soft limit");
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
