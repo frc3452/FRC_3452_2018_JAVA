@@ -100,7 +100,7 @@ public class Elevator extends GZSubsystem {
 				this, AlertLevel.ERROR, "Could not set reverse limit switch");
 		
 		in();
-		if (getUpLmtLimit() && getDownLmtSwitch())
+		if (getTopLimit() && getBottomLimit())
 			Robot.health.addAlert(this, AlertLevel.ERROR, "Both limit switches tripped");
 		if (!getDownLmtLimit())
 			Robot.health.addAlert(this, AlertLevel.WARNING, "Bottom limit not tripped.");
@@ -243,12 +243,13 @@ public class Elevator extends GZSubsystem {
 		mIO.elevator_rev_lmt = elevator_2.getSensorCollection().isRevLimitSwitchClosed();
 	}
 
-	public synchronized Boolean getUpLmtLimit()
+	//TODO ISSUE #22
+	public synchronized Boolean getTopLimit()
 	{
 		return mIO.elevator_fwd_lmt;
 	}
 
-	public synchronized Boolean getDownLmtSwitch()
+	public synchronized Boolean getBottomLimit()
 	{
 		return mIO.elevator_rev_lmt;
 	}
