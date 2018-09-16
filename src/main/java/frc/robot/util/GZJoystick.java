@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Joystick;
 public class GZJoystick extends Joystick {
 
 	DPad mUp, mDown, mRight, mLeft;
-	private LatchedBoolean a,b,x,y,lb,rb,back,start,lclick,rlcick;
+	private LatchedBoolean a,b,x,y,lb,rb,back,start,lclick,rclick;
 
 	public GZJoystick(int port) {
 		super(port);
@@ -86,12 +86,12 @@ public class GZJoystick extends Joystick {
 
 	public Boolean isYPressed()
 	{
-		return y.update(this.getRawButtonRaw(Buttons.Y));
+		return y.update(this.getRawButton(Buttons.Y));
 	}
 
 	public Boolean isLBPressed()
 	{
-		return lb.update(this.getRawButton(Buttonts.LB));
+		return lb.update(this.getRawButton(Buttons.LB));
 	}
 
 	public Boolean isRBPressed()
@@ -104,7 +104,7 @@ public class GZJoystick extends Joystick {
 		return back.update(this.getRawButton(Buttons.BACK));
 	}
 
-	public Booleam isStartPressed()
+	public Boolean isStartPressed()
 	{
 		return start.update(this.getRawButton(Buttons.START));
 	}

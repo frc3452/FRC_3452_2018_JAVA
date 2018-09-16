@@ -2,6 +2,8 @@ package frc.robot;
 
 import java.util.Arrays;
 
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.subsystems.Auton;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Climber;
@@ -14,9 +16,6 @@ import frc.robot.subsystems.Health;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.util.GZSubsystemManager;
-
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
 	public static final Files files = new Files();

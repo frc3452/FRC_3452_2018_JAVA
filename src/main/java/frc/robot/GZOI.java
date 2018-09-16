@@ -1,14 +1,13 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.robot.Constants.kOI;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.util.GZJoystick;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.Util;
-import frc.robot.util.GZJoystick.Buttons;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 public class GZOI extends GZSubsystem {
 	public static GZJoystick driverJoy = new GZJoystick(0);
@@ -35,11 +34,10 @@ public class GZOI extends GZSubsystem {
 		if (isTest())
 			mWasTest = true;
 		
-		//TODO ISSUE #19
+		// TODO ISSUE #19
 		
-		if (driveJoy.isAPressed)
-			Robot.drive.slowSpeed(!Robot.drive.getIsSlow());
-
+		if (driverJoy.isAPressed())
+			Robot.drive.slowSpeed(!Robot.drive.isSlow());
 
 
 			

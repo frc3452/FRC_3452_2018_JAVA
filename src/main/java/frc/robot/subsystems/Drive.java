@@ -17,9 +17,10 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.kDrivetrain;
 import frc.robot.OI;
+import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.Constants.kDrivetrain;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZJoystick;
 import frc.robot.util.GZSRX;
@@ -53,7 +54,6 @@ public class Drive extends GZSubsystem {
 	private double mLeft_target = 0, mRight_target = 0;
 
 	public Drive() {
-
 	}
 
 	public synchronized void construct() {
@@ -743,6 +743,11 @@ public class Drive extends GZSubsystem {
 	public synchronized void zeroSensors() {
 		zeroEncoders();
 		zeroGyro();
+	}
+
+	public synchronized Double getPercentageComplete()
+	{
+		return mPercentageComplete;
 	}
 
 	public synchronized void zeroGyro() {
