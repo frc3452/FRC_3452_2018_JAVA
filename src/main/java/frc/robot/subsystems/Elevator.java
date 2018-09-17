@@ -85,6 +85,7 @@ public class Elevator extends GZSubsystem {
 				elevator_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.UPPER_SOFT_LIMIT), GZSRX.TIMEOUT), this,
 				AlertLevel.WARNING, "Could not set upper soft limit");
 
+
 		// RESET ENCODER ON LIMIT SWITCH DOWN
 		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), this,
 				AlertLevel.ERROR, "Could not set encoder zero on bottom limit");
@@ -99,6 +100,8 @@ public class Elevator extends GZSubsystem {
 				elevator_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set reverse limit switch");
+
+		overrideLimit(false);
 		
 		in();
 		if (getTopLimit() && getBottomLimit())
@@ -397,7 +400,10 @@ public class Elevator extends GZSubsystem {
 		return driveModifier;
 	}
 
-	//TODO ISSUE #22 IMPLEMENT LIMIT SWITCH OVERRIDE
+	public synchronized void overrideLimit(boolean toOverrideLimit)
+	{
+		elevator_1.overrideLimitSwitchesEnable(toOverrideLimit);;
+	}
 
 	public synchronized void setSpeedLimitingOverride(ESO override) {
 		switch (override) {
