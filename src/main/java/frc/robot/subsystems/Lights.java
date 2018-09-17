@@ -50,7 +50,7 @@ public class Lights extends GZSubsystem {
 			tempArray[i] = 3452;
 
 		canifier = new CANifier(Constants.kLights.CANIFIER_ID);
-		GZSRX.logError(canifier.configFactoryDefault(), Robot.lights, AlertLevel.WARNING, "Canifier not found");
+		GZSRX.logError(canifier.configFactoryDefault(), this, AlertLevel.WARNING, "Canifier not found");
 
 		lightTimer.stop();
 		lightTimer.reset();
