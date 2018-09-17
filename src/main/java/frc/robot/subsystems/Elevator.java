@@ -397,6 +397,8 @@ public class Elevator extends GZSubsystem {
 		return driveModifier;
 	}
 
+	//TODO ISSUE #22 IMPLEMENT LIMIT SWITCH OVERRIDE
+
 	public synchronized void setSpeedLimitingOverride(ESO override) {
 		switch (override) {
 		case OFF:
