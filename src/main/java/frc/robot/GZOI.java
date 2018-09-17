@@ -38,9 +38,10 @@ public class GZOI extends GZSubsystem {
 		//TODO ISSUE #19
 
 		// controller rumble
+		//TODO FIND ALTERNATIVE
 		if (Util.between(getMatchTime(), 28, 30))
 			rumble(Controller.BOTH, kOI.Rumble.ENDGAME);
-		else if (Robot.elevator.isOverriden()) {
+		else if (Robot.elevator.isSpeedOverriden()) {
 			rumble(Controller.DRIVE, kOI.Rumble.ELEVATOR_OVERRIDE_DRIVE);
 			rumble(Controller.OP, kOI.Rumble.ELEVATOR_OVERRIDE_OP);
 		} else if (Robot.intake.stateNot(IntakeState.NEUTRAL))
