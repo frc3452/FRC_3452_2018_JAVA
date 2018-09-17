@@ -18,7 +18,7 @@ public class GZJoystick extends Joystick {
 		mRight = new DPad(this, 90);
 	}
 	
-	public boolean areButtonsPressed(List<Integer> buttons) {
+	public boolean areButtonsHeld(List<Integer> buttons) {
 		boolean retval = true;
 
 		for (Integer b : buttons)

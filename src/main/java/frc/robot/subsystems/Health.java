@@ -69,7 +69,7 @@ public class Health {
 			// Write table
 			for (GZSubsystem s : Robot.allSubsystems.getSubsystems())
 				table += tableRow(
-						tableCell(s.getClass().getSimpleName() + tableCell("", s.getHighestAlert().toString(), true)));
+						tableCell(s.getClass().getSimpleName()) + tableCell("", s.getHighestAlert().toString(), true));
 
 			// Put table tags around values
 			table = table(table);
