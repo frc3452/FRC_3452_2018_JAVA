@@ -90,13 +90,14 @@ public class Elevator extends GZSubsystem {
 				AlertLevel.ERROR, "Could not set encoder zero on bottom limit");
 
 		// REMOTE LIMIT SWITCHES
+		//NORMALLYOPEN LIMIT SWITCHES WITH A TALON TACH IS SETTING WHETHER THE SENSOR IS TRIPPED UNDER DARK OR LIGHT
 		GZSRX.logError(
 				elevator_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
-						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
+						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set forward limit switch");
 		GZSRX.logError(
 				elevator_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
-						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
+						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set reverse limit switch");
 		
 		in();
