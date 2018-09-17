@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.Joystick;
 
 public class GZJoystick extends Joystick {
 
-	DPad mUp, mDown, mRight, mLeft;
-	private LatchedBoolean a,b,x,y,lb,rb,back,start,lclick,rclick;
+	private DPad mUp, mDown, mRight, mLeft;
+	private LatchedBoolean a,b,x,y,lb,rb,back,start,lclick,rclick, dUp, dDown, dLeft, dRight;
 
 	public GZJoystick(int port) {
 		super(port);
@@ -18,22 +18,6 @@ public class GZJoystick extends Joystick {
 		mDown = new DPad(this, 180);
 		mLeft = new DPad(this, 270);
 		mRight = new DPad(this, 90);
-	}
-
-	public boolean getDPad(Directions d) {
-		switch (d) {
-		case DOWN:
-			return mDown.get();
-		case LEFT:
-			return mLeft.get();
-		case RIGHT:
-			return mRight.get();
-		case UP:
-			return mRight.get();
-		default:
-			System.out.println("DEFAULT CASE REACHED FOR " + new Throwable().getStackTrace()[0].getMethodName() + " OF " + this.getClass() + "!!!");
-			return false;
-		}
 	}
 	
 	public boolean areButtonsPressed(List<Integer> buttons) {
@@ -117,6 +101,26 @@ public class GZJoystick extends Joystick {
 	public Boolean isRClickPressed()
 	{
 		return rclick.update(this.getRawButton(Buttons.RIGHT_CLICK));
+	}
+
+	public Boolean isDUpPressed()
+	{
+		return dUp.update(mUp.get());
+	}
+
+	public Boolean isDDownPressed()
+	{
+		return dDown.update(mDown.get());
+	}
+
+	public Boolean isDLeftPressed()
+	{
+		return dLeft.update(mLeft.get());
+	}
+
+	public Boolean isDRightPressed()
+	{
+		return dRight.update(mRight.get());
 	}
 
 	public static class Axises {
