@@ -213,8 +213,9 @@ public class Constants {
 		public class Rumble {
 
 			public final static double INTAKE = .3;
-			public final static double ELEVATOR_OVERRIDE_DRIVE = .45;
-			public final static double ELEVATOR_OVERRIDE_OP = ELEVATOR_OVERRIDE_DRIVE - .2;
+			public final static double ELEVATOR_SPEED_OVERRIDE_DRIVE = .45;
+			public final static double ELEVATOR_SPEED_OVERRIDE_OP = ELEVATOR_SPEED_OVERRIDE_DRIVE - .2;
+			public final static double ELEVATOR_LIMIT_OVERRIDE = .45;
 			public final static double ENDGAME = .6;
 
 		}

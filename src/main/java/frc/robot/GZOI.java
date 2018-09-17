@@ -39,9 +39,8 @@ public class GZOI extends GZSubsystem {
 		if (driverJoy.isAPressed())
 			Robot.drive.slowSpeed(!Robot.drive.isSlow());
 
-
 			
-				//TODO ISSUE #19
+		//TODO ISSUE #19
 
 		// controller rumble
 		if (Util.between(getMatchTime(), 28, 30))
@@ -55,8 +54,8 @@ public class GZOI extends GZSubsystem {
 				rumble(Controller.DRIVE, kOI.Rumble.ELEVATOR_SPEED_OVERRIDE_DRIVE);
 				rumble(Controller.OP, kOI.Rumble.ELEVATOR_SPEED_OVERRIDE_OP);
 			} else if (Robot.elevator.isLimitOverriden())
-				rumble(Controller.OP, kOI.Rumble.ELEAVTOR_LIMIT_OVERRIDE);
-      
+				rumble(Controller.OP, kOI.Rumble.ELEVATOR_LIMIT_OVERRIDE);
+	  
 		} else if (Robot.intake.stateNot(IntakeState.NEUTRAL))
 			rumble(Controller.BOTH, kOI.Rumble.INTAKE);
 		else
