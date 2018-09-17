@@ -1,14 +1,13 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.robot.Constants.kOI;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.util.GZJoystick;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.Util;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 public class GZOI extends GZSubsystem {
 	public static GZJoystick driverJoy = new GZJoystick(0);
@@ -35,19 +34,35 @@ public class GZOI extends GZSubsystem {
 		if (isTest())
 			mWasTest = true;
 		
-		//TODO ISSUE #19
+		// TODO ISSUE #19
+		
+		if (driverJoy.isAPressed())
+			Robot.drive.slowSpeed(!Robot.drive.isSlow());
+
+
+			
+				//TODO ISSUE #19
 
 		// controller rumble
-		//TODO FIND ALTERNATIVE
 		if (Util.between(getMatchTime(), 28, 30))
-			rumble(Controller.BOTH, kOI.Rumble.ENDGAME);
-		else if (Robot.elevator.isSpeedOverriden()) {
-			rumble(Controller.DRIVE, kOI.Rumble.ELEVATOR_OVERRIDE_DRIVE);
-			rumble(Controller.OP, kOI.Rumble.ELEVATOR_OVERRIDE_OP);
+		
+      rumble(Controller.BOTH, kOI.Rumble.ENDGAME); 
+		
+    else if (Robot.elevator.isSpeedOverriden() || Robot.elevator.isLimitOverriden()) {
+			
+			if (Robot.elevator.isSpeedOverriden()) 
+      {
+				rumble(Controller.DRIVE, kOI.Rumble.ELEVATOR_SPEED_OVERRIDE_DRIVE);
+				rumble(Controller.OP, kOI.Rumble.ELEVATOR_SPEED_OVERRIDE_OP);
+			} else if (Robot.elevator.isLimitOverriden())
+				rumble(Controller.OP, kOI.Rumble.ELEAVTOR_LIMIT_OVERRIDE);
+      
 		} else if (Robot.intake.stateNot(IntakeState.NEUTRAL))
 			rumble(Controller.BOTH, kOI.Rumble.INTAKE);
 		else
 			rumble(Controller.BOTH, 0);
+	
+
 	}
 
 	private static void rumble(Controller joy, double intensity) {

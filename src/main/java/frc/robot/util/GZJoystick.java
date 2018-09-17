@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Joystick;
 public class GZJoystick extends Joystick {
 
 	DPad mUp, mDown, mRight, mLeft;
+	private LatchedBoolean a,b,x,y,lb,rb,back,start,lclick,rclick;
 
 	public GZJoystick(int port) {
 		super(port);
@@ -44,28 +45,78 @@ public class GZJoystick extends Joystick {
 		return retval;
 	}
 
-	public double getLeftAnalogY() {
+	public Double getLeftAnalogY() {
 		return -this.getRawAxis(Axises.LEFT_ANALOG_Y);
 	}
 
-	public double getLeftAnalogX() {
+	public Double getLeftAnalogX() {
 		return this.getRawAxis(Axises.LEFT_ANALOG_X);
 	}
 
-	public double getRightAnalogY() {
+	public Double getRightAnalogY() {
 		return -this.getRawAxis(Axises.RIGHT_ANALOG_Y);
 	}
 
-	public double getRightAnalogX() {
+	public Double getRightAnalogX() {
 		return this.getRawAxis(Axises.RIGHT_ANALOG_X);
 	}
 
-	public double getLeftTrigger() {
+	public Double getLeftTrigger() {
 		return this.getRawAxis(Axises.LEFT_TRIGGER);
 	}
 
-	public double getRightTrigger() {
+	public Double getRightTrigger() {
 		return this.getRawAxis(Axises.RIGHT_TRIGGER);
+	}
+
+	public Boolean isAPressed()
+	{
+		return a.update(this.getRawButton(Buttons.A));
+	} 
+
+	public Boolean isBPressed()
+	{
+		return b.update(this.getRawButton(Buttons.B));
+	}
+
+	public Boolean isXPressed()
+	{
+		return x.update(this.getRawButton(Buttons.X));
+	}
+
+	public Boolean isYPressed()
+	{
+		return y.update(this.getRawButton(Buttons.Y));
+	}
+
+	public Boolean isLBPressed()
+	{
+		return lb.update(this.getRawButton(Buttons.LB));
+	}
+
+	public Boolean isRBPressed()
+	{
+		return rb.update(this.getRawButton(Buttons.RB));
+	}
+
+	public Boolean isBackPressed()
+	{
+		return back.update(this.getRawButton(Buttons.BACK));
+	}
+
+	public Boolean isStartPressed()
+	{
+		return start.update(this.getRawButton(Buttons.START));
+	}
+
+	public Boolean isLClickPressed()
+	{
+		return lclick.update(this.getRawButton(Buttons.LEFT_CLICK));
+	}
+
+	public Boolean isRClickPressed()
+	{
+		return rclick.update(this.getRawButton(Buttons.RIGHT_CLICK));
 	}
 
 	public static class Axises {
@@ -90,7 +141,7 @@ public class GZJoystick extends Joystick {
 		public static int RIGHT_CLICK = 10;
 	}
 
-	public void rumble(double intensity) {
+	public void rumble(Double intensity) {
 		this.setRumble(RumbleType.kLeftRumble, intensity);
 		this.setRumble(RumbleType.kRightRumble, intensity);
 	}

@@ -1,8 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.Constants.kElevator;
 import frc.robot.Constants.kIntake;
-import frc.robot.commands.drive.SpeedModifier;
 import frc.robot.commands.elevator.ElevatorManual;
 import frc.robot.commands.elevator.ElevatorPosition;
 import frc.robot.commands.elevator.OverrideSet;
@@ -13,9 +14,6 @@ import frc.robot.subsystems.Elevator.ESO;
 import frc.robot.triggers.DriveSafteyOverriden;
 import frc.robot.util.DPad;
 import frc.robot.util.GZJoystick;
-
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 public class OI {
 	public static GZJoystick driverJoy = new GZJoystick(0);
@@ -40,8 +38,6 @@ public class OI {
 		buttonInit();
 
 		// DRIVER JOY
-		driverJoyA.whenPressed(new SpeedModifier(-1));
-
 		driverJoyX.whileHeld(new IntakeManual(kIntake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(kIntake.Speeds.SHOOT));
 
