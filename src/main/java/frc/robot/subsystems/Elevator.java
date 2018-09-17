@@ -35,7 +35,8 @@ public class Elevator extends GZSubsystem {
 
 	private double driveModifier = 0;
 	private double target = 0;
-	private boolean mIsOverriden = false;
+	private boolean mSpeedOverride = false;
+	private boolean mLimitOverride = false;
 
 	public Elevator() {
 	}
@@ -85,19 +86,23 @@ public class Elevator extends GZSubsystem {
 				elevator_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.UPPER_SOFT_LIMIT), GZSRX.TIMEOUT), this,
 				AlertLevel.WARNING, "Could not set upper soft limit");
 
+
 		// RESET ENCODER ON LIMIT SWITCH DOWN
 		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), this,
 				AlertLevel.ERROR, "Could not set encoder zero on bottom limit");
 
 		// REMOTE LIMIT SWITCHES
+		//NORMALLYOPEN LIMIT SWITCHES WITH A TALON TACH IS SETTING WHETHER THE SENSOR IS TRIPPED UNDER DARK OR LIGHT
 		GZSRX.logError(
 				elevator_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
-						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
+						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set forward limit switch");
 		GZSRX.logError(
 				elevator_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
-						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
+						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set reverse limit switch");
+
+		overrideLimit(false);
 		
 		in();
 		if (getTopLimit() && getBottomLimit())
@@ -312,7 +317,7 @@ public class Elevator extends GZSubsystem {
 
 		// if demo, dont limit
 		// if not in demo and not overriding, limit
-		if (getState() != ElevatorState.DEMO && (getState() != ElevatorState.DEMO && !isOverriden())) {
+		if (getState() != ElevatorState.DEMO && (getState() != ElevatorState.DEMO && !isSpeedOverriden())) {
 			if (pos < 2.08)
 				driveModifier = Constants.kElevator.SPEED_1;
 			else if (pos < 2.93 && pos > 2.08)
@@ -396,16 +401,22 @@ public class Elevator extends GZSubsystem {
 		return driveModifier;
 	}
 
+	public synchronized void overrideLimit(boolean toOverrideLimit)
+	{
+		mLimitOverride = toOverrideLimit;
+		elevator_1.overrideLimitSwitchesEnable(toOverrideLimit);;
+	}
+
 	public synchronized void setSpeedLimitingOverride(ESO override) {
 		switch (override) {
 		case OFF:
-			this.mIsOverriden = false;
+			this.mSpeedOverride = false;
 			break;
 		case ON:
-			this.mIsOverriden = true;
+			this.mSpeedOverride = true;
 			break;
 		case TOGGLE:
-			this.mIsOverriden = !isOverriden();
+			this.mSpeedOverride = !isSpeedOverriden();
 			break;
 		}
 	}
@@ -418,8 +429,8 @@ public class Elevator extends GZSubsystem {
 		return mState != state;
 	}
 
-	public boolean isOverriden() {
-		return mIsOverriden;
+	public boolean isSpeedOverriden() {
+		return mSpeedOverride;
 	}
 
 	public synchronized String getStateString() {
@@ -436,6 +447,11 @@ public class Elevator extends GZSubsystem {
 
 	public void setTarget(double target) {
 		this.target = target;
+	}
+
+	public boolean isLimitOverriden()
+	{
+		return mLimitOverride;
 	}
 
 }
