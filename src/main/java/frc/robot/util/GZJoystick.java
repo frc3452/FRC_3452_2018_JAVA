@@ -2,8 +2,6 @@ package frc.robot.util;
 
 import java.util.List;
 
-import frc.robot.util.Util.Directions;
-
 import edu.wpi.first.wpilibj.Joystick;
 
 public class GZJoystick extends Joystick {
