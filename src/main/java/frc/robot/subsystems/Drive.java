@@ -139,6 +139,9 @@ public class Drive extends GZSubsystem {
 		for (GZSRX s : controllers) {
 			String name = s.getSide() + " (" + s.getDeviceID() + ")";
 
+			if (s.getFirmwareVersion() != GZSRX.FIRMWARE)
+				Robot.health.addAlert(this, AlertLevel.ERROR, "Talon " + name + " firmware is " + s.getFirmwareVersion() + " , does not equal " + GZSRX.FIRMWARE);
+
 			GZSRX.logError(s.configFactoryDefault(GZSRX.TIMEOUT), this, AlertLevel.ERROR,
 					"Could not factory reset Talon " + name);
 

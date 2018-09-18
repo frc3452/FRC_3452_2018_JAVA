@@ -97,7 +97,7 @@ public class Health {
 
 						// If error = ERROR, do bold and red. If warning, paragraph
 						if (error.get(0).equals(AlertLevel.ERROR.stringVal()))
-							body += bold(error.get(1), "red");
+							body += paragraph(bold(error.get(1), "red"));
 						else if (error.get(0).equals(AlertLevel.WARNING.stringVal()))
 							body += paragraph(error.get(1));
 					}

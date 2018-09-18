@@ -13,6 +13,7 @@ public class GZSRX extends WPI_TalonSRX {
 	private Master mMaster = Master.NO_INFO;
 
 	public final static int TIMEOUT = 10;
+	public final static int FIRMWARE = 778;
 
 	// Drivetrain
 	public GZSRX(int deviceNumber, Breaker breaker, Side side, Master master) {

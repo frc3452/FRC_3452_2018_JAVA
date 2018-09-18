@@ -41,14 +41,14 @@ public class GZOI extends GZSubsystem {
 
 		// TODO ISSUE #19
 
-		Robot.drive.disable(true);	
-
 		if (isTele()) {
 
 			if (driverJoy.isAPressed())
 				Robot.drive.slowSpeed(!Robot.drive.isSlow());
 			if (driverJoy.isBackPressed())
 				Robot.elevator.setSpeedLimitingOverride(ESO.TOGGLE);
+			if (opJoy.isRClickPressed())
+				Robot.elevator.overrideLimit(!Robot.elevator.isLimitOverriden());
 
 			// CLIMBER
 			if (driverJoy.isYPressed())

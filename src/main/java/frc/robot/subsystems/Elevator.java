@@ -103,6 +103,7 @@ public class Elevator extends GZSubsystem {
 						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set reverse limit switch");
 
+
 		overrideLimit(false);
 		
 		in();
@@ -120,6 +121,10 @@ public class Elevator extends GZSubsystem {
 
 	private synchronized void talonInit(List<GZSRX> srx) {
 		for (GZSRX s : srx) {
+
+			if (s.getFirmwareVersion() != GZSRX.FIRMWARE)
+				Robot.health.addAlert(this, AlertLevel.ERROR, "Talon " + s.getMaster() + " firmware is " + s.getFirmwareVersion() + " , does not equal " + GZSRX.FIRMWARE);
+
 			GZSRX.logError(s.configFactoryDefault(), this, AlertLevel.ERROR,
 					"Could not factory reset " + s.getMaster());
 
