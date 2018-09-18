@@ -32,8 +32,6 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		allSubsystems.construct();
 		health.generateHealth();
-		
-		// TODO ISSUE #14
 	}
 
 	@Override
@@ -68,6 +66,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
+		Scheduler.getInstance().run();
 	}
 
 	@Override
