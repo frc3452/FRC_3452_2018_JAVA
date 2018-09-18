@@ -3,8 +3,16 @@ package frc.robot.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.kElevator;
+import frc.robot.GZOI;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.subsystems.Health.AlertLevel;
@@ -14,14 +22,7 @@ import frc.robot.util.GZSRX.Breaker;
 import frc.robot.util.GZSRX.Master;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.Units;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.util.Util;
 
 public class Elevator extends GZSubsystem {
 
@@ -35,7 +36,8 @@ public class Elevator extends GZSubsystem {
 
 	private double driveModifier = 0;
 	private double target = 0;
-	private boolean mIsOverriden = false;
+	private boolean mSpeedOverride = false;
+	private boolean mLimitOverride = false;
 
 	public Elevator() {
 	}
@@ -79,17 +81,19 @@ public class Elevator extends GZSubsystem {
 
 		// SOFT LIMITS FOR DEMO MODE
 		GZSRX.logError(
-				elevator_1.configForwardSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.LOWER_SOFT_LIMIT)), this,
+				elevator_1.configForwardSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.LOWER_SOFT_LIMIT), GZSRX.TIMEOUT), this,
 				AlertLevel.WARNING, "Could not set lower soft limit");
 		GZSRX.logError(
-				elevator_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.UPPER_SOFT_LIMIT)), this,
+				elevator_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.UPPER_SOFT_LIMIT), GZSRX.TIMEOUT), this,
 				AlertLevel.WARNING, "Could not set upper soft limit");
+
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
 		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), this,
 				AlertLevel.ERROR, "Could not set encoder zero on bottom limit");
 
 		// REMOTE LIMIT SWITCHES
+		//NORMALLYOPEN LIMIT SWITCHES WITH A TALON TACH IS SETTING WHETHER THE SENSOR IS TRIPPED UNDER DARK OR LIGHT
 		GZSRX.logError(
 				elevator_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
@@ -98,6 +102,8 @@ public class Elevator extends GZSubsystem {
 				elevator_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set reverse limit switch");
+
+		overrideLimit(false);
 		
 		in();
 		if (getUpLmtLimit() && getDownLmtSwitch())
@@ -221,11 +227,11 @@ public class Elevator extends GZSubsystem {
 	}
 
 	public Double getRotations() {
-		return Units.ticks_to_rotations(mIO.encoder_ticks);
+		return -Units.ticks_to_rotations(mIO.encoder_ticks);
 	}
 
 	public Double getSpeed() {
-		return Units.ticks_to_rotations(mIO.encoder_vel);
+		return -Units.ticks_to_rotations(mIO.encoder_vel);
 	}
 
 	@Override
@@ -243,16 +249,16 @@ public class Elevator extends GZSubsystem {
 		mIO.elevator_rev_lmt = elevator_2.getSensorCollection().isRevLimitSwitchClosed();
 	}
 
-	public synchronized Boolean getUpLmtLimit()
-	{
-		return mIO.elevator_fwd_lmt;
-	}
-
-	public synchronized Boolean getDownLmtSwitch()
+	public synchronized Boolean getTopLimit()
 	{
 		return mIO.elevator_rev_lmt;
 	}
 
+	public synchronized Boolean getBottomLimit()
+	{
+		return mIO.elevator_fwd_lmt;
+  }
+    
 	@Override
 	protected synchronized void out() {
 		elevator_1.set(mIO.control_mode, mIO.output);
@@ -294,7 +300,11 @@ public class Elevator extends GZSubsystem {
 			onStateExit(mState);
 			mState = mWantedState;
 			onStateStart(mState);
-		}
+		} 
+
+		//Positioning
+		if (mState == ElevatorState.POSITION && (isDone(kElevator.CLOSED_COMPLETION) || ((-getTarget() < 0) && getBottomLimit()) || (-getTarget() > 0) && getTopLimit())) 
+			encoderDone();
 	}
 
 	public synchronized void outputSmartDashboard() {
@@ -311,7 +321,7 @@ public class Elevator extends GZSubsystem {
 
 		// if demo, dont limit
 		// if not in demo and not overriding, limit
-		if (getState() != ElevatorState.DEMO && (getState() != ElevatorState.DEMO && !isOverriden())) {
+		if (getState() != ElevatorState.DEMO && (getState() != ElevatorState.DEMO && !isSpeedOverriden())) {
 			if (pos < 2.08)
 				driveModifier = Constants.kElevator.SPEED_1;
 			else if (pos < 2.93 && pos > 2.08)
@@ -347,9 +357,11 @@ public class Elevator extends GZSubsystem {
 			setWantedState(ElevatorState.POSITION);
 			elevator_1.configPeakOutputForward(kElevator.CLOSED_DOWN_SPEED_LIMIT, 10);
 			elevator_1.configPeakOutputReverse(kElevator.CLOSED_UP_SPEED_LIMIT * -1, 10);
-			setTarget(mIO.desired_output = -Units.rotations_to_ticks(rotations));
-		} else
+			mIO.desired_output = -Units.rotations_to_ticks(rotations);
+			setTarget(mIO.desired_output);
+		} else {
 			stop();
+		}
 	}
 
 	public synchronized boolean isDone(double multiplier) {
@@ -362,8 +374,9 @@ public class Elevator extends GZSubsystem {
 
 		elevator_1.configPeakOutputForward(1, 10);
 		elevator_1.configPeakOutputReverse(-1, 10);
-
+		
 		setTarget(0);
+		stop();
 	}
 
 	public synchronized void manualJoystick(GZJoystick joy) {
@@ -377,9 +390,9 @@ public class Elevator extends GZSubsystem {
 			down = kElevator.JOYSTICK_MODIFIER_DOWN;
 		}
 
-		if (joy == OI.opJoy)
+		if (joy == GZOI.opJoy)
 			manual(joy.getLeftAnalogY() * ((joy.getLeftAnalogY() > 0) ? up : down));
-		else if (joy == OI.driverJoy)
+		else if (joy == GZOI.driverJoy)
 			manual(joy.getRightAnalogY() * ((joy.getRightAnalogY() > 0) ? up : down));
 		else
 			System.out.println("WARNING Incorrect joystick given to manualJoystick of Elevator");
@@ -395,16 +408,22 @@ public class Elevator extends GZSubsystem {
 		return driveModifier;
 	}
 
+	public synchronized void overrideLimit(boolean toOverrideLimit)
+	{
+		mLimitOverride = toOverrideLimit;
+		elevator_1.overrideLimitSwitchesEnable(toOverrideLimit);;
+	}
+
 	public synchronized void setSpeedLimitingOverride(ESO override) {
 		switch (override) {
 		case OFF:
-			this.mIsOverriden = false;
+			this.mSpeedOverride = false;
 			break;
 		case ON:
-			this.mIsOverriden = true;
+			this.mSpeedOverride = true;
 			break;
 		case TOGGLE:
-			this.mIsOverriden = !isOverriden();
+			this.mSpeedOverride = !isSpeedOverriden();
 			break;
 		}
 	}
@@ -417,8 +436,8 @@ public class Elevator extends GZSubsystem {
 		return mState != state;
 	}
 
-	public boolean isOverriden() {
-		return mIsOverriden;
+	public boolean isSpeedOverriden() {
+		return mSpeedOverride;
 	}
 
 	public synchronized String getStateString() {
@@ -435,6 +454,11 @@ public class Elevator extends GZSubsystem {
 
 	public void setTarget(double target) {
 		this.target = target;
+	}
+
+	public boolean isLimitOverriden()
+	{
+		return mLimitOverride;
 	}
 
 }

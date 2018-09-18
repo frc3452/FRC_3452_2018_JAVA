@@ -3,19 +3,6 @@ package frc.robot.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
-import frc.robot.Constants.kDrivetrain;
-import frc.robot.OI;
-import frc.robot.Robot;
-import frc.robot.subsystems.Health.AlertLevel;
-import frc.robot.util.GZJoystick;
-import frc.robot.util.GZSRX;
-import frc.robot.util.GZSRX.Breaker;
-import frc.robot.util.GZSRX.Master;
-import frc.robot.util.GZSRX.Side;
-import frc.robot.util.GZSubsystem;
-import frc.robot.util.Units;
-import frc.robot.util.Util;
-
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motion.TrajectoryPoint;
@@ -30,6 +17,18 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.kDrivetrain;
+import frc.robot.OI;
+import frc.robot.Robot;
+import frc.robot.subsystems.Health.AlertLevel;
+import frc.robot.util.GZJoystick;
+import frc.robot.util.GZSRX;
+import frc.robot.util.GZSRX.Breaker;
+import frc.robot.util.GZSRX.Master;
+import frc.robot.util.GZSRX.Side;
+import frc.robot.util.GZSubsystem;
+import frc.robot.util.Units;
+import frc.robot.util.Util;
 
 public class Drive extends GZSubsystem {
 
@@ -48,12 +47,12 @@ public class Drive extends GZSubsystem {
 	// GYRO
 	private AHRS mGyro;
 
-	private double percentageModify = 1;
-	private double percentageComplete;
-	private double left_target = 0, right_target = 0;
+	private double mModifyPercent = 1;
+	private boolean mIsSlow = false;
+	private double mPercentageComplete;
+	private double mLeft_target = 0, mRight_target = 0;
 
 	public Drive() {
-
 	}
 
 	public synchronized void construct() {
@@ -145,7 +144,6 @@ public class Drive extends GZSubsystem {
 
 			s.setInverted((s.getSide() == Side.LEFT) ? kDrivetrain.L_INVERT : kDrivetrain.R_INVERT);
 
-			// TODO ISSUE #11
 			// CURRENT LIMIT
 			GZSRX.logError(s.configContinuousCurrentLimit(
 					s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_LIMIT : kDrivetrain.AMP_30_LIMIT,
@@ -354,6 +352,8 @@ public class Drive extends GZSubsystem {
 
 	@Override
 	protected synchronized void in() {
+		this.mModifyPercent = (mIsSlow ? .5 : 1);
+
 		mIO.left_encoder_ticks = (double) L1.getSelectedSensorPosition(0);
 		mIO.left_encoder_vel = (double) L1.getSelectedSensorVelocity(0);
 
@@ -403,8 +403,8 @@ public class Drive extends GZSubsystem {
 	}
 
 	private synchronized void arcadeNoState(double move, double rotate) {
-		double[] temp = arcadeToLR(move * Robot.elevator.getPercentageModify() * percentageModify,
-				rotate * Robot.elevator.getPercentageModify() * percentageModify);
+		double[] temp = arcadeToLR(move * Robot.elevator.getPercentageModify() * mModifyPercent,
+				rotate * Robot.elevator.getPercentageModify() * mModifyPercent);
 
 		mIO.left_desired_output = temp[0];
 		mIO.right_desired_output = temp[1];
@@ -458,8 +458,8 @@ public class Drive extends GZSubsystem {
 
 	public synchronized void tank(double left, double right) {
 		setWantedState(DriveState.OPEN_LOOP);
-		mIO.left_desired_output = left * Robot.elevator.getPercentageModify() * percentageModify;
-		mIO.right_desired_output = right * Robot.elevator.getPercentageModify() * percentageModify;
+		mIO.left_desired_output = left * Robot.elevator.getPercentageModify() * mModifyPercent;
+		mIO.right_desired_output = right * Robot.elevator.getPercentageModify() * mModifyPercent;
 	}
 
 	public synchronized void tank(GZJoystick joy) {
@@ -476,10 +476,10 @@ public class Drive extends GZSubsystem {
 
 		double topspeed = 3941;
 
-		left_target = Units.rotations_to_ticks(leftRotations);
-		right_target = Units.rotations_to_ticks(rightRotations);
+		mLeft_target = Units.rotations_to_ticks(leftRotations);
+		mRight_target = Units.rotations_to_ticks(rightRotations);
 
-		percentageComplete = Math.abs(((getLeftRotations() / left_target) + (getRightRotations() / right_target)) / 2);
+		mPercentageComplete = Math.abs(((getLeftRotations() / mLeft_target) + (getRightRotations() / mRight_target)) / 2);
 
 		L1.configMotionAcceleration((int) (topspeed * leftAccel), 10);
 		R1.configMotionAcceleration((int) (topspeed * rightAccel), 10);
@@ -487,8 +487,8 @@ public class Drive extends GZSubsystem {
 		L1.configMotionCruiseVelocity((int) (topspeed * leftSpeed), 10);
 		R1.configMotionCruiseVelocity((int) (topspeed * rightSpeed), 10);
 
-		mIO.left_desired_output = left_target;
-		mIO.right_desired_output = right_target;
+		mIO.left_desired_output = mLeft_target;
+		mIO.right_desired_output = mRight_target;
 	}
 
 	public synchronized boolean encoderSpeedIsUnder(double ticksPer100Ms) {
@@ -511,24 +511,24 @@ public class Drive extends GZSubsystem {
 		L1.configPeakOutputForward(1, 0);
 		L1.configPeakOutputReverse(-1, 0);
 
-		left_target = 0;
-		right_target = 0;
+		mLeft_target = 0;
+		mRight_target = 0;
 
-		percentageComplete = 3452;
+		mPercentageComplete = 3452;
 	}
 
 	public synchronized boolean encoderIsDone(double multiplier) {
-		return (mIO.left_encoder_ticks < left_target + 102 * multiplier)
-				&& (mIO.left_encoder_ticks > left_target - 102 * multiplier)
-				&& (mIO.right_encoder_ticks < right_target + 102 * multiplier)
-				&& (mIO.right_encoder_ticks > right_target - 102 * multiplier);
+		return (mIO.left_encoder_ticks < mLeft_target + 102 * multiplier)
+				&& (mIO.left_encoder_ticks > mLeft_target - 102 * multiplier)
+				&& (mIO.right_encoder_ticks < mRight_target + 102 * multiplier)
+				&& (mIO.right_encoder_ticks > mRight_target - 102 * multiplier);
 	}
 
 	public synchronized boolean encoderIsDoneEither(double multiplier) {
-		return (mIO.left_encoder_ticks < left_target + 102 * multiplier
-				&& mIO.left_encoder_ticks > left_target - 102 * multiplier)
-				|| (mIO.right_encoder_ticks < right_target + 102 * multiplier
-						&& mIO.right_encoder_ticks > right_target - 102 * multiplier);
+		return (mIO.left_encoder_ticks < mLeft_target + 102 * multiplier
+				&& mIO.left_encoder_ticks > mLeft_target - 102 * multiplier)
+				|| (mIO.right_encoder_ticks < mRight_target + 102 * multiplier
+						&& mIO.right_encoder_ticks > mRight_target - 102 * multiplier);
 	}
 
 	private class MotionProfileBuffer implements java.lang.Runnable {
@@ -743,6 +743,11 @@ public class Drive extends GZSubsystem {
 		zeroGyro();
 	}
 
+	public synchronized Double getPercentageComplete()
+	{
+		return mPercentageComplete;
+	}
+
 	public synchronized void zeroGyro() {
 		mGyro.reset();
 	}
@@ -763,20 +768,13 @@ public class Drive extends GZSubsystem {
 		return pdp.getVoltage();
 	}
 
-	public synchronized double getPercentageModify() {
-		return percentageModify;
+	public synchronized void slowSpeed(boolean isSlow)
+	{
+		mIsSlow = isSlow;
 	}
-
-	public synchronized void setPercentageModify(double percentageModify) {
-		this.percentageModify = percentageModify;
-	}
-
-	public synchronized double getPercentageComplete() {
-		return percentageComplete;
-	}
-
-	public synchronized void setPercentageComplete(double percentageComplete) {
-		this.percentageComplete = percentageComplete;
+	public Boolean isSlow()
+	{
+		return mIsSlow;
 	}
 
 	public synchronized Double getGyroAngle() {

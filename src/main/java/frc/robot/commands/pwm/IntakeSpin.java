@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class IntakeSpin extends Command {
 
-	private double m_speed;
 	private boolean m_clockwise;
 
 	/**
@@ -16,10 +15,9 @@ public class IntakeSpin extends Command {
 	 * @param clockwise
 	 * @see Intake
 	 */
-	public IntakeSpin(double speed, boolean clockwise) {
+	public IntakeSpin(boolean clockwise) {
 		requires(Robot.intake);
 
-		m_speed = speed;
 		m_clockwise = clockwise;
 	}
 
@@ -27,7 +25,7 @@ public class IntakeSpin extends Command {
 	}
 
 	protected void execute() {
-		Robot.intake.spin(m_speed, m_clockwise);
+		Robot.intake.spin(m_clockwise);
 	}
 
 	protected boolean isFinished() {

@@ -2,6 +2,8 @@ package frc.robot;
 
 import java.util.Arrays;
 
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.subsystems.Auton;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Climber;
@@ -14,9 +16,6 @@ import frc.robot.subsystems.Health;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.util.GZSubsystemManager;
-
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
 	public static final Files files = new Files();
@@ -37,10 +36,10 @@ public class Robot extends TimedRobot {
 	public static final Health health = new Health();
 	
 	@SuppressWarnings("unused")
-	private static final OI oi = new OI();
+	// private static final OI oi = new OI();
 
 	// LOGGING CONTROL
-	private boolean logging = false, logToUsb = true;
+	private boolean logging = true, logToUsb = false;
 	private String loggingLocation = "Logging/Offseason";
 
 	@Override
@@ -48,6 +47,7 @@ public class Robot extends TimedRobot {
 		allSubsystems.construct();
 		auton.fillAutonArray();
 		health.generateHealth();
+		
 		// TODO ISSUE #14
 	}
 
@@ -66,8 +66,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		auton.autonChooser();
-
-		Scheduler.getInstance().run();
 	}
 
 	@Override
@@ -103,9 +101,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		// TODO ISSUE #19
-		drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
-		Scheduler.getInstance().run();
 	}
 
 	@Override

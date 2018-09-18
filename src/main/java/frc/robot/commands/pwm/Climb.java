@@ -26,9 +26,7 @@ public class Climb extends Command {
 	protected void execute() {
 		if (Robot.elevator.getState() != ElevatorState.DEMO) {
 			// WAIT ON FIRST TWO PRESSES
-			if (Robot.climber.getClimbCounter() < 2) {
-			} else
-				Robot.climber.manual(m_speed);
+			Robot.climber.runClimber(m_speed);
 		}
 	}
 

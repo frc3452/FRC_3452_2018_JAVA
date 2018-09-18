@@ -19,7 +19,7 @@ public class Health {
 		
 		for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
 			ArrayList<String> temp1 = new ArrayList<>();
-			temp1.add(AlertLevel.NONE.toString());
+			temp1.add(AlertLevel.NONE.stringVal());
 			temp1.add("NA");
 
 			ArrayList<ArrayList<String>> temp2 = new ArrayList<ArrayList<String>>();
@@ -31,7 +31,7 @@ public class Health {
 
 	public void addAlert(GZSubsystem subsystem, AlertLevel level, String message) {
 		ArrayList<String> temp = new ArrayList<>();
-		temp.add(level.toString());
+		temp.add(level.stringVal());
 		temp.add(message);
 		map.get(subsystem).add(temp);
 	}
@@ -46,16 +46,17 @@ public class Health {
 			// Loop through each subsystem
 			for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
 				// Loop through all errors
-				for (int i = 0; i < map.get(s).size() - 1; i++) {
+			
+				for (int i = 0; i < map.get(s).size(); i++) {
 
 					// Get alert level of current error
 					String alert_level = map.get(s).get(i).get(0);
 
-					if (alert_level.equals(AlertLevel.ERROR.toString()))
+					if (alert_level.equals(AlertLevel.ERROR.stringVal()))
 						s.setHighestAlert(AlertLevel.ERROR);
-					else if (alert_level.equals(AlertLevel.WARNING.toString())
-							&& (s.getHighestAlert() != AlertLevel.ERROR))
-						s.setHighestAlert(AlertLevel.WARNING);
+					else if (alert_level.equals(AlertLevel.WARNING.stringVal())
+						&& (s.getHighestAlert() != AlertLevel.ERROR))
+					s.setHighestAlert(AlertLevel.WARNING);
 				}
 			}
 
@@ -69,7 +70,7 @@ public class Health {
 			// Write table
 			for (GZSubsystem s : Robot.allSubsystems.getSubsystems())
 				table += tableRow(
-						tableCell(s.getClass().getSimpleName() + tableCell("", s.getHighestAlert().toString(), true)));
+						tableCell(s.getClass().getSimpleName()) + tableCell("", s.getHighestAlert().stringVal(), true));
 
 			// Put table tags around values
 			table = table(table);
@@ -95,9 +96,9 @@ public class Health {
 						ArrayList<String> error = map.get(s).get(i);
 
 						// If error = ERROR, do bold and red. If warning, paragraph
-						if (error.get(0).equals(AlertLevel.ERROR.toString()))
+						if (error.get(0).equals(AlertLevel.ERROR.stringVal()))
 							body += bold(error.get(1), "red");
-						else if (error.get(0).equals(AlertLevel.WARNING.toString()))
+						else if (error.get(0).equals(AlertLevel.WARNING.stringVal()))
 							body += paragraph(error.get(1));
 					}
 				}
@@ -181,7 +182,7 @@ public class Health {
 			stringValue = s;
 		}
 
-		public String toString() {
+		public String stringVal() {
 			return stringValue;
 		}
 		// further methods, attributes, etc.

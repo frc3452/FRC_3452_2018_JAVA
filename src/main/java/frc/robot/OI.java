@@ -1,8 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.Constants.kElevator;
 import frc.robot.Constants.kIntake;
-import frc.robot.commands.drive.SpeedModifier;
 import frc.robot.commands.elevator.ElevatorManual;
 import frc.robot.commands.elevator.ElevatorPosition;
 import frc.robot.commands.elevator.OverrideSet;
@@ -13,9 +14,6 @@ import frc.robot.subsystems.Elevator.ESO;
 import frc.robot.triggers.DriveSafteyOverriden;
 import frc.robot.util.DPad;
 import frc.robot.util.GZJoystick;
-
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 public class OI {
 	public static GZJoystick driverJoy = new GZJoystick(0);
@@ -40,13 +38,11 @@ public class OI {
 		buttonInit();
 
 		// DRIVER JOY
-		driverJoyA.whenPressed(new SpeedModifier(-1));
-
 		driverJoyX.whileHeld(new IntakeManual(kIntake.Speeds.INTAKE));
 		driverJoyB.whileHeld(new IntakeManual(kIntake.Speeds.SHOOT));
 
 		driverJoyY.whileHeld(new Climb(1));
-		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
+		driverJoyRB.whileHeld(new ElevatorManual(GZOI.driverJoy));
 		driverJoyBack.whenPressed(new OverrideSet(ESO.TOGGLE));
 
 		// DPAD
@@ -56,7 +52,7 @@ public class OI {
 		driverRight.whenPressed(new ElevatorPosition(kElevator.Heights.Switch));
 
 		// OP JOY
-		opJoyLB.whileHeld(new ElevatorManual(opJoy));
+		opJoyLB.whileHeld(new ElevatorManual(GZOI.opJoy));
 		// opJoyRB.whenPressed(new JustGonnaSendIt());
 
 		opJoyA.whileHeld(new IntakeManual(kIntake.Speeds.PLACE));
@@ -64,8 +60,8 @@ public class OI {
 		opJoyB.whileHeld(new IntakeManual(kIntake.Speeds.SHOOT));
 		opJoyY.whileHeld(new IntakeManual(kIntake.Speeds.SLOW));
 
-		opJoyBack.whileHeld(new IntakeSpin(kIntake.Speeds.SPIN, true));
-		opJoyStart.whileHeld(new IntakeSpin(kIntake.Speeds.SPIN, false));
+		opJoyBack.whileHeld(new IntakeSpin(true));
+		opJoyStart.whileHeld(new IntakeSpin(false));
 
 		// DPAD
 		opDown.whenPressed(new ElevatorPosition(kElevator.Heights.Floor));

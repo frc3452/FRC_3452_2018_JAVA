@@ -50,7 +50,7 @@ public class Lights extends GZSubsystem {
 			tempArray[i] = 3452;
 
 		canifier = new CANifier(Constants.kLights.CANIFIER_ID);
-		GZSRX.logError(canifier.configFactoryDefault(), Robot.lights, AlertLevel.WARNING, "CANIFIER NOT FOUND");
+		GZSRX.logError(canifier.configFactoryDefault(), this, AlertLevel.WARNING, "Canifier not found");
 
 		lightTimer.stop();
 		lightTimer.reset();
@@ -65,7 +65,7 @@ public class Lights extends GZSubsystem {
 
 	@Override
 	public void loop() {
-		if (OI.driverJoy.areButtonsPressed(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
+		if (OI.driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
 			readyForMatch = true;
 
 		if (Robot.gzOI.isTele()) {

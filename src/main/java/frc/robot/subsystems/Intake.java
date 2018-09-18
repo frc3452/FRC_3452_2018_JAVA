@@ -127,10 +127,10 @@ public class Intake extends GZSubsystem {
 		this.mWantedState = wantedState;
 	}
 
-	public void spin(double percentage, boolean clockwise) {
+	public void spin(boolean clockwise) {
 		setWantedState(IntakeState.MANUAL);
-		IO.left_desired_output = percentage * (clockwise ? -1 : 1);
-		IO.right_desired_output = percentage * (clockwise ? 1 : -1);
+		IO.left_desired_output = kIntake.Speeds.SPIN * (clockwise ? -1 : 1);
+		IO.right_desired_output = kIntake.Speeds.SPIN * (clockwise ? 1 : -1);
 	}
 
 	@Override
