@@ -42,7 +42,7 @@ public class OI {
 		driverJoyB.whileHeld(new IntakeManual(kIntake.Speeds.SHOOT));
 
 		driverJoyY.whileHeld(new Climb(1));
-		driverJoyRB.whileHeld(new ElevatorManual(driverJoy));
+		driverJoyRB.whileHeld(new ElevatorManual(GZOI.driverJoy));
 		driverJoyBack.whenPressed(new OverrideSet(ESO.TOGGLE));
 
 		// DPAD
@@ -52,7 +52,7 @@ public class OI {
 		driverRight.whenPressed(new ElevatorPosition(kElevator.Heights.Switch));
 
 		// OP JOY
-		opJoyLB.whileHeld(new ElevatorManual(opJoy));
+		opJoyLB.whileHeld(new ElevatorManual(GZOI.opJoy));
 		// opJoyRB.whenPressed(new JustGonnaSendIt());
 
 		opJoyA.whileHeld(new IntakeManual(kIntake.Speeds.PLACE));
@@ -60,8 +60,8 @@ public class OI {
 		opJoyB.whileHeld(new IntakeManual(kIntake.Speeds.SHOOT));
 		opJoyY.whileHeld(new IntakeManual(kIntake.Speeds.SLOW));
 
-		opJoyBack.whileHeld(new IntakeSpin(kIntake.Speeds.SPIN, true));
-		opJoyStart.whileHeld(new IntakeSpin(kIntake.Speeds.SPIN, false));
+		opJoyBack.whileHeld(new IntakeSpin(true));
+		opJoyStart.whileHeld(new IntakeSpin(false));
 
 		// DPAD
 		opDown.whenPressed(new ElevatorPosition(kElevator.Heights.Floor));

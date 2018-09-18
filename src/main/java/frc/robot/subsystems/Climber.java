@@ -84,7 +84,16 @@ public class Climber extends GZSubsystem {
 		double climber_desired_output = 0;
 	}
 
-	public void manual(double percentage) {
+	public void runClimber(double percentage)
+	{
+		if (climbCounter > 3)
+			manual(percentage);
+		else
+			stop();
+			
+	}
+
+	private void manual(double percentage) {
 		setWantedState(ClimberState.MANUAL);
 		mIO.climber_desired_output = percentage;
 	}
@@ -119,6 +128,7 @@ public class Climber extends GZSubsystem {
 	}
 
 	private synchronized void handleStates() {
+		
 		//if trying to disable or run demo mode while not connected to field
 		if (((this.isDisabed() || Robot.auton.isDemo()) && !Robot.gzOI.isFMS())
 				|| mWantedState == ClimberState.NEUTRAL) {

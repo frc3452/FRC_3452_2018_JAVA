@@ -7,7 +7,8 @@ import edu.wpi.first.wpilibj.Joystick;
 public class GZJoystick extends Joystick {
 
 	private DPad mUp, mDown, mRight, mLeft;
-	private LatchedBoolean a,b,x,y,lb,rb,back,start,lclick,rclick, dUp, dDown, dLeft, dRight;
+	private LatchedBoolean a = new LatchedBoolean()
+	,b = new LatchedBoolean(),x = new LatchedBoolean(),y = new LatchedBoolean(),lb = new LatchedBoolean(),rb = new LatchedBoolean(),back = new LatchedBoolean(),start = new LatchedBoolean(),lclick = new LatchedBoolean(),rclick = new LatchedBoolean(), dUp = new LatchedBoolean(), dDown = new LatchedBoolean(), dLeft = new LatchedBoolean(), dRight = new LatchedBoolean();
 
 	public GZJoystick(int port) {
 		super(port);
@@ -51,73 +52,75 @@ public class GZJoystick extends Joystick {
 		return this.getRawAxis(Axises.RIGHT_TRIGGER);
 	}
 
-	public Boolean isAPressed()
-	{
+	public Boolean getDUp(){
+		return this.mUp.get();
+	}
+
+	public Boolean getDDown() {
+		return this.mDown.get();
+	}
+
+	public Boolean getDLeft(){
+		return this.mLeft.get();
+	}
+
+	public Boolean getDRight(){
+		return this.mRight.get();
+	}
+
+	public Boolean isAPressed(){
 		return a.update(this.getRawButton(Buttons.A));
 	} 
 
-	public Boolean isBPressed()
-	{
+	public Boolean isBPressed(){
 		return b.update(this.getRawButton(Buttons.B));
 	}
 
-	public Boolean isXPressed()
-	{
+	public Boolean isXPressed(){
 		return x.update(this.getRawButton(Buttons.X));
 	}
 
-	public Boolean isYPressed()
-	{
+	public Boolean isYPressed()	{
 		return y.update(this.getRawButton(Buttons.Y));
 	}
 
-	public Boolean isLBPressed()
-	{
+	public Boolean isLBPressed(){
 		return lb.update(this.getRawButton(Buttons.LB));
 	}
 
-	public Boolean isRBPressed()
-	{
+	public Boolean isRBPressed(){
 		return rb.update(this.getRawButton(Buttons.RB));
 	}
 
-	public Boolean isBackPressed()
-	{
+	public Boolean isBackPressed(){
 		return back.update(this.getRawButton(Buttons.BACK));
 	}
 
-	public Boolean isStartPressed()
-	{
+	public Boolean isStartPressed(){
 		return start.update(this.getRawButton(Buttons.START));
 	}
 
-	public Boolean isLClickPressed()
-	{
+	public Boolean isLClickPressed(){
 		return lclick.update(this.getRawButton(Buttons.LEFT_CLICK));
 	}
 
-	public Boolean isRClickPressed()
-	{
+	public Boolean isRClickPressed(){
 		return rclick.update(this.getRawButton(Buttons.RIGHT_CLICK));
 	}
 
-	public Boolean isDUpPressed()
-	{
+	public Boolean isDUpPressed(){
 		return dUp.update(mUp.get());
 	}
 
-	public Boolean isDDownPressed()
-	{
+	public Boolean isDDownPressed()	{
 		return dDown.update(mDown.get());
 	}
 
-	public Boolean isDLeftPressed()
-	{
+	public Boolean isDLeftPressed(){
 		return dLeft.update(mLeft.get());
 	}
 
-	public Boolean isDRightPressed()
-	{
+	public Boolean isDRightPressed(){
 		return dRight.update(mRight.get());
 	}
 
