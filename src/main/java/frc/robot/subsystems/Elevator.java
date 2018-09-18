@@ -96,20 +96,19 @@ public class Elevator extends GZSubsystem {
 		//NORMALLYOPEN LIMIT SWITCHES WITH A TALON TACH IS SETTING WHETHER THE SENSOR IS TRIPPED UNDER DARK OR LIGHT
 		GZSRX.logError(
 				elevator_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
-						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
+						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set forward limit switch");
 		GZSRX.logError(
 				elevator_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
-						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
+						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set reverse limit switch");
 
 		overrideLimit(false);
 		
 		in();
-		if (getTopLimit() && getBottomLimit())
+		if (getUpLmtLimit() && getDownLmtSwitch())
 			Robot.health.addAlert(this, AlertLevel.ERROR, "Both limit switches tripped");
-			
-		if (!getBottomLimit())
+		if (!getDownLmtLimit())
 			Robot.health.addAlert(this, AlertLevel.WARNING, "Bottom limit not tripped.");
 		
 		softLimits(false);
@@ -258,8 +257,8 @@ public class Elevator extends GZSubsystem {
 	public synchronized Boolean getBottomLimit()
 	{
 		return mIO.elevator_fwd_lmt;
-	}
-
+  }
+    
 	@Override
 	protected synchronized void out() {
 		elevator_1.set(mIO.control_mode, mIO.output);

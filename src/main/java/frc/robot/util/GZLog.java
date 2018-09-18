@@ -95,6 +95,7 @@ public class GZLog {
 
 		elev_up_limit.setValue(Robot.elevator.getTopLimit().toString());
 		elev_down_limit.setValue(Robot.elevator.getBottomLimit().toString());
+
 		elev_rotations.setValue(Robot.elevator.getRotations().toString());
 		elev_speed.setValue(Robot.elevator.getSpeed().toString());
 

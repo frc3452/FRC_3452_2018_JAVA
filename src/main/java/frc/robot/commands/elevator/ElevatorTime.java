@@ -33,6 +33,7 @@ public class ElevatorTime extends Command {
 	}
 
 	protected boolean isFinished() {
+
 		if (Robot.elevator.getTopLimit() && m_speed > 0)
 			return true;
 

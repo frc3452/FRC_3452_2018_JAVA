@@ -37,6 +37,7 @@ public class ElevatorPosition extends Command {
 			return true;
 
 		if (Robot.elevator.getBottomLimit() && m_value < 0)
+
 			return true;
 
 		return Robot.elevator.isDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
