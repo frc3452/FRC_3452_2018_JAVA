@@ -77,7 +77,6 @@ public class Drive extends GZSubsystem {
 			if (s.getFirmwareVersion() != kDrivetrain.FIRMWARE_VERSION)
 				Robot.health.addAlert(this, AlertLevel.ERROR, "Talon " + name + " firmware is " + s.getFirmwareVersion() + " , does not equal " + kDrivetrain.FIRMWARE_VERSION);
 
-			System.out.println(name);
 			GZSRX.logError(s.configFactoryDefault(GZSRX.TIMEOUT), this, AlertLevel.ERROR,
 					"Could not factory reset Talon " + name);
 
