@@ -145,11 +145,11 @@ public class Files {
 			try {
 				// populate position and speed values
 				// WRITE PROFILES IN TICKS,
-				double leftPos = Robot.drive.getLeftRotations();
-				double leftSpeed = Robot.drive.getLeftVel();
+				double leftPos = 0;
+				double leftSpeed = 0;
 
-				double rightPos = Robot.drive.getRightRotations();
-				double rightSpeed = Robot.drive.getRightVel();
+				double rightPos = 0;
+				double rightSpeed = 0;
 
 				// write values
 				bw.write(String.valueOf(leftPos + ","));

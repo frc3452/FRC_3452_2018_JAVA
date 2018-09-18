@@ -74,133 +74,24 @@ public class Constants {
 	}
 
 	public class kDrivetrain {
-
-		public class PID {
-			public class LEFT {
-				public final static double P = .425;
-				public final static double I = 0;
-				public final static double D = 4.25;
-				public static final double F = 0;
-			}
-
-			public class RIGHT {
-				public final static double P = .425;
-				public final static double I = 0;
-				public final static double D = 4.25;
-				public static final double F = 0;
-			}
-		}
+		public final static int FIRMWARE_VERSION = 0;
 
 		public final static int L1 = 1, L2 = 2, L3 = 3, L4 = 4;
 		public final static int R1 = 5, R2 = 6, R3 = 7, R4 = 8;
 
 		public final static boolean L_INVERT = false;
 		public final static boolean R_INVERT = false;
-
-		public final static double DIFFERENTIAL_DRIVE_DEADBAND = 0.045;
-
 		public final static int AMP_40_TRIGGER = 60, AMP_40_LIMIT = 30, AMP_40_TIME = 4000;
 
 		public final static int AMP_30_TRIGGER = 45, AMP_30_LIMIT = 25, AMP_30_TIME = 3000;
 
 		public final static double OPEN_LOOP_RAMP_TIME = 0.125;
 
-		public static final double DEMO_DRIVE_MODIFIER = .5;
 	}
 
 	public class kPDP {
 		public final static int DRIVE_L_1 = 0, DRIVE_L_2 = 1, DRIVE_L_3 = 5, DRIVE_L_4 = 4;
 		public final static int DRIVE_R_1 = 15, DRIVE_R_2 = 14, DRIVE_R_3 = 11, DRIVE_R_4 = 10;
-
-		public final static int ELEVATOR_1 = 12;
-		public final static int ELEVATOR_2 = 13;
-
-		public final static int INTAKE_L = 9;
-		public final static int INTAKE_R = 8;
-
-		public final static int CLIMBER_1 = 3;
-		public final static int CLIMBER_2 = 2;
-	}
-
-	public class kElevator {
-		public class PID {
-			public static final double F = 0;
-			public static final double P = .2;
-			public static final double I = 0.000028;
-			public static final double D = 2.5;
-		}
-		
-		public static final int E_1 = 9;
-		public static final int E_2 = 10;
-
-		public static final boolean E_1_INVERT = false;
-		public static final boolean E_2_INVERT = false;
-
-		public static final boolean ENC_INVERT = true;
-
-		public static final double OPEN_RAMP_TIME = .5;
-		public static final double CLOSED_RAMP_TIME = .125;
-
-		public static final double JOYSTICK_MODIFIER_UP = 1;
-		public static final double JOYSTICK_MODIFIER_DOWN = .6;
-
-		public static final double DEMO_JOYSTICK_MODIFIER_DOWN = .3;
-		public static final double DEMO_JOYSTICK_MODIFIER_UP = .5;
-
-		public static final double CLOSED_DOWN_SPEED_LIMIT = .45;
-		public static final double CLOSED_UP_SPEED_LIMIT = .9;
-
-		public static final double CLOSED_COMPLETION = 6.5;
-
-		private static final double SPEED_MODIFIER = .2;
-		public static final double SPEED_1 = 1 + SPEED_MODIFIER;
-		public static final double SPEED_2 = .9 + SPEED_MODIFIER;
-		public static final double SPEED_3 = .65 + SPEED_MODIFIER;
-		public static final double SPEED_4 = .55 + SPEED_MODIFIER;
-		public static final double SPEED_5 = .43 + SPEED_MODIFIER;
-
-		public static final int AMP_TRIGGER = 50;
-		public static final int AMP_LIMIT = 40;
-		public static final int AMP_TIME = 1000;
-
-		public static final double LOWER_SOFT_LIMIT = Heights.Floor;
-		public static final double UPPER_SOFT_LIMIT = 5;
-
-		public static final boolean USE_SOFT_LIMITS = false;
-
-		public class Heights {
-			public static final double Floor = -15; // below 0 to counter possible encoder drift
-			public static final double Switch = 2.8;
-			public static final double Scale = 8;
-		}
-
-	}
-
-	public class kIntake {
-		public static final int INTAKE_L = 0;
-		public static final int INTAKE_R = 1;
-
-		public static final boolean INTAKE_L_INVERT = false;
-		public static final boolean INTAKE_R_INVERT = true;
-
-		public class Speeds {
-			public static final double INTAKE = -.8;
-			public static final double SHOOT = .75;
-			public static final double SLOW = .3;
-			public static final double PLACE = .2;
-			public static final double SPIN = .35;
-		}
-
-	}
-
-	public class kLights {
-		public static final int CANIFIER_ID = 0;
-
-		public static final int RED = 0;
-		public static final int BLUE = 120;
-		public static final int PURPLE = 55;
-		public static final int GREEN = 254; // ;)
-		public static final int YELLOW = 330;
 	}
 
 	public class kFileManagement {

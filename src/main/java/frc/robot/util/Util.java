@@ -3,8 +3,6 @@ package frc.robot.util;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import frc.robot.motionprofiles.Path;
-
 public class Util {
 
 	public static double limit(double value) {
@@ -73,26 +71,6 @@ public class Util {
 		else
 			temp = new SimpleDateFormat("yyyy.MM.dd.HH.mm").format(new Date());
 		return temp;
-	}
-
-	public static class Parse implements Path {
-
-		@Override
-		public double[][] mpL() {
-			double[][] mpL = { { 3452, 3452 }, { 3452, 3452 }, };
-			return mpL;
-		}
-
-		@Override
-		public double[][] mpR() {
-			double[][] mpR = { { 3452, 3452 }, { 3452, 3452 }, };
-			return mpR;
-		}
-
-		@Override
-		public Integer mpDur() {
-			return 3452;
-		}
 	}
 
 }
