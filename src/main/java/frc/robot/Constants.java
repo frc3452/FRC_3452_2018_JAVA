@@ -8,70 +8,6 @@ package frc.robot;
  */
 
 public class Constants {
-	public class kAuton {
-		public static final int COMMAND_ARRAY_SIZE = 41;
-
-		public static final double CORRECTION = 0.025;
-
-		public static final int SAFTEY_SWITCH = 96;
-
-		public static final int AUTO_SELECTOR_1 = 2;
-		public static final int AUTO_SELECTOR_2 = 3;
-
-		public static final int AUTO_VARIANCE = 15;
-
-		// COMP
-		public static final int AUTO_1 = 2683;
-		public static final int AUTO_2 = 2992;
-		public static final int AUTO_3 = 3185;
-		public static final int AUTO_4 = 3321;
-		public static final int AUTO_5 = 3427;
-		public static final int AUTO_6 = 3507;
-		public static final int AUTO_7 = 3565;
-		public static final int AUTO_8 = 3658;
-		public static final int AUTO_9 = 3721;
-		public static final int AUTO_10 = 3781;
-
-		public static final int AUTO_1_L = AUTO_1 - AUTO_VARIANCE;
-		public static final int AUTO_1_H = AUTO_1 + AUTO_VARIANCE;
-
-		public static final int AUTO_2_L = AUTO_2 - AUTO_VARIANCE;
-		public static final int AUTO_2_H = AUTO_2 + AUTO_VARIANCE;
-
-		public static final int AUTO_3_L = AUTO_3 - AUTO_VARIANCE;
-		public static final int AUTO_3_H = AUTO_3 + AUTO_VARIANCE;
-
-		public static final int AUTO_4_L = AUTO_4 - AUTO_VARIANCE;
-		public static final int AUTO_4_H = AUTO_4 + AUTO_VARIANCE;
-
-		public static final int AUTO_5_L = AUTO_5 - AUTO_VARIANCE;
-		public static final int AUTO_5_H = AUTO_5 + AUTO_VARIANCE;
-
-		public static final int AUTO_6_L = AUTO_6 - AUTO_VARIANCE;
-		public static final int AUTO_6_H = AUTO_6 + AUTO_VARIANCE;
-
-		public static final int AUTO_7_L = AUTO_7 - AUTO_VARIANCE;
-		public static final int AUTO_7_H = AUTO_7 + AUTO_VARIANCE;
-
-		public static final int AUTO_8_L = AUTO_8 - AUTO_VARIANCE;
-		public static final int AUTO_8_H = AUTO_8 + AUTO_VARIANCE;
-
-		public static final int AUTO_9_L = AUTO_9 - AUTO_VARIANCE;
-		public static final int AUTO_9_H = AUTO_9 + AUTO_VARIANCE;
-
-		public static final int AUTO_10_L = AUTO_10 - AUTO_VARIANCE;
-		public static final int AUTO_10_H = AUTO_10 + AUTO_VARIANCE;
-
-		public static final String DEFAULT_NAME = "NO COMMAND";
-	}
-
-	public class kCamera {
-	}
-
-	public class kClimber {
-		public static final int CLIMBER_1 = 2;
-		public static final boolean CLIMBER_1_INVERT = false;
-	}
 
 	public class kDrivetrain {
 		public final static int FIRMWARE_VERSION = 0;
@@ -102,13 +38,7 @@ public class Constants {
 
 	public class kOI {
 		public class Rumble {
-
-			public final static double INTAKE = .3;
-			public final static double ELEVATOR_SPEED_OVERRIDE_DRIVE = .45;
-			public final static double ELEVATOR_SPEED_OVERRIDE_OP = ELEVATOR_SPEED_OVERRIDE_DRIVE - .2;
-			public final static double ELEVATOR_LIMIT_OVERRIDE = .45;
 			public final static double ENDGAME = .6;
-
 		}
 	}
 
