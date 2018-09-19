@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.kElevator;
 import frc.robot.GZOI;
-import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZJoystick;
@@ -22,7 +21,6 @@ import frc.robot.util.GZSRX.Breaker;
 import frc.robot.util.GZSRX.Master;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.Units;
-import frc.robot.util.Util;
 
 public class Elevator extends GZSubsystem {
 
@@ -43,8 +41,8 @@ public class Elevator extends GZSubsystem {
 	}
 
 	public synchronized void construct() {
-		elevator_1 = new GZSRX(kElevator.E_1, Breaker.AMP_40, Master.MASTER);
-		elevator_2 = new GZSRX(kElevator.E_2, Breaker.AMP_40, Master.FOLLOWER);
+		elevator_1 = new GZSRX(this, kElevator.E_1, Breaker.AMP_40, Master.MASTER);
+		elevator_2 = new GZSRX(this, kElevator.E_2, Breaker.AMP_40, Master.FOLLOWER);
 
 		controllers = Arrays.asList(elevator_1, elevator_2);
 
@@ -57,14 +55,14 @@ public class Elevator extends GZSubsystem {
 		elevator_1.setInverted(Constants.kElevator.E_1_INVERT);
 		elevator_2.setInverted(Constants.kElevator.E_2_INVERT);
 
-		GZSRX.logError(elevator_1.config_kF(0, kElevator.PID.F, 10), this,
-				AlertLevel.WARNING, "Could not set 'F' gain");
-		GZSRX.logError(elevator_1.config_kP(0, kElevator.PID.P, 10), this,
-				AlertLevel.WARNING, "Could not set 'P' gain");
-		GZSRX.logError(elevator_1.config_kI(0, kElevator.PID.I, 10), this,
-				AlertLevel.WARNING, "Could not set 'I' gain");
-		GZSRX.logError(elevator_1.config_kD(0, kElevator.PID.D, 10), this,
-				AlertLevel.WARNING, "Could not set 'D' gain");
+		GZSRX.logError(elevator_1.config_kF(0, kElevator.PID.F, 10), this, AlertLevel.WARNING,
+				"Could not set 'F' gain");
+		GZSRX.logError(elevator_1.config_kP(0, kElevator.PID.P, 10), this, AlertLevel.WARNING,
+				"Could not set 'P' gain");
+		GZSRX.logError(elevator_1.config_kI(0, kElevator.PID.I, 10), this, AlertLevel.WARNING,
+				"Could not set 'I' gain");
+		GZSRX.logError(elevator_1.config_kD(0, kElevator.PID.D, 10), this, AlertLevel.WARNING,
+				"Could not set 'D' gain");
 		GZSRX.logError(elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10), Robot.elevator,
 				AlertLevel.WARNING, "Could not set open loop ramp");
 		GZSRX.logError(elevator_1.configClosedloopRamp(Constants.kElevator.CLOSED_RAMP_TIME, 10), this,
@@ -75,25 +73,23 @@ public class Elevator extends GZSubsystem {
 		GZSRX.logError(elevator_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10), this,
 				AlertLevel.ERROR, "Could not find encoder");
 
-		GZSRX.logError(elevator_1.setSelectedSensorPosition(0, 0, 10), this,
-				AlertLevel.WARNING, "Could not zero encoder");
+		GZSRX.logError(elevator_1.setSelectedSensorPosition(0, 0, 10), this, AlertLevel.WARNING,
+				"Could not zero encoder");
 		elevator_1.setSensorPhase(Constants.kElevator.ENC_INVERT);
 
 		// SOFT LIMITS FOR DEMO MODE
-		GZSRX.logError(
-				elevator_1.configForwardSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.LOWER_SOFT_LIMIT), GZSRX.TIMEOUT), this,
-				AlertLevel.WARNING, "Could not set lower soft limit");
-		GZSRX.logError(
-				elevator_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.UPPER_SOFT_LIMIT), GZSRX.TIMEOUT), this,
-				AlertLevel.WARNING, "Could not set upper soft limit");
-
+		GZSRX.logError(elevator_1.configForwardSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.LOWER_SOFT_LIMIT),
+				GZSRX.TIMEOUT), this, AlertLevel.WARNING, "Could not set lower soft limit");
+		GZSRX.logError(elevator_1.configReverseSoftLimitThreshold(Units.rotations_to_ticks(-kElevator.UPPER_SOFT_LIMIT),
+				GZSRX.TIMEOUT), this, AlertLevel.WARNING, "Could not set upper soft limit");
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
-		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), this,
-				AlertLevel.ERROR, "Could not set encoder zero on bottom limit");
+		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), this, AlertLevel.ERROR,
+				"Could not set encoder zero on bottom limit");
 
 		// REMOTE LIMIT SWITCHES
-		//NORMALLYOPEN LIMIT SWITCHES WITH A TALON TACH IS SETTING WHETHER THE SENSOR IS TRIPPED UNDER DARK OR LIGHT
+		// NORMALLYOPEN LIMIT SWITCHES WITH A TALON TACH IS SETTING WHETHER THE SENSOR
+		// IS TRIPPED UNDER DARK OR LIGHT
 		GZSRX.logError(
 				elevator_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
@@ -103,15 +99,13 @@ public class Elevator extends GZSubsystem {
 						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set reverse limit switch");
 
-
-		overrideLimit(false);
-		
 		in();
 		if (getTopLimit() && getBottomLimit())
 			Robot.health.addAlert(this, AlertLevel.ERROR, "Both limit switches tripped");
 		if (!getBottomLimit())
 			Robot.health.addAlert(this, AlertLevel.WARNING, "Bottom limit not tripped.");
-		
+
+		overrideLimit(false);
 		softLimits(false);
 
 		elevator_1.setName("Elev 1");
@@ -123,7 +117,8 @@ public class Elevator extends GZSubsystem {
 		for (GZSRX s : srx) {
 
 			if (s.getFirmwareVersion() != GZSRX.FIRMWARE)
-				Robot.health.addAlert(this, AlertLevel.ERROR, "Talon " + s.getMaster() + " firmware is " + s.getFirmwareVersion() + " , does not equal " + GZSRX.FIRMWARE);
+				Robot.health.addAlert(this, AlertLevel.ERROR, "Talon " + s.getMaster() + " firmware is "
+						+ s.getFirmwareVersion() + " , does not equal " + GZSRX.FIRMWARE);
 
 			GZSRX.logError(s.configFactoryDefault(), this, AlertLevel.ERROR,
 					"Could not factory reset " + s.getMaster());
@@ -254,16 +249,14 @@ public class Elevator extends GZSubsystem {
 		mIO.elevator_rev_lmt = elevator_2.getSensorCollection().isRevLimitSwitchClosed();
 	}
 
-	public synchronized Boolean getTopLimit()
-	{
+	public synchronized Boolean getTopLimit() {
 		return mIO.elevator_rev_lmt;
 	}
 
-	public synchronized Boolean getBottomLimit()
-	{
+	public synchronized Boolean getBottomLimit() {
 		return mIO.elevator_fwd_lmt;
-  }
-    
+	}
+
 	@Override
 	protected synchronized void out() {
 		elevator_1.set(mIO.control_mode, mIO.output);
@@ -305,10 +298,11 @@ public class Elevator extends GZSubsystem {
 			onStateExit(mState);
 			mState = mWantedState;
 			onStateStart(mState);
-		} 
+		}
 
-		//Positioning
-		if (mState == ElevatorState.POSITION && (isDone(kElevator.CLOSED_COMPLETION) || ((-getTarget() < 0) && getBottomLimit()) || (-getTarget() > 0) && getTopLimit())) 
+		// Positioning
+		if (mState == ElevatorState.POSITION && (isDone(kElevator.CLOSED_COMPLETION)
+				|| ((-getTarget() < 0) && getBottomLimit()) || (-getTarget() > 0) && getTopLimit()))
 			encoderDone();
 	}
 
@@ -379,7 +373,7 @@ public class Elevator extends GZSubsystem {
 
 		elevator_1.configPeakOutputForward(1, 10);
 		elevator_1.configPeakOutputReverse(-1, 10);
-		
+
 		setTarget(0);
 		stop();
 	}
@@ -413,10 +407,10 @@ public class Elevator extends GZSubsystem {
 		return driveModifier;
 	}
 
-	public synchronized void overrideLimit(boolean toOverrideLimit)
-	{
+	public synchronized void overrideLimit(boolean toOverrideLimit) {
 		mLimitOverride = toOverrideLimit;
-		elevator_1.overrideLimitSwitchesEnable(toOverrideLimit);;
+		elevator_1.overrideLimitSwitchesEnable(toOverrideLimit);
+		;
 	}
 
 	public synchronized void setSpeedLimitingOverride(ESO override) {
@@ -461,8 +455,7 @@ public class Elevator extends GZSubsystem {
 		this.target = target;
 	}
 
-	public boolean isLimitOverriden()
-	{
+	public boolean isLimitOverriden() {
 		return mLimitOverride;
 	}
 

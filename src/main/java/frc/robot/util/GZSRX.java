@@ -16,32 +16,54 @@ public class GZSRX extends WPI_TalonSRX {
 	public final static int FIRMWARE = 778;
 
 	// Drivetrain
-	public GZSRX(int deviceNumber, Breaker breaker, Side side, Master master) {
+	public GZSRX(GZSubsystem sub, int deviceNumber, Breaker breaker, Side side, Master master) {
 		super(deviceNumber);
 
 		mBreaker = breaker;
 		mSide = side;
 		mMaster = master;
+
+		checkFirmware(sub);
 	}
 
 	// Other subsystem
-	public GZSRX(int deviceNumber, Breaker breaker, Master master) {
+	public GZSRX(GZSubsystem sub, int deviceNumber, Breaker breaker, Master master) {
 		super(deviceNumber);
 
 		mBreaker = breaker;
 		mMaster = master;
+
+		checkFirmware(sub);
 	}
 
 	// Basic
-	public GZSRX(int deviceNumber, Breaker breaker) {
+	public GZSRX(GZSubsystem sub, int deviceNumber, Breaker breaker) {
 		super(deviceNumber);
 
 		mBreaker = breaker;
+		checkFirmware(sub);
 	}
 
 	public static void logError(ErrorCode errorCode, GZSubsystem subsystem, AlertLevel level, String message) {
 		if (errorCode != ErrorCode.OK)
 			Robot.health.addAlert(subsystem, level, message);
+	}
+
+	private void checkFirmware(GZSubsystem sub)
+	{
+		int firm = this.getFirmwareVersion();
+	
+		if(firm != FIRMWARE)
+		{
+			int id = this.getDeviceID();
+
+			if (mSide != Side.NO_INFO)
+				Robot.health.addAlert(sub, AlertLevel.ERROR, "Talon " + id + "(" + mSide + ")" + " firmware is " + firm + ", should be " + FIRMWARE);
+			else if (mMaster != Master.NO_INFO)
+				Robot.health.addAlert(sub, AlertLevel.ERROR, "Talon " + id + "(" + mMaster + ")" + " firmware is " + firm + ", should be " + FIRMWARE);
+			else
+				Robot.health.addAlert(sub, AlertLevel.ERROR, "Talon " + id + " firmware is " + firm + ", should be " + FIRMWARE);
+		}
 	}
 
 	public Breaker getBreakerSize() {
@@ -60,12 +82,13 @@ public class GZSRX extends WPI_TalonSRX {
 		LEFT, RIGHT, NO_INFO
 	}
 
-	public enum Breaker {
-		AMP_20, AMP_30, AMP_40, NO_INFO
-	}
-
+	
 	public enum Master {
 		MASTER, FOLLOWER, NO_INFO
+	}
+
+	public enum Breaker {
+		AMP_20, AMP_30, AMP_40, NO_INFO
 	}
 
 }
