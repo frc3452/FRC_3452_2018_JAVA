@@ -13,7 +13,7 @@
 
 [Control Method](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/63682faa1663f147e58e6ccdb7ff3d9a31c46cd6/src/org/usfirst/frc/team3452/robot/subsystems/FileManagement.java#L296)
 
-[Logging (Control Method)](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/0bef706f09661d3231ddfde3c02970c1501c333c/src/main/java/frc/robot/subsystems/Files.java#L288
+[Logging Control Method](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/0bef706f09661d3231ddfde3c02970c1501c333c/src/main/java/frc/robot/subsystems/Files.java#L288
 
 [Logging (Object)](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/0bef706f09661d3231ddfde3c02970c1501c333c/src/main/java/frc/robot/util/GZLog.java#L69)
 
