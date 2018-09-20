@@ -19,7 +19,7 @@
 
 ### HTML Viewed Health Checker for Subsystem Health
 
-(Viewed through ftp://roborio-TEAM-frc.local/home/lvuser shortcut)
+(Viewed through ftp://roborio-TEAM-frc.local/home/lvuser/Health.html shortcut, opens in Chrome)
 
 [Example - All Good](https://github.com/frc3452/FRC_3452_2018_JAVA/blob/0bef706f09661d3231ddfde3c02970c1501c333c/Extras/Health%20Checker/All%20Systems%20Good.html#L21)
 
