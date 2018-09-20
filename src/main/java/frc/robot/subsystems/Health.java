@@ -37,8 +37,6 @@ public class Health {
 	}
 
 	public void generateHealth() {
-		System.out.println(map);
-
 		try {
 			String htmlString = base_file;
 			String body = "", table = "";

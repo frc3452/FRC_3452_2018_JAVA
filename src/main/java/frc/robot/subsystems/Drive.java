@@ -3,14 +3,12 @@ package frc.robot.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.kDrivetrain;
 import frc.robot.OI;
-import frc.robot.Robot;
 import frc.robot.commands.drive.DriveTele;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZJoystick;
@@ -39,15 +37,15 @@ public class Drive extends GZSubsystem {
 	}
 
 	public synchronized void construct() {
-		L1 = new GZSRX(this, kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
-		L2 = new GZSRX(this, kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
-		L3 = new GZSRX(this, kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
-		L4 = new GZSRX(this, kDrivetrain.L4, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
+		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
+		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
+		L3 = new GZSRX(kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
+		L4 = new GZSRX(kDrivetrain.L4, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
 
-		R1 = new GZSRX(this, kDrivetrain.R1, Breaker.AMP_40, Side.RIGHT, Master.MASTER);
-		R2 = new GZSRX(this, kDrivetrain.R2, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
-		R3 = new GZSRX(this, kDrivetrain.R3, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
-		R4 = new GZSRX(this, kDrivetrain.R4, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
+		R1 = new GZSRX(kDrivetrain.R1, Breaker.AMP_40, Side.RIGHT, Master.MASTER);
+		R2 = new GZSRX(kDrivetrain.R2, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
+		R3 = new GZSRX(kDrivetrain.R3, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
+		R4 = new GZSRX(kDrivetrain.R4, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
 
 		mDrive = new DifferentialDrive(L1, R1);
 
@@ -73,9 +71,8 @@ public class Drive extends GZSubsystem {
 	private void talonInit() {
 		for (GZSRX s : controllers) {
 			String name = s.getSide() + " (" + s.getDeviceID() + ")";
-			
-			if (s.getFirmwareVersion() != kDrivetrain.FIRMWARE_VERSION)
-				Robot.health.addAlert(this, AlertLevel.ERROR, "Talon " + name + " firmware is " + s.getFirmwareVersion() + " , does not equal " + kDrivetrain.FIRMWARE_VERSION);
+
+			s.checkFirmware(this);
 
 			GZSRX.logError(s.configFactoryDefault(GZSRX.TIMEOUT), this, AlertLevel.ERROR,
 					"Could not factory reset Talon " + name);
@@ -117,7 +114,7 @@ public class Drive extends GZSubsystem {
 	@Override
 	public synchronized void loop() {
 		in();
-		mModifyPercent = (mIsSlow ? .5 : 1);
+		mModifyPercent = (mIsSlow ? .65 : 1);
 	}
 
 	public static class IO {
@@ -130,8 +127,6 @@ public class Drive extends GZSubsystem {
 
 	@Override
 	protected synchronized void in() {
-		this.mModifyPercent = (mIsSlow ? .5 : 1);
-
 		mIO.L1_amp = L1.getOutputCurrent();
 		mIO.L2_amp = L2.getOutputCurrent();
 		mIO.L3_amp = L3.getOutputCurrent();

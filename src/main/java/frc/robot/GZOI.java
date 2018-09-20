@@ -33,11 +33,6 @@ public class GZOI extends GZSubsystem {
 			mWasTest = true;
 
 
-		if (isTele()) {
-			if (driverJoy.isAPressed())
-				Robot.drive.slowSpeed(!Robot.drive.isSlow());
-		}
-
 		// controller rumble
 		if (Util.between(getMatchTime(), 29.1, 30))
 			rumble(Controller.BOTH, kOI.Rumble.ENDGAME);
