@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="var" path="wpiutil" sourcepath="wpiutil.sources"/>
+	<classpathentry exported="true" kind="var" path="cscore.sources" sourcepath="wpilib.sources"/>
+	<classpathentry exported="true" kind="var" path="networktables" sourcepath="ntcore.sources"/>
+	<classpathentry exported="true" kind="var" path="opencv" sourcepath="opencv.sources"/>
+	<classpathentry exported="true" kind="var" path="cscore" sourcepath="cscore.sources"/>
+	<classpathentry exported="true" kind="var" path="USERLIBS_DIR/CTRE_Phoenix-sources.jar"/>
+	<classpathentry exported="true" kind="var" path="USERLIBS_DIR/CTRE_Phoenix.jar"/>
+	<classpathentry exported="true" kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
+	<classpathentry kind="var" path="wpilib" sourcepath="wpilib.sources"/>
 	<classpathentry kind="src" output="bin/main" path="src/main/java">
 		<attributes>
 			<attribute name="gradle_scope" value="main"/>

@@ -105,7 +105,7 @@ public class Constants {
 
 		public final static double OPEN_LOOP_RAMP_TIME = 0.125;
 
-		public static final double DEMO_DRIVE_MODIFIER = .5;
+		public static final double DEMO_DRIVE_MODIFIER = .4;
 	}
 
 	public class kPDP {

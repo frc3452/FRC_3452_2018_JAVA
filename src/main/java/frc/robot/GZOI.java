@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.robot.Constants.kElevator;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kOI;
+import frc.robot.subsystems.Drive.DriveState;
 import frc.robot.subsystems.Elevator.ESO;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Intake.IntakeState;
@@ -40,6 +41,8 @@ public class GZOI extends GZSubsystem {
 
 		// TODO ISSUE #19
 
+		Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
+
 		if (isTele()) {
 
 			if (driverJoy.isAPressed())
@@ -60,7 +63,7 @@ public class GZOI extends GZSubsystem {
 			// ELEVATOR
 			if (opJoy.getRawButton(Buttons.LB))
 				Robot.elevator.manualJoystick(opJoy);
-			else if (driverJoy.getRawButton(Buttons.LB))
+			else if (driverJoy.getRawButton(Buttons.RB))
 				Robot.elevator.manualJoystick(driverJoy);
 			else if (opJoy.isDDownPressed())
 				Robot.elevator.encoder(kElevator.Heights.Floor);

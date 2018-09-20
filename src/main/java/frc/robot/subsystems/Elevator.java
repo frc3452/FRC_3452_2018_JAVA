@@ -41,8 +41,8 @@ public class Elevator extends GZSubsystem {
 	}
 
 	public synchronized void construct() {
-		elevator_1 = new GZSRX(this, kElevator.E_1, Breaker.AMP_40, Master.MASTER);
-		elevator_2 = new GZSRX(this, kElevator.E_2, Breaker.AMP_40, Master.FOLLOWER);
+		elevator_1 = new GZSRX(kElevator.E_1, Breaker.AMP_40, Master.MASTER);
+		elevator_2 = new GZSRX(kElevator.E_2, Breaker.AMP_40, Master.FOLLOWER);
 
 		controllers = Arrays.asList(elevator_1, elevator_2);
 
@@ -115,25 +115,23 @@ public class Elevator extends GZSubsystem {
 
 	private synchronized void talonInit(List<GZSRX> srx) {
 		for (GZSRX s : srx) {
-
-			if (s.getFirmwareVersion() != GZSRX.FIRMWARE)
-				Robot.health.addAlert(this, AlertLevel.ERROR, "Talon " + s.getMaster() + " firmware is "
-						+ s.getFirmwareVersion() + " , does not equal " + GZSRX.FIRMWARE);
-
+			s.checkFirmware(this);
+			
 			GZSRX.logError(s.configFactoryDefault(), this, AlertLevel.ERROR,
-					"Could not factory reset " + s.getMaster());
+			"Could not factory reset " + s.getMaster());
 
 			s.setNeutralMode(NeutralMode.Brake);
 
 			GZSRX.logError(s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10), Robot.elevator,
-					AlertLevel.WARNING, "Could not set current-limit limit for " + s.getMaster());
+			AlertLevel.WARNING, "Could not set current-limit limit for " + s.getMaster());
 			GZSRX.logError(s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10), Robot.elevator,
-					AlertLevel.WARNING, "Could not set current-limit trigger for " + s.getMaster());
+			AlertLevel.WARNING, "Could not set current-limit trigger for " + s.getMaster());
 			GZSRX.logError(s.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10), Robot.elevator,
-					AlertLevel.WARNING, "Could not set current-limit duration for " + s.getMaster());
+			AlertLevel.WARNING, "Could not set current-limit duration for " + s.getMaster());
 			s.enableCurrentLimit(true);
-
+			
 			s.setSubsystem("Elevator");
+			
 		}
 	}
 
