@@ -111,17 +111,18 @@ public class Elevator extends GZSubsystem {
 		elevator_1.setName("Elev 1");
 		elevator_2.setName("Elev 2");
 
+
+		elevator_1.checkFirmware(this);
+		elevator_2.checkFirmware(this);
 	}
 
 	private synchronized void talonInit(List<GZSRX> srx) {
 		for (GZSRX s : srx) {
-			s.checkFirmware(this);
-			
 			GZSRX.logError(s.configFactoryDefault(), this, AlertLevel.ERROR,
 			"Could not factory reset " + s.getMaster());
-
+			
 			s.setNeutralMode(NeutralMode.Brake);
-
+			
 			GZSRX.logError(s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10), Robot.elevator,
 			AlertLevel.WARNING, "Could not set current-limit limit for " + s.getMaster());
 			GZSRX.logError(s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10), Robot.elevator,
@@ -131,7 +132,6 @@ public class Elevator extends GZSubsystem {
 			s.enableCurrentLimit(true);
 			
 			s.setSubsystem("Elevator");
-			
 		}
 	}
 

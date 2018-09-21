@@ -55,6 +55,9 @@ public class Drive extends GZSubsystem {
 	public Drive() {
 	}
 
+	public void printfirmware() {
+	}
+
 	public synchronized void construct() {
 		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
 		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
@@ -87,7 +90,8 @@ public class Drive extends GZSubsystem {
 		R4.setName("R4");
 
 		mGyro.reset();
-
+		
+		checkFirmware();
 	}
 
 	@Override
@@ -139,12 +143,8 @@ public class Drive extends GZSubsystem {
 		for (GZSRX s : controllers) {
 			String name = s.getSide() + " (" + s.getDeviceID() + ")";
 
-			s.checkFirmware(this);
-
 			GZSRX.logError(s.configFactoryDefault(GZSRX.TIMEOUT), this, AlertLevel.ERROR,
 					"Could not factory reset Talon " + name);
-
-
 
 			s.setInverted((s.getSide() == Side.LEFT) ? kDrivetrain.L_INVERT : kDrivetrain.R_INVERT);
 
@@ -205,7 +205,14 @@ public class Drive extends GZSubsystem {
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
 				}
 			}
+
 		}
+	}
+
+	private synchronized void checkFirmware()
+	{
+		for (GZSRX s : controllers)
+			s.checkFirmware(this);
 	}
 
 	private synchronized void onStateStart(DriveState newState) {
@@ -483,7 +490,8 @@ public class Drive extends GZSubsystem {
 		mLeft_target = Units.rotations_to_ticks(leftRotations);
 		mRight_target = Units.rotations_to_ticks(rightRotations);
 
-		mPercentageComplete = Math.abs(((getLeftRotations() / mLeft_target) + (getRightRotations() / mRight_target)) / 2);
+		mPercentageComplete = Math
+				.abs(((getLeftRotations() / mLeft_target) + (getRightRotations() / mRight_target)) / 2);
 
 		L1.configMotionAcceleration((int) (topspeed * leftAccel), 10);
 		R1.configMotionAcceleration((int) (topspeed * rightAccel), 10);
@@ -747,8 +755,7 @@ public class Drive extends GZSubsystem {
 		zeroGyro();
 	}
 
-	public synchronized Double getPercentageComplete()
-	{
+	public synchronized Double getPercentageComplete() {
 		return mPercentageComplete;
 	}
 
@@ -772,12 +779,11 @@ public class Drive extends GZSubsystem {
 		return pdp.getVoltage();
 	}
 
-	public synchronized void slowSpeed(boolean isSlow)
-	{
+	public synchronized void slowSpeed(boolean isSlow) {
 		mIsSlow = isSlow;
 	}
-	public Boolean isSlow()
-	{
+
+	public Boolean isSlow() {
 		return mIsSlow;
 	}
 
