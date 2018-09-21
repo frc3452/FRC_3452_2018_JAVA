@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import java.util.ArrayList;
 import frc.robot.Robot;
+import edu.wpi.first.wpilibj.RobotController;
 
 public class GZLog {
 
@@ -246,7 +247,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = Robot.climber.mIO.climber_output.toString();
+				this.mValue = Robot.climber.mIO.climber_desired_output.toString();
 			}
 		};
 
@@ -273,7 +274,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = Robot.drive.mIO.left_output.toString();
+				this.mValue = Robot.intake.mIO.left_desired_output.toString();
 			}
 		};
 
@@ -282,7 +283,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = Robot.drive.mIO.right_output.toString();
+				this.mValue = Robot.intake.mIO.right_desired_output.toString();
 			}
 		};
 

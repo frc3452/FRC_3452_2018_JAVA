@@ -76,12 +76,12 @@ public class Climber extends GZSubsystem {
 
 	public static class IO {
 		// in
-		public double climber_1_amperage = Double.NaN;
-		public double climber_2_amperage = Double.NaN;
+		public Double climber_1_amperage = Double.NaN;
+		public Double climber_2_amperage = Double.NaN;
 
 		// out
 		private double climber_output = 0;
-		public double climber_desired_output = 0;
+		public Double climber_desired_output = 0.0;
 	}
 
 	public void runClimber(double percentage)

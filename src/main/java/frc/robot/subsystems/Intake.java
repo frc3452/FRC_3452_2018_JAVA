@@ -16,10 +16,10 @@ public class Intake extends GZSubsystem {
 	private IntakeState mWantedState = IntakeState.NEUTRAL;
 	public IO mIO = new IO();
 
-	// Construction
 	public Intake() {
 	}
 	
+	// Construction
 	public synchronized void construct()
 	{
 		left_intake = new Spark(kIntake.INTAKE_L);
@@ -66,14 +66,14 @@ public class Intake extends GZSubsystem {
 		switch (mState) {
 		case MANUAL:
 
-			IO.left_output = IO.left_desired_output;
-			IO.right_output = IO.right_desired_output;
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
 
 			break;
 		case NEUTRAL:
 
-			IO.left_output = 0;
-			IO.right_output = 0;
+			mIO.left_output = 0.0;
+			mIO.right_output = 0.0;
 
 			break;
 		default:
@@ -100,27 +100,27 @@ public class Intake extends GZSubsystem {
 		}
 	}
 
-	static class IO {
+	public static class IO {
 		// in
-		static double left_amperage = Double.NaN, right_amperage = Double.NaN;
+		public Double left_amperage = Double.NaN, right_amperage = Double.NaN;
 
 		// out
-		static private double left_output = 0;
-		static double left_desired_output = 0;
+	 	private double left_output = 0;
+		public Double left_desired_output = 0.0;
 
-		static private double right_output = 0;
-		static double right_desired_output = 0;
+		private double right_output = 0;
+		public Double right_desired_output = 0.0;
 	}
 
 	@Override
 	public synchronized void in() {
-		IO.left_amperage = Robot.drive.getPDPChannelCurrent(kPDP.INTAKE_L);
-		IO.right_amperage = Robot.drive.getPDPChannelCurrent(kPDP.INTAKE_R);
+		mIO.left_amperage = Robot.drive.getPDPChannelCurrent(kPDP.INTAKE_L);
+		mIO.right_amperage = Robot.drive.getPDPChannelCurrent(kPDP.INTAKE_R);
 	}
 
 	public void manual(double percentage) {
 		setWantedState(IntakeState.MANUAL);
-		IO.left_desired_output = IO.right_desired_output = percentage;
+		mIO.left_desired_output = mIO.right_desired_output = percentage;
 	}
 
 	private void setWantedState(IntakeState wantedState) {
@@ -129,14 +129,14 @@ public class Intake extends GZSubsystem {
 
 	public void spin(boolean clockwise) {
 		setWantedState(IntakeState.MANUAL);
-		IO.left_desired_output = kIntake.Speeds.SPIN * (clockwise ? -1 : 1);
-		IO.right_desired_output = kIntake.Speeds.SPIN * (clockwise ? 1 : -1);
+		mIO.left_desired_output = kIntake.Speeds.SPIN * (clockwise ? -1 : 1);
+		mIO.right_desired_output = kIntake.Speeds.SPIN * (clockwise ? 1 : -1);
 	}
 
 	@Override
 	public synchronized void out() {
-		left_intake.set(IO.left_output);
-		right_intake.set(IO.right_output);
+		left_intake.set(mIO.left_output);
+		right_intake.set(mIO.right_output);
 	}
 
 	public enum IntakeState {

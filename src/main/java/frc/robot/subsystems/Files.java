@@ -33,11 +33,8 @@ public class Files {
 	private Scanner scnr;
 	private BufferedWriter bw;
 
-	private GZLog mLog;
+	public GZLog mLog;
 
-	/**
-	 * Time string converted to numbers for parsing
-	 */
 	private String prevLog = "Empty";
 
 	private boolean hasPrintedLogFailed = false;
