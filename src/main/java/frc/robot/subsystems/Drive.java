@@ -66,6 +66,8 @@ public class Drive extends GZSubsystem {
 		R2.setName("R2");
 		R3.setName("R3");
 		R4.setName("R4");
+
+		checkFirmware();
 	}
 
 	private void talonInit() {
@@ -105,6 +107,12 @@ public class Drive extends GZSubsystem {
 
 			s.setSubsystem("Drive train");
 		}
+	}
+
+	private void checkFirmware()
+	{
+		for (GZSRX s : controllers)
+			s.checkFirmware(this);
 	}
 
 	protected void initDefaultCommand() {

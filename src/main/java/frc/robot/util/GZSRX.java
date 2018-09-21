@@ -28,7 +28,7 @@ public class GZSRX extends WPI_TalonSRX {
 	// Other subsystem
 	public GZSRX(int deviceNumber, Breaker breaker, Master master) {
 		super(deviceNumber);
- 
+
 		mBreaker = breaker;
 		mMaster = master;
 	}
