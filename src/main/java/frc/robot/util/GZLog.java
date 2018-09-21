@@ -1,16 +1,18 @@
 package frc.robot.util;
 
 import java.util.ArrayList;
+import frc.robot.Robot;
 
 public class GZLog {
 
 	ArrayList<LogItem> values = new ArrayList<>();
 
+	@SuppressWarnings("unused")	
 	public GZLog() {
 		LogItem left_speed = new LogItem("L-RPM"){
 			@Override
 			public void update() {
-				this.mValue = getLeftVel().toString();
+				this.mValue = Robot.drive.getLeftVel().toString();
 			}
 		};
 
@@ -19,7 +21,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = getRightVel().toString();
+				this.mValue = Robot.drive.getRightVel().toString();
 			}
 		};
 
@@ -27,7 +29,7 @@ public class GZLog {
 		{
 			@Override
 			public void update() {
-				this.mValue = mIO.L1_amp.toString();
+				this.mValue = Robot.drive.mIO.L1_amp.toString();
 			}
 		};
 
@@ -35,7 +37,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.L2_amp.toString();
+				this.mValue = Robot.drive.mIO.L2_amp.toString();
 			}
 		};
 
@@ -43,7 +45,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.L3_amp.toString();
+				this.mValue = Robot.drive.mIO.L3_amp.toString();
 			}
 		};
 
@@ -51,7 +53,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.L4_amp.toString();
+				this.mValue = Robot.drive.mIO.L4_amp.toString();
 			}
 		};
 
@@ -59,7 +61,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.R1_amp.toString();
+				this.mValue = Robot.drive.mIO.R1_amp.toString();
 			}
 		};
 
@@ -67,7 +69,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.R2_amp.toString();
+				this.mValue = Robot.drive.mIO.R2_amp.toString();
 			}
 		};
 
@@ -75,7 +77,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.R3_amp.toString();
+				this.mValue = Robot.drive.mIO.R3_amp.toString();
 			}
 		};
 
@@ -83,7 +85,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.R4_amp.toString();
+				this.mValue = Robot.drive.mIO.R4_amp.toString();
 			}
 		};
 
@@ -91,7 +93,7 @@ public class GZLog {
 		{
 			@Override
 			public void update() {
-				this.mValue = mIO.L1_volt.toString();
+				this.mValue = Robot.drive.mIO.L1_volt.toString();
 			}
 		};
 
@@ -99,7 +101,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.L2_volt.toString();
+				this.mValue = Robot.drive.mIO.L2_volt.toString();
 			}
 		};
 
@@ -107,7 +109,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.L3_volt.toString();
+				this.mValue = Robot.drive.mIO.L3_volt.toString();
 			}
 		};
 
@@ -115,7 +117,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.L4_volt.toString();
+				this.mValue = Robot.drive.mIO.L4_volt.toString();
 			}
 		};
 
@@ -123,7 +125,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.R1_volt.toString();
+				this.mValue = Robot.drive.mIO.R1_volt.toString();
 			}
 		};
 
@@ -131,7 +133,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.R2_volt.toString();
+				this.mValue = Robot.drive.mIO.R2_volt.toString();
 			}
 		};
 
@@ -139,7 +141,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.R3_volt.toString();
+				this.mValue = Robot.drive.mIO.R3_volt.toString();
 			}
 		};
 
@@ -147,7 +149,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.R4_volt.toString();
+				this.mValue = Robot.drive.mIO.R4_volt.toString();
 			}
 		};
 
@@ -157,7 +159,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = mIO.elevator_1_amp.toString();
+				this.mValue = Robot.elevator.mIO.elevator_1_amp.toString();
 			}
 		};
 
@@ -166,7 +168,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = mIO.elevator_2_amp.toString();	
+				this.mValue = Robot.elevator.mIO.elevator_2_amp.toString();	
 			}
 		};
 
@@ -175,7 +177,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = mIO.elevator_1_volt.toString();
+				this.mValue = Robot.elevator.mIO.elevator_1_volt.toString();
 			}
 		};
 
@@ -184,7 +186,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = mIO.elevator_2_volt.toString();
+				this.mValue = Robot.elevator.mIO.elevator_2_volt.toString();
 			}
 		};
 
@@ -193,7 +195,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = getTopLimit().toString();
+				this.mValue = Robot.elevator.getTopLimit().toString();
 			}
 		};
 
@@ -202,7 +204,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = getBottomLimit().toString();
+				this.mValue = Robot.elevator.getBottomLimit().toString();
 			}
 		};
 
@@ -210,7 +212,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = getRotations().toString();
+				this.mValue = Robot.elevator.getRotations().toString();
 			}
 		};
 		LogItem elev_speed = new LogItem("ELEV-SPEED")
@@ -218,7 +220,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = getSpeed().toString();
+				this.mValue = Robot.elevator.getSpeed().toString();
 			}
 		};
 
@@ -227,7 +229,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = mIO.climber_1_amperage.toString();
+				this.mValue = Robot.climber.mIO.climber_1_amperage.toString();
 			}
 		};
 
@@ -236,7 +238,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = mIO.climber_2_amperage.toString();
+				this.mValue = Robot.climber.mIO.climber_2_amperage.toString();
 			}
 		};
 
@@ -244,7 +246,7 @@ public class GZLog {
 		
 			@Override
 			public void update() {
-				this.mValue = mIO.climber_output.toString();
+				this.mValue = Robot.climber.mIO.climber_output.toString();
 			}
 		};
 
@@ -253,7 +255,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = mIO.left_amperage.toString();
+				this.mValue = Robot.intake.mIO.left_amperage.toString();
 			}
 		};
 
@@ -262,7 +264,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = mIO.right_amperage.toString();
+				this.mValue = Robot.intake.mIO.right_amperage.toString();
 			}
 		};
 
@@ -271,7 +273,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = mIO.left_output.toString();
+				this.mValue = Robot.drive.mIO.left_output.toString();
 			}
 		};
 
@@ -280,7 +282,7 @@ public class GZLog {
 			@Override
 			public void update()
 			{
-				this.mValue = mIO.right_output.toString();
+				this.mValue = Robot.drive.mIO.right_output.toString();
 			}
 		};
 
