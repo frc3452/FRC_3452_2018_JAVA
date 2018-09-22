@@ -53,6 +53,11 @@ public class Files {
 	public Files() {
 		mLog = new GZLog();
 	}
+	
+	public void fillLogger()
+	{
+		mLog.fillLogger();
+	}
 
 	private void parseMotionProfileCSV() {
 		String st;

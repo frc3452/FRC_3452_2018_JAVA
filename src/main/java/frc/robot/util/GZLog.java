@@ -1,15 +1,37 @@
 package frc.robot.util;
 
 import java.util.ArrayList;
-import frc.robot.Robot;
+
 import edu.wpi.first.wpilibj.RobotController;
+import frc.robot.Constants;
+import frc.robot.Robot;
 
 public class GZLog {
 
 	ArrayList<LogItem> values = new ArrayList<>();
 
-	@SuppressWarnings("unused")	
 	public GZLog() {
+		
+	} 
+
+	@SuppressWarnings("unused")	
+	public void fillLogger() {
+	
+		LogItem left_speed = new LogItem("L-RPM"){
+			@Override
+			public void update() {
+				this.mValue = Robot.drive.getLeftVel().toString();
+			}
+		};
+
+		LogItem right_speed = new LogItem("R-RPM")
+		{
+			@Override
+			public void update()
+			{
+				this.mValue = Robot.drive.getRightVel().toString();
+			}
+		};
 
 		LogItem l1_amp = new LogItem("L1-AMP")
 		{
@@ -24,22 +46,6 @@ public class GZLog {
 			@Override
 			public void update() {
 				this.mValue = Robot.drive.mIO.L2_amp.toString();
-			}
-		};
-
-		LogItem l3_amp = new LogItem("L3-AMP"){
-		
-			@Override
-			public void update() {
-				this.mValue = Robot.drive.mIO.L3_amp.toString();
-			}
-		};
-
-		LogItem l4_amp = new LogItem("L4-AMP"){
-		
-			@Override
-			public void update() {
-				this.mValue = Robot.drive.mIO.L4_amp.toString();
 			}
 		};
 
@@ -59,22 +65,6 @@ public class GZLog {
 			}
 		};
 
-		LogItem r3_amp = new LogItem("R3-AMP"){
-		
-			@Override
-			public void update() {
-				this.mValue = Robot.drive.mIO.R3_amp.toString();
-			}
-		};
-
-		LogItem r4_amp = new LogItem("R4-AMP"){
-		
-			@Override
-			public void update() {
-				this.mValue = Robot.drive.mIO.R4_amp.toString();
-			}
-		};
-
 		LogItem l1_volt = new LogItem("L1-VOLT")
 		{
 			@Override
@@ -88,22 +78,6 @@ public class GZLog {
 			@Override
 			public void update() {
 				this.mValue = Robot.drive.mIO.L2_volt.toString();
-			}
-		};
-
-		LogItem l3_volt = new LogItem("L3-VOLT"){
-		
-			@Override
-			public void update() {
-				this.mValue = Robot.drive.mIO.L3_volt.toString();
-			}
-		};
-
-		LogItem l4_volt = new LogItem("L4-VOLT"){
-		
-			@Override
-			public void update() {
-				this.mValue = Robot.drive.mIO.L4_volt.toString();
 			}
 		};
 
@@ -123,21 +97,6 @@ public class GZLog {
 			}
 		};
 
-		LogItem r3_volt = new LogItem("R3-VOLT"){
-		
-			@Override
-			public void update() {
-				this.mValue = Robot.drive.mIO.R3_volt.toString();
-			}
-		};
-
-		LogItem r4_volt = new LogItem("R4-VOLT"){
-		
-			@Override
-			public void update() {
-				this.mValue = Robot.drive.mIO.R4_volt.toString();
-			}
-		};
 		LogItem battery_voltage = new LogItem("BATTERY-VOLTAGE"){
 		
 			@Override
@@ -171,6 +130,12 @@ public class GZLog {
 				this.mValue = Robot.drive.getPDPVoltage().toString();
 			}
 		};
+
+	}
+
+	public void addLogItemsToLog()
+	{
+
 	}
 
 	public void add(LogItem item) {
@@ -201,5 +166,25 @@ public class GZLog {
 			retval += "," + item.getValue();
 
 		return retval;
+	}
+
+	public abstract class LogItem {
+		private String mName = "";
+		public String mValue = Constants.kFileManagement.DEFAULT_LOG_VALUE;
+	
+		public LogItem(String header) {
+			this.mName = header;
+			Robot.files.mLog.add(this);
+		}
+	
+		public String getHeader() {
+			return this.mName;
+		}
+	
+		public String getValue() {
+			return this.mValue;
+		}
+	
+		public abstract void update();
 	}
 }

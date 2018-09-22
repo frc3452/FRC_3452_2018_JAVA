@@ -31,6 +31,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		allSubsystems.construct();
+		files.fillLogger();
 		health.generateHealth();
 	}
 

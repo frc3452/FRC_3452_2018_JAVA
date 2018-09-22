@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -17,6 +18,7 @@ import frc.robot.util.GZSRX.Breaker;
 import frc.robot.util.GZSRX.Master;
 import frc.robot.util.GZSRX.Side;
 import frc.robot.util.GZSubsystem;
+import frc.robot.util.Units;
 
 public class Drive extends GZSubsystem {
 
@@ -26,7 +28,7 @@ public class Drive extends GZSubsystem {
 	private PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 
 	// DRIVETRAIN
-	private GZSRX L1, L2, L3, L4, R1, R2, R3, R4;
+	private GZSRX L1, L2, R1, R2;
 	private DifferentialDrive mDrive;
 	private List<GZSRX> controllers;
 
@@ -39,17 +41,13 @@ public class Drive extends GZSubsystem {
 	public synchronized void construct() {
 		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
 		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
-		L3 = new GZSRX(kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
-		L4 = new GZSRX(kDrivetrain.L4, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
 
 		R1 = new GZSRX(kDrivetrain.R1, Breaker.AMP_40, Side.RIGHT, Master.MASTER);
 		R2 = new GZSRX(kDrivetrain.R2, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
-		R3 = new GZSRX(kDrivetrain.R3, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
-		R4 = new GZSRX(kDrivetrain.R4, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
 
 		mDrive = new DifferentialDrive(L1, R1);
 
-		controllers = Arrays.asList(L1, L2, L3, L4, R1, R2, R3, R4);
+		controllers = Arrays.asList(L1, L2, R1, R2);
 
 		brake(NeutralMode.Coast);
 
@@ -60,12 +58,8 @@ public class Drive extends GZSubsystem {
 
 		L1.setName("L1");
 		L2.setName("L2");
-		L3.setName("L3");
-		L4.setName("L4");
 		R1.setName("R1");
-		R2.setName("R2");
-		R3.setName("R3");
-		R4.setName("R4");
+		R2.setName("R4");
 
 		checkFirmware();
 	}
@@ -73,8 +67,6 @@ public class Drive extends GZSubsystem {
 	private void talonInit() {
 		for (GZSRX s : controllers) {
 			String name = s.getSide() + " (" + s.getDeviceID() + ")";
-
-			s.checkFirmware(this);
 
 			GZSRX.logError(s.configFactoryDefault(GZSRX.TIMEOUT), this, AlertLevel.ERROR,
 					"Could not factory reset Talon " + name);
@@ -106,8 +98,42 @@ public class Drive extends GZSubsystem {
 					"Could not set Neutral Deadband for Talon " + name);
 
 			s.setSubsystem("Drive train");
+
+			if (s.getMaster() == Master.MASTER) {
+
+				GZSRX.logError(
+						s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT), this,
+						AlertLevel.ERROR, "Could not detect " + s.getSide() + " encoder");
+
+				GZSRX.logError(s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+						"Could not zero " + s.getSide() + " encoder");
+
+				s.setSensorPhase(true);
+
+				if (s.getSide() == Side.LEFT) {
+					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.LEFT.P, GZSRX.TIMEOUT), this,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'P' gain");
+					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.LEFT.I, GZSRX.TIMEOUT), this,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'I' gain");
+					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.LEFT.D, GZSRX.TIMEOUT), this,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
+					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), this,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
+				} else {
+					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), this,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'P' gain");
+					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.RIGHT.I, GZSRX.TIMEOUT), this,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'I' gain");
+					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.RIGHT.D, GZSRX.TIMEOUT), this,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
+					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.RIGHT.F, GZSRX.TIMEOUT), this,
+							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
+				}
+			}
+
 		}
 	}
+
 
 	private void checkFirmware()
 	{
@@ -126,37 +152,56 @@ public class Drive extends GZSubsystem {
 	}
 
 	public static class IO {
-		public Double L1_amp = Double.NaN, L2_amp = Double.NaN, L3_amp = Double.NaN, L4_amp = Double.NaN,
-				R1_amp = Double.NaN, R2_amp = Double.NaN, R3_amp = Double.NaN, R4_amp = Double.NaN;
+		public Double left_encoder_ticks = Double.NaN, left_encoder_vel = Double.NaN;
 
-		public Double L1_volt = Double.NaN, L2_volt = Double.NaN, L3_volt = Double.NaN, L4_volt = Double.NaN,
-				R1_volt = Double.NaN, R2_volt = Double.NaN, R3_volt = Double.NaN, R4_volt = Double.NaN;
+		public Double right_encoder_ticks = Double.NaN, right_encoder_vel = Double.NaN;
+
+
+		public Double L1_amp = Double.NaN, L2_amp = Double.NaN,
+				R1_amp = Double.NaN, R2_amp;
+
+		public Double L1_volt = Double.NaN, L2_volt = Double.NaN,
+				R1_volt = Double.NaN, R2_volt = Double.NaN;
 	}
 
 	@Override
 	protected synchronized void in() {
+		mIO.left_encoder_ticks = (double) L1.getSelectedSensorPosition(0);
+		mIO.left_encoder_vel = (double) L1.getSelectedSensorVelocity(0);
+
+		mIO.right_encoder_ticks = (double) R1.getSelectedSensorPosition(0);
+		mIO.right_encoder_vel = (double) R1.getSelectedSensorVelocity(0);
+		
 		mIO.L1_amp = L1.getOutputCurrent();
 		mIO.L2_amp = L2.getOutputCurrent();
-		mIO.L3_amp = L3.getOutputCurrent();
-		mIO.L4_amp = L4.getOutputCurrent();
 		mIO.R1_amp = R1.getOutputCurrent();
 		mIO.R2_amp = R2.getOutputCurrent();
-		mIO.R3_amp = R3.getOutputCurrent();
-		mIO.R4_amp = R4.getOutputCurrent();
 
 		mIO.L1_volt = L1.getMotorOutputVoltage();
 		mIO.L2_volt = L2.getMotorOutputVoltage();
-		mIO.L3_volt = L3.getMotorOutputVoltage();
-		mIO.L4_volt = L4.getMotorOutputVoltage();
 		mIO.R1_volt = R1.getMotorOutputVoltage();
 		mIO.R2_volt = R2.getMotorOutputVoltage();
-		mIO.R3_volt = R3.getMotorOutputVoltage();
-		mIO.R4_volt = R4.getMotorOutputVoltage();
 	}
 
+	public Double getLeftRotations() {
+		return Units.ticks_to_rotations(mIO.left_encoder_ticks);
+	}
+
+	public Double getLeftVel() {
+		return Units.ticks_to_rotations(mIO.left_encoder_vel);
+	}
+
+	public Double getRightRotations() {
+		return -Units.ticks_to_rotations(mIO.right_encoder_ticks);
+	}
+
+	public Double getRightVel() {
+		return -Units.ticks_to_rotations(mIO.right_encoder_vel);
+
+	}
 
 	public synchronized void arcade(GZJoystick joy) {
-		arcade(joy.getLeftAnalogY(), (joy.getRightTrigger() - joy.getLeftTrigger()) * .8);
+		arcade(joy.getLeftAnalogY(), (joy.getLeftTrigger() - joy.getRightTrigger()) * .8);
 	}
 
 	// called in DEMO state
