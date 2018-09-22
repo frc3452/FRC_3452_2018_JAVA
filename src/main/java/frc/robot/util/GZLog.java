@@ -1,15 +1,22 @@
 package frc.robot.util;
 
 import java.util.ArrayList;
-import frc.robot.Robot;
+
 import edu.wpi.first.wpilibj.RobotController;
+import frc.robot.Constants;
+import frc.robot.Robot;
 
 public class GZLog {
 
 	ArrayList<LogItem> values = new ArrayList<>();
 
-	@SuppressWarnings("unused")	
 	public GZLog() {
+		
+	} 
+
+	@SuppressWarnings("unused")	
+	public void fillLogger() {
+	
 		LogItem left_speed = new LogItem("L-RPM"){
 			@Override
 			public void update() {
@@ -121,7 +128,7 @@ public class GZLog {
 				this.mValue = Robot.drive.mIO.L4_volt.toString();
 			}
 		};
-
+		
 		LogItem r1_volt = new LogItem("R1-VOLT"){
 		
 			@Override
@@ -145,6 +152,7 @@ public class GZLog {
 				this.mValue = Robot.drive.mIO.R3_volt.toString();
 			}
 		};
+
 
 		LogItem r4_volt = new LogItem("R4-VOLT"){
 		
@@ -356,6 +364,12 @@ public class GZLog {
 			}
 		};
 
+
+	}
+
+	public void addLogItemsToLog()
+	{
+
 	}
 
 	public void add(LogItem item) {
@@ -386,5 +400,25 @@ public class GZLog {
 			retval += "," + item.getValue();
 
 		return retval;
+	}
+
+	public abstract class LogItem {
+		private String mName = "";
+		public String mValue = Constants.kFileManagement.DEFAULT_LOG_VALUE;
+	
+		public LogItem(String header) {
+			this.mName = header;
+			Robot.files.mLog.add(this);
+		}
+	
+		public String getHeader() {
+			return this.mName;
+		}
+	
+		public String getValue() {
+			return this.mValue;
+		}
+	
+		public abstract void update();
 	}
 }

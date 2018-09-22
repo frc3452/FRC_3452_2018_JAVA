@@ -10,6 +10,8 @@ import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -405,7 +407,7 @@ public class Drive extends GZSubsystem {
 
 	// called in OPEN_LOOP_DRIVER state
 	private synchronized void arcade(GZJoystick joy) {
-		arcadeNoState(joy.getLeftAnalogY(), (joy.getRightTrigger() - joy.getLeftTrigger()) * .8);
+		arcadeNoState(joy.getLeftAnalogY(), (joy.getRightTrigger() - joy.getLeftTrigger()) * .5);
 	}
 
 	// called in DEMO state

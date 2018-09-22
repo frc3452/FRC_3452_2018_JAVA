@@ -132,11 +132,21 @@ public class Constants {
 		
 		public static final int E_1 = 9;
 		public static final int E_2 = 10;
-
+		
 		public static final boolean E_1_INVERT = false;
 		public static final boolean E_2_INVERT = false;
-
+		
 		public static final boolean ENC_INVERT = true;
+		
+		public static final double TOP_ROTATION = 9.61;
+		public static final double BOTTOM_ROTATION = 2.08;
+		public static final double SPEED_LIMIT_SLOWEST_SPEED = .17;
+		
+		
+		public static final double LOWER_SOFT_LIMIT = Heights.Floor;
+		public static final double UPPER_SOFT_LIMIT = 5;
+		
+		public static final boolean USE_SOFT_LIMITS = false;
 
 		public static final double OPEN_RAMP_TIME = .5;
 		public static final double CLOSED_RAMP_TIME = .125;
@@ -147,32 +157,21 @@ public class Constants {
 		public static final double DEMO_JOYSTICK_MODIFIER_DOWN = .3;
 		public static final double DEMO_JOYSTICK_MODIFIER_UP = .5;
 
-		public static final double CLOSED_DOWN_SPEED_LIMIT = .45;
-		public static final double CLOSED_UP_SPEED_LIMIT = .9;
+		public static final double CLOSED_DOWN_SPEED_LIMIT = .5;
+		public static final double CLOSED_UP_SPEED_LIMIT = 1;
 
 		public static final double CLOSED_COMPLETION = 6.5;
 
-		private static final double SPEED_MODIFIER = .2;
-		public static final double SPEED_1 = 1 + SPEED_MODIFIER;
-		public static final double SPEED_2 = .9 + SPEED_MODIFIER;
-		public static final double SPEED_3 = .65 + SPEED_MODIFIER;
-		public static final double SPEED_4 = .55 + SPEED_MODIFIER;
-		public static final double SPEED_5 = .43 + SPEED_MODIFIER;
 
 		public static final int AMP_TRIGGER = 50;
 		public static final int AMP_LIMIT = 40;
 		public static final int AMP_TIME = 1000;
 
-		public static final double LOWER_SOFT_LIMIT = Heights.Floor;
-		public static final double UPPER_SOFT_LIMIT = 5;
-
-		public static final boolean USE_SOFT_LIMITS = false;
-
 		public class Heights {
 			public static final double Floor = -15; // below 0 to counter possible encoder drift
-			public static final double Switch = 2.8;
+			public static final double Switch = 3.3;
 			public static final double Scale = 8;
-		}
+		}	
 
 	}
 

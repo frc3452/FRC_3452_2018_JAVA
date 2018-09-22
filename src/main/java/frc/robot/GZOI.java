@@ -41,9 +41,8 @@ public class GZOI extends GZSubsystem {
 
 		// TODO ISSUE #19
 
-		Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
-
 		if (isTele()) {
+			Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
 
 			if (driverJoy.isAPressed())
 				Robot.drive.slowSpeed(!Robot.drive.isSlow());
@@ -97,6 +96,8 @@ public class GZOI extends GZSubsystem {
 				Robot.intake.manual(kIntake.Speeds.SHOOT);
 			else if (driverJoy.getDUp())
 				Robot.intake.manual(kIntake.Speeds.SLOW);
+			else if (driverJoy.getRawButton(Buttons.RIGHT_CLICK))
+				Robot.intake.spin(true);
 			else
 				Robot.intake.stop();
 		}

@@ -92,11 +92,11 @@ public class Elevator extends GZSubsystem {
 		// IS TRIPPED UNDER DARK OR LIGHT
 		GZSRX.logError(
 				elevator_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
-						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
+						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set forward limit switch");
 		GZSRX.logError(
 				elevator_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
-						LimitSwitchNormal.NormallyClosed, elevator_2.getDeviceID(), 10),
+						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
 				this, AlertLevel.ERROR, "Could not set reverse limit switch");
 
 		in();
@@ -111,7 +111,6 @@ public class Elevator extends GZSubsystem {
 		elevator_1.setName("Elev 1");
 		elevator_2.setName("Elev 2");
 
-
 		elevator_1.checkFirmware(this);
 		elevator_2.checkFirmware(this);
 	}
@@ -119,18 +118,18 @@ public class Elevator extends GZSubsystem {
 	private synchronized void talonInit(List<GZSRX> srx) {
 		for (GZSRX s : srx) {
 			GZSRX.logError(s.configFactoryDefault(), this, AlertLevel.ERROR,
-			"Could not factory reset " + s.getMaster());
-			
+					"Could not factory reset " + s.getMaster());
+
 			s.setNeutralMode(NeutralMode.Brake);
-			
+
 			GZSRX.logError(s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10), Robot.elevator,
-			AlertLevel.WARNING, "Could not set current-limit limit for " + s.getMaster());
+					AlertLevel.WARNING, "Could not set current-limit limit for " + s.getMaster());
 			GZSRX.logError(s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10), Robot.elevator,
-			AlertLevel.WARNING, "Could not set current-limit trigger for " + s.getMaster());
+					AlertLevel.WARNING, "Could not set current-limit trigger for " + s.getMaster());
 			GZSRX.logError(s.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10), Robot.elevator,
-			AlertLevel.WARNING, "Could not set current-limit duration for " + s.getMaster());
+					AlertLevel.WARNING, "Could not set current-limit duration for " + s.getMaster());
 			s.enableCurrentLimit(true);
-			
+
 			s.setSubsystem("Elevator");
 		}
 	}
@@ -318,18 +317,11 @@ public class Elevator extends GZSubsystem {
 
 		// if demo, dont limit
 		// if not in demo and not overriding, limit
-		if (getState() != ElevatorState.DEMO && (getState() != ElevatorState.DEMO && !isSpeedOverriden())) {
-			if (pos < 2.08)
-				driveModifier = Constants.kElevator.SPEED_1;
-			else if (pos < 2.93 && pos > 2.08)
-				driveModifier = Constants.kElevator.SPEED_2;
-			else if (pos < 3.66 && pos > 2.93)
-				driveModifier = Constants.kElevator.SPEED_3;
-			else if (pos < 6.1 && pos > 3.66)
-				driveModifier = Constants.kElevator.SPEED_4;
-			else if (pos > 6.1)
-				driveModifier = Constants.kElevator.SPEED_5;
-			// If not in demo, and not overriden
+		if (!(Robot.auton.isDemo() || isSpeedOverriden())) {
+			if (pos - kElevator.BOTTOM_ROTATION > 0) {
+				driveModifier = 1 - (pos / kElevator.TOP_ROTATION) + kElevator.SPEED_LIMIT_SLOWEST_SPEED;
+			} else
+				driveModifier = 1;
 		} else {
 			driveModifier = 1;
 		}
@@ -407,8 +399,7 @@ public class Elevator extends GZSubsystem {
 
 	public synchronized void overrideLimit(boolean toOverrideLimit) {
 		mLimitOverride = toOverrideLimit;
-		elevator_1.overrideLimitSwitchesEnable(toOverrideLimit);
-		;
+		elevator_1.overrideLimitSwitchesEnable(!toOverrideLimit);
 	}
 
 	public synchronized void setSpeedLimitingOverride(ESO override) {

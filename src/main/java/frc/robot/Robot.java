@@ -43,6 +43,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		allSubsystems.construct();
+		files.fillLogger();
 		auton.fillAutonArray();
 		health.generateHealth();
 		
@@ -69,6 +70,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
+		allSubsystems.enableFollower();
+
 		log(true);
 
 		// timer start

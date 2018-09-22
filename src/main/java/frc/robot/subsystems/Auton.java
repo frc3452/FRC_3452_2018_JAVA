@@ -16,6 +16,7 @@ import frc.robot.util.GZTimer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.commands.auton.NoCommand;
 
 /**
  * <h1>AutonSelector Subsystem</h1> Handles autonomous selector case statements
@@ -60,7 +61,8 @@ public class Auton {
 		as_A.setName("Selector A");
 		as_B.setName("Selector B");
 
-		Arrays.fill(commandArray, null);
+		GZCommand noCommand = new GZCommand("NO AUTO", new NoCommand());
+		Arrays.fill(commandArray, noCommand);
 //		fillAutonArray();
 	}
 
