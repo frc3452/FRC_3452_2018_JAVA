@@ -283,30 +283,30 @@ public class Elevator extends GZSubsystem {
 
 		if (((this.isDisabed() && !Robot.gzOI.isFMS()) || mWantedState == ElevatorState.NEUTRAL)) {
 
-			if (stateNot(ElevatorState.NEUTRAL)) {
-				onStateExit(mState);
-				mState = ElevatorState.NEUTRAL;
-				onStateStart(mState);
-			}
+			switchToState(ElevatorState.NEUTRAL);
 
 		} else if (Robot.auton.isDemo() && !Robot.gzOI.isFMS()) {
 
-			if (stateNot(ElevatorState.DEMO)) {
-				onStateExit(mState);
-				mState = ElevatorState.DEMO;
-				onStateStart(mState);
-			}
+			switchToState(ElevatorState.DEMO);
 
-		} else if (mState != mWantedState) {
-			onStateExit(mState);
-			mState = mWantedState;
-			onStateStart(mState);
+		} else {
+			switchToState(mWantedState);
 		}
 
 		// Positioning
 		if (mState == ElevatorState.POSITION && (isDone(kElevator.CLOSED_COMPLETION)
 				|| ((-getTarget() < 0) && getBottomLimit()) || (-getTarget() > 0) && getTopLimit()))
 			encoderDone();
+	}
+
+	private void switchToState(ElevatorState s)
+	{
+		if (mState != s)
+		{
+			onStateExit(mState);
+			mState = s;
+			onStateStart(mState);
+		}
 	}
 
 	public synchronized void outputSmartDashboard() {
@@ -424,10 +424,6 @@ public class Elevator extends GZSubsystem {
 
 	public enum ESO {
 		TOGGLE, ON, OFF
-	}
-
-	private synchronized boolean stateNot(ElevatorState state) {
-		return mState != state;
 	}
 
 	public boolean isSpeedOverriden() {
