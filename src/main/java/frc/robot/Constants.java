@@ -8,6 +8,11 @@ package frc.robot;
  */
 
 public class Constants {
+	public class kLoop {
+		public static final double LOOP_SPEED = .02;
+		public static final double ENCODER_CHECKER_SPEED = .1;
+	}
+
 	public class kAuton {
 		public static final int COMMAND_ARRAY_SIZE = 41;
 

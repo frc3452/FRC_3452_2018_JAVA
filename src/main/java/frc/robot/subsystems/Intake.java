@@ -19,6 +19,8 @@ public class Intake extends GZSubsystem {
 	public Intake() {
 	}
 	
+	
+
 	// Construction
 	public synchronized void construct()
 	{
@@ -62,24 +64,6 @@ public class Intake extends GZSubsystem {
 		handleStates();
 		in();
 		out();
-
-		switch (mState) {
-		case MANUAL:
-
-			mIO.left_output = mIO.left_desired_output;
-			mIO.right_output = mIO.right_desired_output;
-
-			break;
-		case NEUTRAL:
-
-			mIO.left_output = 0.0;
-			mIO.right_output = 0.0;
-
-			break;
-		default:
-			System.out.println("WARNING: Incorrect intake state " + mState + " reached.");
-			break;
-		}
 	}
 
 	private void switchToState(IntakeState s)
@@ -93,9 +77,14 @@ public class Intake extends GZSubsystem {
 	}
 
 	private void handleStates() {
+		boolean neutral = false;
+
+		neutral |= this.isDisabed() && !Robot.gzOI.isFMS();
+		neutral |= mWantedState == IntakeState.NEUTRAL;
+
 		// we dont need to worry about isDemo() here
 		//Dont allow disable on the field
-		if ((this.isDisabed() && !Robot.gzOI.isFMS())|| mWantedState == IntakeState.NEUTRAL) {
+		if (neutral) {
 
 			switchToState(IntakeState.NEUTRAL);
 
@@ -139,6 +128,24 @@ public class Intake extends GZSubsystem {
 
 	@Override
 	public synchronized void out() {
+		switch (mState) {
+			case MANUAL:
+	
+				mIO.left_output = mIO.left_desired_output;
+				mIO.right_output = mIO.right_desired_output;
+	
+				break;
+			case NEUTRAL:
+	
+				mIO.left_output = 0.0;
+				mIO.right_output = 0.0;
+	
+				break;
+			default:
+				System.out.println("WARNING: Incorrect intake state " + mState + " reached.");
+				break;
+			}
+
 		left_intake.set(mIO.left_output);
 		right_intake.set(mIO.right_output);
 	}

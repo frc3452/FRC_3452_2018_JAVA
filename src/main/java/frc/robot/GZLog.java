@@ -1,10 +1,9 @@
-package frc.robot.util;
+package frc.robot;
 
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.RobotController;
-import frc.robot.Constants;
-import frc.robot.Robot;
+import frc.robot.util.Util;
 
 public class GZLog {
 
