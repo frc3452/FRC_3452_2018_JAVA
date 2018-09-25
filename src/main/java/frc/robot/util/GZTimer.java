@@ -18,7 +18,7 @@ public class GZTimer extends Timer {
 			this.reset();
 			this.start();
 		} else {
-			System.out.println(this.getClass().getName() + " " + getName() + " cannot be started.");
+			System.out.println(this.getClass().getSimpleName() + " " + getName() + " cannot be started.");
 		}
 	}
 	
