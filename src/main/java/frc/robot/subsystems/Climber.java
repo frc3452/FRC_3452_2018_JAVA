@@ -1,13 +1,10 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Spark;
 import frc.robot.Constants.kClimber;
 import frc.robot.Constants.kPDP;
 import frc.robot.Robot;
 import frc.robot.util.GZSubsystem;
-
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-
-import edu.wpi.first.wpilibj.Spark;
 
 public class Climber extends GZSubsystem {
 
