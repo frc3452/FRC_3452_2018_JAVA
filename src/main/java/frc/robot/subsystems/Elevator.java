@@ -254,6 +254,12 @@ public class Elevator extends GZSubsystem {
 		return mIO.elevator_fwd_lmt;
 	}
 
+	public void printSensorHealth()
+	{
+		int f = elevator_1.getSensorCollection().getPulseWidthRiseToRiseUs();
+		System.out.println(f + "\t\t" + (f == 1));
+	}
+
 	@Override
 	protected synchronized void out() {
 		elevator_1.set(mIO.control_mode, mIO.output);

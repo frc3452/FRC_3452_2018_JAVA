@@ -101,8 +101,19 @@ public class Drive extends GZSubsystem {
 	}
 
 	public enum DriveState {
-		OPEN_LOOP, OPEN_LOOP_DRIVER, DEMO, NEUTRAL, MOTION_MAGIC, MOTION_PROFILE,
+		OPEN_LOOP(false), OPEN_LOOP_DRIVER(false), DEMO(false), NEUTRAL(false), MOTION_MAGIC(true), MOTION_PROFILE(true);
+	
+		private final boolean mUsesClosedLoop;
+
+		DriveState(final boolean s) {
+			mUsesClosedLoop = s;
+		}
+
+		public boolean usesOpenLoop() {
+			return mUsesClosedLoop;
+		}
 	}
+
 
 	@Override
 	public synchronized void stop() {
@@ -113,29 +124,29 @@ public class Drive extends GZSubsystem {
 		this.mWantedState = wantedState;
 	}
 
+	private void switchToState(DriveState state)
+	{
+		if (mState != state)
+		{
+			onStateExit(mState);
+			mState = state;
+			onStateStart(mState);
+		}
+	}
+
 	private synchronized void handleStates() {
 
 		// Do not allow .disable() while connected to the field.
 		if (((this.isDisabed() && !Robot.gzOI.isFMS()) || mWantedState == DriveState.NEUTRAL)) {
 
-			if (stateNot(DriveState.NEUTRAL)) {
-				onStateExit(mState);
-				mState = DriveState.NEUTRAL;
-				onStateStart(mState);
-			}
+			switchToState(DriveState.NEUTRAL);
 
 		} else if (Robot.auton.isDemo()) {
 
-			if (stateNot(DriveState.DEMO)) {
-				onStateExit(mState);
-				mState = DriveState.DEMO;
-				onStateStart(mState);
-			}
+			switchToState(DriveState.DEMO);
 
-		} else if (mState != mWantedState) {
-			onStateExit(mState);
-			mState = mWantedState;
-			onStateStart(mState);
+		} else {
+			switchToState(mWantedState);
 		}
 	}
 
@@ -793,10 +804,6 @@ public class Drive extends GZSubsystem {
 
 	public synchronized double getGyroFusedHeading() {
 		return mGyro.getFusedHeading();
-	}
-
-	private synchronized boolean stateNot(DriveState state) {
-		return mState != state;
 	}
 
 	public String getStateString() {

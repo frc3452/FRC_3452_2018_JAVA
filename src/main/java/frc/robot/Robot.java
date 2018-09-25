@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotPeriodic() {
 		allSubsystems.loop();
-
+		elevator.printSensorHealth();
 	}
 
 	@Override
