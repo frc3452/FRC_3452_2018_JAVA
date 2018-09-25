@@ -15,6 +15,11 @@ public class GZSubsystemManager {
 	{
 		mAllSystems.forEach((s) -> s.startLooping());
 	}
+
+	public void loop()
+	{
+		mAllSystems.forEach((s) -> s.loop());
+	}
 	
 	public List<GZSubsystem> getSubsystems()
 	{

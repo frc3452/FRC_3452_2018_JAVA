@@ -47,14 +47,14 @@ public class Robot extends TimedRobot {
 		files.fillLogger();
 		auton.fillAutonArray();
 		
-		allSubsystems.startLooping();
+		// allSubsystems.startLooping();
 	
 		health.generateHealth();
 	}
 
 	@Override
 	public void robotPeriodic() {
-		elevator.printSensorHealth();
+		allSubsystems.loop();
 	}
 
 	@Override

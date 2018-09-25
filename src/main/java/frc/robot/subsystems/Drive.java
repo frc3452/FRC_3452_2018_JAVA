@@ -186,7 +186,7 @@ public class Drive extends GZSubsystem {
 		boolean neutral = false;
 		neutral |= this.isDisabed() && !Robot.gzOI.isFMS();
 		neutral |= mWantedState == DriveState.NEUTRAL;
-		neutral |= mState.usesClosedLoop() && !mIO.encodersValid;
+		neutral |= (mState.usesClosedLoop() || mWantedState.usesClosedLoop) && !mIO.encodersValid;
 
 		if (neutral) {
 
@@ -237,14 +237,21 @@ public class Drive extends GZSubsystem {
 			s.setSubsystem("Drive train");
 
 			if (s.getMaster() == Master.MASTER) {
-
+				
 				GZSRX.logError(
-						s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT), this,
+					s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT), this,
 						AlertLevel.ERROR, "Could not setup " + s.getSide() + " encoder");
-
-				GZSRX.logError(s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+						
+						GZSRX.logError(s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
 						"Could not zero " + s.getSide() + " encoder");
 
+				in();
+				if (!mIO.leftEncoderValid)
+					Robot.health.addAlert(this, AlertLevel.ERROR, s.getSide() + " encoder not found");
+
+				if (!mIO.rightEncoderValid)
+					Robot.health.addAlert(this, AlertLevel.ERROR, s.getSide() + " encoder not found");
+					
 				s.setSensorPhase(true);
 
 				if (s.getSide() == Side.LEFT) {
@@ -256,6 +263,8 @@ public class Drive extends GZSubsystem {
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
 					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), Robot.drive,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
+
+
 				} else {
 					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), Robot.drive,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'P' gain");
@@ -342,6 +351,8 @@ public class Drive extends GZSubsystem {
 		public Double L1_volt = Double.NaN, L2_volt = Double.NaN, L3_volt = Double.NaN, L4_volt = Double.NaN,
 				R1_volt = Double.NaN, R2_volt = Double.NaN, R3_volt = Double.NaN, R4_volt = Double.NaN;
 
+		public Boolean leftEncoderValid = false;
+		public Boolean rightEncoderValid = false;
 		public Boolean encodersValid = false;
 
 		// out
@@ -374,8 +385,9 @@ public class Drive extends GZSubsystem {
 	protected synchronized void in() {
 		this.mModifyPercent = (mIsSlow ? .5 : 1);
 
-		mIO.encodersValid = L1.getSensorCollection().getPulseWidthRiseToRiseUs() == 0
-				&& R1.getSensorCollection().getPulseWidthRiseToRiseUs() == 0;
+		mIO.leftEncoderValid = L1.getSensorCollection().getPulseWidthRiseToRiseUs() != 0;
+		mIO.rightEncoderValid = R1.getSensorCollection().getPulseWidthRiseToRiseUs() != 0;
+		mIO.encodersValid = mIO.leftEncoderValid && mIO.rightEncoderValid;
 
 		if (mIO.encodersValid) {
 			mIO.left_encoder_ticks = (double) L1.getSelectedSensorPosition(0);

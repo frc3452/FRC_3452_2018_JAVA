@@ -104,6 +104,8 @@ public class Elevator extends GZSubsystem {
 			Robot.health.addAlert(this, AlertLevel.ERROR, "Both limit switches tripped");
 		if (!getBottomLimit())
 			Robot.health.addAlert(this, AlertLevel.WARNING, "Bottom limit not tripped.");
+		if (!mIO.encoderValid)
+			Robot.health.addAlert(this, AlertLevel.ERROR, "Encoder not detected");
 
 		overrideLimit(false);
 		softLimits(false);
@@ -189,7 +191,7 @@ public class Elevator extends GZSubsystem {
 
 		public Boolean elevator_fwd_lmt = false, elevator_rev_lmt = false;
 
-		public Boolean encodersValid = false;
+		public Boolean encoderValid = false;
 
 		// out
 		private double output = 0;
@@ -214,9 +216,9 @@ public class Elevator extends GZSubsystem {
 
 	@Override
 	protected synchronized void in() {
-		mIO.encodersValid = elevator_1.getSensorCollection().getPulseWidthRiseToRiseUs() == 1;
-	
-		if (mIO.encodersValid) {
+		mIO.encoderValid = elevator_1.getSensorCollection().getPulseWidthRiseToRiseUs() != 0;
+
+		if (mIO.encoderValid) {
 			mIO.encoder_ticks = (double) elevator_1.getSelectedSensorPosition(0);
 			mIO.encoder_vel = (double) elevator_1.getSelectedSensorVelocity(0);
 		} else {
@@ -240,11 +242,6 @@ public class Elevator extends GZSubsystem {
 
 	public synchronized Boolean getBottomLimit() {
 		return mIO.elevator_fwd_lmt;
-	}
-
-	public void printSensorHealth() {
-		int f = elevator_1.getSensorCollection().getPulseWidthRiseToRiseUs();
-		System.out.println(f + "\t\t" + (f == 1));
 	}
 
 	@Override
@@ -307,7 +304,7 @@ public class Elevator extends GZSubsystem {
 		boolean neutral = false;
 		neutral |= this.isDisabed() && !Robot.gzOI.isFMS();
 		neutral |= mWantedState == ElevatorState.NEUTRAL;
-		neutral |= mState.usesClosedLoop() && !mIO.encodersValid;
+		neutral |= (mState.usesClosedLoop() || mWantedState.mUsesClosedLoop) && !mIO.encoderValid;
 
 		if (neutral) {
 
@@ -352,21 +349,18 @@ public class Elevator extends GZSubsystem {
 		if (!(Robot.auton.isDemo() || isSpeedOverriden())) {
 			
 			//Encoder not present or too high
-			if (pos.isNaN() || pos > kElevator.TOP_ROTATION)
+			if (pos.isNaN() || pos > kElevator.TOP_ROTATION){
 				driveModifier = kElevator.SPEED_LIMIT_SLOWEST_SPEED;
 			
 			//Encoder value good, limit
-			else if (pos > kElevator.BOTTOM_ROTATION) {
+			}else if (pos > kElevator.BOTTOM_ROTATION) {
 				driveModifier = 1 - (pos / kElevator.TOP_ROTATION) + kElevator.SPEED_LIMIT_SLOWEST_SPEED;
-			
 
 			//Encoder value lower than limit
 			} else
 				driveModifier = 1;
-
-		} else {
+		} else 
 			driveModifier = 1;
-		}
 	}
 
 	public synchronized void enableFollower() {
