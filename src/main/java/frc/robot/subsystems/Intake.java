@@ -82,21 +82,25 @@ public class Intake extends GZSubsystem {
 		}
 	}
 
+	private void switchToState(IntakeState s)
+	{
+		if (mState != s)
+		{
+			onStateExit(mState);
+			mState = s;
+			onStateStart(mState);
+		}
+	}
+
 	private void handleStates() {
 		// we dont need to worry about isDemo() here
 		//Dont allow disable on the field
 		if ((this.isDisabed() && !Robot.gzOI.isFMS())|| mWantedState == IntakeState.NEUTRAL) {
 
-			if (stateNot(IntakeState.NEUTRAL)) {
-				onStateExit(mState);
-				mState = IntakeState.NEUTRAL;
-				onStateStart(mState);
-			}
+			switchToState(IntakeState.NEUTRAL);
 
-		} else if (mState != mWantedState) {
-			onStateExit(mState);
-			mState = mWantedState;
-			onStateStart(mState);
+		} else {
+			switchToState(mWantedState);
 		}
 	}
 

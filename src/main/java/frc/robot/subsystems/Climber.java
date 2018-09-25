@@ -5,6 +5,8 @@ import frc.robot.Constants.kPDP;
 import frc.robot.Robot;
 import frc.robot.util.GZSubsystem;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.wpilibj.Spark;
 
 public class Climber extends GZSubsystem {
@@ -121,33 +123,30 @@ public class Climber extends GZSubsystem {
 	public synchronized void setWantedState(ClimberState wantedState) {
 		this.mWantedState = wantedState;
 	}
-	
-	public synchronized void checkHealth()
-	{
-		
-	}
 
+	private void switchToState(ClimberState s)
+	{
+		if (mState != s)
+		{
+			onStateExit(mState);
+			mState = s;
+			onStateStart(mState);
+		}
+	}
+	
 	private synchronized void handleStates() {
 		
 		//if trying to disable or run demo mode while not connected to field
 		if (((this.isDisabed() || Robot.auton.isDemo()) && !Robot.gzOI.isFMS())
 				|| mWantedState == ClimberState.NEUTRAL) {
 
-			if (stateNot(ClimberState.NEUTRAL)) {
-				onStateExit(mState);
-				mState = ClimberState.NEUTRAL;
-				onStateStart(mState);
-			}
+					switchToState(ClimberState.NEUTRAL);
 
-		} else if (mState != mWantedState) {
-			onStateExit(mState);
-			mState = mWantedState;
-			onStateStart(mState);
+		} else {
+
+			switchToState(mWantedState);
+
 		}
-	}
-
-	private synchronized boolean stateNot(ClimberState state) {
-		return mState != state;
 	}
 
 	public String getStateString() {
