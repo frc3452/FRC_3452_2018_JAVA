@@ -349,7 +349,7 @@ public class Elevator extends GZSubsystem {
 		if (!(Robot.auton.isDemo() || isSpeedOverriden())) {
 			
 			//Encoder not present or too high
-			if (pos.isNaN() || pos > kElevator.TOP_ROTATION){
+			if (!mIO.encoderValid || pos > kElevator.TOP_ROTATION){
 				driveModifier = kElevator.SPEED_LIMIT_SLOWEST_SPEED;
 			
 			//Encoder value good, limit
