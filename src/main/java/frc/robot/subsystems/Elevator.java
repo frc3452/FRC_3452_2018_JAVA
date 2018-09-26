@@ -342,7 +342,7 @@ public class Elevator extends GZSubsystem {
 
 		// if demo, dont limit
 		// if not in demo and not overriding, limit
-		if (!(Robot.auton.isDemo() || isSpeedOverriden())) {
+		if (!Robot.auton.isDemo() && !isSpeedOverriden()) {
 			
 			//Encoder not present or too high
 			if (!mIO.encoderValid || pos > kElevator.TOP_ROTATION){
