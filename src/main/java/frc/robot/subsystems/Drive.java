@@ -154,15 +154,12 @@ public class Drive extends GZSubsystem {
 		OPEN_LOOP(false), OPEN_LOOP_DRIVER(false), DEMO(false), NEUTRAL(false), MOTION_MAGIC(true),
 		MOTION_PROFILE(true);
 
-		private final boolean mUsesClosedLoop;
+		private final boolean usesClosedLoop;
 
 		DriveState(final boolean s) {
-			mUsesClosedLoop = s;
+			usesClosedLoop = s;
 		}
 
-		public boolean usesClosedLoop() {
-			return mUsesClosedLoop;
-		}
 	}
 
 	@Override
@@ -186,7 +183,7 @@ public class Drive extends GZSubsystem {
 		boolean neutral = false;
 		neutral |= this.isDisabed() && !Robot.gzOI.isFMS();
 		neutral |= mWantedState == DriveState.NEUTRAL;
-		neutral |= (mState.usesClosedLoop() || mWantedState.usesClosedLoop) && !mIO.encodersValid;
+		neutral |= ((mState.usesClosedLoop || mWantedState.usesClosedLoop) && !mIO.encodersValid);
 
 		if (neutral) {
 
@@ -389,17 +386,19 @@ public class Drive extends GZSubsystem {
 		mIO.rightEncoderValid = R1.getSensorCollection().getPulseWidthRiseToRiseUs() != 0;
 		mIO.encodersValid = mIO.leftEncoderValid && mIO.rightEncoderValid;
 
-		if (mIO.encodersValid) {
+		if (mIO.leftEncoderValid) {
 			mIO.left_encoder_ticks = (double) L1.getSelectedSensorPosition(0);
-			mIO.left_encoder_vel = (double) L1.getSelectedSensorVelocity(0);
-
-			mIO.right_encoder_ticks = (double) R1.getSelectedSensorPosition(0);
-			mIO.right_encoder_vel = (double) R1.getSelectedSensorVelocity(0);
-
-		} else {
+			mIO.left_encoder_vel = (double) L1.getSelectedSensorVelocity(0);	
+		} else { 
 			mIO.left_encoder_ticks = Double.NaN;
 			mIO.left_encoder_vel = Double.NaN;
-
+		}
+		
+		if (mIO.rightEncoderValid)
+		{			
+			mIO.right_encoder_ticks = (double) R1.getSelectedSensorPosition(0);
+			mIO.right_encoder_vel = (double) R1.getSelectedSensorVelocity(0);
+		} else {
 			mIO.right_encoder_ticks = Double.NaN;
 			mIO.right_encoder_vel = Double.NaN;
 		}

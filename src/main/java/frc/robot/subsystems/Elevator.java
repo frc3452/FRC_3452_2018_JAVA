@@ -279,14 +279,10 @@ public class Elevator extends GZSubsystem {
 	public enum ElevatorState {
 		NEUTRAL(false), MANUAL(false), DEMO(false), POSITION(true);
 
-		private final boolean mUsesClosedLoop;
+		private final boolean usesClosedLoop;
 
 		ElevatorState(final boolean s) {
-			mUsesClosedLoop = s;
-		}
-
-		public boolean usesClosedLoop() {
-			return mUsesClosedLoop;
+			usesClosedLoop = s;
 		}
 	}
 
@@ -304,7 +300,7 @@ public class Elevator extends GZSubsystem {
 		boolean neutral = false;
 		neutral |= this.isDisabed() && !Robot.gzOI.isFMS();
 		neutral |= mWantedState == ElevatorState.NEUTRAL;
-		neutral |= (mState.usesClosedLoop() || mWantedState.mUsesClosedLoop) && !mIO.encoderValid;
+		neutral |= (mState.usesClosedLoop || mWantedState.usesClosedLoop) && !mIO.encoderValid;
 
 		if (neutral) {
 
