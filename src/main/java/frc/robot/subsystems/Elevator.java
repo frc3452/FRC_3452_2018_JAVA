@@ -340,7 +340,6 @@ public class Elevator extends GZSubsystem {
 	public synchronized void speedLimiting() {
 		Double pos = getRotations();
 
-		// if demo, dont limit
 		// if not in demo and not overriding, limit
 		if (!Robot.auton.isDemo() && !isSpeedOverriden()) {
 			
