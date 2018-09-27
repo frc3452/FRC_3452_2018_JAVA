@@ -16,7 +16,7 @@ public class Health {
 	private Map<GZSubsystem, ArrayList<ArrayList<String>>> map = new HashMap<>();
 
 	public Health() {
-		
+
 		for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
 			ArrayList<String> temp1 = new ArrayList<>();
 			temp1.add(AlertLevel.NONE.stringValue);
@@ -46,7 +46,7 @@ public class Health {
 			// Loop through each subsystem
 			for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
 				// Loop through all errors
-			
+
 				for (int i = 0; i < map.get(s).size(); i++) {
 
 					// Get alert level of current error
@@ -55,8 +55,8 @@ public class Health {
 					if (alert_level.equals(AlertLevel.ERROR.stringValue))
 						s.setHighestAlert(AlertLevel.ERROR);
 					else if (alert_level.equals(AlertLevel.WARNING.stringValue)
-						&& (s.getHighestAlert() != AlertLevel.ERROR))
-					s.setHighestAlert(AlertLevel.WARNING);
+							&& (s.getHighestAlert() != AlertLevel.ERROR))
+						s.setHighestAlert(AlertLevel.WARNING);
 				}
 			}
 
@@ -86,21 +86,28 @@ public class Health {
 				// If errors are present
 				if (s.getHighestAlert() != AlertLevel.NONE) {
 
-					//Print subsystem name
+					// Print subsystem name
 					body += header(s.getClass().getSimpleName(), 3);
 
-					// Loop through errors
-					for (int i = 0; i < map.get(s).size(); i++) {
+					// Loop through errors twice, once for errors and once for warnings
+					// This prints errors first, then warnings
+					for (int errrorLoop = 0; errrorLoop < 2; errrorLoop++)
+						for (int allErrorsForSubsystem = 0; allErrorsForSubsystem < map.get(s).size(); allErrorsForSubsystem++) {
 
-						// Store current error
-						ArrayList<String> error = map.get(s).get(i);
+							// Store current error
+							ArrayList<String> error = map.get(s).get(allErrorsForSubsystem);
 
-						// If error = ERROR, do bold and red. If warning, paragraph
-						if (error.get(0).equals(AlertLevel.ERROR.stringValue))
-							body += paragraph(bold(error.get(1), "red"));
-						else if (error.get(0).equals(AlertLevel.WARNING.stringValue))
-							body += paragraph(error.get(1));
-					}
+							switch (errrorLoop) {
+							case 0:
+								if (error.get(0).equals(AlertLevel.ERROR.stringValue))
+									body += paragraph(bold(error.get(1), "red"));
+								break;
+							case 1:
+								if (error.get(0).equals(AlertLevel.WARNING.stringValue))
+									body += paragraph(error.get(1));
+								break;
+							}
+						}
 				}
 			}
 

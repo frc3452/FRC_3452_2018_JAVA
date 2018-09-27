@@ -84,7 +84,7 @@ public class Elevator extends GZSubsystem {
 				GZSRX.TIMEOUT), this, AlertLevel.WARNING, "Could not set upper soft limit");
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
-		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), this, AlertLevel.ERROR,
+		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), this, AlertLevel.WARNING,
 				"Could not set encoder zero on bottom limit");
 
 		// REMOTE LIMIT SWITCHES
@@ -93,11 +93,11 @@ public class Elevator extends GZSubsystem {
 		GZSRX.logError(
 				elevator_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
-				this, AlertLevel.ERROR, "Could not set forward limit switch");
+				this, AlertLevel.WARNING, "Could not set forward limit switch");
 		GZSRX.logError(
 				elevator_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
-				this, AlertLevel.ERROR, "Could not set reverse limit switch");
+				this, AlertLevel.WARNING, "Could not set reverse limit switch");
 
 		in();
 		if (getTopLimit() && getBottomLimit())
@@ -216,7 +216,7 @@ public class Elevator extends GZSubsystem {
 
 	@Override
 	protected synchronized void in() {
-		mIO.encoderValid = elevator_1.getSensorCollection().getPulseWidthRiseToRiseUs() != 0;
+		mIO.encoderValid = elevator_1.isEncoderValid();
 
 		if (mIO.encoderValid) {
 			mIO.encoder_ticks = (double) elevator_1.getSelectedSensorPosition(0);

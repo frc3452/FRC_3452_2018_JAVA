@@ -1,11 +1,15 @@
 package frc.robot.util;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import frc.robot.motionprofiles.Path;
 
 public class Util {
+
+	private Util()
+	{}
 
 	public static double limit(double value) {
 		if (value > 1.0) {
@@ -23,6 +27,18 @@ public class Util {
 
 		return false;
 	}
+
+    public static boolean epsilonEquals(double a, double b, double epsilon) {
+        return (a - epsilon <= b) && (a + epsilon >= b);
+	}
+	
+	public static boolean allCloseTo(final ArrayList<Double> list, double value, double epsilon) {
+        boolean result = true;
+        for (Double value_in : list) {
+            result &= epsilonEquals(value_in, value, epsilon);
+        }
+        return result;
+    }
 
 	public static double applyDeadband(double value, double deadband) {
 		if (Math.abs(value) > deadband) {

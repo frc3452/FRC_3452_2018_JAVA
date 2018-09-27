@@ -237,18 +237,14 @@ public class Drive extends GZSubsystem {
 				
 				GZSRX.logError(
 					s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT), this,
-						AlertLevel.ERROR, "Could not setup " + s.getSide() + " encoder");
+						AlertLevel.WARNING, "Could not setup " + s.getSide() + " encoder");
 						
 						GZSRX.logError(s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
 						"Could not zero " + s.getSide() + " encoder");
 
-				in();
-				if (!mIO.leftEncoderValid)
+				if (!s.isEncoderValid())
 					Robot.health.addAlert(this, AlertLevel.ERROR, s.getSide() + " encoder not found");
 
-				if (!mIO.rightEncoderValid)
-					Robot.health.addAlert(this, AlertLevel.ERROR, s.getSide() + " encoder not found");
-					
 				s.setSensorPhase(true);
 
 				if (s.getSide() == Side.LEFT) {
@@ -382,8 +378,9 @@ public class Drive extends GZSubsystem {
 	protected synchronized void in() {
 		this.mModifyPercent = (mIsSlow ? .5 : 1);
 
-		mIO.leftEncoderValid = L1.getSensorCollection().getPulseWidthRiseToRiseUs() != 0;
-		mIO.rightEncoderValid = R1.getSensorCollection().getPulseWidthRiseToRiseUs() != 0;
+		mIO.leftEncoderValid = L1.isEncoderValid();
+		mIO.rightEncoderValid = R1.isEncoderValid();
+		
 		mIO.encodersValid = mIO.leftEncoderValid && mIO.rightEncoderValid;
 
 		if (mIO.leftEncoderValid) {
@@ -773,7 +770,7 @@ public class Drive extends GZSubsystem {
 				c.follow(R1);
 				break;
 			case NO_INFO:
-				System.out.println("ERROR Drive talon " + c.getName() + " could not enter follower mode!");
+				System.out.println("ERROR Drive talon " + c.getSide() + " (" + c.getDeviceID() + ") could not enter follower mode!");
 			}
 		}
 	}
