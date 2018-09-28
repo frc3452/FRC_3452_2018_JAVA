@@ -1,11 +1,10 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Spark;
 import frc.robot.Constants.kClimber;
 import frc.robot.Constants.kPDP;
 import frc.robot.Robot;
 import frc.robot.util.GZSubsystem;
-
-import edu.wpi.first.wpilibj.Spark;
 
 public class Climber extends GZSubsystem {
 
@@ -20,12 +19,11 @@ public class Climber extends GZSubsystem {
 	// Construction
 	public Climber() {
 	}
-	
-	public synchronized void construct()
-	{
+
+	public synchronized void construct() {
 		climber_1 = new Spark(kClimber.CLIMBER_1);
 		climber_1.setInverted(kClimber.CLIMBER_1_INVERT);
-		
+
 		climber_1.setSubsystem(Climber.class.getName());
 		climber_1.setName("climber_1");
 	}
@@ -57,21 +55,6 @@ public class Climber extends GZSubsystem {
 		handleStates();
 		in();
 		out();
-
-		switch (mState) {
-
-		case MANUAL:
-			mIO.climber_output = mIO.climber_desired_output;
-			break;
-
-		case NEUTRAL:
-			mIO.climber_output = 0;
-			break;
-
-		default:
-			System.out.println("WARNING: Incorrect climber state " + mState + " reached.");
-			break;
-		}
 	}
 
 	public static class IO {
@@ -84,13 +67,12 @@ public class Climber extends GZSubsystem {
 		public Double climber_desired_output = 0.0;
 	}
 
-	public void runClimber(double percentage)
-	{
+	public void runClimber(double percentage) {
 		if (climbCounter > 3)
 			manual(percentage);
 		else
 			stop();
-			
+
 	}
 
 	private void manual(double percentage) {
@@ -106,11 +88,26 @@ public class Climber extends GZSubsystem {
 
 	@Override
 	protected synchronized void out() {
+
+		switch (mState) {
+
+		case MANUAL:
+			mIO.climber_output = mIO.climber_desired_output;
+			break;
+
+		case NEUTRAL:
+			mIO.climber_output = 0;
+			break;
+
+		default:
+			System.out.println("WARNING: Incorrect climber state " + mState + " reached.");
+			break;
+		}
 		climber_1.set(Math.abs(mIO.climber_output));
 	}
 
 	public enum ClimberState {
-		NEUTRAL, MANUAL,
+		NEUTRAL, MANUAL;
 	}
 
 	@Override
@@ -121,33 +118,30 @@ public class Climber extends GZSubsystem {
 	public synchronized void setWantedState(ClimberState wantedState) {
 		this.mWantedState = wantedState;
 	}
-	
-	public synchronized void checkHealth()
-	{
-		
-	}
 
-	private synchronized void handleStates() {
-		
-		//if trying to disable or run demo mode while not connected to field
-		if (((this.isDisabed() || Robot.auton.isDemo()) && !Robot.gzOI.isFMS())
-				|| mWantedState == ClimberState.NEUTRAL) {
-
-			if (stateNot(ClimberState.NEUTRAL)) {
-				onStateExit(mState);
-				mState = ClimberState.NEUTRAL;
-				onStateStart(mState);
-			}
-
-		} else if (mState != mWantedState) {
+	private void switchToState(ClimberState s) {
+		if (mState != s) {
 			onStateExit(mState);
-			mState = mWantedState;
+			mState = s;
 			onStateStart(mState);
 		}
 	}
 
-	private synchronized boolean stateNot(ClimberState state) {
-		return mState != state;
+	private synchronized void handleStates() {
+		boolean neutral = false;
+		neutral |= (this.isDisabed() || Robot.auton.isDemo()) && !Robot.gzOI.isFMS();
+		neutral |= mWantedState == ClimberState.NEUTRAL;
+
+		// if trying to disable or run demo mode while not connected to field
+		if (neutral) {
+
+			switchToState(ClimberState.NEUTRAL);
+
+		} else {
+
+			switchToState(mWantedState);
+
+		}
 	}
 
 	public String getStateString() {

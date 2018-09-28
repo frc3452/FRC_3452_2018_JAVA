@@ -1,10 +1,9 @@
-package frc.robot.util;
+package frc.robot;
 
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.RobotController;
-import frc.robot.Constants;
-import frc.robot.Robot;
+import frc.robot.util.Util;
 
 public class GZLog {
 
@@ -24,12 +23,30 @@ public class GZLog {
 			}
 		};
 
+		LogItem left_encoder_valid = new LogItem("L-ENC-PRSNT")
+		{
+			@Override
+			public void update()
+			{
+				this.mValue = Robot.drive.mIO.leftEncoderValid.toString();
+			}
+		};
+
 		LogItem right_speed = new LogItem("R-RPM")
 		{
 			@Override
 			public void update()
 			{
 				this.mValue = Robot.drive.getRightVel().toString();
+			}
+		};
+
+		LogItem right_encoder_valid = new LogItem("R-ENC-PRSNT")
+		{
+			@Override
+			public void update()
+			{
+				this.mValue = Robot.drive.mIO.rightEncoderValid.toString();
 			}
 		};
 
@@ -214,6 +231,15 @@ public class GZLog {
 			public void update()
 			{
 				this.mValue = Robot.elevator.getBottomLimit().toString();
+			}
+		};
+
+		LogItem elev_encoder_present = new LogItem("ELEV-ENC-PRSNT")
+		{
+			@Override
+			public void update()
+			{
+				this.mValue = Robot.elevator.mIO.encoderValid.toString();
 			}
 		};
 

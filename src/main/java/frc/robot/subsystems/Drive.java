@@ -55,9 +55,6 @@ public class Drive extends GZSubsystem {
 	public Drive() {
 	}
 
-	public void printfirmware() {
-	}
-
 	public synchronized void construct() {
 		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
 		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
@@ -90,18 +87,79 @@ public class Drive extends GZSubsystem {
 		R4.setName("R4");
 
 		mGyro.reset();
-		
+
 		checkFirmware();
 	}
 
 	@Override
 	protected synchronized void out() {
+		switch (mState) {
+		case MOTION_MAGIC:
+
+			mIO.control_mode = ControlMode.MotionMagic;
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case MOTION_PROFILE:
+
+			mIO.control_mode = ControlMode.MotionProfile;
+			mIO.left_desired_output = mIO.right_desired_output = SetValueMotionProfile.Enable.value;
+
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case NEUTRAL:
+
+			mIO.control_mode = ControlMode.Disabled;
+			mIO.left_output = 0;
+			mIO.right_output = 0;
+
+			break;
+		case OPEN_LOOP:
+
+			mIO.control_mode = ControlMode.PercentOutput;
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case OPEN_LOOP_DRIVER:
+
+			arcade(OI.driverJoy);
+			mIO.control_mode = ControlMode.PercentOutput;
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case DEMO:
+
+			alternateArcade(OI.driverJoy);
+			mIO.control_mode = ControlMode.PercentOutput;
+			mIO.left_output = mIO.left_desired_output * kDrivetrain.DEMO_DRIVE_MODIFIER;
+			mIO.right_output = mIO.right_desired_output * kDrivetrain.DEMO_DRIVE_MODIFIER;
+
+			break;
+
+		default:
+			System.out.println("WARNING: Incorrect drive state " + mState + " reached.");
+			break;
+		}
+
 		L1.set(mIO.control_mode, mIO.left_output);
 		R1.set(mIO.control_mode, mIO.right_output);
 	}
 
 	public enum DriveState {
-		OPEN_LOOP, OPEN_LOOP_DRIVER, DEMO, NEUTRAL, MOTION_MAGIC, MOTION_PROFILE,
+		OPEN_LOOP(false), OPEN_LOOP_DRIVER(false), DEMO(false), NEUTRAL(false), MOTION_MAGIC(true),
+		MOTION_PROFILE(true);
+
+		private final boolean usesClosedLoop;
+
+		DriveState(final boolean s) {
+			usesClosedLoop = s;
+		}
+
 	}
 
 	@Override
@@ -113,29 +171,30 @@ public class Drive extends GZSubsystem {
 		this.mWantedState = wantedState;
 	}
 
-	private synchronized void handleStates() {
-
-		// Do not allow .disable() while connected to the field.
-		if (((this.isDisabed() && !Robot.gzOI.isFMS()) || mWantedState == DriveState.NEUTRAL)) {
-
-			if (stateNot(DriveState.NEUTRAL)) {
-				onStateExit(mState);
-				mState = DriveState.NEUTRAL;
-				onStateStart(mState);
-			}
-
-		} else if (Robot.auton.isDemo()) {
-
-			if (stateNot(DriveState.DEMO)) {
-				onStateExit(mState);
-				mState = DriveState.DEMO;
-				onStateStart(mState);
-			}
-
-		} else if (mState != mWantedState) {
+	private synchronized void switchToState(DriveState state) {
+		if (mState != state) {
 			onStateExit(mState);
-			mState = mWantedState;
+			mState = state;
 			onStateStart(mState);
+		}
+	}
+
+	private synchronized void handleStates() {
+		boolean neutral = false;
+		neutral |= this.isDisabed() && !Robot.gzOI.isFMS();
+		neutral |= mWantedState == DriveState.NEUTRAL;
+		neutral |= ((mState.usesClosedLoop || mWantedState.usesClosedLoop) && !mIO.encodersValid);
+
+		if (neutral) {
+
+			switchToState(DriveState.NEUTRAL);
+
+		} else if (Robot.auton.isDemo() && !Robot.gzOI.isFMS()) {
+
+			switchToState(DriveState.DEMO);
+
+		} else {
+			switchToState(mWantedState);
 		}
 	}
 
@@ -175,13 +234,16 @@ public class Drive extends GZSubsystem {
 			s.setSubsystem("Drive train");
 
 			if (s.getMaster() == Master.MASTER) {
-
+				
 				GZSRX.logError(
-						s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT), this,
-						AlertLevel.ERROR, "Could not detect " + s.getSide() + " encoder");
-
-				GZSRX.logError(s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+					s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT), this,
+						AlertLevel.WARNING, "Could not setup " + s.getSide() + " encoder");
+						
+						GZSRX.logError(s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
 						"Could not zero " + s.getSide() + " encoder");
+
+				if (!s.isEncoderValid())
+					Robot.health.addAlert(this, AlertLevel.ERROR, s.getSide() + " encoder not found");
 
 				s.setSensorPhase(true);
 
@@ -194,6 +256,8 @@ public class Drive extends GZSubsystem {
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
 					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), Robot.drive,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
+
+
 				} else {
 					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), Robot.drive,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'P' gain");
@@ -209,8 +273,7 @@ public class Drive extends GZSubsystem {
 		}
 	}
 
-	private synchronized void checkFirmware()
-	{
+	private synchronized void checkFirmware() {
 		for (GZSRX s : controllers)
 			s.checkFirmware(this);
 	}
@@ -266,60 +329,6 @@ public class Drive extends GZSubsystem {
 		handleStates();
 		in();
 		out();
-
-		switch (mState) {
-		case MOTION_MAGIC:
-
-			mIO.control_mode = ControlMode.MotionMagic;
-			mIO.left_output = mIO.left_desired_output;
-			mIO.right_output = mIO.right_desired_output;
-
-			break;
-		case MOTION_PROFILE:
-
-			mIO.control_mode = ControlMode.MotionProfile;
-			mIO.left_desired_output = mIO.right_desired_output = SetValueMotionProfile.Enable.value;
-
-			mIO.left_output = mIO.left_desired_output;
-			mIO.right_output = mIO.right_desired_output;
-
-			break;
-		case NEUTRAL:
-
-			mIO.control_mode = ControlMode.Disabled;
-			mIO.left_output = 0;
-			mIO.right_output = 0;
-
-			break;
-		case OPEN_LOOP:
-
-			mIO.control_mode = ControlMode.PercentOutput;
-			mIO.left_output = mIO.left_desired_output;
-			mIO.right_output = mIO.right_desired_output;
-
-			break;
-		case OPEN_LOOP_DRIVER:
-
-			arcade(OI.driverJoy);
-			mIO.control_mode = ControlMode.PercentOutput;
-			mIO.left_output = mIO.left_desired_output;
-			mIO.right_output = mIO.right_desired_output;
-
-			break;
-		case DEMO:
-
-			alternateArcade(OI.driverJoy);
-			mIO.control_mode = ControlMode.PercentOutput;
-			mIO.left_output = mIO.left_desired_output * kDrivetrain.DEMO_DRIVE_MODIFIER;
-			mIO.right_output = mIO.right_desired_output * kDrivetrain.DEMO_DRIVE_MODIFIER;
-
-			break;
-
-		default:
-			System.out.println("WARNING: Incorrect drive state " + mState + " reached.");
-			break;
-		}
-
 	}
 
 	public static class IO {
@@ -334,6 +343,10 @@ public class Drive extends GZSubsystem {
 
 		public Double L1_volt = Double.NaN, L2_volt = Double.NaN, L3_volt = Double.NaN, L4_volt = Double.NaN,
 				R1_volt = Double.NaN, R2_volt = Double.NaN, R3_volt = Double.NaN, R4_volt = Double.NaN;
+
+		public Boolean leftEncoderValid = false;
+		public Boolean rightEncoderValid = false;
+		public Boolean encodersValid = false;
 
 		// out
 		private double left_output = 0;
@@ -365,11 +378,27 @@ public class Drive extends GZSubsystem {
 	protected synchronized void in() {
 		this.mModifyPercent = (mIsSlow ? .5 : 1);
 
-		mIO.left_encoder_ticks = (double) L1.getSelectedSensorPosition(0);
-		mIO.left_encoder_vel = (double) L1.getSelectedSensorVelocity(0);
+		mIO.leftEncoderValid = L1.isEncoderValid();
+		mIO.rightEncoderValid = R1.isEncoderValid();
+		
+		mIO.encodersValid = mIO.leftEncoderValid && mIO.rightEncoderValid;
 
-		mIO.right_encoder_ticks = (double) R1.getSelectedSensorPosition(0);
-		mIO.right_encoder_vel = (double) R1.getSelectedSensorVelocity(0);
+		if (mIO.leftEncoderValid) {
+			mIO.left_encoder_ticks = (double) L1.getSelectedSensorPosition(0);
+			mIO.left_encoder_vel = (double) L1.getSelectedSensorVelocity(0);	
+		} else { 
+			mIO.left_encoder_ticks = Double.NaN;
+			mIO.left_encoder_vel = Double.NaN;
+		}
+		
+		if (mIO.rightEncoderValid)
+		{			
+			mIO.right_encoder_ticks = (double) R1.getSelectedSensorPosition(0);
+			mIO.right_encoder_vel = (double) R1.getSelectedSensorVelocity(0);
+		} else {
+			mIO.right_encoder_ticks = Double.NaN;
+			mIO.right_encoder_vel = Double.NaN;
+		}
 
 		mIO.L1_amp = L1.getOutputCurrent();
 		mIO.L2_amp = L2.getOutputCurrent();
@@ -543,18 +572,19 @@ public class Drive extends GZSubsystem {
 						&& mIO.right_encoder_ticks > mRight_target - 102 * multiplier);
 	}
 
-	private class MotionProfileBuffer implements java.lang.Runnable {
-		@Override
-		public void run() {
-			L1.processMotionProfileBuffer();
-			R1.processMotionProfileBuffer();
-		}
-	}
-
 	/**
 	 * notifier object for running MotionProfileBuffer
 	 */
-	private Notifier processMotionProfile = new Notifier(new MotionProfileBuffer());
+	private Notifier processMotionProfile = new Notifier(new Runnable() {
+
+		@Override
+		public void run() {
+			{
+				L1.processMotionProfileBuffer();
+				R1.processMotionProfileBuffer();
+			}
+		}
+	});
 
 	/**
 	 * Used to turn on/off runnable for motion profiling
@@ -740,7 +770,7 @@ public class Drive extends GZSubsystem {
 				c.follow(R1);
 				break;
 			case NO_INFO:
-				System.out.println("ERROR Drive talon " + c.getName() + " could not enter follower mode!");
+				System.out.println("ERROR Drive talon " + c.getSide() + " (" + c.getDeviceID() + ") could not enter follower mode!");
 			}
 		}
 	}
@@ -793,10 +823,6 @@ public class Drive extends GZSubsystem {
 
 	public synchronized double getGyroFusedHeading() {
 		return mGyro.getFusedHeading();
-	}
-
-	private synchronized boolean stateNot(DriveState state) {
-		return mState != state;
 	}
 
 	public String getStateString() {

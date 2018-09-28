@@ -41,7 +41,11 @@ public class GZSRX extends WPI_TalonSRX {
 	}
 
 
-
+	public boolean isEncoderValid()
+	{
+		return this.getSensorCollection().getPulseWidthRiseToRiseUs() != 0;
+	}
+	
 	public static void logError(ErrorCode errorCode, GZSubsystem subsystem, AlertLevel level, String message) {
 		if (errorCode != ErrorCode.OK)
 			Robot.health.addAlert(subsystem, level, message);

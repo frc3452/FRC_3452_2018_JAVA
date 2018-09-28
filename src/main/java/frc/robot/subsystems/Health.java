@@ -16,10 +16,10 @@ public class Health {
 	private Map<GZSubsystem, ArrayList<ArrayList<String>>> map = new HashMap<>();
 
 	public Health() {
-		
+
 		for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
 			ArrayList<String> temp1 = new ArrayList<>();
-			temp1.add(AlertLevel.NONE.stringVal());
+			temp1.add(AlertLevel.NONE.stringValue);
 			temp1.add("NA");
 
 			ArrayList<ArrayList<String>> temp2 = new ArrayList<ArrayList<String>>();
@@ -31,7 +31,7 @@ public class Health {
 
 	public void addAlert(GZSubsystem subsystem, AlertLevel level, String message) {
 		ArrayList<String> temp = new ArrayList<>();
-		temp.add(level.stringVal());
+		temp.add(level.stringValue);
 		temp.add(message);
 		map.get(subsystem).add(temp);
 	}
@@ -46,17 +46,17 @@ public class Health {
 			// Loop through each subsystem
 			for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
 				// Loop through all errors
-			
+
 				for (int i = 0; i < map.get(s).size(); i++) {
 
 					// Get alert level of current error
 					String alert_level = map.get(s).get(i).get(0);
 
-					if (alert_level.equals(AlertLevel.ERROR.stringVal()))
+					if (alert_level.equals(AlertLevel.ERROR.stringValue))
 						s.setHighestAlert(AlertLevel.ERROR);
-					else if (alert_level.equals(AlertLevel.WARNING.stringVal())
-						&& (s.getHighestAlert() != AlertLevel.ERROR))
-					s.setHighestAlert(AlertLevel.WARNING);
+					else if (alert_level.equals(AlertLevel.WARNING.stringValue)
+							&& (s.getHighestAlert() != AlertLevel.ERROR))
+						s.setHighestAlert(AlertLevel.WARNING);
 				}
 			}
 
@@ -70,7 +70,7 @@ public class Health {
 			// Write table
 			for (GZSubsystem s : Robot.allSubsystems.getSubsystems())
 				table += tableRow(
-						tableCell(s.getClass().getSimpleName()) + tableCell("", s.getHighestAlert().stringVal(), true));
+						tableCell(s.getClass().getSimpleName()) + tableCell("", s.getHighestAlert().stringValue, true));
 
 			// Put table tags around values
 			table = table(table);
@@ -86,21 +86,28 @@ public class Health {
 				// If errors are present
 				if (s.getHighestAlert() != AlertLevel.NONE) {
 
-					//Print subsystem name
+					// Print subsystem name
 					body += header(s.getClass().getSimpleName(), 3);
 
-					// Loop through errors
-					for (int i = 0; i < map.get(s).size(); i++) {
+					// Loop through errors twice, once for errors and once for warnings
+					// This prints errors first, then warnings
+					for (int errrorLoop = 0; errrorLoop < 2; errrorLoop++)
+						for (int allErrorsForSubsystem = 0; allErrorsForSubsystem < map.get(s).size(); allErrorsForSubsystem++) {
 
-						// Store current error
-						ArrayList<String> error = map.get(s).get(i);
+							// Store current error
+							ArrayList<String> error = map.get(s).get(allErrorsForSubsystem);
 
-						// If error = ERROR, do bold and red. If warning, paragraph
-						if (error.get(0).equals(AlertLevel.ERROR.stringVal()))
-							body += paragraph(bold(error.get(1), "red"));
-						else if (error.get(0).equals(AlertLevel.WARNING.stringVal()))
-							body += paragraph(error.get(1));
-					}
+							switch (errrorLoop) {
+							case 0:
+								if (error.get(0).equals(AlertLevel.ERROR.stringValue))
+									body += paragraph(bold(error.get(1), "red"));
+								break;
+							case 1:
+								if (error.get(0).equals(AlertLevel.WARNING.stringValue))
+									body += paragraph(error.get(1));
+								break;
+							}
+						}
 				}
 			}
 
@@ -182,9 +189,6 @@ public class Health {
 			stringValue = s;
 		}
 
-		public String stringVal() {
-			return stringValue;
-		}
 		// further methods, attributes, etc.
 	}
 

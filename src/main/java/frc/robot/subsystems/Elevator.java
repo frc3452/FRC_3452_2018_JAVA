@@ -71,7 +71,7 @@ public class Elevator extends GZSubsystem {
 		// TODO ISSUE #11
 		// ENCODER
 		GZSRX.logError(elevator_1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10), this,
-				AlertLevel.ERROR, "Could not find encoder");
+				AlertLevel.ERROR, "Could not setup encoder");
 
 		GZSRX.logError(elevator_1.setSelectedSensorPosition(0, 0, 10), this, AlertLevel.WARNING,
 				"Could not zero encoder");
@@ -84,7 +84,7 @@ public class Elevator extends GZSubsystem {
 				GZSRX.TIMEOUT), this, AlertLevel.WARNING, "Could not set upper soft limit");
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
-		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), this, AlertLevel.ERROR,
+		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), this, AlertLevel.WARNING,
 				"Could not set encoder zero on bottom limit");
 
 		// REMOTE LIMIT SWITCHES
@@ -93,17 +93,19 @@ public class Elevator extends GZSubsystem {
 		GZSRX.logError(
 				elevator_1.configForwardLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
-				this, AlertLevel.ERROR, "Could not set forward limit switch");
+				this, AlertLevel.WARNING, "Could not set forward limit switch");
 		GZSRX.logError(
 				elevator_1.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX,
 						LimitSwitchNormal.NormallyOpen, elevator_2.getDeviceID(), 10),
-				this, AlertLevel.ERROR, "Could not set reverse limit switch");
+				this, AlertLevel.WARNING, "Could not set reverse limit switch");
 
 		in();
 		if (getTopLimit() && getBottomLimit())
 			Robot.health.addAlert(this, AlertLevel.ERROR, "Both limit switches tripped");
 		if (!getBottomLimit())
 			Robot.health.addAlert(this, AlertLevel.WARNING, "Bottom limit not tripped.");
+		if (!mIO.encoderValid)
+			Robot.health.addAlert(this, AlertLevel.ERROR, "Encoder not detected");
 
 		overrideLimit(false);
 		softLimits(false);
@@ -172,10 +174,78 @@ public class Elevator extends GZSubsystem {
 
 	@Override
 	public synchronized void loop() {
-		handleStates();
 		in();
+		handleStates();
 		out();
 
+		speedLimiting();
+	}
+
+	public static class IO {
+		// in
+		public Double encoder_ticks = Double.NaN, encoder_vel = Double.NaN;
+
+		public Double elevator_1_amp = Double.NaN, elevator_2_amp = Double.NaN;
+
+		public Double elevator_1_volt = Double.NaN, elevator_2_volt = Double.NaN;
+
+		public Boolean elevator_fwd_lmt = false, elevator_rev_lmt = false;
+
+		public Boolean encoderValid = false;
+
+		// out
+		private double output = 0;
+		public double desired_output = 0;
+
+		ControlMode control_mode = ControlMode.PercentOutput;
+	}
+
+	/**
+	 * NaN if encoder not detected
+	 */
+	public Double getRotations() {
+		return -Units.ticks_to_rotations(mIO.encoder_ticks);
+	}
+
+	/**
+	 * NaN if encoder not detected
+	 */
+	public Double getSpeed() {
+		return -Units.ticks_to_rotations(mIO.encoder_vel);
+	}
+
+	@Override
+	protected synchronized void in() {
+		mIO.encoderValid = elevator_1.isEncoderValid();
+
+		if (mIO.encoderValid) {
+			mIO.encoder_ticks = (double) elevator_1.getSelectedSensorPosition(0);
+			mIO.encoder_vel = (double) elevator_1.getSelectedSensorVelocity(0);
+		} else {
+			mIO.encoder_ticks = Double.NaN;
+			mIO.encoder_vel = Double.NaN;
+		}
+
+		mIO.elevator_1_amp = elevator_1.getOutputCurrent();
+		mIO.elevator_2_amp = elevator_2.getOutputCurrent();
+
+		mIO.elevator_1_volt = elevator_1.getMotorOutputVoltage();
+		mIO.elevator_2_volt = elevator_2.getMotorOutputVoltage();
+
+		mIO.elevator_fwd_lmt = elevator_2.getSensorCollection().isFwdLimitSwitchClosed();
+		mIO.elevator_rev_lmt = elevator_2.getSensorCollection().isRevLimitSwitchClosed();
+	}
+
+	public synchronized Boolean getTopLimit() {
+		return mIO.elevator_rev_lmt;
+	}
+
+	public synchronized Boolean getBottomLimit() {
+		return mIO.elevator_fwd_lmt;
+	}
+
+	@Override
+	protected synchronized void out() {
 		switch (mState) {
 		case MANUAL:
 
@@ -203,64 +273,17 @@ public class Elevator extends GZSubsystem {
 			break;
 		}
 
-		speedLimiting();
-	}
-
-	public static class IO {
-		// in
-		public Double encoder_ticks = Double.NaN, encoder_vel = Double.NaN;
-
-		public Double elevator_1_amp = Double.NaN, elevator_2_amp = Double.NaN;
-
-		public Double elevator_1_volt = Double.NaN, elevator_2_volt = Double.NaN;
-
-		public Boolean elevator_fwd_lmt = false, elevator_rev_lmt = false;
-
-		// out
-		private double output = 0;
-		public double desired_output = 0;
-
-		ControlMode control_mode = ControlMode.PercentOutput;
-	}
-
-	public Double getRotations() {
-		return -Units.ticks_to_rotations(mIO.encoder_ticks);
-	}
-
-	public Double getSpeed() {
-		return -Units.ticks_to_rotations(mIO.encoder_vel);
-	}
-
-	@Override
-	protected synchronized void in() {
-		mIO.encoder_ticks = (double) elevator_1.getSelectedSensorPosition(0);
-		mIO.encoder_vel = (double) elevator_1.getSelectedSensorVelocity(0);
-
-		mIO.elevator_1_amp = elevator_1.getOutputCurrent();
-		mIO.elevator_2_amp = elevator_2.getOutputCurrent();
-
-		mIO.elevator_1_volt = elevator_1.getMotorOutputVoltage();
-		mIO.elevator_2_volt = elevator_2.getMotorOutputVoltage();
-
-		mIO.elevator_fwd_lmt = elevator_2.getSensorCollection().isFwdLimitSwitchClosed();
-		mIO.elevator_rev_lmt = elevator_2.getSensorCollection().isRevLimitSwitchClosed();
-	}
-
-	public synchronized Boolean getTopLimit() {
-		return mIO.elevator_rev_lmt;
-	}
-
-	public synchronized Boolean getBottomLimit() {
-		return mIO.elevator_fwd_lmt;
-	}
-
-	@Override
-	protected synchronized void out() {
 		elevator_1.set(mIO.control_mode, mIO.output);
 	}
 
 	public enum ElevatorState {
-		NEUTRAL, MANUAL, DEMO, POSITION
+		NEUTRAL(false), MANUAL(false), DEMO(false), POSITION(true);
+
+		private final boolean usesClosedLoop;
+
+		ElevatorState(final boolean s) {
+			usesClosedLoop = s;
+		}
 	}
 
 	@Override
@@ -274,33 +297,35 @@ public class Elevator extends GZSubsystem {
 
 	private synchronized void handleStates() {
 		// Dont allow Disabled or Demo while on the field
+		boolean neutral = false;
+		neutral |= this.isDisabed() && !Robot.gzOI.isFMS();
+		neutral |= mWantedState == ElevatorState.NEUTRAL;
+		neutral |= (mState.usesClosedLoop || mWantedState.usesClosedLoop) && !mIO.encoderValid;
 
-		if (((this.isDisabed() && !Robot.gzOI.isFMS()) || mWantedState == ElevatorState.NEUTRAL)) {
+		if (neutral) {
 
-			if (stateNot(ElevatorState.NEUTRAL)) {
-				onStateExit(mState);
-				mState = ElevatorState.NEUTRAL;
-				onStateStart(mState);
-			}
+			switchToState(ElevatorState.NEUTRAL);
 
 		} else if (Robot.auton.isDemo() && !Robot.gzOI.isFMS()) {
 
-			if (stateNot(ElevatorState.DEMO)) {
-				onStateExit(mState);
-				mState = ElevatorState.DEMO;
-				onStateStart(mState);
-			}
+			switchToState(ElevatorState.DEMO);
 
-		} else if (mState != mWantedState) {
-			onStateExit(mState);
-			mState = mWantedState;
-			onStateStart(mState);
+		} else {
+			switchToState(mWantedState);
 		}
 
 		// Positioning
 		if (mState == ElevatorState.POSITION && (isDone(kElevator.CLOSED_COMPLETION)
 				|| ((-getTarget() < 0) && getBottomLimit()) || (-getTarget() > 0) && getTopLimit()))
 			encoderDone();
+	}
+
+	private void switchToState(ElevatorState s) {
+		if (mState != s) {
+			onStateExit(mState);
+			mState = s;
+			onStateStart(mState);
+		}
 	}
 
 	public synchronized void outputSmartDashboard() {
@@ -313,18 +338,24 @@ public class Elevator extends GZSubsystem {
 	}
 
 	public synchronized void speedLimiting() {
-		double pos = getRotations();
+		Double pos = getRotations();
 
-		// if demo, dont limit
 		// if not in demo and not overriding, limit
-		if (!(Robot.auton.isDemo() || isSpeedOverriden())) {
-			if (pos - kElevator.BOTTOM_ROTATION > 0) {
+		if (!Robot.auton.isDemo() && !isSpeedOverriden()) {
+			
+			//Encoder not present or too high
+			if (!mIO.encoderValid || pos > kElevator.TOP_ROTATION){
+				driveModifier = kElevator.SPEED_LIMIT_SLOWEST_SPEED;
+			
+			//Encoder value good, limit
+			}else if (pos > kElevator.BOTTOM_ROTATION) {
 				driveModifier = 1 - (pos / kElevator.TOP_ROTATION) + kElevator.SPEED_LIMIT_SLOWEST_SPEED;
+
+			//Encoder value lower than limit
 			} else
 				driveModifier = 1;
-		} else {
+		} else 
 			driveModifier = 1;
-		}
 	}
 
 	public synchronized void enableFollower() {
@@ -418,10 +449,6 @@ public class Elevator extends GZSubsystem {
 
 	public enum ESO {
 		TOGGLE, ON, OFF
-	}
-
-	private synchronized boolean stateNot(ElevatorState state) {
-		return mState != state;
 	}
 
 	public boolean isSpeedOverriden() {

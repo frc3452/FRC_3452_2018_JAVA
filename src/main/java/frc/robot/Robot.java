@@ -43,17 +43,18 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		allSubsystems.construct();
+	
 		files.fillLogger();
 		auton.fillAutonArray();
-		health.generateHealth();
 		
-		// TODO ISSUE #14
+		// allSubsystems.startLooping();
+	
+		health.generateHealth();
 	}
 
 	@Override
 	public void robotPeriodic() {
 		allSubsystems.loop();
-
 	}
 
 	@Override
