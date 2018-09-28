@@ -7,14 +7,12 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import frc.robot.Constants;
-import frc.robot.Constants.kFileManagement;
-import frc.robot.Robot;
-import frc.robot.util.GZLog;
-import frc.robot.util.Util;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
+import frc.robot.Constants;
+import frc.robot.Constants.kFileManagement;
+import frc.robot.GZLog;
+import frc.robot.util.Util;
 
 /**
  * <b>Playback subsystem</b> Also used for file writing, logging, etc.
