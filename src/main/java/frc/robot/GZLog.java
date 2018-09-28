@@ -329,6 +329,15 @@ public class GZLog {
 			}
 		};
 
+		LogItem brownout = new LogItem("BROWNED-OUT")
+		{
+			@Override
+			public void update()
+			{
+				this.mValue = String.valueOf(RobotController.isBrownedOut());
+			}
+		};
+
 		LogItem pdp_temp = new LogItem("PDP-TEMP")
 		{
 			@Override
