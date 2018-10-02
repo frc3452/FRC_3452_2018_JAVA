@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.kDrivetrain;
-import frc.robot.OI;
+import frc.robot.GZOI;
 import frc.robot.Robot;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZJoystick;
@@ -126,7 +126,7 @@ public class Drive extends GZSubsystem {
 			break;
 		case OPEN_LOOP_DRIVER:
 
-			arcade(OI.driverJoy);
+			arcade(GZOI.driverJoy);
 			mIO.control_mode = ControlMode.PercentOutput;
 			mIO.left_output = mIO.left_desired_output;
 			mIO.right_output = mIO.right_desired_output;
@@ -134,7 +134,7 @@ public class Drive extends GZSubsystem {
 			break;
 		case DEMO:
 
-			alternateArcade(OI.driverJoy);
+			alternateArcade(GZOI.driverJoy);
 			mIO.control_mode = ControlMode.PercentOutput;
 			mIO.left_output = mIO.left_desired_output * kDrivetrain.DEMO_DRIVE_MODIFIER;
 			mIO.right_output = mIO.right_desired_output * kDrivetrain.DEMO_DRIVE_MODIFIER;

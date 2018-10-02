@@ -2,21 +2,20 @@ package frc.robot.subsystems;
 
 import java.util.Arrays;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.kAuton;
-import frc.robot.OI;
+import frc.robot.GZOI;
 import frc.robot.commands.auton.DefaultAutonomous;
 import frc.robot.commands.auton.LeftAuton;
 import frc.robot.commands.auton.MiddleAuton;
+import frc.robot.commands.auton.NoCommand;
 import frc.robot.commands.auton.RightAuton;
 import frc.robot.util.GZCommand;
 import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZTimer;
-
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.commands.auton.NoCommand;
 
 /**
  * <h1>AutonSelector Subsystem</h1> Handles autonomous selector case statements
@@ -92,57 +91,57 @@ public class Auton {
 	 * override
 	 */
 	private void controllerChooser() {
-		if (OI.driverJoy.getRawButton(Buttons.LB) && OI.driverJoy.getRawButton(Buttons.RB)) {
+		if (GZOI.driverJoy.getRawButton(Buttons.LB) && GZOI.driverJoy.getRawButton(Buttons.RB)) {
 
-			if (OI.driverJoy.getRawButton(Buttons.A)) {
+			if (GZOI.driverJoy.getRawButton(Buttons.A)) {
 				overrideValue = 2;
 				overrideString = "Controller override 1:\t" + commandArray[overrideValue].getName();
 				controllerOverride = true;
 			}
 
-			else if (OI.driverJoy.getRawButton(Buttons.B)) {
+			else if (GZOI.driverJoy.getRawButton(Buttons.B)) {
 				overrideValue = 3;
 				overrideString = "Controller override 2:\t" + commandArray[overrideValue].getName();
 				controllerOverride = true;
 			}
 
 			// X BUTTON
-			else if (OI.driverJoy.getRawButton(Buttons.X)) {
+			else if (GZOI.driverJoy.getRawButton(Buttons.X)) {
 				overrideValue = 4;
 				overrideString = "Controller override 3:\t" + commandArray[overrideValue].getName();
 				controllerOverride = true;
 			}
 
 			// Y BUTTON
-			else if (OI.driverJoy.getRawButton(Buttons.Y)) {
+			else if (GZOI.driverJoy.getRawButton(Buttons.Y)) {
 				overrideValue = 5;
 				overrideString = "Controller override 4:\t" + commandArray[overrideValue].getName();
 				controllerOverride = true;
 			}
 
 			// BACK BUTTON
-			else if (OI.driverJoy.getRawButton(Buttons.BACK)) {
+			else if (GZOI.driverJoy.getRawButton(Buttons.BACK)) {
 				overrideValue = 13;
 				overrideString = "Controller override 5:\t" + commandArray[overrideValue].getName();
 				controllerOverride = true;
 			}
 
 			// START BUTTON
-			else if (OI.driverJoy.getRawButton(Buttons.START)) {
+			else if (GZOI.driverJoy.getRawButton(Buttons.START)) {
 				overrideValue = 17;
 				overrideString = "Controller override 6:\t" + commandArray[overrideValue].getName();
 				controllerOverride = true;
 			}
 
 			// LEFT CLICK
-			else if (OI.driverJoy.getRawButton(Buttons.LEFT_CLICK)) {
+			else if (GZOI.driverJoy.getRawButton(Buttons.LEFT_CLICK)) {
 				autonomousCommand = defaultCommand.getCommand();
 				overrideString = "Controller override: DEFAULT AUTO SELECTED";
 				controllerOverride = true;
 			}
 
 			// RIGHT CLICK
-			else if (OI.driverJoy.getRawButton(Buttons.RIGHT_CLICK)) {
+			else if (GZOI.driverJoy.getRawButton(Buttons.RIGHT_CLICK)) {
 				controllerOverride = false;
 				System.out.println(autonString);
 			}

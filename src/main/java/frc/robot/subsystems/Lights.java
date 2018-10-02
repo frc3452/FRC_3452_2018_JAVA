@@ -2,16 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.Arrays;
 
-import frc.robot.Constants;
-import frc.robot.Constants.kAuton;
-import frc.robot.Constants.kLights;
-import frc.robot.OI;
-import frc.robot.Robot;
-import frc.robot.subsystems.Health.AlertLevel;
-import frc.robot.util.GZJoystick.Buttons;
-import frc.robot.util.GZSRX;
-import frc.robot.util.GZSubsystem;
-
 import com.ctre.phoenix.CANifier;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -19,6 +9,15 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants;
+import frc.robot.Constants.kAuton;
+import frc.robot.Constants.kLights;
+import frc.robot.GZOI;
+import frc.robot.Robot;
+import frc.robot.subsystems.Health.AlertLevel;
+import frc.robot.util.GZJoystick.Buttons;
+import frc.robot.util.GZSRX;
+import frc.robot.util.GZSubsystem;
 
 public class Lights extends GZSubsystem {
 	private static CANifier canifier;
@@ -65,7 +64,7 @@ public class Lights extends GZSubsystem {
 
 	@Override
 	public void loop() {
-		if (OI.driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
+		if (GZOI.driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
 			readyForMatch = true;
 
 		if (Robot.gzOI.isTele()) {
