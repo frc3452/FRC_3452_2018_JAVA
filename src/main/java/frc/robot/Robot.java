@@ -42,6 +42,15 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
+		/**
+		Construction of each subsystem moved out of constructor, into construct(). 
+		The rationale for this was because we needed to use the List of all subsystems 
+		to setup the map in  health, so it was easiest to instantiate each hardware 
+		subsystem object, put them in a list, construct health, then use .construct() 
+		on all subsystems to initialize hardware. Health had to be instantiated before 
+		each other subsystems construction because to construct, health.addAlert() was 
+		necessary.
+		**/
 		allSubsystems.construct();
 	
 		files.fillLogger();
