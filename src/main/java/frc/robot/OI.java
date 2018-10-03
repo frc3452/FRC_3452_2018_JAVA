@@ -7,9 +7,6 @@ import frc.robot.util.DPad;
 import frc.robot.util.GZJoystick;
 
 public class OI {
-	public static GZJoystick driverJoy = new GZJoystick(0);
-	public static GZJoystick opJoy = new GZJoystick(1);
-
 	@SuppressWarnings("unused")
 	private static Button driverJoyA, driverJoyB, driverJoyX, driverJoyY, driverJoyLB, driverJoyRB, driverJoyBack,
 			driverJoyStart, driverJoyLClick, driverJoyRClick;
@@ -30,39 +27,36 @@ public class OI {
 	}
 
 	private static void buttonInit() {
+		driverJoyA = new JoystickButton(GZOI.driverJoy, 1);
+		driverJoyB = new JoystickButton(GZOI.driverJoy, 2);
+		driverJoyX = new JoystickButton(GZOI.driverJoy, 3);
+		driverJoyY = new JoystickButton(GZOI.driverJoy, 4);
+		driverJoyLB = new JoystickButton(GZOI.driverJoy, 5);
+		driverJoyRB = new JoystickButton(GZOI.driverJoy, 6);
+		driverJoyBack = new JoystickButton(GZOI.driverJoy, 7);
+		driverJoyStart = new JoystickButton(GZOI.driverJoy, 8);
+		driverJoyLClick = new JoystickButton(GZOI.driverJoy, 9);
+		driverJoyRClick = new JoystickButton(GZOI.driverJoy, 10);
 
-		driverJoy = new GZJoystick(0);
-		driverJoyA = new JoystickButton(driverJoy, 1);
-		driverJoyB = new JoystickButton(driverJoy, 2);
-		driverJoyX = new JoystickButton(driverJoy, 3);
-		driverJoyY = new JoystickButton(driverJoy, 4);
-		driverJoyLB = new JoystickButton(driverJoy, 5);
-		driverJoyRB = new JoystickButton(driverJoy, 6);
-		driverJoyBack = new JoystickButton(driverJoy, 7);
-		driverJoyStart = new JoystickButton(driverJoy, 8);
-		driverJoyLClick = new JoystickButton(driverJoy, 9);
-		driverJoyRClick = new JoystickButton(driverJoy, 10);
+		driverUp = new DPad(GZOI.driverJoy, 0);
+		driverDown = new DPad(GZOI.driverJoy, 180);
+		driverLeft = new DPad(GZOI.driverJoy, 270);
+		driverRight = new DPad(GZOI.driverJoy, 90);
 
-		driverUp = new DPad(driverJoy, 0);
-		driverDown = new DPad(driverJoy, 180);
-		driverLeft = new DPad(driverJoy, 270);
-		driverRight = new DPad(driverJoy, 90);
+		opJoyA = new JoystickButton(GZOI.opJoy, 1);
+		opJoyB = new JoystickButton(GZOI.opJoy, 2);
+		opJoyX = new JoystickButton(GZOI.opJoy, 3);
+		opJoyY = new JoystickButton(GZOI.opJoy, 4);
+		opJoyLB = new JoystickButton(GZOI.opJoy, 5);
+		opJoyRB = new JoystickButton(GZOI.opJoy, 6);
+		opJoyBack = new JoystickButton(GZOI.opJoy, 7);
+		opJoyStart = new JoystickButton(GZOI.opJoy, 8);
+		opJoyLClick = new JoystickButton(GZOI.opJoy, 9);
+		opJoyRClick = new JoystickButton(GZOI.opJoy, 10);
 
-		opJoy = new GZJoystick(1);
-		opJoyA = new JoystickButton(opJoy, 1);
-		opJoyB = new JoystickButton(opJoy, 2);
-		opJoyX = new JoystickButton(opJoy, 3);
-		opJoyY = new JoystickButton(opJoy, 4);
-		opJoyLB = new JoystickButton(opJoy, 5);
-		opJoyRB = new JoystickButton(opJoy, 6);
-		opJoyBack = new JoystickButton(opJoy, 7);
-		opJoyStart = new JoystickButton(opJoy, 8);
-		opJoyLClick = new JoystickButton(opJoy, 9);
-		opJoyRClick = new JoystickButton(opJoy, 10);
-
-		opUp = new DPad(opJoy, 0);
-		opDown = new DPad(opJoy, 180);
-		opLeft = new DPad(opJoy, 270);
-		opRight = new DPad(opJoy, 90);
+		opUp = new DPad(GZOI.opJoy, 0);
+		opDown = new DPad(GZOI.opJoy, 180);
+		opLeft = new DPad(GZOI.opJoy, 270);
+		opRight = new DPad(GZOI.opJoy, 90);
 	}
 }
