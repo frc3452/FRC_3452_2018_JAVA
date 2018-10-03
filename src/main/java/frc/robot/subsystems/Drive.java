@@ -9,7 +9,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants.kDrivetrain;
-import frc.robot.OI;
+import frc.robot.GZOI;
 import frc.robot.commands.drive.DriveTele;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZJoystick;
@@ -39,11 +39,11 @@ public class Drive extends GZSubsystem {
 	}
 
 	public synchronized void construct() {
-		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
-		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
+		L1 = new GZSRX(this, kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
+		L2 = new GZSRX(this, kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
 
-		R1 = new GZSRX(kDrivetrain.R1, Breaker.AMP_40, Side.RIGHT, Master.MASTER);
-		R2 = new GZSRX(kDrivetrain.R2, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
+		R1 = new GZSRX(this, kDrivetrain.R1, Breaker.AMP_40, Side.RIGHT, Master.MASTER);
+		R2 = new GZSRX(this, kDrivetrain.R2, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
 
 		mDrive = new DifferentialDrive(L1, R1);
 
@@ -142,7 +142,7 @@ public class Drive extends GZSubsystem {
 	}
 
 	protected void initDefaultCommand() {
-		setDefaultCommand(new DriveTele(OI.driverJoy));
+		setDefaultCommand(new DriveTele(GZOI.driverJoy));
 	}
 
 	@Override
