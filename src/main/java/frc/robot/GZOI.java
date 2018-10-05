@@ -44,6 +44,7 @@ public class GZOI extends GZSubsystem {
 		if (isTele()) {
 			Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
 
+			//OVERRIDES, ETC.
 			if (driverJoy.isAPressed())
 				Robot.drive.slowSpeed(!Robot.drive.isSlow());
 			if (driverJoy.isBackPressed())
@@ -59,7 +60,7 @@ public class GZOI extends GZSubsystem {
 			else
 				Robot.climber.stop();
 
-			// ELEVATOR
+			// ELEVATOR OPERATOR
 			if (opJoy.getRawButton(Buttons.LB))
 				Robot.elevator.manualJoystick(opJoy);
 			else if (driverJoy.getRawButton(Buttons.RB))
@@ -68,6 +69,7 @@ public class GZOI extends GZSubsystem {
 				Robot.elevator.encoder(kElevator.Heights.Floor);
 			else if (opJoy.isDRightPressed())
 				Robot.elevator.encoder(kElevator.Heights.Switch);
+			// ELEVATOR DRIVER
 			else if (driverJoy.isDDownPressed())
 				Robot.elevator.encoder(kElevator.Heights.Floor);
 			else if (driverJoy.isDLeftPressed())
@@ -77,7 +79,7 @@ public class GZOI extends GZSubsystem {
 			else if (Robot.elevator.getState() != ElevatorState.POSITION)
 				Robot.elevator.stop();
 
-			// INTAKE
+			// INTAKE OPERATOR
 			if (opJoy.getRawButton(Buttons.X))
 				Robot.intake.manual(kIntake.Speeds.INTAKE);
 			else if (opJoy.getRawButton(Buttons.Y))
@@ -90,6 +92,7 @@ public class GZOI extends GZSubsystem {
 				Robot.intake.spin(false);
 			else if (opJoy.getRawButton(Buttons.START))
 				Robot.intake.spin(true);
+			//INTAKE DRIVER
 			else if (driverJoy.getRawButton(Buttons.X))
 				Robot.intake.manual(kIntake.Speeds.INTAKE);
 			else if (driverJoy.getRawButton(Buttons.B))
@@ -102,11 +105,14 @@ public class GZOI extends GZSubsystem {
 				Robot.intake.stop();
 		}
 
-		// controller rumble
-		if (Util.between(getMatchTime(), 29.1, 30))
+		// CONTROLLER RUMBLE
 
+		
+		if (Util.between(getMatchTime(), 29.1, 30))
+		//ENDGAME
 			rumble(Controller.BOTH, kOI.Rumble.ENDGAME);
 
+		//LIMITING
 		else if (Robot.elevator.isSpeedOverriden() || Robot.elevator.isLimitOverriden()) {
 
 			if (Robot.elevator.isSpeedOverriden()) {
@@ -114,6 +120,7 @@ public class GZOI extends GZSubsystem {
 			} else if (Robot.elevator.isLimitOverriden())
 				rumble(Controller.OP, kOI.Rumble.ELEVATOR_LIMIT_OVERRIDE);
 
+		//INTAKE
 		} else if (Robot.intake.stateNot(IntakeState.NEUTRAL))
 			rumble(Controller.BOTH, kOI.Rumble.INTAKE);
 		else
