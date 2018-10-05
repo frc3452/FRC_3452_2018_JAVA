@@ -110,42 +110,26 @@ public class GZOI extends GZSubsystem {
 		
 		if (Util.between(getMatchTime(), 29.1, 30))
 		//ENDGAME
-			rumble(Controller.BOTH, kOI.Rumble.ENDGAME);
+			rumble(kOI.Rumble.ENDGAME);
 
 		//LIMITING
 		else if (Robot.elevator.isSpeedOverriden() || Robot.elevator.isLimitOverriden()) {
 
 			if (Robot.elevator.isSpeedOverriden()) {
-				rumble(Controller.DRIVE, kOI.Rumble.ELEVATOR_SPEED_OVERRIDE_DRIVE);
+				driverJoy.rumble(kOI.Rumble.ELEVATOR_SPEED_OVERRIDE_DRIVE);
 			} else if (Robot.elevator.isLimitOverriden())
-				rumble(Controller.OP, kOI.Rumble.ELEVATOR_LIMIT_OVERRIDE);
+				opJoy.rumble(kOI.Rumble.ELEVATOR_LIMIT_OVERRIDE);
 
 		//INTAKE
 		} else if (Robot.intake.stateNot(IntakeState.NEUTRAL))
-			rumble(Controller.BOTH, kOI.Rumble.INTAKE);
+			rumble(kOI.Rumble.INTAKE);
 		else
-			rumble(Controller.BOTH, 0);
+			rumble(0);
 	}
 
-	private static void rumble(Controller joy, double intensity) {
-		switch (joy) {
-		case DRIVE:
-			driverJoy.setRumble(RumbleType.kLeftRumble, intensity);
-			driverJoy.setRumble(RumbleType.kRightRumble, intensity);
-			break;
-		case OP:
-			opJoy.setRumble(RumbleType.kLeftRumble, intensity);
-			opJoy.setRumble(RumbleType.kRightRumble, intensity);
-			break;
-		case BOTH:
-			rumble(Controller.DRIVE, intensity);
-			rumble(Controller.OP, intensity);
-			break;
-		}
-	}
-
-	private static enum Controller {
-		DRIVE, OP, BOTH
+	private static void rumble(double intensity) {
+		driverJoy.rumble(intensity);
+		opJoy.rumble(intensity);
 	}
 
 	public boolean isFMS() {
