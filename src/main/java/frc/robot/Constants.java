@@ -127,6 +127,34 @@ public class Constants {
 		public final static int CLIMBER_2 = 2;
 	}
 
+	public class kWrist {
+		public class PID {
+			public static final double F = 0; //TODO TUNE
+			public static final double P = 0; //TODO TUNE
+			public static final double I = 0; //TODO TUNE
+			public static final double D = 0; //TODO TUNE
+		}
+
+		public static final int W_1 = 11;
+		public static final int W_2 = 12;
+
+		public static final double MINIMUM_ANGLE = Double.NaN; //TODO TUNE
+		public static final double MAXIMUM_ANGLE = Double.NaN; //TODO TUNE
+		
+		public static final boolean W_1_INVERT = false;
+		public static final boolean W_2_INVERT = false;
+
+		public static final double TICKS_PER_DEGREE = Double.NaN; //TODO TUNE
+		public static final boolean ENC_INVERT = false;
+
+		public static final double OPEN_RAMP_TIME = 0;
+		public static final double CLOSED_RAMP_TIME = 0;
+
+		public static final int AMP_TRIGGER = 50;
+		public static final int AMP_LIMIT = 40;
+		public static final int AMP_TIME = 1000;
+	}
+
 	public class kElevator {
 		public class PID {
 			public static final double F = 0;
@@ -134,49 +162,57 @@ public class Constants {
 			public static final double I = 0.000028;
 			public static final double D = 2.5;
 		}
-		
+
 		public static final int E_1 = 9;
 		public static final int E_2 = 10;
-		
+
 		public static final boolean E_1_INVERT = false;
 		public static final boolean E_2_INVERT = false;
-		
+
 		public static final boolean ENC_INVERT = true;
+		public static final double ENC_TICKS_PER_INCH = Double.NaN; //TODO tune
+		public static final double ENC_HOME_INCHES = Double.NaN; //TODO tune
+
 		
+		//LIMITING
+		public static final double BOTTOM_ROTATION = Heights.Floor;
 		public static final double TOP_ROTATION = 9.61;
-		public static final double BOTTOM_ROTATION = 2.08;
+
 		public static final double SPEED_LIMIT_SLOWEST_SPEED = .17;
+		public static final double SPEED_LIMIT_STARTING_ROTATION = 2.08;
 		
-		
+		public static final double TOP_HEIGHT = (TOP_ROTATION * 4096) / ENC_TICKS_PER_INCH;
+
 		public static final double LOWER_SOFT_LIMIT = Heights.Floor;
-		public static final double UPPER_SOFT_LIMIT = 5;
-		
+		public static final double UPPER_SOFT_LIMIT = TOP_HEIGHT;
+
 		public static final boolean USE_SOFT_LIMITS = false;
 
 		public static final double OPEN_RAMP_TIME = .5;
 		public static final double CLOSED_RAMP_TIME = .125;
 
+		//TELEOP MODIFIERS
 		public static final double JOYSTICK_MODIFIER_UP = 1;
 		public static final double JOYSTICK_MODIFIER_DOWN = .6;
 
 		public static final double DEMO_JOYSTICK_MODIFIER_DOWN = .3;
 		public static final double DEMO_JOYSTICK_MODIFIER_UP = .5;
 
+		//CLOSED LOOP
 		public static final double CLOSED_DOWN_SPEED_LIMIT = .5;
 		public static final double CLOSED_UP_SPEED_LIMIT = 1;
 
 		public static final double CLOSED_COMPLETION = 6.5;
-
 
 		public static final int AMP_TRIGGER = 50;
 		public static final int AMP_LIMIT = 40;
 		public static final int AMP_TIME = 1000;
 
 		public class Heights {
-			public static final double Floor = -15; // below 0 to counter possible encoder drift
-			public static final double Switch = 3.3;
-			public static final double Scale = 8;
-		}	
+			public static final double Floor = 0;
+			public static final double Switch = Double.NaN; //3.3 rotations //TODO TUNE
+			public static final double Scale = Double.NaN; //8 rotations //TODO TUNE
+		}
 
 	}
 

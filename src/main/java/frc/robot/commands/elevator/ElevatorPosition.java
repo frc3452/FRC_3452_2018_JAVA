@@ -29,7 +29,7 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected void execute() {
-		Robot.elevator.encoder(m_value);
+		Robot.elevator.setHeight(m_value);
 	}
 
 	protected boolean isFinished() {
@@ -40,7 +40,7 @@ public class ElevatorPosition extends Command {
 
 			return true;
 
-		return Robot.elevator.isDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
+		return Robot.elevator.isEncoderMovementDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
 	}
 
 	protected void end() {

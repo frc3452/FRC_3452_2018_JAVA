@@ -20,10 +20,10 @@ public class Camera {
 		mCamera0.setFPS(15);
 		mCamera0.setExposureManual(40);
 
-		//		mCamera1 = CameraServer.getInstance().startAutomaticCapture(1);
-		//		mCamera1.setResolution(180, 120);
-		//		mCamera1.setFPS(30);
-		//		mCamera1.setExposureAuto();
+		// mCamera1 = CameraServer.getInstance().startAutomaticCapture(1);
+		// mCamera1.setResolution(180, 120);
+		// mCamera1.setFPS(30);
+		// mCamera1.setExposureAuto();
 
 		server = CameraServer.getInstance().getServer();
 		server.setSource(mCamera0);

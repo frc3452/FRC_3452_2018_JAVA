@@ -66,16 +66,16 @@ public class GZOI extends GZSubsystem {
 			else if (driverJoy.getRawButton(Buttons.RB))
 				Robot.elevator.manualJoystick(driverJoy);
 			else if (opJoy.isDDownPressed())
-				Robot.elevator.encoder(kElevator.Heights.Floor);
+				Robot.elevator.setHeight(kElevator.Heights.Floor);
 			else if (opJoy.isDRightPressed())
-				Robot.elevator.encoder(kElevator.Heights.Switch);
+				Robot.elevator.setHeight(kElevator.Heights.Switch);
 			// ELEVATOR DRIVER
 			else if (driverJoy.isDDownPressed())
-				Robot.elevator.encoder(kElevator.Heights.Floor);
+				Robot.elevator.setHeight(kElevator.Heights.Floor);
 			else if (driverJoy.isDLeftPressed())
-				Robot.elevator.encoder(kElevator.Heights.Scale);
+				Robot.elevator.setHeight(kElevator.Heights.Scale);
 			else if (driverJoy.isDRightPressed())
-				Robot.elevator.encoder(kElevator.Heights.Switch);
+				Robot.elevator.setHeight(kElevator.Heights.Switch);
 			else if (Robot.elevator.getState() != ElevatorState.POSITION)
 				Robot.elevator.stop();
 

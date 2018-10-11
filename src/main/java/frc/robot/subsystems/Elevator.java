@@ -124,11 +124,11 @@ public class Elevator extends GZSubsystem {
 
 			s.setNeutralMode(NeutralMode.Brake);
 
-			GZSRX.logError(s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10), Robot.elevator,
+			GZSRX.logError(s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10), this,
 					AlertLevel.WARNING, "Could not set current-limit limit for " + s.getMaster());
-			GZSRX.logError(s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10), Robot.elevator,
+			GZSRX.logError(s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10), this,
 					AlertLevel.WARNING, "Could not set current-limit trigger for " + s.getMaster());
-			GZSRX.logError(s.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10), Robot.elevator,
+			GZSRX.logError(s.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10), this,
 					AlertLevel.WARNING, "Could not set current-limit duration for " + s.getMaster());
 			s.enableCurrentLimit(true);
 
@@ -143,6 +143,10 @@ public class Elevator extends GZSubsystem {
 		case NEUTRAL:
 			break;
 		case POSITION:
+
+			elevator_1.configPeakOutputForward(kElevator.CLOSED_DOWN_SPEED_LIMIT, 10);
+			elevator_1.configPeakOutputReverse(kElevator.CLOSED_UP_SPEED_LIMIT * -1, 10);
+
 			break;
 		case DEMO:
 
@@ -177,11 +181,10 @@ public class Elevator extends GZSubsystem {
 		in();
 		handleStates();
 		out();
-
 		speedLimiting();
 	}
 
-	public static class IO {
+	public class IO {
 		// in
 		public Double encoder_ticks = Double.NaN, encoder_vel = Double.NaN;
 
@@ -205,6 +208,15 @@ public class Elevator extends GZSubsystem {
 	 */
 	public Double getRotations() {
 		return -Units.ticks_to_rotations(mIO.encoder_ticks);
+	}
+
+	/**
+	 * 
+	 * @return inches off of ground
+	 */
+	public Double getHeight()
+	{
+		return (mIO.encoder_ticks / kElevator.ENC_TICKS_PER_INCH) + kElevator.ENC_HOME_INCHES;
 	}
 
 	/**
@@ -307,17 +319,13 @@ public class Elevator extends GZSubsystem {
 			switchToState(ElevatorState.NEUTRAL);
 
 		} else if (Robot.auton.isDemo() && !Robot.gzOI.isFMS()) {
-
+			
 			switchToState(ElevatorState.DEMO);
 
 		} else {
 			switchToState(mWantedState);
 		}
 
-		// Positioning
-		if (mState == ElevatorState.POSITION && (isDone(kElevator.CLOSED_COMPLETION)
-				|| ((-getTarget() < 0) && getBottomLimit()) || (-getTarget() > 0) && getTopLimit()))
-			encoderDone();
 	}
 
 	private void switchToState(ElevatorState s) {
@@ -342,19 +350,19 @@ public class Elevator extends GZSubsystem {
 
 		// if not in demo and not overriding, limit
 		if (!Robot.auton.isDemo() && !isSpeedOverriden()) {
-			
-			//Encoder not present or too high
-			if (!mIO.encoderValid || pos > kElevator.TOP_ROTATION){
+
+			// Encoder not present or too high
+			if (!mIO.encoderValid || pos > kElevator.TOP_ROTATION) {
 				driveModifier = kElevator.SPEED_LIMIT_SLOWEST_SPEED;
-			
-			//Encoder value good, limit
-			}else if (pos > kElevator.BOTTOM_ROTATION) {
+
+			// Encoder value good, limit
+			} else if (pos > kElevator.SPEED_LIMIT_STARTING_ROTATION) {
 				driveModifier = 1 - (pos / kElevator.TOP_ROTATION) + kElevator.SPEED_LIMIT_SLOWEST_SPEED;
 
-			//Encoder value lower than limit
+				// Encoder value lower than limit
 			} else
 				driveModifier = 1;
-		} else 
+		} else
 			driveModifier = 1;
 	}
 
@@ -372,21 +380,32 @@ public class Elevator extends GZSubsystem {
 				"Could not " + (enableSoftLimit ? "enable" : "disable") + " reverse soft limit");
 	}
 
-	public synchronized void encoder(double rotations) {
+	public synchronized void setHeight(double inches) {
 		if (mState != ElevatorState.DEMO) {
+
 			setWantedState(ElevatorState.POSITION);
-			elevator_1.configPeakOutputForward(kElevator.CLOSED_DOWN_SPEED_LIMIT, 10);
-			elevator_1.configPeakOutputReverse(kElevator.CLOSED_UP_SPEED_LIMIT * -1, 10);
-			mIO.desired_output = -Units.rotations_to_ticks(rotations);
+			mIO.desired_output = -(inches * kElevator.ENC_TICKS_PER_INCH);
 			setTarget(mIO.desired_output);
+
 		} else {
 			stop();
 		}
 	}
 
-	public synchronized boolean isDone(double multiplier) {
-		return (mIO.encoder_ticks < (getTarget() + (102 * multiplier))
-				&& mIO.encoder_ticks > (getTarget() - (102 * multiplier)));
+	public synchronized boolean isEncoderMovementDone()
+	{
+		return isEncoderMovementDone(kElevator.CLOSED_COMPLETION);
+	}
+
+	public synchronized boolean isEncoderMovementDone(double multiplier) {
+		if (((-getTarget() < 0) && getBottomLimit()) || (-getTarget() > 0) && getTopLimit())
+			return true;
+
+		if  (mIO.encoder_ticks < (getTarget() + (102 * multiplier))
+				&& mIO.encoder_ticks > (getTarget() - (102 * multiplier)))
+			return true;
+
+		return false;
 	}
 
 	public synchronized void encoderDone() {
