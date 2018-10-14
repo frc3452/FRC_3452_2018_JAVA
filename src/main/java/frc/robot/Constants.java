@@ -89,7 +89,7 @@ public class Constants {
 			}
 
 			public class RIGHT {
-				public final static double P = .425;
+				public final static double P = .8;
 				public final static double I = 0;
 				public final static double D = 4.25;
 				public static final double F = 0;
