@@ -81,25 +81,25 @@ public class Lights extends GZSubsystem {
 			case 100:
 
 				// OFF
-				Robot.lights.off();
+				off();
 
 				break;
 
 			case kAuton.SAFTEY_SWITCH:
 
 				// FADE
-				Robot.lights.hsv(Robot.lights.m_hue, 1, .25);
-				Robot.lights.m_hue++;
+				hsv(m_hue, 1, .25);
+				m_hue++;
 
 				break;
 			case 97:
 
 				// POLICE
-				if (Robot.lights.m_hue > 180)
-					Robot.lights.hsv(kLights.RED, 1, 1);
+				if (m_hue > 180)
+					hsv(kLights.RED, 1, 1);
 				else
-					Robot.lights.hsv(kLights.BLUE, 1, 1);
-				Robot.lights.m_hue += 30;
+					hsv(kLights.BLUE, 1, 1);
+				m_hue += 30;
 
 				break;
 			default:
@@ -108,13 +108,13 @@ public class Lights extends GZSubsystem {
 				if (DriverStation.getInstance().isDSAttached()) {
 
 					if (readyForMatch)
-						Robot.lights.pulse(kLights.GREEN, 1, 0.1, .4, 0.025 / 3.5);
+						pulse(kLights.GREEN, 1, 0.1, .4, 0.025 / 3.5);
 					else
-						Robot.lights.pulse(kLights.YELLOW, 1, 0.1, .4, 0.025 / 3.5);
+						pulse(kLights.YELLOW, 1, 0.1, .4, 0.025 / 3.5);
 
 				} else {
 					// IF NOT CONNECTED DO AGGRESSIVE RED PULSE
-					Robot.lights.pulse(0, 1, 0.2, .8, 0);
+					pulse(kLights.RED, 1, 0.2, .8, 0.025 / 3.5);
 				}
 				break;
 			}
@@ -252,7 +252,7 @@ public class Lights extends GZSubsystem {
 			pulseDirection = true;
 
 		hsv(hue, saturation, pulseBrightness);
-		Robot.lights.m_hue = hue;
+		m_hue = hue;
 	}
 
 	public void stop() {

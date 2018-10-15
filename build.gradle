@@ -30,6 +30,12 @@ wpi {
     ctreVersion = "5.7.1.0"
 }
 
+// So we don't have to go looking for the thread that Jaci posted this on if for whatever
+// reason we add a password to the RIO 
+// locations.all {
+//     password = "mY_s3cret_p4ssw0rd"
+// }
+
 // Defining my dependencies. In this case, WPILib (+ friends), CTRE Toolsuite (Talon SRX)
 // and NavX.
 dependencies {

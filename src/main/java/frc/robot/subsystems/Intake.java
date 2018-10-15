@@ -18,8 +18,6 @@ public class Intake extends GZSubsystem {
 
 	public Intake() {
 	}
-	
-	
 
 	// Construction
 	public synchronized void construct()
@@ -61,8 +59,8 @@ public class Intake extends GZSubsystem {
 	}
 
 	public synchronized void loop() {
-		handleStates();
 		in();
+		handleStates();
 		out();
 	}
 
@@ -93,7 +91,7 @@ public class Intake extends GZSubsystem {
 		}
 	}
 
-	public static class IO {
+	public class IO {
 		// in
 		public Double left_amperage = Double.NaN, right_amperage = Double.NaN;
 

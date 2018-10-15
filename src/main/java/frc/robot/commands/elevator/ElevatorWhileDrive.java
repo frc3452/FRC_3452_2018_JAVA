@@ -32,7 +32,7 @@ public class ElevatorWhileDrive extends Command {
 	@Override
 	protected void execute() {
 		if (Robot.drive.getPercentageComplete() > m_percent)
-			Robot.elevator.encoder(m_value);
+			Robot.elevator.setHeight(m_value);
 		else
 			Robot.elevator.stop();
 	}
@@ -45,7 +45,7 @@ public class ElevatorWhileDrive extends Command {
 		if (Robot.elevator.getBottomLimit() && m_value < 0)
 			return true;
 
-		return Robot.elevator.isDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
+		return Robot.elevator.isEncoderMovementDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
 	}
 
 	@Override

@@ -8,8 +8,38 @@ import frc.robot.motionprofiles.Path;
 
 public class Util {
 
-	private Util()
-	{}
+	private Util() {
+	}
+
+	int scaleBetween(int unscaledNum, int minAllowed, int maxAllowed, int min, int max) {
+		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
+	}
+
+	double scaleBetween(double unscaledNum, double minAllowed, double maxAllowed, double min, double max) {
+		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
+	}
+
+	/**
+	 * Thread.currentThread().getStackTrace();
+	 */
+	public static String trace(StackTraceElement e[]) {
+
+		String retval = "";
+		try {
+			for (int i = e.length - 5; i > 0; i--) {
+				retval += e[i].getMethodName();
+
+				if (i != 1)
+					retval += ".";
+			}
+		} catch (Exception ex) {
+			System.out.println(
+					"Max was a dummy that tried to write something to make his life easier but he made it much much harder");
+			// ex.printStackTrace();
+		}
+
+		return retval;
+	}
 
 	public static double limit(double value) {
 		if (value > 1.0) {
@@ -28,17 +58,17 @@ public class Util {
 		return false;
 	}
 
-    public static boolean epsilonEquals(double a, double b, double epsilon) {
-        return (a - epsilon <= b) && (a + epsilon >= b);
+	public static boolean epsilonEquals(double value, double epislonPoint, double epsilon) {
+		return (value - epsilon <= epislonPoint) && (value + epsilon >= epislonPoint);
 	}
-	
+
 	public static boolean allCloseTo(final ArrayList<Double> list, double value, double epsilon) {
-        boolean result = true;
-        for (Double value_in : list) {
-            result &= epsilonEquals(value_in, value, epsilon);
-        }
-        return result;
-    }
+		boolean result = true;
+		for (Double value_in : list) {
+			result &= epsilonEquals(value_in, value, epsilon);
+		}
+		return result;
+	}
 
 	public static double applyDeadband(double value, double deadband) {
 		if (Math.abs(value) > deadband) {

@@ -169,6 +169,9 @@ public class Drive extends GZSubsystem {
 
 	public synchronized void setWantedState(DriveState wantedState) {
 		this.mWantedState = wantedState;
+		
+		//TODO figure out what in auto is switching it to open loop
+		System.out.println(Util.trace(Thread.currentThread().getStackTrace()));
 	}
 
 	private synchronized void switchToState(DriveState state) {
@@ -512,6 +515,7 @@ public class Drive extends GZSubsystem {
 
 	public synchronized void motionMagic(double leftRotations, double rightRotations, double leftAccel,
 			double rightAccel, double leftSpeed, double rightSpeed) {
+		
 		setWantedState(DriveState.MOTION_MAGIC);
 
 		double topspeed = 3941;

@@ -61,7 +61,7 @@ public class MiddleAuton extends CommandGroup {
 
 	private void switchL(AV version) {
 		switch (version) {
-		case CURRENT:
+		case SEASON:
 
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
@@ -135,7 +135,7 @@ public class MiddleAuton extends CommandGroup {
 
 	private void switchR(AV version) {
 		switch (version) {
-		case CURRENT:
+		case SEASON:
 			
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));

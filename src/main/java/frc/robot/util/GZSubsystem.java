@@ -23,16 +23,17 @@ public abstract class GZSubsystem extends Subsystem {
 	// void onStateExit (State s)
 	// void switchToState (State s)
 
-
 	/**
 	 * Disabling each subsystem
 	 */
 	private boolean mIsDisabled = false;
+
 	public void disable(boolean toDisable) {
 		mIsDisabled = toDisable;
 		if (mIsDisabled)
 			stop();
 	}
+
 	public Boolean isDisabed() {
 		return mIsDisabled;
 	}
@@ -40,34 +41,29 @@ public abstract class GZSubsystem extends Subsystem {
 	/**
 	 * Looping
 	 */
-	private class loopRunnable implements java.lang.Runnable {
-		@Override
+	private Notifier loopNotifier = new Notifier(new Runnable() {
 		public void run() {
 			loop();
 		}
-	}
-	private Notifier loopNotifier = new Notifier(new loopRunnable());
+	});
+
 	public abstract void loop();
 
-	public void startLooping()
-	{
+	public void startLooping() {
 		loopNotifier.startPeriodic(kLoop.LOOP_SPEED);
 	}
-
 
 	// Each subsystem is able to report its current state as a string
 	public abstract String getStateString();
 
-
-	//For Health generater
+	// For Health generater
 	public void setHighestAlert(AlertLevel level) {
 		mHighestAlert = level;
 	}
-
 	public AlertLevel getHighestAlert() {
 		return mHighestAlert;
 	}
-	
+
 	// Read all inputs
 	protected abstract void in();
 

@@ -130,42 +130,51 @@ public class Constants {
 	public class kElevator {
 		public class PID {
 			public static final double F = 0;
-			public static final double P = .2;
-			public static final double I = 0.000028;
-			public static final double D = 2.5;
+			public static final double P = .55;
+			public static final double I = 0; //0.000028
+			public static final double D = 1.5;
 		}
+		
+		//CLOSED LOOP
+		public static final double CLOSED_DOWN_SPEED_LIMIT = .5;
+		public static final double CLOSED_UP_SPEED_LIMIT = 1;
+		public static final double CLOSED_COMPLETION = .06;
+		
+		public static final double OPEN_RAMP_TIME = .5;
+		public static final double CLOSED_RAMP_TIME = 0.08;
 		
 		public static final int E_1 = 9;
 		public static final int E_2 = 10;
-		
+
 		public static final boolean E_1_INVERT = false;
 		public static final boolean E_2_INVERT = false;
-		
+
 		public static final boolean ENC_INVERT = true;
+		public static final double ENC_TICKS_PER_INCH = -507.0;
+		public static final double ENC_HOME_INCHES = 10.4375;
+
 		
-		public static final double TOP_ROTATION = 9.61;
-		public static final double BOTTOM_ROTATION = 2.08;
+		//LIMITING
+		public static final double BOTTOM_ROTATION = Heights.Floor;
+		public static final double TOP_ROTATION = 9.414;
+
 		public static final double SPEED_LIMIT_SLOWEST_SPEED = .17;
+		public static final double SPEED_LIMIT_STARTING_ROTATION = 2.08;
 		
-		
-		public static final double LOWER_SOFT_LIMIT = Heights.Floor;
-		public static final double UPPER_SOFT_LIMIT = 5;
-		
-		public static final boolean USE_SOFT_LIMITS = false;
+		public static final double TOP_HEIGHT_INCHES = (TOP_ROTATION * 4096) / ENC_TICKS_PER_INCH;
 
-		public static final double OPEN_RAMP_TIME = .5;
-		public static final double CLOSED_RAMP_TIME = .125;
+		public static final double LOWER_SOFT_LIMIT_INCHES = 0;
+		public static final double UPPER_SOFT_LIMIT_INCHES = TOP_HEIGHT_INCHES / 2;
 
+		public static final boolean USE_DEMO_SOFT_LIMITS = false;
+
+
+		//TELEOP MODIFIERS
 		public static final double JOYSTICK_MODIFIER_UP = 1;
 		public static final double JOYSTICK_MODIFIER_DOWN = .6;
 
 		public static final double DEMO_JOYSTICK_MODIFIER_DOWN = .3;
 		public static final double DEMO_JOYSTICK_MODIFIER_UP = .5;
-
-		public static final double CLOSED_DOWN_SPEED_LIMIT = .5;
-		public static final double CLOSED_UP_SPEED_LIMIT = 1;
-
-		public static final double CLOSED_COMPLETION = 6.5;
 
 
 		public static final int AMP_TRIGGER = 50;
@@ -173,10 +182,10 @@ public class Constants {
 		public static final int AMP_TIME = 1000;
 
 		public class Heights {
-			public static final double Floor = -15; // below 0 to counter possible encoder drift
-			public static final double Switch = 3.3;
-			public static final double Scale = 8;
-		}	
+			public static final double Floor = 0;
+			public static final double Switch = 3.3; //3.3 rotations //23.6 inches
+			public static final double Scale = 8; //8 rotations //TODO TUNE
+		}
 
 	}
 

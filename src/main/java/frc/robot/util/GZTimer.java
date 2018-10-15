@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class GZTimer extends Timer {
 
-	private boolean mHasStarted = false;
+	private boolean mHasOneTimeStarted = false;
 	private String mName = "";
 	
 	public GZTimer(String name) {
@@ -13,23 +13,29 @@ public class GZTimer extends Timer {
 	}
 
 	public void start() {
-		if (!mHasStarted) {
-			this.stop();
-			this.reset();
-			this.start();
-		} else {
-			System.out.println(this.getClass().getSimpleName() + " " + getName() + " cannot be started.");
-		}
+		if (!startTimer()) 
+			System.out.println(this.getClass().getSimpleName() + " [" + getName() + "] cannot be started.");
 	}
 	
 	public void oneTimeStart()
 	{
-		mHasStarted = true;
-		this.stop();
-		this.reset();
-		this.start();
+		if (startTimer()) {
+			mHasOneTimeStarted = true;
+		}
 	}
 	
+	private boolean startTimer()
+	{
+		if (!mHasOneTimeStarted)
+		{
+			this.stop();
+			this.reset();
+			this.start();
+			return true;
+		}
+		return false;
+	}
+
 	public double get() {
 		return this.get();
 	}

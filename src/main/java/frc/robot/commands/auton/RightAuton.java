@@ -116,7 +116,7 @@ public class RightAuton extends CommandGroup {
 
 	private void switchL(AV version) {
 		switch (version) {
-		case CURRENT:
+		case SEASON:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward
@@ -196,7 +196,7 @@ public class RightAuton extends CommandGroup {
 	private void switchR(AV version) {
 		switch (version) {
 
-		case CURRENT:
+		case SEASON:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward
@@ -253,7 +253,7 @@ public class RightAuton extends CommandGroup {
 
 	private void scaleL(AV version) {
 		switch (version) {
-		case CURRENT:
+		case SEASON:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward
@@ -331,7 +331,7 @@ public class RightAuton extends CommandGroup {
 
 	private void scaleR(AV version) {
 		switch (version) {
-		case CURRENT:
+		case SEASON:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward

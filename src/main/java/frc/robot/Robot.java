@@ -2,6 +2,7 @@ package frc.robot;
 
 import java.util.Arrays;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.subsystems.Auton;
@@ -34,23 +35,12 @@ public class Robot extends TimedRobot {
 
 	public static final Health health = new Health();
 	
-	// private static final OI oi = new OI();
-
 	// LOGGING CONTROL
 	private boolean logging = true, logToUsb = false;
 	private String loggingLocation = "Logging/Offseason";
 
 	@Override
 	public void robotInit() {
-		/**
-		Construction of each subsystem moved out of constructor, into construct(). 
-		The rationale for this was because we needed to use the List of all subsystems 
-		to setup the map in  health, so it was easiest to instantiate each hardware 
-		subsystem object, put them in a list, construct health, then use .construct() 
-		on all subsystems to initialize hardware. Health had to be instantiated before 
-		each other subsystems construction because to construct, health.addAlert() was 
-		necessary.
-		**/
 		allSubsystems.construct();
 	
 		files.fillLogger();
@@ -63,7 +53,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic() {
-		allSubsystems.loop();
 	}
 
 	@Override
@@ -113,6 +102,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
+		allSubsystems.loop();
 	}
 
 	@Override

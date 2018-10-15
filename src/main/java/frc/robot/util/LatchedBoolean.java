@@ -12,6 +12,7 @@ public class LatchedBoolean {
         }
 
         mLast = newValue;
+       
         return ret;
     }
 }

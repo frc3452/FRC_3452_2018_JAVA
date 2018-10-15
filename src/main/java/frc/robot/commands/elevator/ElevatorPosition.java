@@ -29,18 +29,11 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected void execute() {
-		Robot.elevator.encoder(m_value);
+		Robot.elevator.setRotations(m_value);
 	}
 
 	protected boolean isFinished() {
-		if (Robot.elevator.getTopLimit() && m_value > 0)
-			return true;
-
-		if (Robot.elevator.getBottomLimit() && m_value < 0)
-
-			return true;
-
-		return Robot.elevator.isDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
+		return Robot.elevator.isEncoderMovementDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
 	}
 
 	protected void end() {
