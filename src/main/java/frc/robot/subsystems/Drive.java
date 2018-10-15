@@ -171,7 +171,7 @@ public class Drive extends GZSubsystem {
 		this.mWantedState = wantedState;
 		
 		//TODO figure out what in auto is switching it to open loop
-		System.out.println(Util.trace(Thread.currentThread().getStackTrace()));
+		System.out.println(Util.trace(Util.currentThread()));
 	}
 
 	private synchronized void switchToState(DriveState state) {

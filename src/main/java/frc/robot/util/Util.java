@@ -19,17 +19,21 @@ public class Util {
 		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 	}
 
+	public static StackTraceElement[] currentThread() {
+		return Thread.currentThread().getStackTrace();
+	}
+
 	/**
-	 * Thread.currentThread().getStackTrace();
+	 * currentThread();
 	 */
 	public static String trace(StackTraceElement e[]) {
 
 		String retval = "";
 		try {
-			for (int i = e.length - 5; i > 0; i--) {
+			for (int i = e.length - 5; i > 1; i--) {
 				retval += e[i].getMethodName();
 
-				if (i != 1)
+				if (i != 2)
 					retval += ".";
 			}
 		} catch (Exception ex) {
