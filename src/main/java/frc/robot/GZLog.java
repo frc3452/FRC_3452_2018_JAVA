@@ -355,6 +355,7 @@ public class GZLog {
 			}
 		};
 
+
 		LogItem climber_2_amp_avg = new LogItem("CLIMBER-2-AMP-AVG", true)
 		{
 			@Override
@@ -404,6 +405,7 @@ public class GZLog {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
+
 
 		LogItem intake_l_speed = new LogItem("INTAKE-L-PRCNT") {
 			@Override
@@ -515,10 +517,6 @@ public class GZLog {
 
 	}
 
-	public void addLogItemsToLog() {
-
-	}
-
 	public void add(LogItem item) {
 		values.add(item);
 	}
@@ -536,6 +534,7 @@ public class GZLog {
 		}
 		return retval;
 	}
+
 
 	public String getFunctions() {
 		this.update();
