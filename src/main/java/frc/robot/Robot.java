@@ -36,8 +36,8 @@ public class Robot extends TimedRobot {
 	public static final Health health = new Health();
 	
 	// LOGGING CONTROL
-	private boolean logging = true, logToUsb = false;
-	private String loggingLocation = "Logging/Offseason";
+	private boolean logging = true, logToUsb = true;
+	private String loggingLocation = "Logging/Offseason/PreWMRI";
 
 	@Override
 	public void robotInit() {
