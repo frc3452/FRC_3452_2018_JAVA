@@ -1,13 +1,11 @@
 package frc.robot.commands.drive;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.kIntake;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Drive.DriveState;
-
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveToCube extends Command {
 

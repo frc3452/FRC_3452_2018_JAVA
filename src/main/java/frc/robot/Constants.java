@@ -130,9 +130,9 @@ public class Constants {
 	public class kElevator {
 		public class PID {
 			public static final double F = 0;
-			public static final double P = .55;
-			public static final double I = 0; //0.000028
-			public static final double D = 1.5;
+			public static final double P = .2;
+			public static final double I = 0.000028; //0.000028
+			public static final double D = 2.5;
 		}
 		
 		//CLOSED LOOP
@@ -141,7 +141,7 @@ public class Constants {
 		public static final double CLOSED_COMPLETION = .06;
 		
 		public static final double OPEN_RAMP_TIME = .5;
-		public static final double CLOSED_RAMP_TIME = 0.08;
+		public static final double CLOSED_RAMP_TIME = .2;
 		
 		public static final int E_1 = 9;
 		public static final int E_2 = 10;
@@ -155,13 +155,13 @@ public class Constants {
 
 		
 		//LIMITING
-		public static final double BOTTOM_ROTATION = Heights.Floor;
+		public static final double BOTTOM_ROTATION = HeightsInches.Floor;
 		public static final double TOP_ROTATION = 9.414;
 
 		public static final double SPEED_LIMIT_SLOWEST_SPEED = .17;
 		public static final double SPEED_LIMIT_STARTING_ROTATION = 2.08;
 		
-		public static final double TOP_HEIGHT_INCHES = (TOP_ROTATION * 4096) / ENC_TICKS_PER_INCH;
+		public static final double TOP_HEIGHT_INCHES = (TOP_ROTATION * 4096) / -ENC_TICKS_PER_INCH;
 
 		public static final double LOWER_SOFT_LIMIT_INCHES = 0;
 		public static final double UPPER_SOFT_LIMIT_INCHES = TOP_HEIGHT_INCHES / 2;
@@ -181,7 +181,13 @@ public class Constants {
 		public static final int AMP_LIMIT = 40;
 		public static final int AMP_TIME = 1000;
 
-		public class Heights {
+		public class HeightsInches {
+			public static final double Floor = 0;
+			public static final double Switch = 25; //3.3 rotations //23.6 inches
+			public static final double Scale = 64.63; //8 rotations //TODO TUNE
+		}
+
+		public class HeightsRotations {
 			public static final double Floor = 0;
 			public static final double Switch = 3.3; //3.3 rotations //23.6 inches
 			public static final double Scale = 8; //8 rotations //TODO TUNE

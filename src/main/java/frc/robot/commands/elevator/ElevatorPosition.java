@@ -29,7 +29,7 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected void execute() {
-		Robot.elevator.setRotations(m_value);
+		Robot.elevator.setHeight(m_value);
 	}
 
 	protected boolean isFinished() {

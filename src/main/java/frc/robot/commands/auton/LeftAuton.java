@@ -1,6 +1,7 @@
 package frc.robot.commands.auton;
 
 import frc.robot.Constants.kAuton;
+import frc.robot.Constants.kElevator;
 import frc.robot.Constants.kIntake;
 import frc.robot.Robot;
 import frc.robot.commands.drive.DriveTime;
@@ -25,17 +26,17 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class LeftAuton extends CommandGroup {
 
 	/**
-     * @param option AO
-     * @param switchVersion AV
-     * @param scaleVersion AV
+	 * @param option        AO
+	 * @param switchVersion AV
+	 * @param scaleVersion  AV
 	 * @see Auton
 	 */
 	public LeftAuton(AO option, AV switchVersion, AV scaleVersion) {
 		addSequential(new ZeroEncoders());
 		addSequential(new GyroReset());
 
-		//IF DATA FOUND
-        if (!Robot.auton.gsm().equals("NOT")) {
+		// IF DATA FOUND
+		if (!Robot.auton.gsm().equals("NOT")) {
 
 			switch (option) {
 			case SWITCH:
@@ -108,7 +109,7 @@ public class LeftAuton extends CommandGroup {
 				break;
 			}
 		} else {
-			//game data not found
+			// game data not found
 			defaultAuton();
 		}
 		addSequential(new DriveTime(0, 0, 16));
@@ -131,9 +132,9 @@ public class LeftAuton extends CommandGroup {
 			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch
 
 			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.55)); //hit to switch
+			addSequential(new DriveToStop(.55)); // hit to switch
 
-			addSequential(new IntakeTime(1, .5)); //drop and back up
+			addSequential(new IntakeTime(1, .5)); // drop and back up
 			addParallel(new DriveTime(-.5, 0, .8));
 			addSequential(new ElevatorTime(-.15, 10));
 
@@ -169,34 +170,34 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new EncoderGyro(11.6, 11.6, .5, .5, .6, 0, .017)); // drive to side of switch
 
-			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .6)); // turn to switch 
+			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .6)); // turn to switch
 
 			addSequential(new ZeroEncoders());
 			addSequential(new CommandGroup() {
 				{
 					addParallel(new ElevatorWhileDrive(3.5, .6));
-					addSequential(new EncoderGyro(11.25, 11.25, .5, .5, .6, 90, 0.021)); //drive back of switch
+					addSequential(new EncoderGyro(11.25, 11.25, .5, .5, .6, 90, 0.021)); // drive back of switch
 				}
 			});
 
 			addSequential(new EncoderFrom(1.6, -1.2, .5, .5, .6));
 
 			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.55)); //was .45
+			addSequential(new DriveToStop(.55)); // was .45
 
 			addSequential(new IntakeTime(.75, .25));
 
 			addParallel(new ElevatorWhileDrive(-15, .9));
 			addSequential(new EncoderFrom(-.85, -.75, .5, .5, .6));
 
-			addSequential(new DriveToCube(.58, 5)); //was .45
+			addSequential(new DriveToCube(.58, 5)); // was .45
 			addSequential(new EncoderFrom(-.5, -.5, .5, .5, .6));
 
 			addSequential(new ElevatorTime(1, .6));
 
-			//hit switch
+			// hit switch
 			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.55)); //was .45
+			addSequential(new DriveToStop(.55)); // was .45
 
 			addSequential(new IntakeTime(-1, 1));
 
@@ -208,14 +209,14 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new EncoderGyro(11.2, 11.2, .4, .4, .4, 0, .017)); // drive to side of switch
 
-			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
+			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch
 
 			addSequential(new ZeroEncoders());
 
 			addSequential(new CommandGroup() {
 				{
 					addSequential(new ElevatorWhileDrive(3.5, .6));
-					addSequential(new EncoderGyro(6.95, 6.95, .4, .4, .4, 90, 0.021)); //drive back of switch
+					addSequential(new EncoderGyro(6.95, 6.95, .4, .4, .4, 90, 0.021)); // drive back of switch
 				}
 			});
 
@@ -235,45 +236,41 @@ public class LeftAuton extends CommandGroup {
 	private void scaleL(AV version) {
 		switch (version) {
 		case SEASON:
-			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
-			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
-			//Drive to scale 
-			
-			//15.27
-			addSequential(new EncoderGyro(15.8, 15.8, .6, .6, .7, 0, kAuton.CORRECTION));
-			//TURN CHANGED FINALS 3
-			addSequential(new EncoderFrom(1.5, -1.15, .6, .6, .6)); 
+			addSequential(new CommandGroup() {
+				{
+					addParallel(new ElevatorWhileDrive(18, .05));
+					addSequential(new EncoderGyro(15.8, 15.8, .35, .35, .4, 0, kAuton.CORRECTION));
+				}
+			});
 
-			addSequential(new DriveTime(-.5, 0, .5));
-			addSequential(new DriveToStop(-.55)); //was .45
-			
-			addSequential(new ElevatorPosition(15)); //raise and forward
-			addSequential(new EncoderFrom(.5, .5, .4, .4, .6));
+			addSequential(new GyroPos(75, .28, 5));
 
-			addSequential(new IntakeTime(.8, 4)); //shoot, back up down and spin
+			addSequential(new ElevatorPosition(kElevator.TOP_HEIGHT_INCHES));
+			addSequential(new EncoderFrom(.6, .6, .3, .3, .3));
+			addSequential(new IntakeTime(.8, 1));
 
 			break;
 		case FOREST_HILLS:
-
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
-			addSequential(new ElevatorTime(.75, .25));
-			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, kAuton.CORRECTION)); // drive to far side of switch
+			// Drive to scale
 
-			addSequential(new EncoderFrom(.2, -.4, .4, .4, .5)); //turn to switch
-			addSequential(new ElevatorPosition(15)); //raise and forward
+			// 15.27
+			addSequential(new EncoderGyro(15.8, 15.8, .4, .4, .5, 0, kAuton.CORRECTION));
+			// TURN CHANGED FINALS 3
+			addSequential(new EncoderFrom(1.5, -1.15, .6, .6, .6));
 
-			addSequential(new DriveTime(.4, 0, 1.7));
+			addSequential(new DriveTime(-.5, 0, .5));
+			addSequential(new DriveToStop(-.35)); // was .45
 
-			addSequential(new IntakeTime(.4, .6)); //shoot, back up down and spin
-			addSequential(new DriveTime(-.4, 0, 1.6));
+			addSequential(new ElevatorPosition(kElevator.TOP_HEIGHT_INCHES)); // raise and forward
+			addSequential(new EncoderFrom(.5, .5, .4, .4, .6));
 
-			addParallel(new ElevatorTime(-.65, 10));
-			addSequential(new GyroPos(135, .4, 1));
+			addSequential(new IntakeTime(.8, 4)); // shoot, back up down and spin
 
 			break;
 		default:
@@ -292,15 +289,15 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new EncoderGyro(11.7, 11.7, .6, .6, .65, 0, kAuton.CORRECTION)); // drive to side of switch
 
-			addParallel(new ElevatorPosition(2)); //raise
-			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
+			addParallel(new ElevatorPosition(2)); // raise
+			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch
 
 			addSequential(new ZeroEncoders());
-			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, kAuton.CORRECTION)); //drive front of scale
+			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, kAuton.CORRECTION)); // drive front of scale
 
 			addSequential(new EncoderFrom(-1.5, .75, .5, .5, .5));
 
-			addSequential(new ElevatorPosition(15)); //raise and turn to switch
+			addSequential(new ElevatorPosition(15)); // raise and turn to switch
 
 			addSequential(new CommandGroup() {
 				{
@@ -322,15 +319,15 @@ public class LeftAuton extends CommandGroup {
 
 			addSequential(new EncoderGyro(11.7, 11.7, .6, .6, .65, 0, kAuton.CORRECTION)); // drive to side of switch
 
-			addParallel(new ElevatorPosition(2)); //raise
-			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch 
+			addParallel(new ElevatorPosition(2)); // raise
+			addSequential(new EncoderFrom(0.75, -1.5, .5, .5, .5)); // turn to switch
 
 			addSequential(new ZeroEncoders());
-			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, kAuton.CORRECTION)); //drive front of scale
+			addSequential(new EncoderGyro(10.1, 10.1, .5, .5, .5, 90, kAuton.CORRECTION)); // drive front of scale
 
 			addSequential(new EncoderFrom(-1.5, .75, .5, .5, .5));
 
-			addSequential(new ElevatorPosition(15)); //raise and turn to switch
+			addSequential(new ElevatorPosition(15)); // raise and turn to switch
 
 			addSequential(new EncoderFrom(2.41, 2.61, .1, .1, .15));
 

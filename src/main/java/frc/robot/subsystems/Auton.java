@@ -13,6 +13,7 @@ import frc.robot.commands.auton.LeftAuton;
 import frc.robot.commands.auton.MiddleAuton;
 import frc.robot.commands.auton.NoCommand;
 import frc.robot.commands.auton.RightAuton;
+import frc.robot.commands.drive.EncoderFrom;
 import frc.robot.util.GZCommand;
 import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZTimer;
@@ -152,6 +153,7 @@ public class Auton {
 	public void fillAutonArray() {
 		defaultCommand = new GZCommand("DEFAULT", new DefaultAutonomous());
 
+		// commandArray[1] = new GZCommand("TEST", new EncoderFrom(3, 3, .5, .5, .6));
 		commandArray[1] = new GZCommand("Middle - Switch", new MiddleAuton(AO.SWITCH, AV.SEASON));
 		commandArray[2] = new GZCommand("Left - Switch", new LeftAuton(AO.SWITCH, AV.SEASON, AV.SEASON));
 		commandArray[3] = new GZCommand("Left - Scale", new LeftAuton(AO.SCALE, AV.SEASON, AV.SEASON));

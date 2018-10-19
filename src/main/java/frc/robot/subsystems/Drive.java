@@ -49,7 +49,7 @@ public class Drive extends GZSubsystem {
 
 	private double mModifyPercent = 1;
 	private boolean mIsSlow = false;
-	private double mPercentageComplete;
+	private double mPercentageComplete = 0;
 	private double mLeft_target = 0, mRight_target = 0;
 
 	public Drive() {
@@ -169,9 +169,9 @@ public class Drive extends GZSubsystem {
 
 	public synchronized void setWantedState(DriveState wantedState) {
 		this.mWantedState = wantedState;
-		
-		//TODO figure out what in auto is switching it to open loop
-		System.out.println(Util.trace(Util.currentThread()));
+
+		// TODO figure out what in auto is switching it to open loop
+		// System.out.println(Util.trace(Util.currentThread()));
 	}
 
 	private synchronized void switchToState(DriveState state) {
@@ -237,12 +237,12 @@ public class Drive extends GZSubsystem {
 			s.setSubsystem("Drive train");
 
 			if (s.getMaster() == Master.MASTER) {
-				
+
 				GZSRX.logError(
-					s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT), this,
+						s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT), this,
 						AlertLevel.WARNING, "Could not setup " + s.getSide() + " encoder");
-						
-						GZSRX.logError(s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+
+				GZSRX.logError(s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
 						"Could not zero " + s.getSide() + " encoder");
 
 				if (!s.isEncoderValid())
@@ -259,7 +259,6 @@ public class Drive extends GZSubsystem {
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
 					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), Robot.drive,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
-
 
 				} else {
 					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), Robot.drive,
@@ -383,19 +382,18 @@ public class Drive extends GZSubsystem {
 
 		mIO.leftEncoderValid = L1.isEncoderValid();
 		mIO.rightEncoderValid = R1.isEncoderValid();
-		
+
 		mIO.encodersValid = mIO.leftEncoderValid && mIO.rightEncoderValid;
 
 		if (mIO.leftEncoderValid) {
 			mIO.left_encoder_ticks = (double) L1.getSelectedSensorPosition(0);
-			mIO.left_encoder_vel = (double) L1.getSelectedSensorVelocity(0);	
-		} else { 
+			mIO.left_encoder_vel = (double) L1.getSelectedSensorVelocity(0);
+		} else {
 			mIO.left_encoder_ticks = Double.NaN;
 			mIO.left_encoder_vel = Double.NaN;
 		}
-		
-		if (mIO.rightEncoderValid)
-		{			
+
+		if (mIO.rightEncoderValid) {
 			mIO.right_encoder_ticks = (double) R1.getSelectedSensorPosition(0);
 			mIO.right_encoder_vel = (double) R1.getSelectedSensorVelocity(0);
 		} else {
@@ -446,8 +444,14 @@ public class Drive extends GZSubsystem {
 	}
 
 	private synchronized void arcadeNoState(double move, double rotate) {
+		double turnScalar;
+		if (Robot.elevator.isLimiting())
+			turnScalar = 1.5;
+		else
+			turnScalar = 1;
+
 		double[] temp = arcadeToLR(move * Robot.elevator.getPercentageModify() * mModifyPercent,
-				rotate * Robot.elevator.getPercentageModify() * mModifyPercent);
+				rotate * mModifyPercent * Robot.elevator.getPercentageModify() * turnScalar);
 
 		mIO.left_desired_output = temp[0];
 		mIO.right_desired_output = temp[1];
@@ -515,16 +519,16 @@ public class Drive extends GZSubsystem {
 
 	public synchronized void motionMagic(double leftRotations, double rightRotations, double leftAccel,
 			double rightAccel, double leftSpeed, double rightSpeed) {
-		
+
 		setWantedState(DriveState.MOTION_MAGIC);
 
 		double topspeed = 3941;
 
 		mLeft_target = Units.rotations_to_ticks(leftRotations);
-		mRight_target = Units.rotations_to_ticks(rightRotations);
+		mRight_target = -Units.rotations_to_ticks(rightRotations);
 
 		mPercentageComplete = Math
-				.abs(((getLeftRotations() / mLeft_target) + (getRightRotations() / mRight_target)) / 2);
+				.abs(((mIO.left_encoder_ticks / mLeft_target) + (mIO.right_encoder_ticks / mRight_target)) / 2);
 
 		L1.configMotionAcceleration((int) (topspeed * leftAccel), 10);
 		R1.configMotionAcceleration((int) (topspeed * rightAccel), 10);
@@ -537,10 +541,11 @@ public class Drive extends GZSubsystem {
 	}
 
 	public synchronized boolean encoderSpeedIsUnder(double ticksPer100Ms) {
+		System.out.println(Math.abs(mIO.left_encoder_vel) + "\t" + Math.abs(mIO.right_encoder_vel));
 		double l = Math.abs(mIO.left_encoder_vel);
 		double r = Math.abs(mIO.right_encoder_vel);
 
-		return l < ticksPer100Ms && r < ticksPer100Ms;
+		return l < ticksPer100Ms || r < ticksPer100Ms;
 	}
 
 	public synchronized void encoderDone() {
@@ -559,7 +564,7 @@ public class Drive extends GZSubsystem {
 		mLeft_target = 0;
 		mRight_target = 0;
 
-		mPercentageComplete = 3452;
+		mPercentageComplete = -3452;
 	}
 
 	public synchronized boolean encoderIsDone(double multiplier) {
@@ -774,7 +779,8 @@ public class Drive extends GZSubsystem {
 				c.follow(R1);
 				break;
 			case NO_INFO:
-				System.out.println("ERROR Drive talon " + c.getSide() + " (" + c.getDeviceID() + ") could not enter follower mode!");
+				System.out.println("ERROR Drive talon " + c.getSide() + " (" + c.getDeviceID()
+						+ ") could not enter follower mode!");
 			}
 		}
 	}

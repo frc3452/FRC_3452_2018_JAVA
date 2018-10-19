@@ -1,10 +1,8 @@
 package frc.robot.commands.drive;
 
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Drive.DriveState;
-
-import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveToStop extends Command {
 	private double m_speed;
@@ -29,7 +27,7 @@ public class DriveToStop extends Command {
 	}
 
 	protected boolean isFinished() {
-		return Robot.drive.encoderSpeedIsUnder(60) || isTimedOut();
+		return Robot.drive.encoderSpeedIsUnder(200) || isTimedOut();
 	}
 
 	protected void end() {

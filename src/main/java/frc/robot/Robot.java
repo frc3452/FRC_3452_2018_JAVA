@@ -2,9 +2,9 @@ package frc.robot;
 
 import java.util.Arrays;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.robot.Constants.kElevator;
 import frc.robot.subsystems.Auton;
 import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Climber;
@@ -53,6 +53,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic() {
+		allSubsystems.loop();
 	}
 
 	@Override
@@ -74,7 +75,7 @@ public class Robot extends TimedRobot {
 		log(true);
 
 		// timer start
-		auton.matchTimer.oneTimeStart();
+		auton.matchTimer.oneTimeStartTimer();
 
 		// Loop while game data is bad and timer is acceptable
 		do {

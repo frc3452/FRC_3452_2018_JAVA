@@ -12,6 +12,6 @@ public class DefaultAutonomous extends CommandGroup {
 
 		addSequential(new DriveTime(0, 0, 1));
 		addSequential(new ElevatorTime(.5, .7));
-		addSequential(new DriveTime(.4, 0, 5));
+		addSequential(new DriveTime(.4, 0, 3));
 	}
 }

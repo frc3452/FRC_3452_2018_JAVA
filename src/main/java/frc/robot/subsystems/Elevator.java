@@ -36,6 +36,7 @@ public class Elevator extends GZSubsystem {
 	private double target = 0;
 	private boolean mSpeedOverride = false;
 	private boolean mLimitOverride = false;
+	private boolean mLimiting = false;
 
 	public Elevator() {
 	}
@@ -77,13 +78,13 @@ public class Elevator extends GZSubsystem {
 				"Could not zero encoder");
 		elevator_1.setSensorPhase(Constants.kElevator.ENC_INVERT);
 
-		// SOFT LIMITS 
+		// SOFT LIMITS
 		int btmSoftLimit = (int) (kElevator.LOWER_SOFT_LIMIT_INCHES * kElevator.ENC_TICKS_PER_INCH);
 		int topSoftLimit = (int) (kElevator.UPPER_SOFT_LIMIT_INCHES * kElevator.ENC_TICKS_PER_INCH);
-		GZSRX.logError(elevator_1.configForwardSoftLimitThreshold(topSoftLimit,
-				GZSRX.TIMEOUT), this, AlertLevel.WARNING, "Could not set lower soft limit");
-		GZSRX.logError(elevator_1.configReverseSoftLimitThreshold(btmSoftLimit,
-				GZSRX.TIMEOUT), this, AlertLevel.WARNING, "Could not set upper soft limit");
+		GZSRX.logError(elevator_1.configForwardSoftLimitThreshold(topSoftLimit, GZSRX.TIMEOUT), this,
+				AlertLevel.WARNING, "Could not set lower soft limit");
+		GZSRX.logError(elevator_1.configReverseSoftLimitThreshold(btmSoftLimit, GZSRX.TIMEOUT), this,
+				AlertLevel.WARNING, "Could not set upper soft limit");
 
 		// RESET ENCODER ON LIMIT SWITCH DOWN
 		GZSRX.logError(elevator_1.configClearPositionOnLimitF(true, 10), this, AlertLevel.WARNING,
@@ -127,12 +128,12 @@ public class Elevator extends GZSubsystem {
 
 			s.setNeutralMode(NeutralMode.Brake);
 
-			GZSRX.logError(s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10), this,
-					AlertLevel.WARNING, "Could not set current-limit limit for " + s.getMaster());
-			GZSRX.logError(s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10), this,
-					AlertLevel.WARNING, "Could not set current-limit trigger for " + s.getMaster());
-			GZSRX.logError(s.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10), this,
-					AlertLevel.WARNING, "Could not set current-limit duration for " + s.getMaster());
+			GZSRX.logError(s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10), this, AlertLevel.WARNING,
+					"Could not set current-limit limit for " + s.getMaster());
+			GZSRX.logError(s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10), this, AlertLevel.WARNING,
+					"Could not set current-limit trigger for " + s.getMaster());
+			GZSRX.logError(s.configPeakCurrentDuration(Constants.kElevator.AMP_TIME, 10), this, AlertLevel.WARNING,
+					"Could not set current-limit duration for " + s.getMaster());
 			s.enableCurrentLimit(true);
 
 			s.setSubsystem("Elevator");
@@ -217,8 +218,7 @@ public class Elevator extends GZSubsystem {
 	 * 
 	 * @return inches off of ground
 	 */
-	public Double getHeight()
-	{
+	public Double getHeight() {
 		return (mIO.encoder_ticks / kElevator.ENC_TICKS_PER_INCH) + kElevator.ENC_HOME_INCHES;
 	}
 
@@ -322,7 +322,7 @@ public class Elevator extends GZSubsystem {
 			switchToState(ElevatorState.NEUTRAL);
 
 		} else if (Robot.auton.isDemo() && !Robot.gzOI.isFMS()) {
-			
+
 			switchToState(ElevatorState.DEMO);
 
 		} else {
@@ -357,25 +357,34 @@ public class Elevator extends GZSubsystem {
 		// if not in demo and not overriding, limit
 		if (!Robot.auton.isDemo() && !isSpeedOverriden()) {
 
+			mLimiting = true;
+
 			// Encoder not present or too high
 			if (!mIO.encoderValid || pos > kElevator.TOP_ROTATION) {
 				driveModifier = kElevator.SPEED_LIMIT_SLOWEST_SPEED;
 
-			// Encoder value good, limit
+				// Encoder value good, limit
 			} else if (pos > kElevator.SPEED_LIMIT_STARTING_ROTATION) {
 				driveModifier = 1 - (pos / kElevator.TOP_ROTATION) + kElevator.SPEED_LIMIT_SLOWEST_SPEED;
 
 				// Encoder value lower than limit
 			} else
 				driveModifier = 1;
-		} else
+		} else {
+			mLimiting = false;
 			driveModifier = 1;
+		}
+	}
+
+	public synchronized boolean isLimiting()
+	{
+		return mLimiting;
 	}
 
 	public synchronized void enableFollower() {
 		elevator_2.follow(elevator_1);
 	}
-	
+
 	private synchronized void softLimits(boolean enableSoftLimit) {
 		GZSRX.logError(elevator_1.configForwardSoftLimitEnable(enableSoftLimit), this,
 				(enableSoftLimit) ? AlertLevel.WARNING : AlertLevel.ERROR,
@@ -385,10 +394,8 @@ public class Elevator extends GZSubsystem {
 				"Could not " + (enableSoftLimit ? "enable" : "disable") + " reverse soft limit");
 	}
 
-	public void setRotations(double rot)
-	{
-		if (mState != ElevatorState.DEMO)
-		{
+	public void setRotations(double rot) {
+		if (mState != ElevatorState.DEMO) {
 			setWantedState(ElevatorState.POSITION);
 			mIO.desired_output = rot * -4096;
 			setTarget(mIO.desired_output);
@@ -409,8 +416,7 @@ public class Elevator extends GZSubsystem {
 		}
 	}
 
-	public synchronized boolean isEncoderMovementDone()
-	{
+	public synchronized boolean isEncoderMovementDone() {
 		return isEncoderMovementDone(kElevator.CLOSED_COMPLETION);
 	}
 
@@ -418,7 +424,7 @@ public class Elevator extends GZSubsystem {
 		if (((-getTarget() < 0) && getBottomLimit()) || (-getTarget() > 0) && getTopLimit())
 			return true;
 
-		if  (mIO.encoder_ticks < (getTarget() + (4096 * multiplier))
+		if (mIO.encoder_ticks < (getTarget() + (4096 * multiplier))
 				&& mIO.encoder_ticks > (getTarget() - (4096 * multiplier)))
 			return true;
 

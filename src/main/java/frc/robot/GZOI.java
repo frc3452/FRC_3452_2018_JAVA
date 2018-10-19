@@ -2,7 +2,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.robot.Constants.kElevator;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kOI;
@@ -66,16 +65,16 @@ public class GZOI extends GZSubsystem {
 			else if (driverJoy.getRawButton(Buttons.RB))
 				Robot.elevator.manualJoystick(driverJoy);
 			else if (opJoy.isDDownPressed())
-				Robot.elevator.setRotations(kElevator.Heights.Floor);
+				Robot.elevator.setHeight(kElevator.HeightsInches.Floor);
 			else if (opJoy.isDRightPressed())
-				Robot.elevator.setRotations(kElevator.Heights.Switch);
+				Robot.elevator.setHeight(kElevator.HeightsInches.Switch);
 			// ELEVATOR DRIVER
 			else if (driverJoy.isDDownPressed())
-				Robot.elevator.setRotations(kElevator.Heights.Floor);
+				Robot.elevator.setHeight(kElevator.HeightsInches.Floor);
 			else if (driverJoy.isDLeftPressed())
-				Robot.elevator.setRotations(kElevator.Heights.Scale);
+				Robot.elevator.setHeight(kElevator.HeightsInches.Scale);
 			else if (driverJoy.isDRightPressed())
-				Robot.elevator.setRotations(kElevator.Heights.Switch);
+				Robot.elevator.setHeight(kElevator.HeightsInches.Switch);
 			else if (Robot.elevator.getState() != ElevatorState.POSITION)
 				Robot.elevator.stop();
 
@@ -121,7 +120,7 @@ public class GZOI extends GZSubsystem {
 				opJoy.rumble(kOI.Rumble.ELEVATOR_LIMIT_OVERRIDE);
 
 		//INTAKE
-		} else if (Robot.intake.stateNot(IntakeState.NEUTRAL))
+		} else if (Robot.intake.stateNot(IntakeState.NEUTRAL) && !isAuto())
 			rumble(kOI.Rumble.INTAKE);
 		else
 			rumble(0);
@@ -148,7 +147,7 @@ public class GZOI extends GZSubsystem {
 	}
 
 	public boolean isAuto() {
-		return DriverStation.getInstance().isAutonomous();
+		return DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled();
 	}
 
 	public boolean isDisabled() {

@@ -39,12 +39,6 @@ public class ElevatorWhileDrive extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		if (Robot.elevator.getTopLimit() && m_value > 0)
-			return true;
-
-		if (Robot.elevator.getBottomLimit() && m_value < 0)
-			return true;
-
 		return Robot.elevator.isEncoderMovementDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
 	}
 
