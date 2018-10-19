@@ -538,6 +538,8 @@ public class GZLog {
 	}
 
 	public String getFunctions() {
+		this.update();
+
 		String retval = "";
 		retval += "Functions";
 
@@ -555,8 +557,8 @@ public class GZLog {
 				try {
 					// Replace "$L"s and "$R"s with appropriate letter
 					temp = item.getValue();
-					temp = temp.replace("$L", Util.letters[counter - 1]);
-					temp = temp.replace("$R", Util.letters[counter + 1]);
+					temp = temp.replace("$L", Util.letters[counter]);
+					temp = temp.replace("$R", Util.letters[counter+2]);
 
 				} catch (Exception e) {
 
