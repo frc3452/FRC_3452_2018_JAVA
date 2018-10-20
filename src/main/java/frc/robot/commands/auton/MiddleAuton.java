@@ -1,7 +1,8 @@
 package frc.robot.commands.auton;
 
-import frc.robot.Robot;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.Constants.kElevator;
+import frc.robot.Robot;
 import frc.robot.commands.drive.DriveTime;
 import frc.robot.commands.drive.DriveToCube;
 import frc.robot.commands.drive.DriveToStop;
@@ -9,14 +10,13 @@ import frc.robot.commands.drive.EncoderDrive;
 import frc.robot.commands.drive.EncoderFrom;
 import frc.robot.commands.drive.GyroReset;
 import frc.robot.commands.drive.ZeroEncoders;
+import frc.robot.commands.elevator.ElevatorPosition;
 import frc.robot.commands.elevator.ElevatorTime;
 import frc.robot.commands.elevator.ElevatorWhileDrive;
 import frc.robot.commands.pwm.IntakeTime;
 import frc.robot.subsystems.Auton;
 import frc.robot.subsystems.Auton.AO;
 import frc.robot.subsystems.Auton.AV;
-
-import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class MiddleAuton extends CommandGroup {
 
@@ -64,9 +64,7 @@ public class MiddleAuton extends CommandGroup {
 		switch (version) {
 		case SEASON:
 
-			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
-			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
 			addSequential(new EncoderDrive(1, 2.35, .8, .8, .6)); //init curve
 
@@ -138,19 +136,18 @@ public class MiddleAuton extends CommandGroup {
 	private void switchR(AV version) {
 		switch (version) {
 		case SEASON:
-			
-			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
-			addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
 			addSequential(new EncoderDrive(2.5, 1, .8, .8, .6));
 
 			addSequential(new CommandGroup() {
 				{
-					addParallel(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, .3));
+					addParallel(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, .1));
 					addSequential(new EncoderFrom(2.9, 4.2 + .72 /*+.38*/, .6, .6, .7));
 				}
 			});
+
+			addSequential(new ElevatorPosition(kElevator.HeightsInches.Switch));
 
 			addSequential(new DriveTime(.5, 0, .5));
 			addSequential(new DriveToStop(.55));
@@ -164,7 +161,7 @@ public class MiddleAuton extends CommandGroup {
 			//backup
 			addSequential(new CommandGroup() {
 				{
-					addParallel(new ElevatorWhileDrive(-15, .75));
+					addParallel(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, .75));
 					addSequential(new EncoderFrom(-3.8, -3.8, .6, .6, .6));
 				}
 			});
@@ -185,7 +182,7 @@ public class MiddleAuton extends CommandGroup {
 			//DRIVE TO SWITCH
 			addSequential(new CommandGroup() {
 				{
-					addSequential(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, .6));
+					addSequential(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, 0));
 					addSequential(new EncoderFrom(3, 3, .5, .5, .6));
 				}
 			});
@@ -208,9 +205,7 @@ public class MiddleAuton extends CommandGroup {
 	}
 
 	private void defaultAuton() {
-		addParallel(new DriveTime(.55, 0, .5));
 		addSequential(new ElevatorTime(.5, .1725));
-		addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to drop arm
 
 		addSequential(new EncoderFrom(7.2, 2, .35, .35, .5));
 		addSequential(new DriveTime(-.4, 0, 7));

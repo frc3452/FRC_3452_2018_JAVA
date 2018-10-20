@@ -128,6 +128,8 @@ public class Elevator extends GZSubsystem {
 
 			s.setNeutralMode(NeutralMode.Brake);
 
+			// s.enableVoltageCompensation(true);
+
 			GZSRX.logError(s.configContinuousCurrentLimit(Constants.kElevator.AMP_LIMIT, 10), this, AlertLevel.WARNING,
 					"Could not set current-limit limit for " + s.getMaster());
 			GZSRX.logError(s.configPeakCurrentLimit(Constants.kElevator.AMP_TRIGGER, 10), this, AlertLevel.WARNING,
@@ -182,6 +184,7 @@ public class Elevator extends GZSubsystem {
 
 	@Override
 	public synchronized void loop() {
+		outputSmartDashboard();
 		in();
 		handleStates();
 		out();
@@ -343,6 +346,10 @@ public class Elevator extends GZSubsystem {
 	}
 
 	public synchronized void outputSmartDashboard() {
+		SmartDashboard.putBoolean("Elevator Limiting", isLimiting());
+		SmartDashboard.putBoolean("Elevator Speed Limiting Overriden ", isSpeedOverriden());
+		SmartDashboard.putBoolean("Elevator Limit Switched Overriden", isLimitOverriden());
+		SmartDashboard.putNumber("Elevator Height", getHeight());
 		SmartDashboard.putNumber("Elevator Rotations", getRotations());
 		SmartDashboard.putNumber("Elevator Vel", mIO.encoder_vel);
 	}

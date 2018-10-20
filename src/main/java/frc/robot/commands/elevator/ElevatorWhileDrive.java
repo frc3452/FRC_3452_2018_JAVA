@@ -39,7 +39,7 @@ public class ElevatorWhileDrive extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		return Robot.elevator.isEncoderMovementDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
+		return Robot.elevator.isEncoderMovementDone(kElevator.CLOSED_COMPLETION + .05) || isTimedOut();
 	}
 
 	@Override

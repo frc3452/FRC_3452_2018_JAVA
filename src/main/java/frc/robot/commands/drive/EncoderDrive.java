@@ -29,7 +29,7 @@ public class EncoderDrive extends Command {
 	}
 
 	protected void initialize() {
-		setTimeout(9);
+		setTimeout(7);
 	}
 
 	protected void execute() {
@@ -39,7 +39,7 @@ public class EncoderDrive extends Command {
 	protected boolean isFinished() {
 //		return false;
 //		return isTimedOut();
-		return Robot.drive.encoderIsDone(1.9) || isTimedOut();
+		return Robot.drive.encoderIsDone(2) || isTimedOut();
 	}
 
 	protected void end() {

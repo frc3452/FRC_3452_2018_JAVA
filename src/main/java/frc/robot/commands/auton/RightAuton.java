@@ -1,6 +1,8 @@
 package frc.robot.commands.auton;
 
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.Constants.kAuton;
+import frc.robot.Constants.kElevator;
 import frc.robot.Robot;
 import frc.robot.commands.drive.DriveTime;
 import frc.robot.commands.drive.DriveToStop;
@@ -17,17 +19,12 @@ import frc.robot.subsystems.Auton;
 import frc.robot.subsystems.Auton.AO;
 import frc.robot.subsystems.Auton.AV;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
-
 public class RightAuton extends CommandGroup {
 
 	/**
-	 * @param option
-	 *            AO
-	 * @param switchVersion
-	 *            AV
-	 * @param scaleVersion
-	 *            AV
+	 * @param option        AO
+	 * @param switchVersion AV
+	 * @param scaleVersion  AV
 	 * @see Auton
 	 */
 	public RightAuton(AO option, AV switchVersion, AV scaleVersion) {
@@ -117,6 +114,9 @@ public class RightAuton extends CommandGroup {
 	private void switchL(AV version) {
 		switch (version) {
 		case SEASON:
+			defaultAuton();
+			break;
+		case FOREST_HILLS:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward
@@ -155,38 +155,6 @@ public class RightAuton extends CommandGroup {
 			addSequential(new ElevatorTime(-.15, 10));
 
 			break;
-		case FOREST_HILLS:
-			addParallel(new DriveTime(.55, 0, .5));
-			addSequential(new ElevatorTime(.5, .1725));
-			addSequential(new DriveTime(-.55, 0, .225)); // jog forward
-															// backwards to drop
-															// arm
-
-			addSequential(new EncoderGyro(11.2, 11.2, .4, .4, .4, 0, kAuton.CORRECTION)); // drive
-			// to
-			// side
-			// of
-			// switch
-
-			addSequential(new EncoderFrom(-1.5, .75, .5, .5, .5)); // turn to
-																	// switch
-			addParallel(new ElevatorPosition(2)); // raise
-
-			addSequential(new ZeroEncoders());
-			addSequential(new EncoderGyro(6.95, 6.95, .4, .4, .4, -90, kAuton.CORRECTION)); // drive
-			// back
-			// of
-			// switch
-
-			addSequential(new ElevatorPosition(4.5)); // raise and turn to
-														// switch
-			addSequential(new EncoderFrom(-.42, .55, .6, .6, .65));
-			addSequential(new DriveTime(.65, 0, .5));
-
-			addSequential(new IntakeTime(.3, 2));
-			addSequential(new EncoderFrom(-.5, -.5, .5, .5, .5));
-
-			break;
 		default:
 			defaultAuton();
 			break;
@@ -197,31 +165,25 @@ public class RightAuton extends CommandGroup {
 		switch (version) {
 
 		case SEASON:
-			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
-			addSequential(new DriveTime(-.55, 0, .225)); // jog forward
 															// backwards to drop
-															// arm
-
 			addSequential(new CommandGroup() {
 				{
-					addParallel(new ElevatorWhileDrive(3.5, .7));
-					addSequential(new EncoderGyro(7.91, 7.91, .6, .6, .7, 0, kAuton.CORRECTION)); // drive
-					// to
-					// side
-					// of
-					// switch
+					// addParallel(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, .3));
+					addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .5, 0, kAuton.CORRECTION));
 				}
 			});
-			addSequential(new EncoderFrom(-1.5, 0.75, .5, .5, .5)); // turn to
-																	// switch
+
+			addSequential(new GyroPos(290, .17, 3));														// switch
+
+			addSequential(new ElevatorPosition(kElevator.HeightsInches.Switch));
 
 			addSequential(new DriveTime(.5, 0, .75)); // hit switch
-			addSequential(new DriveToStop(.4));
+			addSequential(new DriveToStop(.35));
 
-			addSequential(new IntakeTime(1, .5)); // drop and backup
-			addParallel(new DriveTime(-.5, 0, .8));
-			addSequential(new ElevatorTime(-.1, 10));
+			addSequential(new IntakeTime(.6, 2)); // drop and backup
+			// addParallel(new DriveTime(-.5, 0, .8));
+			// addSequential(new ElevatorTime(-.1, 10));
 			break;
 		case FOREST_HILLS:
 			addParallel(new DriveTime(.55, 0, .5));
@@ -254,6 +216,22 @@ public class RightAuton extends CommandGroup {
 	private void scaleL(AV version) {
 		switch (version) {
 		case SEASON:
+			addSequential(new ElevatorTime(.5, .1725));
+
+			addSequential(new CommandGroup() {
+				{
+					addParallel(new ElevatorWhileDrive(18, .15));
+					addSequential(new EncoderGyro(11.4, 11.4, .35, .35, .4, 0, kAuton.CORRECTION));
+				}
+			});
+
+			addSequential(new GyroPos(280, .18, 3.5));
+
+			addSequential(new ZeroEncoders());
+			addSequential(new EncoderGyro(5.2, 5.2, .3, .3, .5, 270, kAuton.CORRECTION));
+
+			break;
+		case FOREST_HILLS:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward
@@ -278,49 +256,16 @@ public class RightAuton extends CommandGroup {
 			/**
 			 * addSequential(new EncoderFrom(.75, -1.5, .5, .5, .5));
 			 * 
-			 * addSequential(new ElevatorPosition(15)); // raise and turn to
-			 * switch
+			 * addSequential(new ElevatorPosition(15)); // raise and turn to switch
 			 * 
-			 * addSequential(new CommandGroup() { { addParallel(new
-			 * IntakeWhileDrive(.4, .92, .6)); addSequential(new
-			 * EncoderFrom(2.61, 2.41, .1, .1, .15)); } });
+			 * addSequential(new CommandGroup() { { addParallel(new IntakeWhileDrive(.4,
+			 * .92, .6)); addSequential(new EncoderFrom(2.61, 2.41, .1, .1, .15)); } });
 			 * 
 			 * addSequential(new DriveTime(-.4, 0, 1.6));
 			 * 
-			 * addParallel(new ElevatorTime(-.65, 10)); addSequential(new
-			 * GyroPos(135, .4, 1));
+			 * addParallel(new ElevatorTime(-.65, 10)); addSequential(new GyroPos(135, .4,
+			 * 1));
 			 */
-
-			break;
-		case FOREST_HILLS:
-			addParallel(new DriveTime(.55, 0, .5));
-			addSequential(new ElevatorTime(.5, .1725));
-			addSequential(new DriveTime(-.55, 0, .225)); // jog forward
-															// backwards to drop
-															// arm
-
-			addSequential(new EncoderGyro(11.5, 11.5, .6, .6, .65, 0, kAuton.CORRECTION)); // drive
-			// to
-			// side
-			// of
-			// switch
-
-			addParallel(new ElevatorPosition(2)); // raise
-			addSequential(new EncoderFrom(-1.5, 0.75, .5, .5, .5)); // turn to
-																	// switch
-
-			addSequential(new ZeroEncoders());
-			addSequential(new EncoderGyro(10.6, 10.6, .5, .5, .5, -90, kAuton.CORRECTION)); // drive
-			// front
-			// of
-			// scale
-
-			addSequential(new EncoderFrom(.75, -1.5, .5, .5, .5));
-
-			addSequential(new ElevatorPosition(15)); // raise and turn to switch
-
-			addSequential(new EncoderFrom(2.61, 2.41, .1, .1, .15));
-			addSequential(new IntakeTime(.5, 1));
 
 			break;
 		default:
@@ -332,6 +277,28 @@ public class RightAuton extends CommandGroup {
 	private void scaleR(AV version) {
 		switch (version) {
 		case SEASON:
+			addSequential(new ElevatorTime(.5, .1725));
+
+			addSequential(new CommandGroup() {
+				{
+					addParallel(new ElevatorWhileDrive(18, .05));
+					addSequential(new EncoderGyro(15.8, 15.8, .35, .35, .4, 0, kAuton.CORRECTION));
+				}
+			});
+
+			addSequential(new GyroPos(290, .28, 5));
+			addSequential(new EncoderFrom(-.7, -.7, .3, .3, .5));
+
+			addSequential(new ElevatorPosition(kElevator.TOP_HEIGHT_INCHES));
+
+			addSequential(new EncoderFrom(.6, .6, .3, .3, .3));
+			addSequential(new IntakeTime(.8, 1));
+
+			addSequential(new EncoderFrom(-.8, -.8, .3, .3, .3));
+			addSequential(new ElevatorTime(-.3, 20));
+
+			break;
+		case FOREST_HILLS:
 			addParallel(new DriveTime(.55, 0, .5));
 			addSequential(new ElevatorTime(.5, .1725));
 			addSequential(new DriveTime(-.55, 0, .225)); // jog forward
@@ -353,34 +320,6 @@ public class RightAuton extends CommandGroup {
 			addSequential(new IntakeTime(.8, 4));
 
 			break;
-		case FOREST_HILLS:
-			addParallel(new DriveTime(.55, 0, .5));
-			addSequential(new ElevatorTime(.5, .1725));
-			addSequential(new DriveTime(-.55, 0, .225)); // jog forward
-															// backwards to drop
-															// arm
-
-			addParallel(new ElevatorPosition(1)); // lift for drive
-			addSequential(new EncoderGyro(12.3, 12.3, .5, .5, .6, 0, kAuton.CORRECTION)); // drive
-			// to
-			// far
-			// side
-			// of
-			// switch
-			addSequential(new EncoderFrom(-.4, .35, .4, .4, .5)); // turn to
-																	// switch
-
-			addSequential(new ElevatorPosition(15)); // raise and forward
-			addSequential(new DriveTime(.4, 0, 1.9));
-
-			addSequential(new IntakeTime(.4, .6)); // shoot, back up down and
-													// spin
-
-			addSequential(new DriveTime(-.4, 0, 1.6));
-			addSequential(new ElevatorTime(-.7, 10));
-
-			addSequential(new GyroPos(225, .4, 1));
-			break;
 		default:
 			defaultAuton();
 			break;
@@ -388,17 +327,14 @@ public class RightAuton extends CommandGroup {
 	}
 
 	private void defaultAuton() {
-		addParallel(new DriveTime(.55, 0, .5));
 		addSequential(new ElevatorTime(.5, .1725));
-		addSequential(new DriveTime(-.55, 0, .225)); // jog forward backwards to
-														// drop arm
 
 		addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, kAuton.CORRECTION)); // drive
 		// to
 		// side
 		// of
 		// switch
-		addSequential(new ElevatorPosition(3.5)); // raise arm
+		addSequential(new ElevatorPosition(kElevator.HeightsInches.Switch)); // raise arm
 	}
 
 }

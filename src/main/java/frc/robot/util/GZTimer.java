@@ -12,28 +12,25 @@ public class GZTimer extends Timer {
 		mName = name;
 	}
 
-	public void startTimer() {
+	public void start()
+	{
 		if (!mHasOneTimeStarted)
 		{
-			this.stop();
-			this.reset();
-			this.start();
+			super.stop();
+			super.reset();
+			super.start();
 		}
 	}
 
 	public void oneTimeStartTimer() {
 		if (!mHasOneTimeStarted) {
-			this.stop();
-			this.reset();
-			this.startTimer();
+			super.stop();
+			super.reset();
+			super.start();
 			mHasOneTimeStarted = true;
 		} else {
 			System.out.println(this.getClass().getSimpleName() + " [" + getName() + "] cannot be started.");
 		}
-	}
-
-	public double get() {
-		return this.get();
 	}
 
 	public String getName() {

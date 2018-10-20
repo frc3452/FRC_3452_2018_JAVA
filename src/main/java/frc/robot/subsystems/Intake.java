@@ -59,6 +59,7 @@ public class Intake extends GZSubsystem {
 	}
 
 	public synchronized void loop() {
+		outputSmartDashboard();
 		in();
 		handleStates();
 		out();

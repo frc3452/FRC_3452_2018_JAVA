@@ -210,6 +210,8 @@ public class Drive extends GZSubsystem {
 
 			s.setInverted((s.getSide() == Side.LEFT) ? kDrivetrain.L_INVERT : kDrivetrain.R_INVERT);
 
+			// s.enableVoltageCompensation(true);
+
 			// CURRENT LIMIT
 			GZSRX.logError(s.configContinuousCurrentLimit(
 					s.getBreakerSize() == Breaker.AMP_40 ? kDrivetrain.AMP_40_LIMIT : kDrivetrain.AMP_30_LIMIT,
@@ -328,6 +330,7 @@ public class Drive extends GZSubsystem {
 
 	@Override
 	public synchronized void loop() {
+		outputSmartDashboard();
 		handleStates();
 		in();
 		out();

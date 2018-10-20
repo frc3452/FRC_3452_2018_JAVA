@@ -64,60 +64,70 @@ public class Lights extends GZSubsystem {
 
 	@Override
 	public void loop() {
-		if (GZOI.driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
-			readyForMatch = true;
+		outputSmartDashboard();
 
-		if (Robot.gzOI.isTele()) {
+		if (!Robot.gzOI.isSafteyDisabled()) {
 
-			hsv(kLights.GREEN, 1, .5);
+			if (GZOI.driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
+				readyForMatch = true;
 
-		} else if (Robot.gzOI.isAuto()) {
+			if (GZOI.driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.B, Buttons.START)))
+				readyForMatch = false;
 
-			hsv(Robot.gzOI.isRed() ? kLights.RED : kLights.BLUE, 1, .5);
+			if (Robot.gzOI.isTele()) {
 
-		} else if (Robot.gzOI.isDisabled()) {
+				hsv(kLights.GREEN, 1, .5);
 
-			switch (Robot.auton.uglyAnalog()) {
-			case 100:
+			} else if (Robot.gzOI.isAuto()) {
 
-				// OFF
-				off();
+				hsv(Robot.gzOI.isRed() ? kLights.RED : kLights.BLUE, 1, .5);
 
-				break;
+			} else if (Robot.gzOI.isDisabled()) {
 
-			case kAuton.SAFTEY_SWITCH:
+				switch (Robot.auton.uglyAnalog()) {
+				case 100:
 
-				// FADE
-				hsv(m_hue, 1, .25);
-				m_hue++;
+					// OFF
+					off();
 
-				break;
-			case 97:
+					break;
 
-				// POLICE
-				if (m_hue > 180)
-					hsv(kLights.RED, 1, 1);
-				else
-					hsv(kLights.BLUE, 1, 1);
-				m_hue += 30;
+				case kAuton.SAFTEY_SWITCH:
 
-				break;
-			default:
+					// FADE
+					hsv(m_hue, 1, .25);
+					m_hue++;
 
-				// IF CONNECTED LOW GREEN
-				if (DriverStation.getInstance().isDSAttached()) {
+					break;
+				case 97:
 
-					if (readyForMatch)
-						pulse(kLights.GREEN, 1, 0.1, .4, 0.025 / 3.5);
+					// POLICE
+					if (m_hue > 180)
+						hsv(kLights.RED, 1, 1);
 					else
-						pulse(kLights.YELLOW, 1, 0.1, .4, 0.025 / 3.5);
+						hsv(kLights.BLUE, 1, 1);
+					m_hue += 30;
 
-				} else {
-					// IF NOT CONNECTED DO AGGRESSIVE RED PULSE
-					pulse(kLights.RED, 1, 0.2, .8, 0.025 / 3.5);
+					break;
+				default:
+
+					// IF CONNECTED LOW GREEN
+					if (DriverStation.getInstance().isDSAttached()) {
+
+						if (readyForMatch)
+							pulse(kLights.GREEN, 1, 0.1, .4, 0.025 / 3.5);
+						else
+							pulse(kLights.YELLOW, 1, 0.1, .4, 0.025 / 3.5);
+
+					} else {
+						// IF NOT CONNECTED DO AGGRESSIVE RED PULSE
+						pulse(kLights.RED, 1, 0.2, .8, 0.025 / 3.5);
+					}
+					break;
 				}
-				break;
 			}
+		} else {
+			pulse(kLights.RED, 1, 0, 1, Double.POSITIVE_INFINITY);
 		}
 	}
 

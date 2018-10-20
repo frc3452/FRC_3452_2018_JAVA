@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
 			Arrays.asList(drive, elevator, intake, climber, lights, gzOI));
 
 	public static final Health health = new Health();
-	
+
 	// LOGGING CONTROL
 	private boolean logging = true, logToUsb = true;
 	private String loggingLocation = "Logging/Offseason/PreWMRI";
@@ -42,18 +42,19 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		allSubsystems.construct();
-	
+
 		files.fillLogger();
 		auton.fillAutonArray();
-		
+
 		// allSubsystems.startLooping();
-	
+
 		health.generateHealth();
 	}
 
 	@Override
 	public void robotPeriodic() {
-		allSubsystems.loop();
+		if (!gzOI.isTest())
+			allSubsystems.loop();
 	}
 
 	@Override
@@ -113,6 +114,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testPeriodic() {
+		Scheduler.getInstance().run();
+		// allSubsystems.loop();
 	}
 
 	private void log(boolean startup) {

@@ -1,7 +1,11 @@
 package frc.robot;
 
+import java.util.Arrays;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants.kElevator;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kOI;
@@ -12,6 +16,7 @@ import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.util.GZJoystick;
 import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZSubsystem;
+import frc.robot.util.LatchedBoolean;
 import frc.robot.util.Util;
 
 public class GZOI extends GZSubsystem {
@@ -19,6 +24,9 @@ public class GZOI extends GZSubsystem {
 	public static GZJoystick opJoy = new GZJoystick(1);
 
 	private boolean mWasTele = false, mWasAuto = false, mWasTest = false;
+
+	private LatchedBoolean mUserButton = new LatchedBoolean();
+	private boolean mSafteyDisable = false;
 
 	public GZOI() {
 
@@ -31,6 +39,8 @@ public class GZOI extends GZSubsystem {
 
 	@Override
 	public void loop() {
+		outputSmartDashboard();
+
 		if (isTele())
 			mWasTele = true;
 		if (isAuto())
@@ -38,12 +48,20 @@ public class GZOI extends GZSubsystem {
 		if (isTest())
 			mWasTest = true;
 
-		// TODO ISSUE #19
+		if (mUserButton.update(RobotController.getUserButton()))
+			mSafteyDisable = !mSafteyDisable;
+		if (!isFMS())
+			Robot.allSubsystems.disable(mSafteyDisable);
+		else
+			Robot.allSubsystems.disable(false);
+
+		// if (driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.RB, Buttons.LEFT_CLICK)))
+			// Robot.auton.crash();
 
 		if (isTele()) {
 			Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
 
-			//OVERRIDES, ETC.
+			// OVERRIDES, ETC.
 			if (driverJoy.isAPressed())
 				Robot.drive.slowSpeed(!Robot.drive.isSlow());
 			if (driverJoy.isBackPressed())
@@ -91,7 +109,7 @@ public class GZOI extends GZSubsystem {
 				Robot.intake.spin(false);
 			else if (opJoy.getRawButton(Buttons.START))
 				Robot.intake.spin(true);
-			//INTAKE DRIVER
+			// INTAKE DRIVER
 			else if (driverJoy.getRawButton(Buttons.X))
 				Robot.intake.manual(kIntake.Speeds.INTAKE);
 			else if (driverJoy.getRawButton(Buttons.B))
@@ -106,12 +124,11 @@ public class GZOI extends GZSubsystem {
 
 		// CONTROLLER RUMBLE
 
-		
 		if (Util.between(getMatchTime(), 29.1, 30))
-		//ENDGAME
+			// ENDGAME
 			rumble(kOI.Rumble.ENDGAME);
 
-		//LIMITING
+		// LIMITING
 		else if (Robot.elevator.isSpeedOverriden() || Robot.elevator.isLimitOverriden()) {
 
 			if (Robot.elevator.isSpeedOverriden()) {
@@ -119,11 +136,22 @@ public class GZOI extends GZSubsystem {
 			} else if (Robot.elevator.isLimitOverriden())
 				opJoy.rumble(kOI.Rumble.ELEVATOR_LIMIT_OVERRIDE);
 
-		//INTAKE
+			// INTAKE
 		} else if (Robot.intake.stateNot(IntakeState.NEUTRAL) && !isAuto())
 			rumble(kOI.Rumble.INTAKE);
 		else
 			rumble(0);
+	}
+
+	public boolean isSafteyDisabled() {
+		return mSafteyDisable;
+	}
+
+	@Override
+	public void outputSmartDashboard()
+	{
+		SmartDashboard.putString("Selected Auton", Robot.auton.getAutonString());
+		SmartDashboard.putString("FIELD DATA", Robot.auton.gsm());
 	}
 
 	private static void rumble(double intensity) {

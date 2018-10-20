@@ -4,16 +4,17 @@ import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.kAuton;
 import frc.robot.GZOI;
+import frc.robot.Robot;
 import frc.robot.commands.auton.DefaultAutonomous;
 import frc.robot.commands.auton.LeftAuton;
 import frc.robot.commands.auton.MiddleAuton;
 import frc.robot.commands.auton.NoCommand;
 import frc.robot.commands.auton.RightAuton;
-import frc.robot.commands.drive.EncoderFrom;
 import frc.robot.util.GZCommand;
 import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZTimer;
@@ -34,7 +35,7 @@ public class Auton {
 	private int m_asA, m_asB;
 
 	public GZCommand commandArray[] = new GZCommand[kAuton.COMMAND_ARRAY_SIZE];
-	
+
 	private GZCommand defaultCommand = null;
 	public Command autonomousCommand = null;
 
@@ -63,7 +64,19 @@ public class Auton {
 
 		GZCommand noCommand = new GZCommand("NO AUTO", new NoCommand());
 		Arrays.fill(commandArray, noCommand);
-//		fillAutonArray();
+		// fillAutonArray();
+	}
+
+	public String getAutonString()
+	{
+		return autonString;
+	} 
+
+	public void crash() {
+		if (Robot.gzOI.isDisabled()) {
+			Timer f = null;
+			f.start();
+		}
 	}
 
 	/**
@@ -83,7 +96,7 @@ public class Auton {
 				autonomousCommand = defaultCommand.getCommand();
 			}
 		}
-		
+
 		printSelected();
 	}
 
@@ -166,8 +179,7 @@ public class Auton {
 				new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.SEASON, AV.SEASON));
 		commandArray[13] = new GZCommand("Left Only - Switch Only",
 				new LeftAuton(AO.SWITCH_ONLY, AV.SEASON, AV.SEASON));
-		commandArray[14] = new GZCommand("Left Only - Scale Only",
-				new LeftAuton(AO.SCALE_ONLY, AV.SEASON, AV.SEASON));
+		commandArray[14] = new GZCommand("Left Only - Scale Only", new LeftAuton(AO.SCALE_ONLY, AV.SEASON, AV.SEASON));
 
 		commandArray[15] = new GZCommand("Right Only - Switch Priority",
 				new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.SEASON, AV.SEASON));
@@ -184,11 +196,10 @@ public class Auton {
 		autonChooser();
 	}
 
-	public void startAuton()
-	{
+	public void startAuton() {
 		fillAutonArray();
-		
-		if (autonomousCommand != null){
+
+		if (autonomousCommand != null) {
 			autonomousCommand.start();
 		}
 	}
@@ -319,7 +330,7 @@ public class Auton {
 			gameMsg = f;
 		else
 			gameMsg = "NOT";
-		
+
 		return gameMsg;
 	}
 
