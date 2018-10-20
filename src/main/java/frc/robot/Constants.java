@@ -183,8 +183,8 @@ public class Constants {
 
 		public class HeightsInches {
 			public static final double Floor = 0;
-			public static final double Switch = 25; //3.3 rotations //23.6 inches
-			public static final double Scale = 64.63; //8 rotations //TODO TUNE
+			public static final double Switch = 25;
+			public static final double Scale = 64.63; 
 		}
 
 		public class HeightsRotations {

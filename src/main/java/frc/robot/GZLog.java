@@ -65,11 +65,9 @@ public class GZLog {
 			}
 		};
 
-		LogItem l2_amp_avg = new LogItem("L2-AMP-AVG", true)
-		{
+		LogItem l2_amp_avg = new LogItem("L2-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -82,11 +80,9 @@ public class GZLog {
 			}
 		};
 
-		LogItem l3_amp_avg = new LogItem("L3-AMP-AVG", true)
-		{
+		LogItem l3_amp_avg = new LogItem("L3-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -99,11 +95,9 @@ public class GZLog {
 			}
 		};
 
-		LogItem l4_amp_avg = new LogItem("L4-AMP-AVG", true)
-		{
+		LogItem l4_amp_avg = new LogItem("L4-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -116,16 +110,12 @@ public class GZLog {
 			}
 		};
 
-		LogItem r1_amp_avg = new LogItem("R1-AMP-AVG", true)
-		{
+		LogItem r1_amp_avg = new LogItem("R1-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
-
-		
 
 		LogItem r2_amp = new LogItem("R2-AMP") {
 
@@ -135,16 +125,12 @@ public class GZLog {
 			}
 		};
 
-		LogItem r2_amp_avg = new LogItem("R2-AMP-AVG", true)
-		{
+		LogItem r2_amp_avg = new LogItem("R2-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
-
-		
 
 		LogItem r3_amp = new LogItem("R3-AMP") {
 
@@ -154,12 +140,9 @@ public class GZLog {
 			}
 		};
 
-
-		LogItem r3_amp_avg = new LogItem("R3-AMP-AVG", true)
-		{
+		LogItem r3_amp_avg = new LogItem("R3-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -172,11 +155,9 @@ public class GZLog {
 			}
 		};
 
-		LogItem r4_amp_avg = new LogItem("R4-AMP-AVG", true)
-		{
+		LogItem r4_amp_avg = new LogItem("R4-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -251,11 +232,9 @@ public class GZLog {
 			}
 		};
 
-		LogItem elev_1_amp_avg = new LogItem("ELEV-1-AMP-AVG", true)
-		{
+		LogItem elev_1_amp_avg = new LogItem("ELEV-1-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -267,11 +246,9 @@ public class GZLog {
 			}
 		};
 
-		LogItem elev_2_amp_avg = new LogItem("ELEV-2-AMP-AVG", true)
-		{
+		LogItem elev_2_amp_avg = new LogItem("ELEV-2-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -339,11 +316,9 @@ public class GZLog {
 			}
 		};
 
-		LogItem climber_1_amp_avg = new LogItem("CLIMBER-1-AMP-AVG", true)
-		{
+		LogItem climber_1_amp_avg = new LogItem("CLIMBER-1-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -355,12 +330,9 @@ public class GZLog {
 			}
 		};
 
-
-		LogItem climber_2_amp_avg = new LogItem("CLIMBER-2-AMP-AVG", true)
-		{
+		LogItem climber_2_amp_avg = new LogItem("CLIMBER-2-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -380,11 +352,9 @@ public class GZLog {
 			}
 		};
 
-		LogItem intake_l_amp_avg = new LogItem("INTAKE-L-AMP-AVG", true)
-		{
+		LogItem intake_l_amp_avg = new LogItem("INTAKE-L-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -396,16 +366,12 @@ public class GZLog {
 			}
 		};
 
-		
-		LogItem intake_r_amp_avg = new LogItem("INTAKE-R-AMP-AVG", true)
-		{
+		LogItem intake_r_amp_avg = new LogItem("INTAKE-R-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
-
 
 		LogItem intake_l_speed = new LogItem("INTAKE-L-PRCNT") {
 			@Override
@@ -443,12 +409,9 @@ public class GZLog {
 			}
 		};
 
-		
-		LogItem pdp_temp_avg = new LogItem("PDP-TEMP-AVG", true)
-		{
+		LogItem pdp_temp_avg = new LogItem("PDP-TEMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -460,11 +423,9 @@ public class GZLog {
 			}
 		};
 
-		LogItem pdp_current_avg = new LogItem("PDP-AMP-AVG", true)
-		{
+		LogItem pdp_current_avg = new LogItem("PDP-AMP-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -477,11 +438,9 @@ public class GZLog {
 			}
 		};
 
-		LogItem pdp_volt_avg = new LogItem("PDP-VOLT-AVG", true)
-		{
+		LogItem pdp_volt_avg = new LogItem("PDP-VOLT-AVG", true) {
 			@Override
-			public void update()
-			{
+			public void update() {
 				this.mValue = "=AVERAGE($L:$L)";
 			}
 		};
@@ -535,7 +494,6 @@ public class GZLog {
 		return retval;
 	}
 
-
 	public String getFunctions() {
 		this.update();
 
@@ -557,20 +515,20 @@ public class GZLog {
 					// Replace "$L"s and "$R"s with appropriate letter
 					temp = item.getValue();
 					temp = temp.replace("$L", Util.letters[counter]);
-					temp = temp.replace("$R", Util.letters[counter+2]);
+					temp = temp.replace("$R", Util.letters[counter + 2]);
 
 				} catch (Exception e) {
 
-					//In case of out of bounds area
+					// In case of out of bounds area
 					temp = "Error with function " + item.getHeader();
 					System.out.println(temp);
 
 				}
 
-				//Add to value
+				// Add to value
 				retval += "," + temp;
 			}
-			//Add to counter
+			// Add to counter
 			counter++;
 		}
 

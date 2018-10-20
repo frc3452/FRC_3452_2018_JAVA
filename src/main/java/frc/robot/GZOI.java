@@ -50,13 +50,15 @@ public class GZOI extends GZSubsystem {
 
 		if (mUserButton.update(RobotController.getUserButton()))
 			mSafteyDisable = !mSafteyDisable;
+
 		if (!isFMS())
 			Robot.allSubsystems.disable(mSafteyDisable);
 		else
 			Robot.allSubsystems.disable(false);
 
-		// if (driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.RB, Buttons.LEFT_CLICK)))
-			// Robot.auton.crash();
+		// if (driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.RB,
+		// Buttons.LEFT_CLICK)))
+		// Robot.auton.crash();
 
 		if (isTele()) {
 			Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
@@ -148,8 +150,7 @@ public class GZOI extends GZSubsystem {
 	}
 
 	@Override
-	public void outputSmartDashboard()
-	{
+	public void outputSmartDashboard() {
 		SmartDashboard.putString("Selected Auton", Robot.auton.getAutonString());
 		SmartDashboard.putString("FIELD DATA", Robot.auton.gsm());
 	}
