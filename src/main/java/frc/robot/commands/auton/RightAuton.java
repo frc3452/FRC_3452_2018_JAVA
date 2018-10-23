@@ -174,7 +174,7 @@ public class RightAuton extends CommandGroup {
 				}
 			});
 
-			addSequential(new GyroPos(290, .17, 3));														// switch
+			addSequential(new GyroPos(290, kAuton.GYRO_TURN_SPEED, 3));														// switch
 
 			addSequential(new ElevatorPosition(kElevator.HeightsInches.Switch));
 
@@ -225,7 +225,7 @@ public class RightAuton extends CommandGroup {
 				}
 			});
 
-			addSequential(new GyroPos(280, .18, 3.5));
+			addSequential(new GyroPos(280, kAuton.GYRO_TURN_SPEED, 3.5));
 
 			addSequential(new ZeroEncoders());
 			addSequential(new EncoderGyro(5.2, 5.2, .3, .3, .5, 270, kAuton.CORRECTION));
@@ -286,7 +286,7 @@ public class RightAuton extends CommandGroup {
 				}
 			});
 
-			addSequential(new GyroPos(290, .28, 5));
+			addSequential(new GyroPos(290, kAuton.GYRO_TURN_SPEED, 5));
 			addSequential(new EncoderFrom(-.7, -.7, .3, .3, .5));
 
 			addSequential(new ElevatorPosition(kElevator.TOP_HEIGHT_INCHES));

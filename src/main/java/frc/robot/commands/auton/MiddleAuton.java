@@ -21,7 +21,7 @@ import frc.robot.subsystems.Auton.AV;
 public class MiddleAuton extends CommandGroup {
 
 	/**
-	 * @param option AO
+	 * @param option        AO
 	 * @param switchVersion AV
 	 * @see Auton
 	 */
@@ -29,7 +29,7 @@ public class MiddleAuton extends CommandGroup {
 		addSequential(new ZeroEncoders());
 		addSequential(new GyroReset());
 
-		//IF DATA FOUND
+		// IF DATA FOUND
 		if (!Robot.auton.gsm().equals("NOT")) {
 
 			switch (option) {
@@ -53,7 +53,7 @@ public class MiddleAuton extends CommandGroup {
 				break;
 			}
 		} else {
-			//if game data bad
+			// if game data bad
 			defaultAuton();
 		}
 
@@ -66,27 +66,25 @@ public class MiddleAuton extends CommandGroup {
 
 			addSequential(new ElevatorTime(.5, .1725));
 
-			addSequential(new EncoderDrive(1, 2.35, .8, .8, .6)); //init curve
+			addSequential(new EncoderDrive(1, 2.35, .8, .8, .6)); // init curve
 
-			//drive to switch
-			addSequential(new CommandGroup() {
-				{
-					addParallel(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, .1/*.8*/));
-					addSequential(new EncoderFrom(3.8, 3.25, .6, .6, .7));
-				}
-			});
+			// drive to switch
+			addParallel(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, .1/* .8 */));
+			addSequential(new EncoderFrom(3.8, 3.25, .6, .6, .7));
 
-			//hit switch
+			addSequential(new ElevatorPosition(kElevator.HeightsInches.Switch));
+
+			// hit switch
 			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.35)); //was .45
+			addSequential(new DriveToStop(.35)); // was .45
 
-			addSequential(new IntakeTime(.5, .5)); //first place
+			addSequential(new IntakeTime(.5, .5)); // first place
 
-			//			back up
-			//			addParallel(new DriveTime(-.5, 0, 1.5));
-			//			addSequential(new ElevatorTime(-.1, 10));
+			// back up
+			// addParallel(new DriveTime(-.5, 0, 1.5));
+			// addSequential(new ElevatorTime(-.1, 10));
 
-			//backup
+			// backup
 			addSequential(new CommandGroup() {
 				{
 					addParallel(new ElevatorWhileDrive(-15, .75));
@@ -97,34 +95,23 @@ public class MiddleAuton extends CommandGroup {
 			addSequential(new ZeroEncoders());
 
 			/**
-			//TURN AND GRAB CUBE
-			addSequential(new CommandGroup() {
-				{
-					addSequential(new EncoderDrive(.35, -.4, .5, .5, .6)); //turn to switch
-					addSequential(new DriveToCube(.35, 5)); //was .45 
-					addParallel(new IntakeTime(-.2, .75));
-					addSequential(new EncoderDrive(0, 0, .6, .6, .65));
-				}
-			});
-
-			//DRIVE TO SWITCH
-			addSequential(new CommandGroup() {
-				{
-					addParallel(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, .6));
-					addSequential(new EncoderFrom(3, 3, .5, .5, .6));
-				}
-			});
-
-			//hit switch
-			addSequential(new DriveTime(.5, 0, .5));
-			addSequential(new DriveToStop(.55)); //was .45
-
-			addSequential(new IntakeTime(.5, .5)); //second place
-
-			//back up
-			addParallel(new EncoderFrom(-2, -2, .3, .3, .5));
-			addSequential(new ElevatorTime(-.1, 10));
-			**/
+			 * //TURN AND GRAB CUBE addSequential(new CommandGroup() { { addSequential(new
+			 * EncoderDrive(.35, -.4, .5, .5, .6)); //turn to switch addSequential(new
+			 * DriveToCube(.35, 5)); //was .45 addParallel(new IntakeTime(-.2, .75));
+			 * addSequential(new EncoderDrive(0, 0, .6, .6, .65)); } });
+			 * 
+			 * //DRIVE TO SWITCH addSequential(new CommandGroup() { { addParallel(new
+			 * ElevatorWhileDrive(kElevator.HeightsInches.Switch, .6)); addSequential(new
+			 * EncoderFrom(3, 3, .5, .5, .6)); } });
+			 * 
+			 * //hit switch addSequential(new DriveTime(.5, 0, .5)); addSequential(new
+			 * DriveToStop(.55)); //was .45
+			 * 
+			 * addSequential(new IntakeTime(.5, .5)); //second place
+			 * 
+			 * //back up addParallel(new EncoderFrom(-2, -2, .3, .3, .5)); addSequential(new
+			 * ElevatorTime(-.1, 10));
+			 **/
 			break;
 		default:
 			defaultAuton();
@@ -140,25 +127,21 @@ public class MiddleAuton extends CommandGroup {
 
 			addSequential(new EncoderDrive(2.5, 1, .8, .8, .6));
 
-			addSequential(new CommandGroup() {
-				{
-					addParallel(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, .1));
-					addSequential(new EncoderFrom(2.9, 4.2 + .72 /*+.38*/, .6, .6, .7));
-				}
-			});
+			addParallel(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, .1));
+			addSequential(new EncoderFrom(2.9, 4.2 + .72 /* +.38 */, .6, .6, .7));
 
 			addSequential(new ElevatorPosition(kElevator.HeightsInches.Switch));
 
 			addSequential(new DriveTime(.5, 0, .5));
 			addSequential(new DriveToStop(.55));
 
-			addSequential(new IntakeTime(.5, .5)); //PLACE 1
+			addSequential(new IntakeTime(.5, .5)); // PLACE 1
 
-			//back up
-			//			addParallel(new DriveTime(-.5, 0, 1.5));
-			//			addSequential(new ElevatorTime(-.1, 10));
+			// back up
+			// addParallel(new DriveTime(-.5, 0, 1.5));
+			// addSequential(new ElevatorTime(-.1, 10));
 
-			//backup
+			// backup
 			addSequential(new CommandGroup() {
 				{
 					addParallel(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, .75));
@@ -166,20 +149,20 @@ public class MiddleAuton extends CommandGroup {
 				}
 			});
 
-			//lower and reset encoders
+			// lower and reset encoders
 			addSequential(new ZeroEncoders());
 
-			//TURN AND GRAB CUBE
+			// TURN AND GRAB CUBE
 			addSequential(new CommandGroup() {
 				{
-					addSequential(new EncoderFrom(-.4, .35, .5, .5, .6)); //turn to switch
+					addSequential(new EncoderFrom(-.4, .35, .5, .5, .6)); // turn to switch
 					addSequential(new DriveToCube(.35, 5));
-					addParallel(new IntakeTime(-.5, .75)); 
+					addParallel(new IntakeTime(-.5, .75));
 					addSequential(new EncoderDrive(0, 0, .6, .6, .65));
 				}
 			});
 
-			//DRIVE TO SWITCH
+			// DRIVE TO SWITCH
 			addSequential(new CommandGroup() {
 				{
 					addSequential(new ElevatorWhileDrive(kElevator.HeightsInches.Switch, 0));
@@ -187,13 +170,13 @@ public class MiddleAuton extends CommandGroup {
 				}
 			});
 
-			//hit switch
+			// hit switch
 			addSequential(new DriveTime(.5, 0, .5));
 			addSequential(new DriveToStop(.55));
 
-			addSequential(new IntakeTime(.5, 1.5)); //second place
+			addSequential(new IntakeTime(.5, 1.5)); // second place
 
-			//back up
+			// back up
 			addParallel(new EncoderFrom(-2, -2, .3, .3, .5));
 			addSequential(new ElevatorTime(-.1, 10));
 

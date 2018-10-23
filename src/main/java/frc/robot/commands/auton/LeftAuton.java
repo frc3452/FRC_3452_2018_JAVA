@@ -223,7 +223,7 @@ public class LeftAuton extends CommandGroup {
 				}
 			});
 
-			addSequential(new GyroPos(70, .18, 5));
+			addSequential(new GyroPos(70, kAuton.GYRO_TURN_SPEED, 5));
 
 			addSequential(new ElevatorPosition(kElevator.TOP_HEIGHT_INCHES));
 			addSequential(new EncoderFrom(.6, .6, .3, .3, .3));
@@ -273,7 +273,7 @@ public class LeftAuton extends CommandGroup {
 				}
 			});
 
-			addSequential(new GyroPos(80, .18, 3.5));
+			addSequential(new GyroPos(80, kAuton.GYRO_TURN_SPEED, 3.5));
 
 			addSequential(new ZeroEncoders());
 			addSequential(new EncoderGyro(5.2, 5.2, .3, .3, .5, 90, kAuton.CORRECTION));
@@ -319,8 +319,9 @@ public class LeftAuton extends CommandGroup {
 	private void defaultAuton() {
 		addSequential(new ElevatorTime(.5, .1725));
 
-		addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, kAuton.CORRECTION)); // drive to side of switch
-		addSequential(new ElevatorPosition(kElevator.HeightsInches.Switch)); // raise arm
+		addSequential(new DriveTime(.125, 0, 5));
+		// addSequential(new EncoderGyro(7.91, 7.91, .4, .4, .4, 0, kAuton.CORRECTION)); // drive to side of switch
+		// addSequential(new ElevatorPosition(kElevator.HeightsInches.Switch)); // raise arm
 	}
 
 }

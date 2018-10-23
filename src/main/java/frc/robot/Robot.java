@@ -37,7 +37,7 @@ public class Robot extends TimedRobot {
 
 	// LOGGING CONTROL
 	private boolean logging = true, logToUsb = true;
-	private String loggingLocation = "Logging/Offseason/PreWMRI";
+	private String loggingLocation = "Logging/Offseason/WMRI";
 
 	@Override
 	public void robotInit() {

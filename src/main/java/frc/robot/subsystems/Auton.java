@@ -183,7 +183,7 @@ public class Auton {
 
 		commandArray[15] = new GZCommand("Right Only - Switch Priority",
 				new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.SEASON, AV.SEASON));
-		commandArray[16] = new GZCommand("Right Only - Switch Priority",
+		commandArray[16] = new GZCommand("Right Only - Scale Priority",
 				new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.SEASON, AV.SEASON));
 		commandArray[17] = new GZCommand("Right Only - Switch Only",
 				new RightAuton(AO.SWITCH_ONLY, AV.SEASON, AV.SEASON));

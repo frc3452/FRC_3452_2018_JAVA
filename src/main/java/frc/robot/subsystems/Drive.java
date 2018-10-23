@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Constants.kDrivetrain;
 import frc.robot.GZOI;
 import frc.robot.Robot;
@@ -69,6 +70,8 @@ public class Drive extends GZSubsystem {
 		controllers = Arrays.asList(L1, L2, L3, L4, R1, R2, R3, R4);
 
 		mGyro = new AHRS(SPI.Port.kMXP);
+
+		L1.set(ControlMode.Current, 2);
 
 		brake(NeutralMode.Coast);
 
@@ -338,7 +341,6 @@ public class Drive extends GZSubsystem {
 
 	public static class IO {
 		// in
-
 		public Double left_encoder_ticks = Double.NaN, left_encoder_vel = Double.NaN;
 
 		public Double right_encoder_ticks = Double.NaN, right_encoder_vel = Double.NaN;
@@ -449,7 +451,7 @@ public class Drive extends GZSubsystem {
 	private synchronized void arcadeNoState(double move, double rotate) {
 		double turnScalar;
 		if (Robot.elevator.isLimiting())
-			turnScalar = 1.5;
+			turnScalar = Constants.kDrivetrain.ELEV_TURN_SCALAR;
 		else
 			turnScalar = 1;
 
@@ -544,7 +546,6 @@ public class Drive extends GZSubsystem {
 	}
 
 	public synchronized boolean encoderSpeedIsUnder(double ticksPer100Ms) {
-		System.out.println(Math.abs(mIO.left_encoder_vel) + "\t" + Math.abs(mIO.right_encoder_vel));
 		double l = Math.abs(mIO.left_encoder_vel);
 		double r = Math.abs(mIO.right_encoder_vel);
 

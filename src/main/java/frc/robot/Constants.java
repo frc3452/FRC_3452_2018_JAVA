@@ -14,6 +14,8 @@ public class Constants {
 	}
 
 	public class kAuton {
+		public static final double GYRO_TURN_SPEED = .25;
+
 		public static final int COMMAND_ARRAY_SIZE = 41;
 
 		public static final double CORRECTION = 0.025;
@@ -111,6 +113,8 @@ public class Constants {
 		public final static double OPEN_LOOP_RAMP_TIME = 0.125;
 
 		public static final double DEMO_DRIVE_MODIFIER = .4;
+
+		public final static double ELEV_TURN_SCALAR = 1.65;
 	}
 
 	public class kPDP {
@@ -152,7 +156,6 @@ public class Constants {
 		public static final boolean ENC_INVERT = true;
 		public static final double ENC_TICKS_PER_INCH = -507.0;
 		public static final double ENC_HOME_INCHES = 10.4375;
-
 		
 		//LIMITING
 		public static final double BOTTOM_ROTATION = HeightsInches.Floor;
@@ -239,5 +242,4 @@ public class Constants {
 
 		}
 	}
-
 }
