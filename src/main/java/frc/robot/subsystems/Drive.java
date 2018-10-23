@@ -71,8 +71,6 @@ public class Drive extends GZSubsystem {
 
 		mGyro = new AHRS(SPI.Port.kMXP);
 
-		L1.set(ControlMode.Current, 2);
-
 		brake(NeutralMode.Coast);
 
 		talonInit();
