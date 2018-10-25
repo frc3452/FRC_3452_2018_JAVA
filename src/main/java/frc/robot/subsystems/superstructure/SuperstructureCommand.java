@@ -5,7 +5,7 @@ import frc.robot.Constants.kWrist;
 
 public class SuperstructureCommand {
     public double height = kElevator.BOTTOM_ROTATION;
-    public double wristAngle = kWrist.MINIMUM_ANGLE;
+    public double angle = kWrist.MINIMUM_ANGLE;
 
     public boolean openLoopElevator = false;
     public double openLoopElevatorPercent = 0.0;

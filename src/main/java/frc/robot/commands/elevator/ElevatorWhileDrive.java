@@ -45,7 +45,7 @@ public class ElevatorWhileDrive extends Command {
 		if (Robot.elevator.getBottomLimit() && m_value < 0)
 			return true;
 
-		return Robot.elevator.isEncoderMovementDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
+		return Robot.elevator.isMovementComplete() || isTimedOut();
 	}
 
 	@Override

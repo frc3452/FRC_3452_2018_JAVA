@@ -4,60 +4,63 @@ import frc.robot.util.GZSubsystem;
 import frc.robot.Robot;
 
 public class Superstructure extends GZSubsystem {
-    
+
     private SuperstructureState mState = new SuperstructureState();
     private SuperstructureStateMachine.WantedState mWantedState = SuperstructureStateMachine.WantedState.NEUTRAL;
-    
-    public SuperstructureStateMachine mStateMachine = new SuperstructureStateMachine();
-    private SuperstructureCommand mCommand = new SuperstructureCommand();
 
-    public Superstructure()
-    {
+    public SuperstructureStateMachine mStateMachine = new SuperstructureStateMachine();
+
+    public Superstructure() {
     }
 
-    private synchronized void updateFromObservedState(SuperstructureState state)
-    {
+    private synchronized void updateFromObservedState(SuperstructureState state) {
         state.angle = Robot.wrist.getAngle();
         state.height = Robot.elevator.getHeight();
     }
 
-    public void loop(){
-        updateFromObservedState(mState);   
-        
-        mCommand = mStateMachine.update(mWantedState, mState);
-        
+    public SuperstructureStateMachine getStateMachine()
+    {
+        return mStateMachine;
+    }
+
+    public void loop() {
+        updateFromObservedState(mState);
+
+        SuperstructureCommand mCommand = mStateMachine.update(mWantedState, mState);
+
         sendToSubsystems(mCommand);
     }
-    
-    public void sendToSubsystems(SuperstructureCommand command)
-    {
-        if (command.openLoopElevator)
-        {
+
+    private void sendToSubsystems(SuperstructureCommand command) {
+        if (command.openLoopElevator) {
             Robot.elevator.manual(command.openLoopElevatorPercent);
         } else {
             Robot.elevator.setHeight(command.height);
         }
 
-        if (command.openLoopWrist)
-        {
+        if (command.openLoopWrist) {
             Robot.wrist.setPercentage(command.openLoopWristPercent);
         } else {
-            Robot.wrist.setAngle(command.wristAngle);
+            Robot.wrist.setAngle(command.angle);
         }
     }
 
-    public void in(){}
+    public void in() {
+    }
 
-    public void out(){}
+    public void out() {
+    }
 
-    public void stop(){}
+    public void stop() {
+    }
 
-    public void construct(){}
+    public void construct() {
+    }
 
-    public void initDefaultCommand(){}
+    public void initDefaultCommand() {
+    }
 
-    public String getStateString()
-    {
+    public String getStateString() {
         return "";
     }
 

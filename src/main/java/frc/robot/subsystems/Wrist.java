@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import frc.robot.Constants;
 import frc.robot.Constants.kWrist;
 import frc.robot.Robot;
+import frc.robot.util.Util;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZSRX;
 import frc.robot.util.GZSRX.Breaker;
@@ -133,7 +134,7 @@ public class Wrist extends GZSubsystem {
 
 	public void setPercentage(double power)
 	{
-		setWantedState(WristState.NEUTRAL);
+		setWantedState(WristState.MANUAL);
 		mIO.wrist_desired_output = power;
 	}
 
@@ -143,6 +144,22 @@ public class Wrist extends GZSubsystem {
 		mIO.wrist_desired_output = (double) angleToTicks(degrees);
 	}
 	
+	public boolean isMovementComplete()
+	{
+		return isMovementComplete(kWrist.PRECISION_IN_DEGREES);
+	}
+
+	public boolean isMovementComplete(double degrees)
+	{
+		if (mState != WristState.POSITION)
+			return false;
+
+		if (Util.epsilonEquals(mIO.wrist_desired_output, mIO.wrist_target, kWrist.TICKS_PER_DEGREE * degrees))
+			return true;
+
+		return false;
+	}
+
 	public Double getAngle()
 	{
 		return mIO.enc_ticks / kWrist.TICKS_PER_DEGREE;
@@ -181,6 +198,8 @@ public class Wrist extends GZSubsystem {
 			mIO.enc_ticks = Double.NaN;
 			mIO.enc_vel = Double.NaN;
 		}
+
+		mIO.wrist_target = wrist_1.getClosedLoopTarget();
 	}
 
 	public void out() {
@@ -235,6 +254,8 @@ public class Wrist extends GZSubsystem {
 		// out
 		private double wrist_output = 0;
 		public Double wrist_desired_output = 0.0;
+
+		public int wrist_target = 0;
 
 		ControlMode control_mode = ControlMode.PercentOutput;
 	}

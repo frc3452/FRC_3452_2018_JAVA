@@ -15,6 +15,7 @@ import frc.robot.subsystems.Health;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Wrist;
+import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.util.GZSubsystemManager;
 
 public class Robot extends TimedRobot {
@@ -24,7 +25,9 @@ public class Robot extends TimedRobot {
 	public static final Elevator elevator = new Elevator();
 	public static final Intake intake = new Intake();
 	public static final Climber climber = new Climber();
+	
 	public static final Wrist wrist = new Wrist();
+	public static final Superstructure superstructure = new Superstructure();
 
 	public static final Lights lights = new Lights();
 	public static final Auton auton = new Auton();

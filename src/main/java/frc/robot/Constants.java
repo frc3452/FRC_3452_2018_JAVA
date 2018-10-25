@@ -82,69 +82,93 @@ public class Constants {
 
 		public class PID {
 			public class LEFT {
-				public final static double P = .425;
-				public final static double I = 0;
-				public final static double D = 4.25;
+				public static final double P = .425;
+				public static final double I = 0;
+				public static final double D = 4.25;
 				public static final double F = 0;
 			}
 
 			public class RIGHT {
-				public final static double P = .425;
-				public final static double I = 0;
-				public final static double D = 4.25;
+				public static final double P = .425;
+				public static final double I = 0;
+				public static final double D = 4.25;
 				public static final double F = 0;
 			}
 		}
 
-		public final static int L1 = 1, L2 = 2, L3 = 3, L4 = 4;
-		public final static int R1 = 5, R2 = 6, R3 = 7, R4 = 8;
+		public static final int L1 = 1, L2 = 2, L3 = 3, L4 = 4;
+		public static final int R1 = 5, R2 = 6, R3 = 7, R4 = 8;
 
-		public final static boolean L_INVERT = false;
-		public final static boolean R_INVERT = false;
+		public static final boolean L_INVERT = false;
+		public static final boolean R_INVERT = false;
 
-		public final static double DIFFERENTIAL_DRIVE_DEADBAND = 0.045;
+		public static final double DIFFERENTIAL_DRIVE_DEADBAND = 0.045;
 
-		public final static int AMP_40_TRIGGER = 60, AMP_40_LIMIT = 30, AMP_40_TIME = 4000;
+		public static final int AMP_40_TRIGGER = 60, AMP_40_LIMIT = 30, AMP_40_TIME = 4000;
 
-		public final static int AMP_30_TRIGGER = 45, AMP_30_LIMIT = 25, AMP_30_TIME = 3000;
+		public static final int AMP_30_TRIGGER = 45, AMP_30_LIMIT = 25, AMP_30_TIME = 3000;
 
-		public final static double OPEN_LOOP_RAMP_TIME = 0.125;
+		public static final double OPEN_LOOP_RAMP_TIME = 0.125;
 
 		public static final double DEMO_DRIVE_MODIFIER = .4;
 	}
 
 	public class kPDP {
-		public final static int DRIVE_L_1 = 0, DRIVE_L_2 = 1, DRIVE_L_3 = 5, DRIVE_L_4 = 4;
-		public final static int DRIVE_R_1 = 15, DRIVE_R_2 = 14, DRIVE_R_3 = 11, DRIVE_R_4 = 10;
+		public static final int DRIVE_L_1 = 0, DRIVE_L_2 = 1, DRIVE_L_3 = 5, DRIVE_L_4 = 4;
+		public static final int DRIVE_R_1 = 15, DRIVE_R_2 = 14, DRIVE_R_3 = 11, DRIVE_R_4 = 10;
 
-		public final static int ELEVATOR_1 = 12;
-		public final static int ELEVATOR_2 = 13;
+		public static final int ELEVATOR_1 = 12;
+		public static final int ELEVATOR_2 = 13;
 
-		public final static int INTAKE_L = 9;
-		public final static int INTAKE_R = 8;
+		public static final int INTAKE_L = 9;
+		public static final int INTAKE_R = 8;
 
-		public final static int CLIMBER_1 = 3;
-		public final static int CLIMBER_2 = 2;
+		public static final int CLIMBER_1 = 3;
+		public static final int CLIMBER_2 = 2;
+	}
+
+	public class kSuperstructure {
+		public class Poofs {
+			public static final double ELEV_MAX_HEIGHT = 10;
+			public static final double ELEV_MIN_HEIGHT = 0;
+
+			public static final double WRIST_MAX_RANGE = 180;
+			public static final double WRIST_MIN_RANGE = 0;
+
+			public static final double CLEAR_FIRST_STAGE_MIN_HEIGHT = 5;
+			public static final double CLEAR_FIRST_STAGE_MIN_ANGLE = 35;
+		}
+
+		public class Wrist {
+			public static final double ELEV_MAX_HEIGHT = 10;
+			public static final double ELEV_MIN_HEIGHT = 0;
+
+			public static final double WRIST_MAX_RANGE = 90;
+			public static final double WRIST_MIN_RANGE = 25;
+
+		}
 	}
 
 	public class kWrist {
 		public class PID {
-			public static final double F = 0; //TODO TUNE
-			public static final double P = 0; //TODO TUNE
-			public static final double I = 0; //TODO TUNE
-			public static final double D = 0; //TODO TUNE
+			public static final double F = 0; // TODO TUNE
+			public static final double P = 0; // TODO TUNE
+			public static final double I = 0; // TODO TUNE
+			public static final double D = 0; // TODO TUNE
 		}
 
 		public static final int W_1 = 11;
 		public static final int W_2 = 12;
 
-		public static final double MINIMUM_ANGLE = Double.NaN; //TODO TUNE
-		public static final double MAXIMUM_ANGLE = Double.NaN; //TODO TUNE
-		
+		public static final double MINIMUM_ANGLE = Double.NaN; // TODO TUNE
+		public static final double MAXIMUM_ANGLE = Double.NaN; // TODO TUNE
+
 		public static final boolean W_1_INVERT = false;
 		public static final boolean W_2_INVERT = false;
 
-		public static final double TICKS_PER_DEGREE = Double.NaN; //TODO TUNE
+		public static final double PRECISION_IN_DEGREES = 3;
+
+		public static final double TICKS_PER_DEGREE = Double.NaN; // TODO TUNE
 		public static final boolean ENC_INVERT = false;
 
 		public static final double OPEN_RAMP_TIME = 0;
@@ -170,17 +194,16 @@ public class Constants {
 		public static final boolean E_2_INVERT = false;
 
 		public static final boolean ENC_INVERT = true;
-		public static final double ENC_TICKS_PER_INCH = Double.NaN; //TODO tune
-		public static final double ENC_HOME_INCHES = Double.NaN; //TODO tune
+		public static final double ENC_TICKS_PER_INCH = Double.NaN; // TODO tune
+		public static final double ENC_HOME_INCHES = Double.NaN; // TODO tune
 
-		
-		//LIMITING
+		// LIMITING
 		public static final double BOTTOM_ROTATION = Heights.Floor;
 		public static final double TOP_ROTATION = 9.61;
 
 		public static final double SPEED_LIMIT_SLOWEST_SPEED = .17;
 		public static final double SPEED_LIMIT_STARTING_ROTATION = 2.08;
-		
+
 		public static final double TOP_HEIGHT = (TOP_ROTATION * 4096) / ENC_TICKS_PER_INCH;
 
 		public static final double LOWER_SOFT_LIMIT = Heights.Floor;
@@ -191,14 +214,14 @@ public class Constants {
 		public static final double OPEN_RAMP_TIME = .5;
 		public static final double CLOSED_RAMP_TIME = .125;
 
-		//TELEOP MODIFIERS
+		// TELEOP MODIFIERS
 		public static final double JOYSTICK_MODIFIER_UP = 1;
 		public static final double JOYSTICK_MODIFIER_DOWN = .6;
 
 		public static final double DEMO_JOYSTICK_MODIFIER_DOWN = .3;
 		public static final double DEMO_JOYSTICK_MODIFIER_UP = .5;
 
-		//CLOSED LOOP
+		// CLOSED LOOP
 		public static final double CLOSED_DOWN_SPEED_LIMIT = .5;
 		public static final double CLOSED_UP_SPEED_LIMIT = 1;
 
@@ -210,8 +233,8 @@ public class Constants {
 
 		public class Heights {
 			public static final double Floor = 0;
-			public static final double Switch = Double.NaN; //3.3 rotations //TODO TUNE
-			public static final double Scale = Double.NaN; //8 rotations //TODO TUNE
+			public static final double Switch = Double.NaN; // 3.3 rotations //TODO TUNE
+			public static final double Scale = Double.NaN; // 8 rotations //TODO TUNE
 		}
 
 	}
@@ -244,19 +267,19 @@ public class Constants {
 	}
 
 	public class kFileManagement {
-		public final static int RECORDING_MOTION_PROFILE_MS = 100; // 20
-		public final static double LOGGING_SPEED = .125;
-		public final static String DEFAULT_LOG_VALUE = "N/A";
+		public static final int RECORDING_MOTION_PROFILE_MS = 100; // 20
+		public static final double LOGGING_SPEED = .125;
+		public static final String DEFAULT_LOG_VALUE = "N/A";
 	}
 
 	public class kOI {
 		public class Rumble {
 
-			public final static double INTAKE = .3;
-			public final static double ELEVATOR_SPEED_OVERRIDE_DRIVE = .45;
-			public final static double ELEVATOR_SPEED_OVERRIDE_OP = ELEVATOR_SPEED_OVERRIDE_DRIVE - .2;
-			public final static double ELEVATOR_LIMIT_OVERRIDE = .45;
-			public final static double ENDGAME = .6;
+			public static final double INTAKE = .3;
+			public static final double ELEVATOR_SPEED_OVERRIDE_DRIVE = .45;
+			public static final double ELEVATOR_SPEED_OVERRIDE_OP = ELEVATOR_SPEED_OVERRIDE_DRIVE - .2;
+			public static final double ELEVATOR_LIMIT_OVERRIDE = .45;
+			public static final double ENDGAME = .6;
 
 		}
 	}

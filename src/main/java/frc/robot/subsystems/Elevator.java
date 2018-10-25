@@ -392,12 +392,12 @@ public class Elevator extends GZSubsystem {
 		}
 	}
 
-	public synchronized boolean isEncoderMovementDone()
+	public synchronized boolean isMovementComplete()
 	{
-		return isEncoderMovementDone(kElevator.CLOSED_COMPLETION);
+		return isMovementComplete(kElevator.CLOSED_COMPLETION);
 	}
 
-	public synchronized boolean isEncoderMovementDone(double multiplier) {
+	public synchronized boolean isMovementComplete(double multiplier) {
 		if (((-getTarget() < 0) && getBottomLimit()) || (-getTarget() > 0) && getTopLimit())
 			return true;
 

@@ -40,7 +40,7 @@ public class ElevatorPosition extends Command {
 
 			return true;
 
-		return Robot.elevator.isEncoderMovementDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
+		return Robot.elevator.isMovementComplete() || isTimedOut();
 	}
 
 	protected void end() {
