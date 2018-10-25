@@ -72,7 +72,6 @@ public class Climber extends GZSubsystem {
 			manual(percentage);
 		else
 			stop();
-
 	}
 
 	private void manual(double percentage) {
@@ -138,9 +137,7 @@ public class Climber extends GZSubsystem {
 			switchToState(ClimberState.NEUTRAL);
 
 		} else {
-
 			switchToState(mWantedState);
-
 		}
 	}
 

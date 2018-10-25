@@ -48,14 +48,13 @@ public class GZOI extends GZSubsystem {
 		if (isTest())
 			mWasTest = true;
 
-		if (mUserButton.update(RobotController.getUserButton()))
+		if (isFms())
+			mSafteyDisable = false;
+		else if (mUserButton.update(RobotController.getUserButton()))
 			mSafteyDisable = !mSafteyDisable;
-
-		if (!isFMS())
-			Robot.allSubsystems.disable(mSafteyDisable);
-		else
-			Robot.allSubsystems.disable(false);
-
+		
+		Robot.allSubsystems.disable(mSafteyDisable);
+		
 		// if (driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.RB,
 		// Buttons.LEFT_CLICK)))
 		// Robot.auton.crash();
