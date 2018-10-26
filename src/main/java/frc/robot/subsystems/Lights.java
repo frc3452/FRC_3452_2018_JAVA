@@ -39,7 +39,7 @@ public class Lights extends GZSubsystem {
 
 	private static Lights mInstance = null;
 
-	public static Lights getInstance() {
+	public synchronized static Lights getInstance() {
 		if (mInstance == null)
 			mInstance = new Lights();
 

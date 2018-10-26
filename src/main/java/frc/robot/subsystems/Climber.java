@@ -19,7 +19,7 @@ public class Climber extends GZSubsystem {
 
 	private static Climber mInstance = null;
 
-	public static Climber getInstance()
+	public synchronized static Climber getInstance()
 	{
 		if (mInstance == null)
 			mInstance = new Climber();

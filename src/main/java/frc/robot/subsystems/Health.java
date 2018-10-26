@@ -20,7 +20,7 @@ public class Health {
 	private Health() {
 	}
 
-	public static Health getInstance()
+	public synchronized static Health getInstance()
 	{
 		if (mInstance == null)
 			mInstance = new Health();

@@ -14,6 +14,15 @@ public class Camera {
 	private UsbCamera mCamera0, mCamera1;
 	private VideoSink server;
 
+	private static Camera mInstance = null;
+
+	public synchronized static Camera getInstance() {
+		if (mInstance == null)
+			mInstance = new Camera();
+
+		return mInstance;
+	}
+
 	public Camera() {
 		mCamera0 = CameraServer.getInstance().startAutomaticCapture(0);
 		mCamera0.setResolution(640, 480);

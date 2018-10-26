@@ -42,7 +42,7 @@ public class Elevator extends GZSubsystem {
 
 	private GZOI gzOI = GZOI.getInstance();
 
-	public static Elevator getInstance()
+	public synchronized static Elevator getInstance()
 	{
 		if (mInstance == null)
 			mInstance = new Elevator();

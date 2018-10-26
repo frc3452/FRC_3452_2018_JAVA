@@ -57,7 +57,7 @@ public class Drive extends GZSubsystem {
 
 	private static Drive mInstance = null;
 
-	public static Drive getInstance()
+	public synchronized static Drive getInstance()
 	{
 		if (mInstance == null)
 			mInstance = new Drive();

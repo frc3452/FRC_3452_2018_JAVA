@@ -17,7 +17,7 @@ public class Intake extends GZSubsystem {
 
 	private static Intake mInstance = null;
 
-	public static Intake getInstance()
+	public synchronized static Intake getInstance()
 	{
 		if (mInstance == null)
 			mInstance = new Intake();

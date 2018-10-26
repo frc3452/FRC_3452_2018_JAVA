@@ -50,7 +50,7 @@ public class Auton {
 
 	private static Auton mInstance = null;
 
-	public static Auton getInstance()
+	public synchronized static Auton getInstance()
 	{
 		if (mInstance == null)
 			mInstance = new Auton();

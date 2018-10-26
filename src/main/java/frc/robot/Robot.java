@@ -16,6 +16,7 @@ import frc.robot.subsystems.Lights;
 import frc.robot.util.GZSubsystemManager;
 
 public class Robot extends TimedRobot {
+	//Force construction of files first
 	private Files files = Files.getInstance();
 	private Health health = Health.getInstance();
 	private Auton auton = Auton.getInstance();
