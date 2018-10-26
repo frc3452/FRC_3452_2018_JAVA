@@ -41,9 +41,6 @@ public class GZOI extends GZSubsystem {
 
 		// TODO ISSUE #19
 
-		Robot.superstructure.getStateMachine().setHeight(3);
-		Robot.superstructure.getStateMachine().setWristPower(.25);
-
 		if (isTele()) {
 			Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
 

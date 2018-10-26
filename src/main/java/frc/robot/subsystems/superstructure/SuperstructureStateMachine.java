@@ -8,7 +8,6 @@ import frc.robot.Constants.kSuperstructure.Poofs;
 public class SuperstructureStateMachine {
 
     private SystemState mState = SystemState.MANUAL;
-    private SuperstructureCommand mOutputCommand = new SuperstructureCommand();
     private SuperstructureCommand mTargetCommand = new SuperstructureCommand();
 
     public void setHeight(double height) {
@@ -27,12 +26,7 @@ public class SuperstructureStateMachine {
         mTargetCommand.openLoopWristPercent = power;
     }
 
-    public void setWristWrist(double angle) {
-
-    }
-
     public void setWristForwardLimit(double angle) {
-
     }
 
     public enum WantedState {
@@ -67,13 +61,15 @@ public class SuperstructureStateMachine {
                 mState = newState;
             }
 
-            applySafteyToCommand(mOutputCommand, mTargetCommand, currentStructureState, LimitingOptions.POOFS);
+            SuperstructureCommand mOutputCommand = new SuperstructureCommand();
+            modifyCommandWithState(mOutputCommand, mState);
+            mOutputCommand = applySafteyToCommand(mTargetCommand, currentStructureState, LimitingOptions.POOFS);
 
             return mOutputCommand;
         }
     }
 
-    private void fillCommand(SuperstructureCommand command, SystemState state) {
+    private void modifyCommandWithState(SuperstructureCommand command, SystemState state) {
         if (state == SystemState.MANUAL) {
             command.openLoopWrist = true;
             command.openLoopElevator = true;
@@ -90,24 +86,26 @@ public class SuperstructureStateMachine {
     /**
      * Lets put in a few different posibilities for mechanisms
      */
-    private boolean applySafteyToCommand(SuperstructureCommand command, SuperstructureCommand target,
-            SuperstructureState state, LimitingOptions option) {
+    private SuperstructureCommand applySafteyToCommand(SuperstructureCommand target, SuperstructureState state,
+            LimitingOptions option) {
+        SuperstructureCommand command = new SuperstructureCommand();
+
         // if we're actually using closed loop,
-        if (!command.openLoopElevator || !command.openLoopWrist) {
+        if (!target.openLoopElevator || !target.openLoopWrist) {
 
             switch (option) {
             case POOFS:
-                // Not possible
+                // Not possible, but prioritize height
                 if (target.angle < Poofs.CLEAR_FIRST_STAGE_MIN_ANGLE
-                        && target.height < Poofs.CLEAR_FIRST_STAGE_MIN_HEIGHT)
-                    return false;
+                        && target.height > Poofs.CLEAR_FIRST_STAGE_MIN_HEIGHT)
+                    command.angle = Math.max(target.angle, Poofs.CLEAR_FIRST_STAGE_MIN_ANGLE);
 
                 // Folded, want to go high
                 if (target.height > kSuperstructure.Poofs.CLEAR_FIRST_STAGE_MIN_HEIGHT
                         && state.angle < Poofs.CLEAR_FIRST_STAGE_MIN_ANGLE)
-                    command.height = Math.min(command.height, Poofs.CLEAR_FIRST_STAGE_MIN_HEIGHT);
+                    command.height = Math.min(target.height, Poofs.CLEAR_FIRST_STAGE_MIN_HEIGHT);
 
-                //
+                // Want to fold, wait for wrist
                 else if (target.angle < Poofs.CLEAR_FIRST_STAGE_MIN_ANGLE
                         && state.height > Poofs.CLEAR_FIRST_STAGE_MIN_HEIGHT)
                     command.angle = Math.max(target.angle, Poofs.CLEAR_FIRST_STAGE_MIN_ANGLE);
@@ -128,9 +126,9 @@ public class SuperstructureStateMachine {
 
         } else {
             // Let other systems handle open loop limiting
+            command = target;
         }
-
-        return true;
+        return command;
     }
 
     private SystemState handleMovingToPositionTransition(WantedState wantedAction) {
