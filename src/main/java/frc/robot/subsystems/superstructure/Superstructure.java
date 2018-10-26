@@ -2,40 +2,60 @@ package frc.robot.subsystems.superstructure;
 
 import frc.robot.util.GZSubsystem;
 import frc.robot.Robot;
-import frc.robot.subsystems.superstructure.SuperstructureStateMachine.WantedState;
+import frc.robot.subsystems.superstructure.SuperstructureStateMachine.WantedAction;
 
 public class Superstructure extends GZSubsystem {
 
     private SuperstructureState mState = new SuperstructureState();
-    private SuperstructureStateMachine.WantedState mWantedState = SuperstructureStateMachine.WantedState.NEUTRAL;
+    private SuperstructureStateMachine.WantedAction mWantedAction = SuperstructureStateMachine.WantedAction.NEUTRAL;
 
     private SuperstructureStateMachine mStateMachine = new SuperstructureStateMachine();
 
     public Superstructure() {
     }
 
+    /**
+     * Fill information about superstructure into variable
+     * 
+     * @param state
+     */
     private synchronized void updateFromObservedState(SuperstructureState state) {
         state.angle = Robot.wrist.getAngle();
         state.height = Robot.elevator.getHeight();
     }
 
+    /**
+     * Set wanted state to neutral
+     */
     public void setNeutral() {
-        mWantedState = WantedState.NEUTRAL;
+        mWantedAction = WantedAction.NEUTRAL;
     }
 
-    public void setHeight(double height) {
-        mWantedState = WantedState.MOVE_TO_POSITION;
+    /**
+     * Update state machine desired height, angle, and wanted action
+     */
+    public void setPosition(double height, double angle) {
+        mWantedAction = WantedAction.MOVE_TO_POSITION;
         mStateMachine.setHeight(height);
+        mStateMachine.setAngle(angle);
     }
 
-    public void setAngle(double angle) {
-        mWantedState = WantedState.NEUTRAL;
+    /**
+     * Set manual speed of elevator and wrist
+     */
+    public void setSpeeed(double elev, double wrist) {
+        mWantedAction = WantedAction.WANT_MANUAL;
+        mStateMachine.setElevatorPower(elev);
+        mStateMachine.setWristPower(wrist);
     }
 
+    /**
+     * Get command from state machine based of current state and desired action
+     * Send to subsystem
+     */
     public void loop() {
         updateFromObservedState(mState);
-
-        SuperstructureCommand mCommand = mStateMachine.update(mWantedState, mState);
+        SuperstructureCommand mCommand = mStateMachine.update(mWantedAction, mState);
 
         sendToSubsystems(mCommand);
     }

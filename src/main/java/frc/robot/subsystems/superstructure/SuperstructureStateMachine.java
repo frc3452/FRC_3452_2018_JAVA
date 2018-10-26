@@ -10,26 +10,7 @@ public class SuperstructureStateMachine {
     private SystemState mState = SystemState.MANUAL;
     private SuperstructureCommand mTargetCommand = new SuperstructureCommand();
 
-    public void setHeight(double height) {
-        mTargetCommand.height = height;
-    }
-
-    public void setAngle(double angle) {
-        mTargetCommand.angle = angle;
-    }
-
-    public void setElevatorPower(double power) {
-        mTargetCommand.openLoopElevatorPercent = power;
-    }
-
-    public void setWristPower(double power) {
-        mTargetCommand.openLoopWristPercent = power;
-    }
-
-    public void setWristForwardLimit(double angle) {
-    }
-
-    public enum WantedState {
+    public enum WantedAction {
         NEUTRAL, WANT_MANUAL, MOVE_TO_POSITION,
     }
 
@@ -37,9 +18,43 @@ public class SuperstructureStateMachine {
         MANUAL, MOVING_TO_POSITION, HOLDING_POSITION
     }
 
-    public SuperstructureCommand update(WantedState wanted, SuperstructureState currentStructureState) {
+    /**
+     * Used by superstructure to set desired height
+     */
+    public void setHeight(double height) {
+        mTargetCommand.height = height;
+    }
+
+    /**
+     * Used by superstructure to set desired angle
+     */
+    public void setAngle(double angle) {
+        mTargetCommand.angle = angle;
+    }
+
+    /**
+     * Used by superstructure to set desired elevator power
+     * 
+     * @param power
+     */
+    public void setElevatorPower(double power) {
+        mTargetCommand.openLoopElevatorPercent = power;
+    }
+
+    /**
+     * Used by superstructure to set desired wrist power
+     */
+    public void setWristPower(double power) {
+        mTargetCommand.openLoopWristPercent = power;
+    }
+
+    /**
+     * Generates command for superstructure to send to subsystems
+     */
+    public SuperstructureCommand update(WantedAction wanted, SuperstructureState currentStructureState) {
 
         synchronized (SuperstructureStateMachine.this) {
+            //Transition state
             SystemState newState;
             switch (mState) {
             case MANUAL:
@@ -61,30 +76,43 @@ public class SuperstructureStateMachine {
                 mState = newState;
             }
 
+            //Generate output command
             SuperstructureCommand mOutputCommand = new SuperstructureCommand();
-            modifyCommandWithState(mOutputCommand, mState);
+
+            //Match command to state
+            modifyCommandWithState(mOutputCommand, wanted, mState);
+
+            //Apply limiting saftey to command
             mOutputCommand = applySafteyToCommand(mTargetCommand, currentStructureState, LimitingOptions.POOFS);
 
+            //Give back to superstructure
             return mOutputCommand;
         }
     }
 
-    private void modifyCommandWithState(SuperstructureCommand command, SystemState state) {
+    //Match command to state and wanted action
+    private void modifyCommandWithState(SuperstructureCommand command, WantedAction wanted, SystemState state) {
         if (state == SystemState.MANUAL) {
             command.openLoopWrist = true;
             command.openLoopElevator = true;
+
+            if (wanted == WantedAction.NEUTRAL) {
+                command.openLoopElevatorPercent = 0;
+                command.openLoopWristPercent = 0;
+            }
         } else {
             command.openLoopElevator = false;
             command.openLoopWrist = false;
         }
     }
 
+    //For testing, limit either a 2018 cheesy poofs style robot or a standard wrist
     private enum LimitingOptions {
         POOFS, STANDARD_WRIST
     }
 
     /**
-     * Lets put in a few different posibilities for mechanisms
+     * Generate possible output from target combined with saftey
      */
     private SuperstructureCommand applySafteyToCommand(SuperstructureCommand target, SuperstructureState state,
             LimitingOptions option) {
@@ -131,25 +159,38 @@ public class SuperstructureStateMachine {
         return command;
     }
 
-    private SystemState handleMovingToPositionTransition(WantedState wantedAction) {
+    /**
+     * Handle transition
+     */
+    private SystemState handleMovingToPositionTransition(WantedAction wantedAction) {
         return handleTransitions(wantedAction);
     }
 
-    private SystemState handleHoldingTransitions(WantedState wantedAction) {
+    /**
+     * Handle transition
+     */
+    private SystemState handleHoldingTransitions(WantedAction wantedAction) {
         return handleTransitions(wantedAction);
     }
 
-    private SystemState handleManualTransition(WantedState wantedAction) {
+
+    /**
+     * Handle transition
+     */
+    private SystemState handleManualTransition(WantedAction wantedAction) {
         return handleTransitions(wantedAction);
     }
 
-    private SystemState handleTransitions(WantedState wantedAction) {
-        if (wantedAction == WantedState.WANT_MANUAL) {
+    /**
+     * TODO need to compare if mTarget is close to mState
+     */
+    private SystemState handleTransitions(WantedAction wantedAction) {
+        if (wantedAction == WantedAction.WANT_MANUAL) {
             return SystemState.MANUAL;
-        } else if (wantedAction == WantedState.NEUTRAL) {
+        } else if (wantedAction == WantedAction.NEUTRAL) {
             return SystemState.MANUAL;
         } else {
-            if (wantedAction == WantedState.MOVE_TO_POSITION && Robot.elevator.isMovementComplete()
+            if (wantedAction == WantedAction.MOVE_TO_POSITION && Robot.elevator.isMovementComplete()
                     && Robot.wrist.isMovementComplete()) {
                 return SystemState.HOLDING_POSITION;
             }
