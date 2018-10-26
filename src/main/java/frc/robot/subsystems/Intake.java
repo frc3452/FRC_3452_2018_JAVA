@@ -1,11 +1,10 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Spark;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kPDP;
-import frc.robot.Robot;
+import frc.robot.GZOI;
 import frc.robot.util.GZSubsystem;
-
-import edu.wpi.first.wpilibj.Spark;
 
 public class Intake extends GZSubsystem {
 
@@ -16,12 +15,17 @@ public class Intake extends GZSubsystem {
 	private IntakeState mWantedState = IntakeState.NEUTRAL;
 	public IO mIO = new IO();
 
-	public Intake() {
+	private static Intake mInstance = null;
+
+	public static Intake getInstance()
+	{
+		if (mInstance == null)
+			mInstance = new Intake();
+		
+		return mInstance;
 	}
 
-	// Construction
-	public synchronized void construct()
-	{
+	private Intake() {
 		left_intake = new Spark(kIntake.INTAKE_L);
 		right_intake = new Spark(kIntake.INTAKE_R);
 
@@ -78,7 +82,7 @@ public class Intake extends GZSubsystem {
 	private void handleStates() {
 		boolean neutral = false;
 
-		neutral |= this.isDisabed() && !Robot.gzOI.isFMS();
+		neutral |= this.isDisabed() && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == IntakeState.NEUTRAL;
 
 		// we dont need to worry about isDemo() here
@@ -106,8 +110,8 @@ public class Intake extends GZSubsystem {
 
 	@Override
 	public synchronized void in() {
-		mIO.left_amperage = Robot.drive.getPDPChannelCurrent(kPDP.INTAKE_L);
-		mIO.right_amperage = Robot.drive.getPDPChannelCurrent(kPDP.INTAKE_R);
+		mIO.left_amperage = Drive.getInstance().getPDPChannelCurrent(kPDP.INTAKE_L);
+		mIO.right_amperage = Drive.getInstance().getPDPChannelCurrent(kPDP.INTAKE_R);
 	}
 
 	public void manual(double percentage) {

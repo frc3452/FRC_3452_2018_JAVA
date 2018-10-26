@@ -7,18 +7,20 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class GyroReset extends Command {
 
+	private Drive drive = Drive.getInstance();
+
 	/**
 	 * Gyro reset
 	 * @author macco
 	 * @see Drive
 	 */
 	public GyroReset() {
-		requires(Robot.drive);
+		requires(drive);
 	}
 
 	protected void initialize() {
 		setTimeout(0.1);
-		Robot.drive.zeroGyro();
+		drive.zeroGyro();
 	}
 	protected void execute() {
 		

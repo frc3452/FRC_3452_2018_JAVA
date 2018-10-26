@@ -1,10 +1,9 @@
 package frc.robot.commands.pwm;
 
-import frc.robot.Robot;
-import frc.robot.subsystems.Intake;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Intake;
 
 public class IntakeWhileDrive extends Command {
 
@@ -12,6 +11,8 @@ public class IntakeWhileDrive extends Command {
 	private boolean timeoutSet = false;
 
 	private Timer timer = new Timer();
+
+	private Intake intake = Intake.getInstance();
 
 	/**
 	 * @author macco
@@ -21,7 +22,7 @@ public class IntakeWhileDrive extends Command {
 	 * @see Intake
 	 */
 	public IntakeWhileDrive(double value, double atPercent, double timeout) {
-		requires(Robot.intake);
+		requires(intake);
 
 		m_value = value;
 		m_percent = atPercent;
@@ -37,8 +38,8 @@ public class IntakeWhileDrive extends Command {
 	protected void execute() {
 		//If drivetrain is certain percentage through movement, turn on intake for time
 		
-		if (Robot.drive.getPercentageComplete() > m_percent) {
-			Robot.intake.manual(m_value);
+		if (Drive.getInstance().getPercentageComplete() > m_percent) {
+			intake.manual(m_value);
 
 			if (timeoutSet == false) {
 				setTimeout(m_timeout + timer.get());
@@ -46,7 +47,7 @@ public class IntakeWhileDrive extends Command {
 			}
 
 		} else {
-			Robot.intake.manual(0);
+			intake.stop();
 		}
 	}
 
@@ -56,7 +57,7 @@ public class IntakeWhileDrive extends Command {
 
 	protected void end() {
 		System.out.println("Done");
-		Robot.intake.manual(0);
+		intake.stop();
 	}
 
 	protected void interrupted() {

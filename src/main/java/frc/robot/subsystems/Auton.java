@@ -48,12 +48,16 @@ public class Auton {
 
 	public GZTimer matchTimer = new GZTimer("matchTimer");
 
-	/**
-	 * hardware initialization
-	 * 
-	 * @author max
-	 */
-	public Auton() {
+	private static Auton mInstance = null;
+
+	public static Auton getInstance()
+	{
+		if (mInstance == null)
+			mInstance = new Auton();
+		return mInstance;
+	}
+
+	private Auton() {
 		as_A = new AnalogInput(Constants.kAuton.AUTO_SELECTOR_1);
 		as_B = new AnalogInput(Constants.kAuton.AUTO_SELECTOR_2);
 
@@ -73,7 +77,7 @@ public class Auton {
 	} 
 
 	public void crash() {
-		if (Robot.gzOI.isDisabled()) {
+		if (GZOI.getInstance().isDisabled()) {
 			Timer f = null;
 			f.start();
 		}

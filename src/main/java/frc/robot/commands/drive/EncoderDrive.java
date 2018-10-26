@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.command.Command;
 public class EncoderDrive extends Command {
 	private double m_left, m_right, m_laccel, m_raccel, m_topspeed;
 
+	private Drive drive = Drive.getInstance();
+
 	/**
 	 * @author macco
 	 * @param left
@@ -19,7 +21,7 @@ public class EncoderDrive extends Command {
 	 * @see Drive
 	 */
 	public EncoderDrive(double left, double right, double leftaccel, double rightaccel, double topspeed) {
-		requires(Robot.drive);
+		requires(drive);
 
 		m_left = left;
 		m_right = right;
@@ -33,17 +35,17 @@ public class EncoderDrive extends Command {
 	}
 
 	protected void execute() {
-		Robot.drive.motionMagic(m_left, m_right, m_laccel, m_raccel, m_topspeed, m_topspeed);
+		drive.motionMagic(m_left, m_right, m_laccel, m_raccel, m_topspeed, m_topspeed);
 	}
 
 	protected boolean isFinished() {
 //		return false;
 //		return isTimedOut();
-		return Robot.drive.encoderIsDone(2) || isTimedOut();
+		return drive.encoderIsDone(2) || isTimedOut();
 	}
 
 	protected void end() {
-		Robot.drive.stop();
+		drive.stop();
 		System.out.println("Encoder drive completed.");
 	}
 

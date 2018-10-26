@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Spark;
 import frc.robot.Constants.kClimber;
 import frc.robot.Constants.kPDP;
+import frc.robot.GZOI;
 import frc.robot.Robot;
 import frc.robot.util.GZSubsystem;
 
@@ -16,11 +17,18 @@ public class Climber extends GZSubsystem {
 
 	private int climbCounter = 0;
 
-	// Construction
-	public Climber() {
+	private static Climber mInstance = null;
+
+	public static Climber getInstance()
+	{
+		if (mInstance == null)
+			mInstance = new Climber();
+
+		return mInstance;
 	}
 
-	public synchronized void construct() {
+	// Construction
+	private Climber() {
 		climber_1 = new Spark(kClimber.CLIMBER_1);
 		climber_1.setInverted(kClimber.CLIMBER_1_INVERT);
 
@@ -81,8 +89,8 @@ public class Climber extends GZSubsystem {
 
 	@Override
 	protected synchronized void in() {
-		mIO.climber_1_amperage = Robot.drive.getPDPChannelCurrent(kPDP.CLIMBER_1);
-		mIO.climber_2_amperage = Robot.drive.getPDPChannelCurrent(kPDP.CLIMBER_2);
+		mIO.climber_1_amperage = Drive.getInstance().getPDPChannelCurrent(kPDP.CLIMBER_1);
+		mIO.climber_2_amperage = Drive.getInstance().getPDPChannelCurrent(kPDP.CLIMBER_2);
 	}
 
 	@Override
@@ -128,7 +136,7 @@ public class Climber extends GZSubsystem {
 
 	private synchronized void handleStates() {
 		boolean neutral = false;
-		neutral |= (this.isDisabed() || Robot.auton.isDemo()) && !Robot.gzOI.isFMS();
+		neutral |= (this.isDisabed() || Auton.getInstance().isDemo()) && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == ClimberState.NEUTRAL;
 
 		// if trying to disable or run demo mode while not connected to field

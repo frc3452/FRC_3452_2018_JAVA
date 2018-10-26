@@ -29,15 +29,17 @@ public class MiddleAuton extends CommandGroup {
 		addSequential(new ZeroEncoders());
 		addSequential(new GyroReset());
 
+		Auton auton = Auton.getInstance();
+
 		// IF DATA FOUND
-		if (!Robot.auton.gsm().equals("NOT")) {
+		if (!auton.gsm().equals("NOT")) {
 
 			switch (option) {
 			case SWITCH:
 
-				if (Robot.auton.gsm().charAt(0) == 'L') {
+				if (auton.gsm().charAt(0) == 'L') {
 					switchL(switchVersion);
-				} else if (Robot.auton.gsm().charAt(0) == 'R') {
+				} else if (auton.gsm().charAt(0) == 'R') {
 					switchR(switchVersion);
 				} else {
 					defaultAuton();

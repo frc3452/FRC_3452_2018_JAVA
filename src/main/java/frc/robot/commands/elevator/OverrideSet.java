@@ -24,6 +24,6 @@ public class OverrideSet extends InstantCommand {
 	}
 
 	protected void initialize() {
-		Robot.elevator.setSpeedLimitingOverride(m_override);
+		Elevator.getInstance().setSpeedLimitingOverride(m_override);
 	}
 }

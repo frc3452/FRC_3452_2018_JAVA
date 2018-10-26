@@ -7,13 +7,15 @@ import frc.robot.subsystems.Drive;
 public class DriveToStop extends Command {
 	private double m_speed;
 
+	private Drive drive = Drive.getInstance();
+
 	/**
 	 * @author macco
 	 * @param speed
 	 * @see Drive
 	 */
 	public DriveToStop(double speed) {
-		requires(Robot.drive);
+		requires(drive);
 		
 		m_speed = speed;
 	}
@@ -23,15 +25,15 @@ public class DriveToStop extends Command {
 	}
 
 	protected void execute() {
-		Robot.drive.arcade(m_speed, 0);
+		drive.arcade(m_speed, 0);
 	}
 
 	protected boolean isFinished() {
-		return Robot.drive.encoderSpeedIsUnder(200) || isTimedOut();
+		return drive.encoderSpeedIsUnder(200) || isTimedOut();
 	}
 
 	protected void end() {
-		Robot.drive.stop();
+		drive.stop();
 	}
 
 	protected void interrupted() {

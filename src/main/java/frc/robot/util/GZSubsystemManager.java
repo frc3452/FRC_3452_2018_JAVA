@@ -26,10 +26,6 @@ public class GZSubsystemManager {
 		return mAllSystems;
 	}
 
-	public void construct() {
-		mAllSystems.forEach((s) -> s.construct());
-	}
-
 	public void outputSmartDashboard() {
 		mAllSystems.forEach((s) -> s.outputSmartDashboard());
 	}

@@ -15,24 +15,31 @@ public class Health {
 
 	private Map<GZSubsystem, ArrayList<ArrayList<String>>> map = new HashMap<>();
 
-	public Health() {
+	private static Health mInstance = null;
 
-		for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
-			ArrayList<String> temp1 = new ArrayList<>();
-			temp1.add(AlertLevel.NONE.stringValue);
-			temp1.add("NA");
+	private Health() {
+	}
 
-			ArrayList<ArrayList<String>> temp2 = new ArrayList<ArrayList<String>>();
-			temp2.add(temp1);
-
-			map.put(s, temp2);
-		}
+	public static Health getInstance()
+	{
+		if (mInstance == null)
+			mInstance = new Health();
+		return mInstance;
 	}
 
 	public void addAlert(GZSubsystem subsystem, AlertLevel level, String message) {
 		ArrayList<String> temp = new ArrayList<>();
 		temp.add(level.stringValue);
 		temp.add(message);
+		if (!map.containsKey(subsystem)){
+			ArrayList<String> temp1 = new ArrayList<>();
+			temp1.add(AlertLevel.NONE.stringValue);
+			temp1.add("NA");
+
+			ArrayList<ArrayList<String>> temp2 = new ArrayList<ArrayList<String>>();
+			temp2.add(temp1);
+			map.put(subsystem, temp2);
+		}
 		map.get(subsystem).add(temp);
 	}
 
