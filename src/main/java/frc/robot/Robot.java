@@ -26,8 +26,8 @@ public class Robot extends TimedRobot {
 					Lights.getInstance(), GZOI.getInstance()));
 
 	// LOGGING CONTROL
-	private boolean logging = true, logToUsb = true;
-	private String loggingLocation = "Logging/Offseason/WMRI";
+	private final boolean logging = true, logToUsb = true;
+	private final String loggingLocation = "Logging/Offseason/WMRI";
 
 	@Override
 	public void robotInit() {
