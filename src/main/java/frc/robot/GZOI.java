@@ -48,7 +48,7 @@ public class GZOI extends GZSubsystem {
 		if (isTest())
 			mWasTest = true;
 
-		if (isFms())
+		if (isFMS())
 			mSafteyDisable = false;
 		else if (mUserButton.update(RobotController.getUserButton()))
 			mSafteyDisable = !mSafteyDisable;
