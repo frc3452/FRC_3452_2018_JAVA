@@ -9,6 +9,8 @@ public class IntakeTime extends Command {
 
 	private double m_speed, m_timeout;
 
+	private Intake intake = Intake.getInstance();
+
 	/**
 	 * @author macco
 	 * @param speed
@@ -16,7 +18,7 @@ public class IntakeTime extends Command {
 	 * @see Intake
 	 */
 	public IntakeTime(double speed, double timeout) {
-		requires(Robot.intake);
+		requires(intake);
 
 		m_speed = speed;
 		m_timeout = timeout;
@@ -27,7 +29,7 @@ public class IntakeTime extends Command {
 	}
 
 	protected void execute() {
-		Robot.intake.manual(m_speed);
+		intake.manual(m_speed);
 	}
 
 	protected boolean isFinished() {
@@ -35,7 +37,7 @@ public class IntakeTime extends Command {
 	}
 
 	protected void end() {
-		Robot.intake.manual(0);
+		intake.stop();
 	}
 
 	protected void interrupted() {

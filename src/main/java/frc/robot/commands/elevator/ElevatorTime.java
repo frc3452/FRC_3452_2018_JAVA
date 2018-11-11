@@ -9,6 +9,8 @@ public class ElevatorTime extends Command {
 
 	private double m_speed, m_time;
 
+	private Elevator elevator = Elevator.getInstance();
+
 	/**
 	 * @author macco
 	 * @param speed positive = up
@@ -17,7 +19,7 @@ public class ElevatorTime extends Command {
 	 */
 
 	public ElevatorTime(double speed, double time) {
-		requires(Robot.elevator);
+		requires(elevator);
 
 		m_speed = speed;
 		m_time = time;
@@ -28,23 +30,23 @@ public class ElevatorTime extends Command {
 	}
 
 	protected void execute() {
-		Robot.elevator.manual(m_speed);
+		elevator.manual(m_speed);
 
 	}
 
 	protected boolean isFinished() {
 
-		if (Robot.elevator.getTopLimit() && m_speed > 0)
+		if (elevator.getTopLimit() && m_speed > 0)
 			return true;
 
-		if (Robot.elevator.getBottomLimit() && m_speed < 0)
+		if (elevator.getBottomLimit() && m_speed < 0)
 			return true;
 
 		return isTimedOut();
 	}
 
 	protected void end() {
-		Robot.elevator.stop();
+		elevator.stop();
 	}
 
 	protected void interrupted() {

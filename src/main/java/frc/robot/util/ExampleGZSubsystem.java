@@ -1,8 +1,8 @@
 package frc.robot.util;
 
-import frc.robot.Robot;
-
 import edu.wpi.first.wpilibj.Spark;
+import frc.robot.GZOI;
+import frc.robot.subsystems.Auton;
 
 public class ExampleGZSubsystem extends GZSubsystem {
 	/**
@@ -73,14 +73,14 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	private synchronized void handleStates() {
 		boolean neutral = false;
 		
-		neutral |= this.isDisabed() && !Robot.gzOI.isFMS();
+		neutral |= this.isDisabed() && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == ExampleState.NEUTRAL;
 
 		if (neutral) { /* AAAA **/
 
 			switchToState(ExampleState.NEUTRAL);
 
-		} else if (Robot.auton.isDemo()) { /* AAAA **/
+		} else if (Auton.getInstance().isDemo()) { /* AAAA **/
 
 			switchToState(ExampleState.DEMO);
 

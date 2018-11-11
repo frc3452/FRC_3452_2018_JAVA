@@ -8,13 +8,15 @@ import edu.wpi.first.wpilibj.command.Command;
 public class IntakeManual extends Command {
 	private double m_speed;
 
+	private Intake intake = Intake.getInstance();
+
 	/**
 	 * @author macco
 	 * @param speed
 	 * @see Intake
 	 */
 	public IntakeManual(double speed) {
-		requires(Robot.intake);
+		requires(intake);
 		
 		m_speed = speed;
 	}
@@ -25,7 +27,7 @@ public class IntakeManual extends Command {
 
 	@Override
 	protected void execute() {
-		Robot.intake.manual(m_speed);
+		intake.manual(m_speed);
 	}
 
 	@Override
@@ -35,7 +37,7 @@ public class IntakeManual extends Command {
 
 	@Override
 	protected void end() {
-		Robot.intake.stop();
+		intake.stop();
 	}
 
 	@Override

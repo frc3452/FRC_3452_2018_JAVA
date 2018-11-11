@@ -1,14 +1,15 @@
 package frc.robot.commands.elevator;
 
-import frc.robot.Constants.kElevator;
-import frc.robot.Robot;
-import frc.robot.subsystems.Elevator;
-
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.Constants.kElevator;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Elevator;
 
 public class ElevatorWhileDrive extends Command {
 
 	private double m_value, m_percent;
+
+	private Elevator elevator = Elevator.getInstance();
 
 	/**
 	 * @author macco
@@ -17,7 +18,7 @@ public class ElevatorWhileDrive extends Command {
 	 * @see Elevator
 	 */
 	public ElevatorWhileDrive(double value, double atPercent) {
-		requires(Robot.elevator);
+		requires(elevator);
 
 		m_value = value;
 		m_percent = atPercent;
@@ -26,25 +27,25 @@ public class ElevatorWhileDrive extends Command {
 	@Override
 	protected void initialize() {
 		setTimeout(15);
-		Robot.elevator.setTarget(-3452);
+		elevator.setTarget(-3452);
 	}
 
 	@Override
 	protected void execute() {
-		if (Robot.drive.getPercentageComplete() > m_percent)
-			Robot.elevator.setHeight(m_value);
+		if (Drive.getInstance().getPercentageComplete() > m_percent)
+			elevator.setHeight(m_value);
 		else
-			Robot.elevator.stop();
+			elevator.stop();
 	}
 
 	@Override
 	protected boolean isFinished() {
-		return Robot.elevator.isEncoderMovementDone(kElevator.CLOSED_COMPLETION + .05) || isTimedOut();
+		return elevator.isEncoderMovementDone(kElevator.CLOSED_COMPLETION + .05) || isTimedOut();
 	}
 
 	@Override
 	protected void end() {
-		Robot.elevator.stop();
+		elevator.stop();
 		System.out.println("Elevator position completed.");
 	}
 

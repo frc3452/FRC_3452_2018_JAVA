@@ -4,9 +4,7 @@ import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import frc.robot.Constants.kElevator;
 import frc.robot.subsystems.Auton;
-import frc.robot.subsystems.Camera;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
@@ -18,31 +16,24 @@ import frc.robot.subsystems.Lights;
 import frc.robot.util.GZSubsystemManager;
 
 public class Robot extends TimedRobot {
-	public static final Files files = new Files();
+	//Force construction of files first
+	private Files files = Files.getInstance();
 
-	public static final Drive drive = new Drive();
-	public static final Elevator elevator = new Elevator();
-	public static final Intake intake = new Intake();
-	public static final Climber climber = new Climber();
-
-	public static final Lights lights = new Lights();
-	public static final Auton auton = new Auton();
-	public static final Camera camera = new Camera();
-	public static final GZOI gzOI = new GZOI();
-
+	
 	public static final GZSubsystemManager allSubsystems = new GZSubsystemManager(
-			Arrays.asList(drive, elevator, intake, climber, lights, gzOI));
+			Arrays.asList(Drive.getInstance(), Elevator.getInstance(), Intake.getInstance(), Climber.getInstance(),
+					Lights.getInstance(), GZOI.getInstance()));
+	
+	private Health health = Health.getInstance();
+	private Auton auton = Auton.getInstance();
 
-	public static final Health health = new Health();
 
 	// LOGGING CONTROL
-	private boolean logging = true, logToUsb = true;
-	private String loggingLocation = "Logging/Offseason/WMRI";
+	private final boolean logging = true, logToUsb = true;
+	private final String loggingLocation = "Logging/Offseason/WMRI";
 
 	@Override
 	public void robotInit() {
-		allSubsystems.construct();
-
 		files.fillLogger();
 		auton.fillAutonArray();
 
@@ -53,7 +44,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic() {
-		if (!gzOI.isTest())
+		if (!GZOI.getInstance().isTest())
 			allSubsystems.loop();
 	}
 

@@ -11,8 +11,7 @@ public class ElevatorManual extends Command {
 //	private int m_axis;
 	private GZJoystick m_joy;
 
-//	double value = 0;
-//	double speeds[] = new double[2];
+	private Elevator elevator = Elevator.getInstance();
 
 	/**
 	 * Operator control of elevator
@@ -22,7 +21,7 @@ public class ElevatorManual extends Command {
 	 * @see Elevator
 	 */
 	public ElevatorManual(GZJoystick joy) {
-		requires(Robot.elevator);
+		requires(elevator);
 		m_joy = joy;
 	}
 
@@ -32,7 +31,7 @@ public class ElevatorManual extends Command {
 
 	@Override
 	protected void execute() {
-		Robot.elevator.manualJoystick(m_joy);
+		elevator.manualJoystick(m_joy);
 	}
 
 	@Override
@@ -42,7 +41,7 @@ public class ElevatorManual extends Command {
 
 	@Override
 	protected void end() {
-		Robot.elevator.stop();
+		elevator.stop();
 	}
 
 	@Override

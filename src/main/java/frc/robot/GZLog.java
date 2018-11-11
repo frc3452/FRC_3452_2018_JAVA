@@ -3,13 +3,26 @@ package frc.robot;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.RobotController;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
 import frc.robot.util.Util;
 
 public class GZLog {
 
-	ArrayList<LogItem> values = new ArrayList<>();
+	private ArrayList<LogItem> values = new ArrayList<>();
 
-	public GZLog() {
+	private static GZLog mInstance = null;
+
+	public synchronized static GZLog getInstance()
+	{
+		if (mInstance == null)
+			mInstance = new GZLog();
+		return mInstance;
+	}
+
+	private GZLog() {
 	}
 
 	@SuppressWarnings("unused")
@@ -18,35 +31,35 @@ public class GZLog {
 		LogItem left_speed = new LogItem("L-RPM") {
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.getLeftVel().toString();
+				this.mValue = Drive.getInstance().getLeftVel().toString();
 			}
 		};
 
 		LogItem left_encoder_valid = new LogItem("L-ENC-PRSNT") {
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.leftEncoderValid.toString();
+				this.mValue = Drive.getInstance().mIO.leftEncoderValid.toString();
 			}
 		};
 
 		LogItem right_speed = new LogItem("R-RPM") {
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.getRightVel().toString();
+				this.mValue = Drive.getInstance().getRightVel().toString();
 			}
 		};
 
 		LogItem right_encoder_valid = new LogItem("R-ENC-PRSNT") {
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.rightEncoderValid.toString();
+				this.mValue = Drive.getInstance().mIO.rightEncoderValid.toString();
 			}
 		};
 
 		LogItem l1_amp = new LogItem("L1-AMP") {
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.L1_amp.toString();
+				this.mValue = Drive.getInstance().mIO.L1_amp.toString();
 			}
 		};
 
@@ -61,7 +74,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.L2_amp.toString();
+				this.mValue = Drive.getInstance().mIO.L2_amp.toString();
 			}
 		};
 
@@ -76,7 +89,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.L3_amp.toString();
+				this.mValue = Drive.getInstance().mIO.L3_amp.toString();
 			}
 		};
 
@@ -91,7 +104,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.L4_amp.toString();
+				this.mValue = Drive.getInstance().mIO.L4_amp.toString();
 			}
 		};
 
@@ -106,7 +119,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.R1_amp.toString();
+				this.mValue = Drive.getInstance().mIO.R1_amp.toString();
 			}
 		};
 
@@ -121,7 +134,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.R2_amp.toString();
+				this.mValue = Drive.getInstance().mIO.R2_amp.toString();
 			}
 		};
 
@@ -136,7 +149,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.R3_amp.toString();
+				this.mValue = Drive.getInstance().mIO.R3_amp.toString();
 			}
 		};
 
@@ -151,7 +164,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.R4_amp.toString();
+				this.mValue = Drive.getInstance().mIO.R4_amp.toString();
 			}
 		};
 
@@ -165,7 +178,7 @@ public class GZLog {
 		LogItem l1_volt = new LogItem("L1-VOLT") {
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.L1_volt.toString();
+				this.mValue = Drive.getInstance().mIO.L1_volt.toString();
 			}
 		};
 
@@ -173,7 +186,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.L2_volt.toString();
+				this.mValue = Drive.getInstance().mIO.L2_volt.toString();
 			}
 		};
 
@@ -181,7 +194,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.L3_volt.toString();
+				this.mValue = Drive.getInstance().mIO.L3_volt.toString();
 			}
 		};
 
@@ -189,7 +202,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.L4_volt.toString();
+				this.mValue = Drive.getInstance().mIO.L4_volt.toString();
 			}
 		};
 
@@ -197,7 +210,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.R1_volt.toString();
+				this.mValue = Drive.getInstance().mIO.R1_volt.toString();
 			}
 		};
 
@@ -205,7 +218,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.R2_volt.toString();
+				this.mValue = Drive.getInstance().mIO.R2_volt.toString();
 			}
 		};
 
@@ -213,7 +226,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.R3_volt.toString();
+				this.mValue = Drive.getInstance().mIO.R3_volt.toString();
 			}
 		};
 
@@ -221,14 +234,14 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.mIO.R4_volt.toString();
+				this.mValue = Drive.getInstance().mIO.R4_volt.toString();
 			}
 		};
 
 		LogItem elev_1_amp = new LogItem("ELEV-1-AMP") {
 			@Override
 			public void update() {
-				this.mValue = Robot.elevator.mIO.elevator_1_amp.toString();
+				this.mValue = Elevator.getInstance().mIO.elevator_1_amp.toString();
 			}
 		};
 
@@ -242,7 +255,7 @@ public class GZLog {
 		LogItem elev_2_amp = new LogItem("ELEV-2-AMP") {
 			@Override
 			public void update() {
-				this.mValue = Robot.elevator.mIO.elevator_2_amp.toString();
+				this.mValue = Elevator.getInstance().mIO.elevator_2_amp.toString();
 			}
 		};
 
@@ -256,63 +269,63 @@ public class GZLog {
 		LogItem elev_1_volt = new LogItem("ELEV-1-VOLT") {
 			@Override
 			public void update() {
-				this.mValue = Robot.elevator.mIO.elevator_1_volt.toString();
+				this.mValue = Elevator.getInstance().mIO.elevator_1_volt.toString();
 			}
 		};
 
 		LogItem elev_2_volt = new LogItem("ELEV-2-VOLT") {
 			@Override
 			public void update() {
-				this.mValue = Robot.elevator.mIO.elevator_2_volt.toString();
+				this.mValue = Elevator.getInstance().mIO.elevator_2_volt.toString();
 			}
 		};
 
 		LogItem elev_up_limit = new LogItem("ELEV-UP-LMT") {
 			@Override
 			public void update() {
-				this.mValue = Robot.elevator.getTopLimit().toString();
+				this.mValue = Elevator.getInstance().getTopLimit().toString();
 			}
 		};
 
 		LogItem elev_down_limit = new LogItem("ELEV-DOWN-LMT") {
 			@Override
 			public void update() {
-				this.mValue = Robot.elevator.getBottomLimit().toString();
+				this.mValue = Elevator.getInstance().getBottomLimit().toString();
 			}
 		};
 
 		LogItem elev_encoder_present = new LogItem("ELEV-ENC-PRSNT") {
 			@Override
 			public void update() {
-				this.mValue = Robot.elevator.mIO.encoderValid.toString();
+				this.mValue = Elevator.getInstance().mIO.encoderValid.toString();
 			}
 		};
 
 		LogItem elev_rotations = new LogItem("ELEV-ROT") {
 			@Override
 			public void update() {
-				this.mValue = Robot.elevator.getRotations().toString();
+				this.mValue = Elevator.getInstance().getRotations().toString();
 			}
 		};
 
 		LogItem elev_inches = new LogItem("ELEV-INCHES") {
 			@Override
 			public void update() {
-				this.mValue = Robot.elevator.getHeight().toString();
+				this.mValue = Elevator.getInstance().getHeight().toString();
 			}
 
 		};
 		LogItem elev_speed = new LogItem("ELEV-SPEED") {
 			@Override
 			public void update() {
-				this.mValue = Robot.elevator.getSpeed().toString();
+				this.mValue = Elevator.getInstance().getSpeed().toString();
 			}
 		};
 
 		LogItem climber_1_amp = new LogItem("CLIMBER-1-AMP") {
 			@Override
 			public void update() {
-				this.mValue = Robot.climber.mIO.climber_1_amperage.toString();
+				this.mValue = Climber.getInstance().mIO.climber_1_amperage.toString();
 			}
 		};
 
@@ -326,7 +339,7 @@ public class GZLog {
 		LogItem climber_2_amp = new LogItem("CLIMBER-2-AMP") {
 			@Override
 			public void update() {
-				this.mValue = Robot.climber.mIO.climber_2_amperage.toString();
+				this.mValue = Climber.getInstance().mIO.climber_2_amperage.toString();
 			}
 		};
 
@@ -341,14 +354,14 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.climber.mIO.climber_desired_output.toString();
+				this.mValue = Climber.getInstance().mIO.climber_desired_output.toString();
 			}
 		};
 
 		LogItem intake_l_amp = new LogItem("INTAKE-L-AMP") {
 			@Override
 			public void update() {
-				this.mValue = Robot.intake.mIO.left_amperage.toString();
+				this.mValue = Intake.getInstance().mIO.left_amperage.toString();
 			}
 		};
 
@@ -362,7 +375,7 @@ public class GZLog {
 		LogItem intake_r_amp = new LogItem("INTAKE-R-AMP") {
 			@Override
 			public void update() {
-				this.mValue = Robot.intake.mIO.right_amperage.toString();
+				this.mValue = Intake.getInstance().mIO.right_amperage.toString();
 			}
 		};
 
@@ -376,14 +389,14 @@ public class GZLog {
 		LogItem intake_l_speed = new LogItem("INTAKE-L-PRCNT") {
 			@Override
 			public void update() {
-				this.mValue = Robot.intake.mIO.left_desired_output.toString();
+				this.mValue = Intake.getInstance().mIO.left_desired_output.toString();
 			}
 		};
 
 		LogItem intake_r_speed = new LogItem("INTAKE-R-PRCNT") {
 			@Override
 			public void update() {
-				this.mValue = Robot.intake.mIO.right_desired_output.toString();
+				this.mValue = Intake.getInstance().mIO.right_desired_output.toString();
 			}
 		};
 
@@ -405,7 +418,7 @@ public class GZLog {
 		LogItem pdp_temp = new LogItem("PDP-TEMP") {
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.getPDPTemperature().toString();
+				this.mValue = Drive.getInstance().getPDPTemperature().toString();
 			}
 		};
 
@@ -419,7 +432,7 @@ public class GZLog {
 		LogItem pdp_current = new LogItem("PDP-AMP") {
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.getPDPTotalCurrent().toString();
+				this.mValue = Drive.getInstance().getPDPTotalCurrent().toString();
 			}
 		};
 
@@ -434,7 +447,7 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.getPDPVoltage().toString();
+				this.mValue = Drive.getInstance().getPDPVoltage().toString();
 			}
 		};
 
@@ -449,28 +462,28 @@ public class GZLog {
 
 			@Override
 			public void update() {
-				this.mValue = Robot.drive.getStateString() + "-" + Robot.drive.isDisabed();
+				this.mValue = Drive.getInstance().getStateString() + "-" + Drive.getInstance().isDisabed();
 			}
 		};
 
 		LogItem state_elevator = new LogItem("ELEV-STATE") {
 			@Override
 			public void update() {
-				this.mValue = Robot.elevator.getStateString() + "-" + Robot.elevator.isDisabed();
+				this.mValue = Elevator.getInstance().getStateString() + "-" + Elevator.getInstance().isDisabed();
 			}
 		};
 
 		LogItem state_intake = new LogItem("INTAKE-STATE") {
 			@Override
 			public void update() {
-				this.mValue = Robot.intake.getStateString() + "-" + Robot.intake.isDisabed();
+				this.mValue = Intake.getInstance().getStateString() + "-" + Intake.getInstance().isDisabed();
 			}
 		};
 
 		LogItem state_climber = new LogItem("CLIMB-STATE") {
 			@Override
 			public void update() {
-				this.mValue = Robot.climber.getStateString() + "-" + Robot.climber.isDisabed();
+				this.mValue = Climber.getInstance().getStateString() + "-" + Climber.getInstance().isDisabed();
 			}
 		};
 
@@ -559,7 +572,7 @@ public class GZLog {
 
 		public LogItem(String header) {
 			this.mName = header;
-			Robot.files.mLog.add(this);
+			GZLog.getInstance().add(this);
 		}
 
 		/**
@@ -569,7 +582,7 @@ public class GZLog {
 		public LogItem(String header, boolean isFormula) {
 			this.mName = header;
 			mIsFormula = isFormula;
-			Robot.files.mLog.add(this);
+			GZLog.getInstance().add(this);
 		}
 
 		public String getHeader() {

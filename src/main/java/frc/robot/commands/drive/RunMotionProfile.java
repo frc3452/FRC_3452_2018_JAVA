@@ -1,13 +1,12 @@
 package frc.robot.commands.drive;
 
-import frc.robot.Robot;
-import frc.robot.motionprofiles.Path;
-import frc.robot.subsystems.Drive.DriveState;
-import frc.robot.util.GZSRX.Side;
-
 import com.ctre.phoenix.motion.MotionProfileStatus;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.motionprofiles.Path;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Drive.DriveState;
+import frc.robot.util.GZSRX.Side;
 
 /**
  * @author max
@@ -20,8 +19,10 @@ public class RunMotionProfile extends Command {
 
 	private Path path_ = null;
 
+	private Drive drive = Drive.getInstance();
+
 	public RunMotionProfile(Path path) {
-		requires(Robot.drive);
+		requires(drive);
 
 		path_ = path;
 	}
@@ -30,21 +31,21 @@ public class RunMotionProfile extends Command {
 	protected void initialize() {
 		// check if we are parsing or running a stored motion profile
 		if (path_.mpDur() == 3452)
-			Robot.drive.motionProfileToTalons();
+			drive.motionProfileToTalons();
 		else
-			Robot.drive.motionProfileToTalons(path_.mpL(), path_.mpR(), path_.mpDur());
+			drive.motionProfileToTalons(path_.mpL(), path_.mpR(), path_.mpDur());
 	}
 
 	@Override
 	protected void execute() {
 
 		if (lStat.btmBufferCnt > 5 && rStat.btmBufferCnt > 5)
-			Robot.drive.setWantedState(DriveState.MOTION_PROFILE);
+			drive.setWantedState(DriveState.MOTION_PROFILE);
 		else
-			Robot.drive.stop();
+			drive.stop();
 
-		Robot.drive.getMotionProfileStatus(Side.LEFT, lStat);
-		Robot.drive.getMotionProfileStatus(Side.RIGHT, rStat);
+		drive.getMotionProfileStatus(Side.LEFT, lStat);
+		drive.getMotionProfileStatus(Side.RIGHT, rStat);
 	}
 
 	@Override
@@ -55,7 +56,7 @@ public class RunMotionProfile extends Command {
 
 	@Override
 	protected void end() {
-		Robot.drive.stop();
+		drive.stop();
 		System.out.println("Motion Profile Complete");
 	}
 

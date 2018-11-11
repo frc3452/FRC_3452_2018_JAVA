@@ -53,10 +53,16 @@ public class Drive extends GZSubsystem {
 	private double mPercentageComplete = 0;
 	private double mLeft_target = 0, mRight_target = 0;
 
-	public Drive() {
+	private static Drive mInstance = null;
+
+	public synchronized static Drive getInstance()
+	{
+		if (mInstance == null)
+			mInstance = new Drive();
+		return mInstance;
 	}
 
-	public synchronized void construct() {
+	private Drive() {
 		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
 		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
 		L3 = new GZSRX(kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
@@ -184,8 +190,10 @@ public class Drive extends GZSubsystem {
 	}
 
 	private synchronized void handleStates() {
+		GZOI gzOI = GZOI.getInstance();
+
 		boolean neutral = false;
-		neutral |= this.isDisabed() && !Robot.gzOI.isFMS();
+		neutral |= this.isDisabed() && !gzOI.isFMS();
 		neutral |= mWantedState == DriveState.NEUTRAL;
 		neutral |= ((mState.usesClosedLoop || mWantedState.usesClosedLoop) && !mIO.encodersValid);
 
@@ -193,7 +201,7 @@ public class Drive extends GZSubsystem {
 
 			switchToState(DriveState.NEUTRAL);
 
-		} else if (Robot.auton.isDemo() && !Robot.gzOI.isFMS()) {
+		} else if (Auton.getInstance().isDemo() && !gzOI.isFMS()) {
 
 			switchToState(DriveState.DEMO);
 
@@ -249,28 +257,28 @@ public class Drive extends GZSubsystem {
 						"Could not zero " + s.getSide() + " encoder");
 
 				if (!s.isEncoderValid())
-					Robot.health.addAlert(this, AlertLevel.ERROR, s.getSide() + " encoder not found");
+					Health.getInstance().addAlert(this, AlertLevel.ERROR, s.getSide() + " encoder not found");
 
 				s.setSensorPhase(true);
 
 				if (s.getSide() == Side.LEFT) {
-					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.LEFT.P, GZSRX.TIMEOUT), Robot.drive,
+					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.LEFT.P, GZSRX.TIMEOUT), this,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'P' gain");
-					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.LEFT.I, GZSRX.TIMEOUT), Robot.drive,
+					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.LEFT.I, GZSRX.TIMEOUT), this,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'I' gain");
-					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.LEFT.D, GZSRX.TIMEOUT), Robot.drive,
+					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.LEFT.D, GZSRX.TIMEOUT), this,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
-					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), Robot.drive,
+					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), this,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
 
 				} else {
-					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), Robot.drive,
+					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), this,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'P' gain");
-					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.RIGHT.I, GZSRX.TIMEOUT), Robot.drive,
+					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.RIGHT.I, GZSRX.TIMEOUT), this,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'I' gain");
-					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.RIGHT.D, GZSRX.TIMEOUT), Robot.drive,
+					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.RIGHT.D, GZSRX.TIMEOUT), this,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
-					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.RIGHT.F, GZSRX.TIMEOUT), Robot.drive,
+					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.RIGHT.F, GZSRX.TIMEOUT), this,
 							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
 				}
 			}
@@ -292,7 +300,7 @@ public class Drive extends GZSubsystem {
 			brake(NeutralMode.Brake);
 			break;
 		case NEUTRAL:
-			brake(Robot.gzOI.wasTele() ? NeutralMode.Brake : NeutralMode.Coast);
+			brake(GZOI.getInstance().wasTele() ? NeutralMode.Brake : NeutralMode.Coast);
 			break;
 		case OPEN_LOOP:
 			brake(NeutralMode.Brake);
@@ -438,7 +446,15 @@ public class Drive extends GZSubsystem {
 
 	// called in OPEN_LOOP_DRIVER state
 	private synchronized void arcade(GZJoystick joy) {
-		arcadeNoState(joy.getLeftAnalogY(), (joy.getRightTrigger() - joy.getLeftTrigger()) * .5);
+		double turnScalar;
+		if (Elevator.getInstance().isLimiting())
+			turnScalar = Constants.kDrivetrain.ELEV_TURN_SCALAR;
+		else
+			turnScalar = 1;
+
+		double elv = Elevator.getInstance().getPercentageModify();
+
+		arcadeNoState(joy.getLeftAnalogY() * elv, elv * turnScalar * ((joy.getRightTrigger() - joy.getLeftTrigger()) * .5));
 	}
 
 	// called in DEMO state
@@ -447,14 +463,8 @@ public class Drive extends GZSubsystem {
 	}
 
 	private synchronized void arcadeNoState(double move, double rotate) {
-		double turnScalar;
-		if (Robot.elevator.isLimiting())
-			turnScalar = Constants.kDrivetrain.ELEV_TURN_SCALAR;
-		else
-			turnScalar = 1;
-
-		double[] temp = arcadeToLR(move * Robot.elevator.getPercentageModify() * mModifyPercent,
-				rotate * mModifyPercent * Robot.elevator.getPercentageModify() * turnScalar);
+		double[] temp = arcadeToLR(move * mModifyPercent,
+				rotate * mModifyPercent );
 
 		mIO.left_desired_output = temp[0];
 		mIO.right_desired_output = temp[1];
@@ -508,8 +518,8 @@ public class Drive extends GZSubsystem {
 
 	public synchronized void tank(double left, double right) {
 		setWantedState(DriveState.OPEN_LOOP);
-		mIO.left_desired_output = left * Robot.elevator.getPercentageModify() * mModifyPercent;
-		mIO.right_desired_output = right * Robot.elevator.getPercentageModify() * mModifyPercent;
+		mIO.left_desired_output = left * Elevator.getInstance().getPercentageModify() * mModifyPercent;
+		mIO.right_desired_output = right * Elevator.getInstance().getPercentageModify() * mModifyPercent;
 	}
 
 	public synchronized void tank(GZJoystick joy) {
@@ -694,38 +704,38 @@ public class Drive extends GZSubsystem {
 	 * @since 4-22-2018
 	 */
 	public synchronized void motionProfileToTalons() {
-		if (Robot.files.mpL.size() != Robot.files.mpR.size())
-			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + Robot.files.mpL.size() + "\t\t"
-					+ Robot.files.mpR.size());
+		if (Files.getInstance().mpL.size() != Files.getInstance().mpR.size())
+			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + Files.getInstance().mpL.size() + "\t\t"
+					+ Files.getInstance().mpR.size());
 
-		processMotionProfileBuffer((double) Robot.files.mpDur / (1000 * 2));
+		processMotionProfileBuffer((double) Files.getInstance().mpDur / (1000 * 2));
 
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
 
 		// set talon srx
-		L1.configMotionProfileTrajectoryPeriod(Robot.files.mpDur, 10);
-		R1.configMotionProfileTrajectoryPeriod(Robot.files.mpDur, 10);
-		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Robot.files.mpDur, 10);
-		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Robot.files.mpDur, 10);
+		L1.configMotionProfileTrajectoryPeriod(Files.getInstance().mpDur, 10);
+		R1.configMotionProfileTrajectoryPeriod(Files.getInstance().mpDur, 10);
+		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Files.getInstance().mpDur, 10);
+		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Files.getInstance().mpDur, 10);
 
 		L1.clearMotionProfileTrajectories();
 		R1.clearMotionProfileTrajectories();
 
 		// generate and push each mp point
-		if (Robot.files.mpL.size() != Robot.files.mpR.size()) {
+		if (Files.getInstance().mpL.size() != Files.getInstance().mpR.size()) {
 			System.out.println("Motion profile lists not same size!!!");
 		} else {
-			for (int i = 0; i < Robot.files.mpL.size(); i++) {
+			for (int i = 0; i < Files.getInstance().mpL.size(); i++) {
 
-				leftPoint.position = Robot.files.mpL.get(i).get(0) * 4096;
-				leftPoint.velocity = Robot.files.mpL.get(i).get(1) * 4096;
+				leftPoint.position = Files.getInstance().mpL.get(i).get(0) * 4096;
+				leftPoint.velocity = Files.getInstance().mpL.get(i).get(1) * 4096;
 
-				rightPoint.position = Robot.files.mpR.get(i).get(0) * -4096;
-				rightPoint.velocity = Robot.files.mpR.get(i).get(1) * -4096;
+				rightPoint.position = Files.getInstance().mpR.get(i).get(0) * -4096;
+				rightPoint.velocity = Files.getInstance().mpR.get(i).get(1) * -4096;
 
-				leftPoint.timeDur = GetTrajectoryDuration(Robot.files.mpDur);
-				rightPoint.timeDur = GetTrajectoryDuration(Robot.files.mpDur);
+				leftPoint.timeDur = GetTrajectoryDuration(Files.getInstance().mpDur);
+				rightPoint.timeDur = GetTrajectoryDuration(Files.getInstance().mpDur);
 
 				leftPoint.headingDeg = 0;
 				rightPoint.headingDeg = 0;
@@ -747,7 +757,7 @@ public class Drive extends GZSubsystem {
 				leftPoint.isLastPoint = false;
 				rightPoint.isLastPoint = false;
 
-				if ((i + 1) == Robot.files.mpL.size()) {
+				if ((i + 1) == Files.getInstance().mpL.size()) {
 					leftPoint.isLastPoint = true;
 					rightPoint.isLastPoint = true;
 				}

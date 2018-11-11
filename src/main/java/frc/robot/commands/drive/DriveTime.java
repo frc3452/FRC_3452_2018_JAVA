@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.command.Command;
 public class DriveTime extends Command {
 	private double m_speed, m_rotate, m_time;
 
+	private Drive drive = Drive.getInstance();
+
 	/**
 	 * @author macco
 	 * @param speed
@@ -16,7 +18,7 @@ public class DriveTime extends Command {
 	 * @see Drive
 	 */
 	public DriveTime(double speed, double rotate, double time) {
-		requires(Robot.drive);
+		requires(drive);
 		m_speed = speed;
 		m_rotate = rotate;
 		m_time = time;
@@ -27,14 +29,17 @@ public class DriveTime extends Command {
 	}
 
 	protected void execute() {
-		Robot.drive.arcade(m_speed, m_rotate);
+		drive.arcade(m_speed, m_rotate);
 	}
+
 	protected boolean isFinished() {
 		return isTimedOut();
 	}
+
 	protected void end() {
-		Robot.drive.stop();
+		drive.stop();
 	}
+
 	protected void interrupted() {
 		end();
 	}

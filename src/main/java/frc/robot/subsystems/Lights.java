@@ -35,16 +35,17 @@ public class Lights extends GZSubsystem {
 
 	private double tempArray[] = new double[10];
 
-	/**
-	 * hardware initialization
-	 * 
-	 * @author max
-	 */
-	public Lights() {
+	private static Lights mInstance = null;
 
+	public synchronized static Lights getInstance() {
+		if (mInstance == null)
+			mInstance = new Lights();
+
+		return mInstance;
 	}
 
-	public synchronized void construct() {
+	private Lights() {
+
 		for (int i = 0; i < 10; i++)
 			tempArray[i] = 3452;
 
@@ -64,9 +65,11 @@ public class Lights extends GZSubsystem {
 
 	@Override
 	public void loop() {
+		GZOI gzOI = GZOI.getInstance();
+
 		outputSmartDashboard();
 
-		if (!Robot.gzOI.isSafteyDisabled()) {
+		if (!gzOI.isSafteyDisabled()) {
 
 			if (GZOI.driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
 				readyForMatch = true;
@@ -74,17 +77,17 @@ public class Lights extends GZSubsystem {
 			if (GZOI.driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.B, Buttons.START)))
 				readyForMatch = false;
 
-			if (Robot.gzOI.isTele()) {
+			if (gzOI.isTele()) {
 
 				hsv(kLights.GREEN, 1, .5);
 
-			} else if (Robot.gzOI.isAuto()) {
+			} else if (gzOI.isAuto()) {
 
-				hsv(Robot.gzOI.isRed() ? kLights.RED : kLights.BLUE, 1, .5);
+				hsv(gzOI.isRed() ? kLights.RED : kLights.BLUE, 1, .5);
 
-			} else if (Robot.gzOI.isDisabled()) {
+			} else if (gzOI.isDisabled()) {
 
-				switch (Robot.auton.uglyAnalog()) {
+				switch (Auton.getInstance().uglyAnalog()) {
 				case 100:
 
 					// OFF

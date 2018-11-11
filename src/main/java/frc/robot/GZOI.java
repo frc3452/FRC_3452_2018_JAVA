@@ -1,17 +1,20 @@
 package frc.robot;
 
-import java.util.Arrays;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.kElevator;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kOI;
+import frc.robot.subsystems.Auton;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveState;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ESO;
 import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.util.GZJoystick;
 import frc.robot.util.GZJoystick.Buttons;
@@ -28,11 +31,21 @@ public class GZOI extends GZSubsystem {
 	private LatchedBoolean mUserButton = new LatchedBoolean();
 	private boolean mSafteyDisable = false;
 
-	public GZOI() {
+	private Drive drive = Drive.getInstance();
+	private Elevator elev = Elevator.getInstance();
+	private Intake intake = Intake.getInstance();
+	private Climber climber = Climber.getInstance();
 
+	private static GZOI mInstance = null;
+
+	public static GZOI getInstance() {
+		if (mInstance == null)
+			mInstance = new GZOI();
+
+		return mInstance;
 	}
 
-	public synchronized void construct() {
+	private GZOI() {
 		driverJoy = new GZJoystick(0);
 		opJoy = new GZJoystick(1);
 	}
@@ -52,75 +65,75 @@ public class GZOI extends GZSubsystem {
 			mSafteyDisable = false;
 		else if (mUserButton.update(RobotController.getUserButton()))
 			mSafteyDisable = !mSafteyDisable;
-		
+
 		Robot.allSubsystems.disable(mSafteyDisable);
-		
+
 		// if (driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.RB,
 		// Buttons.LEFT_CLICK)))
 		// Robot.auton.crash();
 
 		if (isTele()) {
-			Robot.drive.setWantedState(DriveState.OPEN_LOOP_DRIVER);
+			Drive.getInstance().setWantedState(DriveState.OPEN_LOOP_DRIVER);
 
 			// OVERRIDES, ETC.
 			if (driverJoy.isAPressed())
-				Robot.drive.slowSpeed(!Robot.drive.isSlow());
+				drive.slowSpeed(!drive.isSlow());
 			if (driverJoy.isBackPressed())
-				Robot.elevator.setSpeedLimitingOverride(ESO.TOGGLE);
+				elev.setSpeedLimitingOverride(ESO.TOGGLE);
 			if (opJoy.isRClickPressed())
-				Robot.elevator.overrideLimit(!Robot.elevator.isLimitOverriden());
+				elev.overrideLimit(!elev.isLimitOverriden());
 
 			// CLIMBER
 			if (driverJoy.isYPressed())
-				Robot.climber.addClimberCounter();
+				climber.addClimberCounter();
 			if (driverJoy.getRawButton(Buttons.Y))
-				Robot.climber.runClimber(1);
+				climber.runClimber(1);
 			else
-				Robot.climber.stop();
+				climber.stop();
 
 			// ELEVATOR OPERATOR
 			if (opJoy.getRawButton(Buttons.LB))
-				Robot.elevator.manualJoystick(opJoy);
+				elev.manualJoystick(opJoy);
 			else if (driverJoy.getRawButton(Buttons.RB))
-				Robot.elevator.manualJoystick(driverJoy);
+				elev.manualJoystick(driverJoy);
 			else if (opJoy.isDDownPressed())
-				Robot.elevator.setHeight(kElevator.HeightsInches.Floor);
+				elev.setHeight(kElevator.HeightsInches.Floor);
 			else if (opJoy.isDRightPressed())
-				Robot.elevator.setHeight(kElevator.HeightsInches.Switch);
+				elev.setHeight(kElevator.HeightsInches.Switch);
 			// ELEVATOR DRIVER
 			else if (driverJoy.isDDownPressed())
-				Robot.elevator.setHeight(kElevator.HeightsInches.Floor);
+				elev.setHeight(kElevator.HeightsInches.Floor);
 			else if (driverJoy.isDLeftPressed())
-				Robot.elevator.setHeight(kElevator.HeightsInches.Scale);
+				elev.setHeight(kElevator.HeightsInches.Scale);
 			else if (driverJoy.isDRightPressed())
-				Robot.elevator.setHeight(kElevator.HeightsInches.Switch);
-			else if (Robot.elevator.getState() != ElevatorState.POSITION)
-				Robot.elevator.stop();
+				elev.setHeight(kElevator.HeightsInches.Switch);
+			else if (elev.getState() != ElevatorState.POSITION)
+				elev.stop();
 
 			// INTAKE OPERATOR
 			if (opJoy.getRawButton(Buttons.X))
-				Robot.intake.manual(kIntake.Speeds.INTAKE);
+				intake.manual(kIntake.Speeds.INTAKE);
 			else if (opJoy.getRawButton(Buttons.Y))
-				Robot.intake.manual(kIntake.Speeds.SLOW);
+				intake.manual(kIntake.Speeds.SLOW);
 			else if (opJoy.getRawButton(Buttons.B))
-				Robot.intake.manual(kIntake.Speeds.SHOOT);
+				intake.manual(kIntake.Speeds.SHOOT);
 			else if (opJoy.getRawButton(Buttons.A))
-				Robot.intake.manual(kIntake.Speeds.PLACE);
+				intake.manual(kIntake.Speeds.PLACE);
 			else if (opJoy.getRawButton(Buttons.BACK))
-				Robot.intake.spin(false);
+				intake.spin(false);
 			else if (opJoy.getRawButton(Buttons.START))
-				Robot.intake.spin(true);
+				intake.spin(true);
 			// INTAKE DRIVER
 			else if (driverJoy.getRawButton(Buttons.X))
-				Robot.intake.manual(kIntake.Speeds.INTAKE);
+				intake.manual(kIntake.Speeds.INTAKE);
 			else if (driverJoy.getRawButton(Buttons.B))
-				Robot.intake.manual(kIntake.Speeds.SHOOT);
+				intake.manual(kIntake.Speeds.SHOOT);
 			else if (driverJoy.getDUp())
-				Robot.intake.manual(kIntake.Speeds.SLOW);
+				intake.manual(kIntake.Speeds.SLOW);
 			else if (driverJoy.getRawButton(Buttons.RIGHT_CLICK))
-				Robot.intake.spin(true);
+				intake.spin(true);
 			else
-				Robot.intake.stop();
+				intake.stop();
 		}
 
 		// CONTROLLER RUMBLE
@@ -130,15 +143,15 @@ public class GZOI extends GZSubsystem {
 			rumble(kOI.Rumble.ENDGAME);
 
 		// LIMITING
-		else if (Robot.elevator.isSpeedOverriden() || Robot.elevator.isLimitOverriden()) {
+		else if (elev.isSpeedOverriden() || elev.isLimitOverriden()) {
 
-			if (Robot.elevator.isSpeedOverriden()) {
+			if (elev.isSpeedOverriden()) {
 				driverJoy.rumble(kOI.Rumble.ELEVATOR_SPEED_OVERRIDE_DRIVE);
-			} else if (Robot.elevator.isLimitOverriden())
+			} else if (elev.isLimitOverriden())
 				opJoy.rumble(kOI.Rumble.ELEVATOR_LIMIT_OVERRIDE);
 
 			// INTAKE
-		} else if (Robot.intake.stateNot(IntakeState.NEUTRAL) && !isAuto())
+		} else if (intake.stateNot(IntakeState.NEUTRAL) && !isAuto())
 			rumble(kOI.Rumble.INTAKE);
 		else
 			rumble(0);
@@ -150,8 +163,8 @@ public class GZOI extends GZSubsystem {
 
 	@Override
 	public void outputSmartDashboard() {
-		SmartDashboard.putString("Selected Auton", Robot.auton.getAutonString());
-		SmartDashboard.putString("FIELD DATA", Robot.auton.gsm());
+		SmartDashboard.putString("Selected Auton", Auton.getInstance().getAutonString());
+		SmartDashboard.putString("FIELD DATA", Auton.getInstance().gsm());
 	}
 
 	private static void rumble(double intensity) {

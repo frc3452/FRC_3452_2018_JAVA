@@ -38,10 +38,17 @@ public class Elevator extends GZSubsystem {
 	private boolean mLimitOverride = false;
 	private boolean mLimiting = false;
 
-	public Elevator() {
+	private static Elevator mInstance = null;
+
+	public synchronized static Elevator getInstance()
+	{
+		if (mInstance == null)
+			mInstance = new Elevator();
+
+		return mInstance;
 	}
 
-	public synchronized void construct() {
+	private Elevator() {
 		elevator_1 = new GZSRX(kElevator.E_1, Breaker.AMP_40, Master.MASTER);
 		elevator_2 = new GZSRX(kElevator.E_2, Breaker.AMP_40, Master.FOLLOWER);
 
@@ -64,7 +71,7 @@ public class Elevator extends GZSubsystem {
 				"Could not set 'I' gain");
 		GZSRX.logError(elevator_1.config_kD(0, kElevator.PID.D, 10), this, AlertLevel.WARNING,
 				"Could not set 'D' gain");
-		GZSRX.logError(elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10), Robot.elevator,
+		GZSRX.logError(elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10), this,
 				AlertLevel.WARNING, "Could not set open loop ramp");
 		GZSRX.logError(elevator_1.configClosedloopRamp(Constants.kElevator.CLOSED_RAMP_TIME, 10), this,
 				AlertLevel.WARNING, "Could not set closed loop ramp");
@@ -104,11 +111,11 @@ public class Elevator extends GZSubsystem {
 
 		in();
 		if (getTopLimit() && getBottomLimit())
-			Robot.health.addAlert(this, AlertLevel.ERROR, "Both limit switches tripped");
+			Health.getInstance().addAlert(this, AlertLevel.ERROR, "Both limit switches tripped");
 		if (!getBottomLimit())
-			Robot.health.addAlert(this, AlertLevel.WARNING, "Bottom limit not tripped.");
+			Health.getInstance().addAlert(this, AlertLevel.WARNING, "Bottom limit not tripped.");
 		if (!mIO.encoderValid)
-			Robot.health.addAlert(this, AlertLevel.ERROR, "Encoder not detected");
+			Health.getInstance().addAlert(this, AlertLevel.ERROR, "Encoder not detected");
 
 		overrideLimit(false);
 
@@ -316,7 +323,7 @@ public class Elevator extends GZSubsystem {
 	private synchronized void handleStates() {
 		// Dont allow Disabled or Demo while on the field
 		boolean neutral = false;
-		neutral |= this.isDisabed() && !Robot.gzOI.isFMS();
+		neutral |= this.isDisabed() && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == ElevatorState.NEUTRAL;
 		neutral |= (mState.usesClosedLoop || mWantedState.usesClosedLoop) && !mIO.encoderValid;
 
@@ -324,7 +331,7 @@ public class Elevator extends GZSubsystem {
 
 			switchToState(ElevatorState.NEUTRAL);
 
-		} else if (Robot.auton.isDemo() && !Robot.gzOI.isFMS()) {
+		} else if (Auton.getInstance().isDemo() && !GZOI.getInstance().isFMS()) {
 
 			switchToState(ElevatorState.DEMO);
 
@@ -362,7 +369,7 @@ public class Elevator extends GZSubsystem {
 		Double pos = getRotations();
 
 		// if not in demo and not overriding, limit
-		if (!Robot.auton.isDemo() && !isSpeedOverriden()) {
+		if (!Auton.getInstance().isDemo() && !isSpeedOverriden()) {
 
 			mLimiting = true;
 
@@ -383,8 +390,7 @@ public class Elevator extends GZSubsystem {
 		}
 	}
 
-	public synchronized boolean isLimiting()
-	{
+	public synchronized boolean isLimiting() {
 		return mLimiting;
 	}
 

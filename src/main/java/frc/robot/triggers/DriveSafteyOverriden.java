@@ -15,6 +15,6 @@ public class DriveSafteyOverriden extends Trigger {
 
 	@Override
 	public boolean get() {
-		return Robot.elevator.isSpeedOverriden();
+		return Elevator.getInstance().isSpeedOverriden();
 	}
 }

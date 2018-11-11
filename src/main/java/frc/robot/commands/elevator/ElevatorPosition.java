@@ -11,6 +11,8 @@ public class ElevatorPosition extends Command {
 	private double m_value;
 //	private boolean l_rev = false, l_fwd = false;
 
+private Elevator elevator = Elevator.getInstance();
+
 	/**
 	 * Encoder movement of elevator
 	 * 
@@ -19,7 +21,7 @@ public class ElevatorPosition extends Command {
 	 * @see Elevator
 	 */
 	public ElevatorPosition(double value) {
-		requires(Robot.elevator);
+		requires(elevator);
 
 		m_value = value;
 	}
@@ -29,15 +31,15 @@ public class ElevatorPosition extends Command {
 	}
 
 	protected void execute() {
-		Robot.elevator.setHeight(m_value);
+		elevator.setHeight(m_value);
 	}
 
 	protected boolean isFinished() {
-		return Robot.elevator.isEncoderMovementDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
+		return elevator.isEncoderMovementDone(kElevator.CLOSED_COMPLETION) || isTimedOut();
 	}
 
 	protected void end() {
-		Robot.elevator.stop();
+		elevator.stop();
 	}
 
 	protected void interrupted() {

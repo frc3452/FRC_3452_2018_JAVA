@@ -9,6 +9,8 @@ public class EncoderGyro extends Command {
 
 	private double l_pos, r_pos, l_accel, r_accel, m_speed, c_gyro, t_gyro, k;
 
+	private Drive drive = Drive.getInstance();
+
 	/**
 	 * Encoder drive with gyro correction
 	 * 
@@ -24,7 +26,7 @@ public class EncoderGyro extends Command {
 	 */
 	public EncoderGyro(double leftpos, double rightpos, double leftaccel, double rightaccel, double speed, double angle,
 			double constant) {
-		requires(Robot.drive);
+		requires(drive);
 
 		l_pos = leftpos;
 		r_pos = rightpos;
@@ -41,26 +43,26 @@ public class EncoderGyro extends Command {
 	}
 
 	protected void execute() {
-		c_gyro = Robot.drive.getGyroAngle();
+		c_gyro = drive.getGyroAngle();
 
 		if (c_gyro < t_gyro + .4 && c_gyro > t_gyro - .4)
-			Robot.drive.motionMagic(l_pos, r_pos, l_accel, r_accel, m_speed, m_speed);
+			drive.motionMagic(l_pos, r_pos, l_accel, r_accel, m_speed, m_speed);
 
 		else if (c_gyro > t_gyro)
-			Robot.drive.motionMagic(l_pos, r_pos, l_accel, r_accel, m_speed * (1 - (k * Math.abs(c_gyro - t_gyro))),
+			drive.motionMagic(l_pos, r_pos, l_accel, r_accel, m_speed * (1 - (k * Math.abs(c_gyro - t_gyro))),
 					m_speed);
 
 		else if (c_gyro < t_gyro)
-			Robot.drive.motionMagic(l_pos, r_pos, l_accel, r_accel, m_speed,
+			drive.motionMagic(l_pos, r_pos, l_accel, r_accel, m_speed,
 					m_speed * (1 - (k * Math.abs(c_gyro - t_gyro))));
 	}
 
 	protected boolean isFinished() {
-		return Robot.drive.encoderIsDoneEither(1.3) || isTimedOut();
+		return drive.encoderIsDoneEither(1.3) || isTimedOut();
 	}
 
 	protected void end() {
-		Robot.drive.stop();
+		drive.stop();
 	}
 
 	protected void interrupted() {

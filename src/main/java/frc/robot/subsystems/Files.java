@@ -32,8 +32,6 @@ public class Files {
 	private Scanner scnr;
 	private BufferedWriter bw;
 
-	public GZLog mLog;
-
 	private String prevLog = "Empty";
 
 	private boolean hasPrintedLogFailed = false;
@@ -41,17 +39,25 @@ public class Files {
 
 	private boolean isLogging = false;
 
+	private static Files mInstance = null;
+
+	public static synchronized Files getInstance(){
+		if (mInstance == null)
+			mInstance = new Files();
+		
+		return mInstance;
+	}
+
 	/**
 	 * hardware initialization
 	 * 
 	 * @author max
 	 */
-	public Files() {
-		mLog = new GZLog();
+	private Files() {
 	}
 	
 	public void fillLogger(){
-		mLog.fillLogger();
+		GZLog.getInstance().fillLogger();
 	}
 
 	private void parseMotionProfileCSV() {
@@ -145,11 +151,11 @@ public class Files {
 			try {
 				// populate position and speed values
 				// WRITE PROFILES IN TICKS,
-				double leftPos = Robot.drive.getLeftRotations();
-				double leftSpeed = Robot.drive.getLeftVel();
+				double leftPos = Drive.getInstance().getLeftRotations();
+				double leftSpeed = Drive.getInstance().getLeftVel();
 
-				double rightPos = Robot.drive.getRightRotations();
-				double rightSpeed = Robot.drive.getRightVel();
+				double rightPos = Drive.getInstance().getRightRotations();
+				double rightSpeed = Drive.getInstance().getRightVel();
 
 				// write values
 				bw.write(String.valueOf(leftPos + ","));
@@ -182,9 +188,9 @@ public class Files {
 		try {
 			// ON STARTUP, PRINT NAMES
 			if (startup) {
-				bw.write(mLog.getHeader());
+				bw.write(GZLog.getInstance().getHeader());
 				bw.write("\r\n");
-				bw.write(mLog.getFunctions());
+				bw.write(GZLog.getInstance().getFunctions());
 				bw.write("\r\n");
 
 				logging.startPeriodic(kFileManagement.LOGGING_SPEED);
@@ -210,7 +216,7 @@ public class Files {
 		@Override
 		public void run() {
 			try {
-				bw.write(mLog.getLog());
+				bw.write(GZLog.getInstance().getLog());
 				bw.write("\r\n");
 
 			} catch (Exception e) {

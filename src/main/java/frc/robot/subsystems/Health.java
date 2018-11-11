@@ -15,24 +15,33 @@ public class Health {
 
 	private Map<GZSubsystem, ArrayList<ArrayList<String>>> map = new HashMap<>();
 
-	public Health() {
+	private static Health mInstance = null;
 
-		for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
-			ArrayList<String> temp1 = new ArrayList<>();
-			temp1.add(AlertLevel.NONE.stringValue);
-			temp1.add("NA");
+	private Health() {
+		
+	}
 
-			ArrayList<ArrayList<String>> temp2 = new ArrayList<ArrayList<String>>();
-			temp2.add(temp1);
-
-			map.put(s, temp2);
-		}
+	public synchronized static Health getInstance() {
+		if (mInstance == null)
+			mInstance = new Health();
+		return mInstance;
 	}
 
 	public void addAlert(GZSubsystem subsystem, AlertLevel level, String message) {
 		ArrayList<String> temp = new ArrayList<>();
 		temp.add(level.stringValue);
 		temp.add(message);
+
+		if (!(map.containsKey(subsystem))) {
+			ArrayList<String> temp1 = new ArrayList<>();
+			temp1.add(AlertLevel.NONE.stringValue);
+			temp1.add("NA");
+
+			ArrayList<ArrayList<String>> temp2 = new ArrayList<ArrayList<String>>();
+			temp2.add(temp1);
+			map.put(subsystem, temp2);
+		}
+
 		map.get(subsystem).add(temp);
 	}
 
@@ -41,8 +50,11 @@ public class Health {
 			String htmlString = base_file;
 			String body = "", table = "";
 
-			// Find highest alert level per subsystem
+			//Make sure map has every subsystem in it
+			for (GZSubsystem s : Robot.allSubsystems.getSubsystems())
+				this.addAlert(s, AlertLevel.NONE, "NA");
 
+			// Find highest alert level per subsystem
 			// Loop through each subsystem
 			for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
 				// Loop through all errors
@@ -92,7 +104,8 @@ public class Health {
 					// Loop through errors twice, once for errors and once for warnings
 					// This prints errors first, then warnings
 					for (int errrorLoop = 0; errrorLoop < 2; errrorLoop++)
-						for (int allErrorsForSubsystem = 0; allErrorsForSubsystem < map.get(s).size(); allErrorsForSubsystem++) {
+						for (int allErrorsForSubsystem = 0; allErrorsForSubsystem < map.get(s)
+								.size(); allErrorsForSubsystem++) {
 
 							// Store current error
 							ArrayList<String> error = map.get(s).get(allErrorsForSubsystem);

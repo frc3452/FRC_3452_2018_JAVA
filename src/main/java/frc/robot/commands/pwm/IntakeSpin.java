@@ -9,6 +9,8 @@ public class IntakeSpin extends Command {
 
 	private boolean m_clockwise;
 
+	private Intake intake = Intake.getInstance();
+
 	/**
 	 * @author macco
 	 * @param speed
@@ -16,7 +18,7 @@ public class IntakeSpin extends Command {
 	 * @see Intake
 	 */
 	public IntakeSpin(boolean clockwise) {
-		requires(Robot.intake);
+		requires(intake);
 
 		m_clockwise = clockwise;
 	}
@@ -25,7 +27,7 @@ public class IntakeSpin extends Command {
 	}
 
 	protected void execute() {
-		Robot.intake.spin(m_clockwise);
+		intake.spin(m_clockwise);
 	}
 
 	protected boolean isFinished() {
@@ -33,7 +35,7 @@ public class IntakeSpin extends Command {
 	}
 
 	protected void end() {
-		Robot.intake.stop();
+		intake.stop();
 	}
 
 	protected void interrupted() {

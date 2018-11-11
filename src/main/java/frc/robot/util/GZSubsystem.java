@@ -11,8 +11,6 @@ public abstract class GZSubsystem extends Subsystem {
 	// Set to neutral
 	public abstract void stop();
 
-	public abstract void construct();
-
 	private AlertLevel mHighestAlert = AlertLevel.NONE;
 
 	// IO class
