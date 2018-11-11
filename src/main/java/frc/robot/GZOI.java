@@ -38,8 +38,7 @@ public class GZOI extends GZSubsystem {
 
 	private static GZOI mInstance = null;
 
-	public static GZOI getInstance()
-	{
+	public static GZOI getInstance() {
 		if (mInstance == null)
 			mInstance = new GZOI();
 
@@ -66,9 +65,9 @@ public class GZOI extends GZSubsystem {
 			mSafteyDisable = false;
 		else if (mUserButton.update(RobotController.getUserButton()))
 			mSafteyDisable = !mSafteyDisable;
-		
+
 		Robot.allSubsystems.disable(mSafteyDisable);
-		
+
 		// if (driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.RB,
 		// Buttons.LEFT_CLICK)))
 		// Robot.auton.crash();

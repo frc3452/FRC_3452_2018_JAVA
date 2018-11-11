@@ -40,8 +40,6 @@ public class Elevator extends GZSubsystem {
 
 	private static Elevator mInstance = null;
 
-	private GZOI gzOI = GZOI.getInstance();
-
 	public synchronized static Elevator getInstance()
 	{
 		if (mInstance == null)
@@ -325,7 +323,7 @@ public class Elevator extends GZSubsystem {
 	private synchronized void handleStates() {
 		// Dont allow Disabled or Demo while on the field
 		boolean neutral = false;
-		neutral |= this.isDisabed() && !gzOI.isFMS();
+		neutral |= this.isDisabed() && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == ElevatorState.NEUTRAL;
 		neutral |= (mState.usesClosedLoop || mWantedState.usesClosedLoop) && !mIO.encoderValid;
 
@@ -333,7 +331,7 @@ public class Elevator extends GZSubsystem {
 
 			switchToState(ElevatorState.NEUTRAL);
 
-		} else if (Auton.getInstance().isDemo() && !gzOI.isFMS()) {
+		} else if (Auton.getInstance().isDemo() && !GZOI.getInstance().isFMS()) {
 
 			switchToState(ElevatorState.DEMO);
 

@@ -18,12 +18,15 @@ import frc.robot.util.GZSubsystemManager;
 public class Robot extends TimedRobot {
 	//Force construction of files first
 	private Files files = Files.getInstance();
-	private Health health = Health.getInstance();
-	private Auton auton = Auton.getInstance();
 
+	
 	public static final GZSubsystemManager allSubsystems = new GZSubsystemManager(
 			Arrays.asList(Drive.getInstance(), Elevator.getInstance(), Intake.getInstance(), Climber.getInstance(),
 					Lights.getInstance(), GZOI.getInstance()));
+	
+	private Health health = Health.getInstance();
+	private Auton auton = Auton.getInstance();
+
 
 	// LOGGING CONTROL
 	private final boolean logging = true, logToUsb = true;

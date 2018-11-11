@@ -53,8 +53,6 @@ public class Drive extends GZSubsystem {
 	private double mPercentageComplete = 0;
 	private double mLeft_target = 0, mRight_target = 0;
 
-	private GZOI gzOI = GZOI.getInstance();
-
 	private static Drive mInstance = null;
 
 	public synchronized static Drive getInstance()
@@ -192,6 +190,8 @@ public class Drive extends GZSubsystem {
 	}
 
 	private synchronized void handleStates() {
+		GZOI gzOI = GZOI.getInstance();
+
 		boolean neutral = false;
 		neutral |= this.isDisabed() && !gzOI.isFMS();
 		neutral |= mWantedState == DriveState.NEUTRAL;
@@ -300,7 +300,7 @@ public class Drive extends GZSubsystem {
 			brake(NeutralMode.Brake);
 			break;
 		case NEUTRAL:
-			brake(gzOI.wasTele() ? NeutralMode.Brake : NeutralMode.Coast);
+			brake(GZOI.getInstance().wasTele() ? NeutralMode.Brake : NeutralMode.Coast);
 			break;
 		case OPEN_LOOP:
 			brake(NeutralMode.Brake);

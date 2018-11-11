@@ -35,8 +35,6 @@ public class Lights extends GZSubsystem {
 
 	private double tempArray[] = new double[10];
 
-	private GZOI gzOI = GZOI.getInstance();
-
 	private static Lights mInstance = null;
 
 	public synchronized static Lights getInstance() {
@@ -67,6 +65,8 @@ public class Lights extends GZSubsystem {
 
 	@Override
 	public void loop() {
+		GZOI gzOI = GZOI.getInstance();
+
 		outputSmartDashboard();
 
 		if (!gzOI.isSafteyDisabled()) {

@@ -18,10 +18,10 @@ public class Health {
 	private static Health mInstance = null;
 
 	private Health() {
+		
 	}
 
-	public synchronized static Health getInstance()
-	{
+	public synchronized static Health getInstance() {
 		if (mInstance == null)
 			mInstance = new Health();
 		return mInstance;
@@ -31,7 +31,8 @@ public class Health {
 		ArrayList<String> temp = new ArrayList<>();
 		temp.add(level.stringValue);
 		temp.add(message);
-		if (!map.containsKey(subsystem)){
+
+		if (!(map.containsKey(subsystem))) {
 			ArrayList<String> temp1 = new ArrayList<>();
 			temp1.add(AlertLevel.NONE.stringValue);
 			temp1.add("NA");
@@ -40,6 +41,7 @@ public class Health {
 			temp2.add(temp1);
 			map.put(subsystem, temp2);
 		}
+
 		map.get(subsystem).add(temp);
 	}
 
@@ -48,8 +50,11 @@ public class Health {
 			String htmlString = base_file;
 			String body = "", table = "";
 
-			// Find highest alert level per subsystem
+			//Make sure map has every subsystem in it
+			for (GZSubsystem s : Robot.allSubsystems.getSubsystems())
+				this.addAlert(s, AlertLevel.NONE, "NA");
 
+			// Find highest alert level per subsystem
 			// Loop through each subsystem
 			for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
 				// Loop through all errors
@@ -99,7 +104,8 @@ public class Health {
 					// Loop through errors twice, once for errors and once for warnings
 					// This prints errors first, then warnings
 					for (int errrorLoop = 0; errrorLoop < 2; errrorLoop++)
-						for (int allErrorsForSubsystem = 0; allErrorsForSubsystem < map.get(s).size(); allErrorsForSubsystem++) {
+						for (int allErrorsForSubsystem = 0; allErrorsForSubsystem < map.get(s)
+								.size(); allErrorsForSubsystem++) {
 
 							// Store current error
 							ArrayList<String> error = map.get(s).get(allErrorsForSubsystem);
