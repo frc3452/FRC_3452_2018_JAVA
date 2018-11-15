@@ -19,11 +19,11 @@ public class Util {
 			"CL", "CM", "CN", "CO", "CP", "CQ", "CR", "CS", "CT", "CU", "CV", "CW", "CX", "CY", "CZ", "DA", "DB", "DC",
 			"DD", "DE", "DF", "DG", "DH", "DI", "DJ", "DK", "DL", "DM", "DN", };
 
-	int scaleBetween(int unscaledNum, int minAllowed, int maxAllowed, int min, int max) {
+	public static int scaleBetween(int unscaledNum, int minAllowed, int maxAllowed, int min, int max) {
 		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 	}
 
-	double scaleBetween(double unscaledNum, double minAllowed, double maxAllowed, double min, double max) {
+	public static double scaleBetween(double unscaledNum, double minAllowed, double maxAllowed, double min, double max) {
 		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 	}
 
