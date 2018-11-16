@@ -28,7 +28,7 @@ public class Drive extends GZSubsystem {
 	private PowerDistributionPanel pdp = new PowerDistributionPanel(0);
 
 	// DRIVETRAIN
-	private GZSRX L1, L2, R1, R2;
+	private GZSRX L1, L2, L3, L4, R1, R2, R3, R4;
 	private DifferentialDrive mDrive;
 	private List<GZSRX> controllers;
 
@@ -41,13 +41,17 @@ public class Drive extends GZSubsystem {
 	public synchronized void construct() {
 		L1 = new GZSRX(this, kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
 		L2 = new GZSRX(this, kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
+		L3 = new GZSRX(this, kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
+		L4 = new GZSRX(this, kDrivetrain.L4, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
 
 		R1 = new GZSRX(this, kDrivetrain.R1, Breaker.AMP_40, Side.RIGHT, Master.MASTER);
 		R2 = new GZSRX(this, kDrivetrain.R2, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
+		R3 = new GZSRX(this, kDrivetrain.R3, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
+		R4 = new GZSRX(this, kDrivetrain.R4, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
 
 		mDrive = new DifferentialDrive(L1, R1);
 
-		controllers = Arrays.asList(L1, L2, R1, R2);
+		controllers = Arrays.asList(L1, L2, L3, L4, R1, R2, R3, R4);
 
 		brake(NeutralMode.Coast);
 
@@ -197,11 +201,10 @@ public class Drive extends GZSubsystem {
 
 	public Double getRightVel() {
 		return -Units.ticks_to_rotations(mIO.right_encoder_vel);
-
 	}
 
 	public synchronized void arcade(GZJoystick joy) {
-		arcade(joy.getLeftAnalogY(), (joy.getLeftTrigger() - joy.getRightTrigger()) * .8);
+		arcade(joy.getLeftAnalogY(), (joy.getRightTrigger() - joy.getLeftTrigger()) * .8);
 	}
 
 	// called in DEMO state

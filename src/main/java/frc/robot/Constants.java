@@ -12,10 +12,10 @@ public class Constants {
 	public class kDrivetrain {
 		public final static int FIRMWARE_VERSION = 0;
 
-		public final static int L1 = 1, L2 = 2;
-		public final static int R1 = 3, R2 = 4;
+		public final static int L1 = 1, L2 = 2, L3 = 3, L4 = 4;
+		public final static int R1 = 5, R2 = 6, R3 = 7, R4 = 8;
 
-		public final static boolean L_INVERT = true;
+		public final static boolean L_INVERT = false;
 		public final static boolean R_INVERT = true;
 		public final static int AMP_40_TRIGGER = 60, AMP_40_LIMIT = 30, AMP_40_TIME = 4000;
 
