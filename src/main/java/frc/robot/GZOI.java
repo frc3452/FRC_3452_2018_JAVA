@@ -20,7 +20,7 @@ import frc.robot.util.GZJoystick;
 import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.LatchedBoolean;
-import frc.robot.util.Util;
+import frc.robot.util.GZUtil;
 
 public class GZOI extends GZSubsystem {
 	public static GZJoystick driverJoy = new GZJoystick(0);
@@ -138,7 +138,7 @@ public class GZOI extends GZSubsystem {
 
 		// CONTROLLER RUMBLE
 
-		if (Util.between(getMatchTime(), 29.1, 30))
+		if (GZUtil.between(getMatchTime(), 29.1, 30))
 			// ENDGAME
 			rumble(kOI.Rumble.ENDGAME);
 

@@ -7,7 +7,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import frc.robot.util.Util;
+import frc.robot.util.GZUtil;
 
 public class GZLog {
 
@@ -499,7 +499,7 @@ public class GZLog {
 
 	public String getHeader() {
 		String retval = "";
-		retval += Util.dateTime(false);
+		retval += GZUtil.dateTime(false);
 
 		for (LogItem item : values) {
 			retval += ("," + item.getHeader());
@@ -527,8 +527,8 @@ public class GZLog {
 				try {
 					// Replace "$L"s and "$R"s with appropriate letter
 					temp = item.getValue();
-					temp = temp.replace("$L", Util.letters[counter]);
-					temp = temp.replace("$R", Util.letters[counter + 2]);
+					temp = temp.replace("$L", GZUtil.letters[counter]);
+					temp = temp.replace("$R", GZUtil.letters[counter + 2]);
 
 				} catch (Exception e) {
 
@@ -552,7 +552,7 @@ public class GZLog {
 		String retval = "";
 		update();
 
-		retval += Util.dateTime(true);
+		retval += GZUtil.dateTime(true);
 
 		for (LogItem item : values) {
 			if (!item.mIsFormula)

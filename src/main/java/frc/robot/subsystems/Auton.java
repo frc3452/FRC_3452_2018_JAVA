@@ -46,7 +46,7 @@ public class Auton {
 	private String overrideString = "", autonString = "";
 	private String gameMsg = "NOT";
 
-	public GZTimer matchTimer = new GZTimer("matchTimer");
+	public GZTimer matchTimer = new GZTimer("AutonTimer");
 
 	private static Auton mInstance = null;
 

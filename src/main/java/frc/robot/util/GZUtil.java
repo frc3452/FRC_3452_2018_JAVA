@@ -6,9 +6,9 @@ import java.util.Date;
 
 import frc.robot.motionprofiles.Path;
 
-public class Util {
+public class GZUtil {
 
-	private Util() {
+	private GZUtil() {
 	}
 
 	public static String[] letters = { "", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",

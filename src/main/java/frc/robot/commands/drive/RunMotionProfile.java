@@ -21,16 +21,23 @@ public class RunMotionProfile extends Command {
 
 	private Drive drive = Drive.getInstance();
 
+	private boolean mParsed = false;
+
 	public RunMotionProfile(Path path) {
 		requires(drive);
 
 		path_ = path;
 	}
 
+	public RunMotionProfile() {
+		requires(drive);
+		mParsed = true;
+	}
+
 	@Override
 	protected void initialize() {
 		// check if we are parsing or running a stored motion profile
-		if (path_.mpDur() == 3452)
+		if (mParsed)
 			drive.motionProfileToTalons();
 		else
 			drive.motionProfileToTalons(path_.mpL(), path_.mpR(), path_.mpDur());
@@ -38,7 +45,6 @@ public class RunMotionProfile extends Command {
 
 	@Override
 	protected void execute() {
-
 		if (lStat.btmBufferCnt > 5 && rStat.btmBufferCnt > 5)
 			drive.setWantedState(DriveState.MOTION_PROFILE);
 		else
