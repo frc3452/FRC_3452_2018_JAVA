@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.Constants;
 import frc.robot.Constants.kFileManagement;
-import frc.robot.GZLog;
 import frc.robot.subsystems.Drive;
 
 /**

@@ -18,7 +18,6 @@ import frc.robot.util.GZSubsystemManager;
 public class Robot extends TimedRobot {
 	//Force construction of files first
 	private GZFiles files = GZFiles.getInstance();
-
 	
 	public static final GZSubsystemManager allSubsystems = new GZSubsystemManager(
 			Arrays.asList(Drive.getInstance(), Elevator.getInstance(), Intake.getInstance(), Climber.getInstance(),
