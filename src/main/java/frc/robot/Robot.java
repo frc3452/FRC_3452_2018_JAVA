@@ -5,14 +5,10 @@ import java.util.Arrays;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.subsystems.Auton;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Files;
 import frc.robot.subsystems.Files.TASK;
 import frc.robot.subsystems.Health;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Lights;
 import frc.robot.util.GZSubsystemManager;
 
 public class Robot extends TimedRobot {

@@ -4,20 +4,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.kElevator;
-import frc.robot.Constants.kIntake;
-import frc.robot.Constants.kOI;
 import frc.robot.subsystems.Auton;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveState;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Elevator.ESO;
-import frc.robot.subsystems.Elevator.ElevatorState;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.util.GZJoystick;
-import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.LatchedBoolean;
 import frc.robot.util.Util;
@@ -79,7 +69,7 @@ public class GZOI extends GZSubsystem {
 			// CONTROLLER RUMBLE
 			if (Util.between(getMatchTime(), 29.1, 30))
 				// ENDGAME
-				rumble(kOI.Rumble.ENDGAME);
+				rumble(Constants.kOI.Rumble.ENDGAME);
 			else
 				rumble(0);
 		} else {

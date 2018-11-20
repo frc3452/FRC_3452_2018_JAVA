@@ -23,7 +23,8 @@ public class Util {
 		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 	}
 
-	public static double scaleBetween(double unscaledNum, double minAllowed, double maxAllowed, double min, double max) {
+	public static double scaleBetween(double unscaledNum, double minAllowed, double maxAllowed, double min,
+			double max) {
 		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 	}
 
@@ -132,25 +133,4 @@ public class Util {
 			temp = new SimpleDateFormat("yyyy.MM.dd.HH.mm").format(new Date());
 		return temp;
 	}
-
-	public static class Parse implements Path {
-
-		@Override
-		public double[][] mpL() {
-			double[][] mpL = { { 3452, 3452 }, { 3452, 3452 }, };
-			return mpL;
-		}
-
-		@Override
-		public double[][] mpR() {
-			double[][] mpR = { { 3452, 3452 }, { 3452, 3452 }, };
-			return mpR;
-		}
-
-		@Override
-		public Integer mpDur() {
-			return 3452;
-		}
-	}
-
 }

@@ -3,11 +3,9 @@ package frc.robot;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.RobotController;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Intake;
 import frc.robot.util.Util;
+
 
 public class GZLog {
 
