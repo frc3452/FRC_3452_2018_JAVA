@@ -9,8 +9,8 @@ import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveState;
 import frc.robot.util.GZJoystick;
 import frc.robot.util.GZSubsystem;
+import frc.robot.util.GZUtil;
 import frc.robot.util.LatchedBoolean;
-import frc.robot.util.Util;
 
 public class GZOI extends GZSubsystem {
 	public static GZJoystick driverJoy = new GZJoystick(0);
@@ -67,7 +67,7 @@ public class GZOI extends GZSubsystem {
 				drive.slowSpeed(!drive.isSlow());
 
 			// CONTROLLER RUMBLE
-			if (Util.between(getMatchTime(), 29.1, 30))
+			if (GZUtil.between(getMatchTime(), 29.1, 30))
 				// ENDGAME
 				rumble(Constants.kOI.Rumble.ENDGAME);
 			else

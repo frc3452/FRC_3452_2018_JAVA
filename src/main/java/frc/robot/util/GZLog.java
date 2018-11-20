@@ -1,11 +1,10 @@
-package frc.robot;
+package frc.robot.util;
 
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.RobotController;
+import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
-import frc.robot.util.Util;
-
 
 public class GZLog {
 
@@ -13,7 +12,8 @@ public class GZLog {
 
 	private static GZLog mInstance = null;
 
-	public synchronized static GZLog getInstance() {
+	public synchronized static GZLog getInstance()
+	{
 		if (mInstance == null)
 			mInstance = new GZLog();
 		return mInstance;
@@ -234,7 +234,6 @@ public class GZLog {
 				this.mValue = Drive.getInstance().mIO.R4_volt.toString();
 			}
 		};
-
 		LogItem battery_voltage = new LogItem("BATTERY-VOLTAGE") {
 
 			@Override
@@ -312,7 +311,7 @@ public class GZLog {
 
 	public String getHeader() {
 		String retval = "";
-		retval += Util.dateTime(false);
+		retval += GZUtil.dateTime(false);
 
 		for (LogItem item : values) {
 			retval += ("," + item.getHeader());
@@ -327,7 +326,6 @@ public class GZLog {
 		retval += "Functions";
 
 		int counter = 1;
-
 		// Loop through all values
 		for (LogItem item : values) {
 
@@ -341,14 +339,15 @@ public class GZLog {
 				try {
 					// Replace "$L"s and "$R"s with appropriate letter
 					temp = item.getValue();
-					temp = temp.replace("$L", Util.letters[counter]);
-					temp = temp.replace("$R", Util.letters[counter + 2]);
+					temp = temp.replace("$L", GZUtil.letters[counter]);
+					temp = temp.replace("$R", GZUtil.letters[counter + 2]);
 
 				} catch (Exception e) {
 
 					// In case of out of bounds area
 					temp = "Error with function " + item.getHeader();
 					System.out.println(temp);
+
 				}
 
 				// Add to value
@@ -365,7 +364,7 @@ public class GZLog {
 		String retval = "";
 		update();
 
-		retval += Util.dateTime(true);
+		retval += GZUtil.dateTime(true);
 
 		for (LogItem item : values) {
 			if (!item.mIsFormula)

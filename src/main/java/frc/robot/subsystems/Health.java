@@ -9,7 +9,7 @@ import java.util.Map;
 
 import frc.robot.Robot;
 import frc.robot.util.GZSubsystem;
-import frc.robot.util.Util;
+import frc.robot.util.GZUtil;
 
 public class Health {
 
@@ -74,7 +74,7 @@ public class Health {
 
 			// Populate body
 			body += header("Health Checker");
-			body += paragraph("(File generated on " + Util.dateTime(false) + ")");
+			body += paragraph("(File generated on " + GZUtil.dateTime(false) + ")");
 
 			// Print header
 			table += tableRow(tableHeader("Subsystem") + tableHeader("Check"));

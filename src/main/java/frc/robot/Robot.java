@@ -6,14 +6,14 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.subsystems.Auton;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Files;
-import frc.robot.subsystems.Files.TASK;
 import frc.robot.subsystems.Health;
+import frc.robot.util.GZFiles;
+import frc.robot.util.GZFiles.TASK;
 import frc.robot.util.GZSubsystemManager;
 
 public class Robot extends TimedRobot {
 	//Force construction of files first
-	private Files files = Files.getInstance();
+	private GZFiles files = GZFiles.getInstance();
 
 	
 	public static final GZSubsystemManager allSubsystems = new GZSubsystemManager(

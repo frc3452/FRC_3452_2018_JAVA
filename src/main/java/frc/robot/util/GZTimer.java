@@ -12,7 +12,7 @@ public class GZTimer extends Timer {
 		mName = name;
 	}
 
-	public void start()
+	public void startTimer()
 	{
 		if (!mHasOneTimeStarted)
 		{

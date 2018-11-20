@@ -17,19 +17,18 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
 import frc.robot.Constants.kDrivetrain;
 import frc.robot.GZOI;
-import frc.robot.Robot;
 import frc.robot.subsystems.Health.AlertLevel;
+import frc.robot.util.GZFiles;
 import frc.robot.util.GZJoystick;
 import frc.robot.util.GZSRX;
 import frc.robot.util.GZSRX.Breaker;
 import frc.robot.util.GZSRX.Master;
 import frc.robot.util.GZSRX.Side;
 import frc.robot.util.GZSubsystem;
+import frc.robot.util.GZUtil;
 import frc.robot.util.Units;
-import frc.robot.util.Util;
 
 public class Drive extends GZSubsystem {
 
@@ -478,11 +477,11 @@ public class Drive extends GZSubsystem {
 	// Modified from DifferentialDrive.java to produce double array, [0] being left
 	// motor value, [1] being right motor value
 	public synchronized double[] arcadeToLR(double xSpeed, double zRotation) {
-		xSpeed = Util.limit(xSpeed);
-		xSpeed = Util.applyDeadband(xSpeed, kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
+		xSpeed = GZUtil.limit(xSpeed);
+		xSpeed = GZUtil.applyDeadband(xSpeed, kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
 
-		zRotation = Util.limit(zRotation);
-		zRotation = Util.applyDeadband(zRotation, kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
+		zRotation = GZUtil.limit(zRotation);
+		zRotation = GZUtil.applyDeadband(zRotation, kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
 
 		double leftMotorOutput;
 		double rightMotorOutput;
@@ -510,8 +509,8 @@ public class Drive extends GZSubsystem {
 		}
 
 		double retval[] = { 0, 0 };
-		retval[0] = Util.limit(leftMotorOutput);
-		retval[1] = -Util.limit(rightMotorOutput);
+		retval[0] = GZUtil.limit(leftMotorOutput);
+		retval[1] = -GZUtil.limit(rightMotorOutput);
 
 		return retval;
 	}
@@ -703,38 +702,38 @@ public class Drive extends GZSubsystem {
 	 * @since 4-22-2018
 	 */
 	public synchronized void motionProfileToTalons() {
-		if (Files.getInstance().mpL.size() != Files.getInstance().mpR.size())
-			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + Files.getInstance().mpL.size() + "\t\t"
-					+ Files.getInstance().mpR.size());
+		if (GZFiles.getInstance().mpL.size() != GZFiles.getInstance().mpR.size())
+			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + GZFiles.getInstance().mpL.size() + "\t\t"
+					+ GZFiles.getInstance().mpR.size());
 
-		processMotionProfileBuffer((double) Files.getInstance().mpDur / (1000 * 2));
+		processMotionProfileBuffer((double) GZFiles.getInstance().mpDur / (1000 * 2));
 
 		TrajectoryPoint rightPoint = new TrajectoryPoint();
 		TrajectoryPoint leftPoint = new TrajectoryPoint();
 
 		// set talon srx
-		L1.configMotionProfileTrajectoryPeriod(Files.getInstance().mpDur, 10);
-		R1.configMotionProfileTrajectoryPeriod(Files.getInstance().mpDur, 10);
-		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Files.getInstance().mpDur, 10);
-		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Files.getInstance().mpDur, 10);
+		L1.configMotionProfileTrajectoryPeriod(GZFiles.getInstance().mpDur, 10);
+		R1.configMotionProfileTrajectoryPeriod(GZFiles.getInstance().mpDur, 10);
+		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, GZFiles.getInstance().mpDur, 10);
+		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, GZFiles.getInstance().mpDur, 10);
 
 		L1.clearMotionProfileTrajectories();
 		R1.clearMotionProfileTrajectories();
 
 		// generate and push each mp point
-		if (Files.getInstance().mpL.size() != Files.getInstance().mpR.size()) {
+		if (GZFiles.getInstance().mpL.size() != GZFiles.getInstance().mpR.size()) {
 			System.out.println("Motion profile lists not same size!!!");
 		} else {
-			for (int i = 0; i < Files.getInstance().mpL.size(); i++) {
+			for (int i = 0; i < GZFiles.getInstance().mpL.size(); i++) {
 
-				leftPoint.position = Files.getInstance().mpL.get(i).get(0) * 4096;
-				leftPoint.velocity = Files.getInstance().mpL.get(i).get(1) * 4096;
+				leftPoint.position = GZFiles.getInstance().mpL.get(i).get(0) * 4096;
+				leftPoint.velocity = GZFiles.getInstance().mpL.get(i).get(1) * 4096;
 
-				rightPoint.position = Files.getInstance().mpR.get(i).get(0) * -4096;
-				rightPoint.velocity = Files.getInstance().mpR.get(i).get(1) * -4096;
+				rightPoint.position = GZFiles.getInstance().mpR.get(i).get(0) * -4096;
+				rightPoint.velocity = GZFiles.getInstance().mpR.get(i).get(1) * -4096;
 
-				leftPoint.timeDur = GetTrajectoryDuration(Files.getInstance().mpDur);
-				rightPoint.timeDur = GetTrajectoryDuration(Files.getInstance().mpDur);
+				leftPoint.timeDur = GetTrajectoryDuration(GZFiles.getInstance().mpDur);
+				rightPoint.timeDur = GetTrajectoryDuration(GZFiles.getInstance().mpDur);
 
 				leftPoint.headingDeg = 0;
 				rightPoint.headingDeg = 0;
@@ -756,7 +755,7 @@ public class Drive extends GZSubsystem {
 				leftPoint.isLastPoint = false;
 				rightPoint.isLastPoint = false;
 
-				if ((i + 1) == Files.getInstance().mpL.size()) {
+				if ((i + 1) == GZFiles.getInstance().mpL.size()) {
 					leftPoint.isLastPoint = true;
 					rightPoint.isLastPoint = true;
 				}

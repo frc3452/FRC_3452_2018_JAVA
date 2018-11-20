@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.util;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,9 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.Constants;
 import frc.robot.Constants.kFileManagement;
-import frc.robot.GZLog;
-import frc.robot.Robot;
-import frc.robot.util.Util;
+import frc.robot.subsystems.Drive;
 
 /**
  * <b>Playback subsystem</b> Also used for file writing, logging, etc.
@@ -22,7 +20,7 @@ import frc.robot.util.Util;
  * @since 4-18-2018
  *
  */
-public class Files {
+public class GZFiles {
 
 	public ArrayList<ArrayList<Double>> mpL = new ArrayList<>();
 	public ArrayList<ArrayList<Double>> mpR = new ArrayList<>();
@@ -39,11 +37,11 @@ public class Files {
 
 	private boolean isLogging = false;
 
-	private static Files mInstance = null;
+	private static GZFiles mInstance = null;
 
-	public static synchronized Files getInstance(){
+	public static synchronized GZFiles getInstance(){
 		if (mInstance == null)
-			mInstance = new Files();
+			mInstance = new GZFiles();
 		
 		return mInstance;
 	}
@@ -53,7 +51,7 @@ public class Files {
 	 * 
 	 * @author max
 	 */
-	private Files() {
+	private GZFiles() {
 	}
 	
 	public void fillLogger(){
@@ -345,7 +343,7 @@ public class Files {
 
 	private String loggingName(boolean returnCurrent) {
 		if (returnCurrent) {
-			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + Util.dateTime(false);
+			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + GZUtil.dateTime(false);
 			prevLog = retval;
 			return retval;
 		} else {
