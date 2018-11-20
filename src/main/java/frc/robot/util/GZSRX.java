@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import frc.robot.Robot;
+import frc.robot.subsystems.Health;
 import frc.robot.subsystems.Health.AlertLevel;
 
 import com.ctre.phoenix.ErrorCode;
@@ -14,39 +15,41 @@ public class GZSRX extends WPI_TalonSRX {
 
 	public final static int TIMEOUT = 10;
 	public final static int FIRMWARE = 778;
+	private final static AlertLevel mFirmwareLevel = AlertLevel.WARNING;
 
 	// Drivetrain
-	public GZSRX(GZSubsystem sub, int deviceNumber, Breaker breaker, Side side, Master master) {
+	public GZSRX(int deviceNumber, Breaker breaker, Side side, Master master) {
 		super(deviceNumber);
 
 		mBreaker = breaker;
 		mSide = side;
 		mMaster = master;
-
-		checkFirmware(sub);
 	}
 
 	// Other subsystem
-	public GZSRX(GZSubsystem sub, int deviceNumber, Breaker breaker, Master master) {
+	public GZSRX(int deviceNumber, Breaker breaker, Master master) {
 		super(deviceNumber);
 
 		mBreaker = breaker;
 		mMaster = master;
-
-		checkFirmware(sub);
 	}
 
 	// Basic
-	public GZSRX(GZSubsystem sub, int deviceNumber, Breaker breaker) {
+	public GZSRX(int deviceNumber, Breaker breaker) {
 		super(deviceNumber);
 
 		mBreaker = breaker;
-		checkFirmware(sub);
 	}
 
+
+	public boolean isEncoderValid()
+	{
+		return this.getSensorCollection().getPulseWidthRiseToRiseUs() != 0;
+	}
+	
 	public static void logError(ErrorCode errorCode, GZSubsystem subsystem, AlertLevel level, String message) {
 		if (errorCode != ErrorCode.OK)
-			Robot.health.addAlert(subsystem, level, message);
+			Health.getInstance().addAlert(subsystem, level, message);
 	}
 
 	public void checkFirmware(GZSubsystem sub)
@@ -58,11 +61,11 @@ public class GZSRX extends WPI_TalonSRX {
 			int id = this.getDeviceID();
 
 			if (mSide != Side.NO_INFO)
-				Robot.health.addAlert(sub, AlertLevel.ERROR, "Talon " + id + "(" + mSide + ")" + " firmware is " + firm + ", should be " + FIRMWARE);
+				Health.getInstance().addAlert(sub, mFirmwareLevel, "Talon " + id + " (" + mSide + ")" + " firmware is " + firm + ", should be " + FIRMWARE);
 			else if (mMaster != Master.NO_INFO)
-				Robot.health.addAlert(sub, AlertLevel.ERROR, "Talon " + id + "(" + mMaster + ")" + " firmware is " + firm + ", should be " + FIRMWARE);
+				Health.getInstance().addAlert(sub, mFirmwareLevel, "Talon " + id + " (" + mMaster + ")" + " firmware is " + firm + ", should be " + FIRMWARE);
 			else
-				Robot.health.addAlert(sub, AlertLevel.ERROR, "Talon " + id + " firmware is " + firm + ", should be " + FIRMWARE);
+				Health.getInstance().addAlert(sub, mFirmwareLevel, "Talon " + id + " firmware is " + firm + ", should be " + FIRMWARE);
 		}
 	}
 

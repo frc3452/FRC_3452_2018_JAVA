@@ -11,20 +11,19 @@ public class GZSubsystemManager {
 		mAllSystems = allSubsystems;
 	}
 
-	/**
-	 * Run .loop() for each of the subsystems in the subsystem manager.
-	 */
-	public void loop() {
+	public void startLooping()
+	{
+		mAllSystems.forEach((s) -> s.startLooping());
+	}
+
+	public void loop()
+	{
 		mAllSystems.forEach((s) -> s.loop());
 	}
 	
 	public List<GZSubsystem> getSubsystems()
 	{
 		return mAllSystems;
-	}
-
-	public void construct() {
-		mAllSystems.forEach((s) -> s.construct());
 	}
 
 	public void outputSmartDashboard() {

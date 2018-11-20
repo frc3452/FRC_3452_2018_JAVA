@@ -1,9 +1,57 @@
 package frc.robot.util;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
+import frc.robot.motionprofiles.Path;
+
 public class Util {
+
+	private Util() {
+	}
+
+	public static String[] letters = { "", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
+			"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI",
+			"AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA",
+			"BB", "BC", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BK", "BL", "BM", "BN", "BO", "BP", "BQ", "BR", "BS",
+			"BT", "BU", "BV", "BW", "BX", "BY", "BZ", "CA", "CB", "CC", "CD", "CE", "CF", "CG", "CH", "CI", "CJ", "CK",
+			"CL", "CM", "CN", "CO", "CP", "CQ", "CR", "CS", "CT", "CU", "CV", "CW", "CX", "CY", "CZ", "DA", "DB", "DC",
+			"DD", "DE", "DF", "DG", "DH", "DI", "DJ", "DK", "DL", "DM", "DN", };
+
+	public static int scaleBetween(int unscaledNum, int minAllowed, int maxAllowed, int min, int max) {
+		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
+	}
+
+	public static double scaleBetween(double unscaledNum, double minAllowed, double maxAllowed, double min, double max) {
+		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
+	}
+
+	public static StackTraceElement[] currentThread() {
+		return Thread.currentThread().getStackTrace();
+	}
+
+	/**
+	 * currentThread();
+	 */
+	public static String trace(StackTraceElement e[]) {
+
+		String retval = "";
+		try {
+			for (int i = e.length - 5; i > 1; i--) {
+				retval += e[i].getMethodName();
+
+				if (i != 2)
+					retval += ".";
+			}
+		} catch (Exception ex) {
+			System.out.println(
+					"Max was a dummy that tried to write something to make his life easier but he made it much much harder");
+			// ex.printStackTrace();
+		}
+
+		return retval;
+	}
 
 	public static double limit(double value) {
 		if (value > 1.0) {
@@ -20,6 +68,18 @@ public class Util {
 			return true;
 
 		return false;
+	}
+
+	public static boolean epsilonEquals(double value, double epislonPoint, double epsilon) {
+		return (value - epsilon <= epislonPoint) && (value + epsilon >= epislonPoint);
+	}
+
+	public static boolean allCloseTo(final ArrayList<Double> list, double value, double epsilon) {
+		boolean result = true;
+		for (Double value_in : list) {
+			result &= epsilonEquals(value_in, value, epsilon);
+		}
+		return result;
 	}
 
 	public static double applyDeadband(double value, double deadband) {
@@ -71,6 +131,26 @@ public class Util {
 		else
 			temp = new SimpleDateFormat("yyyy.MM.dd.HH.mm").format(new Date());
 		return temp;
+	}
+
+	public static class Parse implements Path {
+
+		@Override
+		public double[][] mpL() {
+			double[][] mpL = { { 3452, 3452 }, { 3452, 3452 }, };
+			return mpL;
+		}
+
+		@Override
+		public double[][] mpR() {
+			double[][] mpR = { { 3452, 3452 }, { 3452, 3452 }, };
+			return mpR;
+		}
+
+		@Override
+		public Integer mpDur() {
+			return 3452;
+		}
 	}
 
 }

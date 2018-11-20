@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+//thx 254
 public class LatchedBoolean {
     private boolean mLast = false;
 
@@ -11,6 +12,7 @@ public class LatchedBoolean {
         }
 
         mLast = newValue;
+       
         return ret;
     }
 }

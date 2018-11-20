@@ -2,10 +2,24 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.kElevator;
+import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kOI;
+import frc.robot.subsystems.Auton;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Drive.DriveState;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Elevator.ESO;
+import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.util.GZJoystick;
+import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZSubsystem;
+import frc.robot.util.LatchedBoolean;
 import frc.robot.util.Util;
 
 public class GZOI extends GZSubsystem {
@@ -14,17 +28,29 @@ public class GZOI extends GZSubsystem {
 
 	private boolean mWasTele = false, mWasAuto = false, mWasTest = false;
 
-	public GZOI() {
+	private LatchedBoolean mUserButton = new LatchedBoolean();
+	private boolean mSafteyDisable = false;
 
+	private Drive drive = Drive.getInstance();
+
+	private static GZOI mInstance = null;
+
+	public static GZOI getInstance() {
+		if (mInstance == null)
+			mInstance = new GZOI();
+
+		return mInstance;
 	}
 
-	public synchronized void construct() {
+	private GZOI() {
 		driverJoy = new GZJoystick(0);
 		opJoy = new GZJoystick(1);
 	}
 
 	@Override
 	public void loop() {
+		outputSmartDashboard();
+
 		if (isTele())
 			mWasTele = true;
 		if (isAuto())
@@ -32,33 +58,49 @@ public class GZOI extends GZSubsystem {
 		if (isTest())
 			mWasTest = true;
 
+		if (isFMS())
+			mSafteyDisable = false;
+		else if (mUserButton.update(RobotController.getUserButton()))
+			mSafteyDisable = !mSafteyDisable;
 
-		// controller rumble
-		if (Util.between(getMatchTime(), 29.1, 30))
-			rumble(Controller.BOTH, kOI.Rumble.ENDGAME);
-		else
-			rumble(Controller.BOTH, 0);
-	}
+		Robot.allSubsystems.disable(mSafteyDisable);
 
-	private static void rumble(Controller joy, double intensity) {
-		switch (joy) {
-		case DRIVE:
-			driverJoy.setRumble(RumbleType.kLeftRumble, intensity);
-			driverJoy.setRumble(RumbleType.kRightRumble, intensity);
-			break;
-		case OP:
-			opJoy.setRumble(RumbleType.kLeftRumble, intensity);
-			opJoy.setRumble(RumbleType.kRightRumble, intensity);
-			break;
-		case BOTH:
-			rumble(Controller.DRIVE, intensity);
-			rumble(Controller.OP, intensity);
-			break;
+		// if (driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.RB,
+		// Buttons.LEFT_CLICK)))
+		// Robot.auton.crash();
+
+		if (isTele()) {
+			Drive.getInstance().setWantedState(DriveState.OPEN_LOOP_DRIVER);
+
+			// OVERRIDES, ETC.
+			if (driverJoy.isAPressed())
+				drive.slowSpeed(!drive.isSlow());
+
+			// CONTROLLER RUMBLE
+			if (Util.between(getMatchTime(), 29.1, 30))
+				// ENDGAME
+				rumble(kOI.Rumble.ENDGAME);
+			else
+				rumble(0);
+		} else {
+			//non tele
+			rumble(0);
 		}
 	}
 
-	private static enum Controller {
-		DRIVE, OP, BOTH
+	public boolean isSafteyDisabled() {
+		return mSafteyDisable;
+	}
+
+	@Override
+	public void outputSmartDashboard() {
+		SmartDashboard.putString("Selected Auton", Auton.getInstance().getAutonString());
+		SmartDashboard.putString("FIELD DATA", Auton.getInstance().gsm());
+	}
+
+	private static void rumble(double intensity) {
+		driverJoy.rumble(intensity);
+		opJoy.rumble(intensity);
 	}
 
 	public boolean isFMS() {
@@ -77,7 +119,7 @@ public class GZOI extends GZSubsystem {
 	}
 
 	public boolean isAuto() {
-		return DriverStation.getInstance().isAutonomous();
+		return DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled();
 	}
 
 	public boolean isDisabled() {

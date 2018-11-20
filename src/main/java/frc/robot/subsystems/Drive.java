@@ -3,14 +3,24 @@ package frc.robot.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
+import com.ctre.phoenix.motion.MotionProfileStatus;
+import com.ctre.phoenix.motion.SetValueMotionProfile;
+import com.ctre.phoenix.motion.TrajectoryPoint;
+import com.ctre.phoenix.motion.TrajectoryPoint.TrajectoryDuration;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Constants.kDrivetrain;
 import frc.robot.GZOI;
-import frc.robot.commands.drive.DriveTele;
+import frc.robot.Robot;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZJoystick;
 import frc.robot.util.GZSRX;
@@ -19,9 +29,13 @@ import frc.robot.util.GZSRX.Master;
 import frc.robot.util.GZSRX.Side;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.Units;
+import frc.robot.util.Util;
 
 public class Drive extends GZSubsystem {
 
+	// Force switch state to neutral on start up
+	private DriveState mState = DriveState.OPEN_LOOP;
+	private DriveState mWantedState = DriveState.NEUTRAL;
 	public IO mIO = new IO();
 
 	// PDP
@@ -29,29 +43,38 @@ public class Drive extends GZSubsystem {
 
 	// DRIVETRAIN
 	private GZSRX L1, L2, L3, L4, R1, R2, R3, R4;
-	private DifferentialDrive mDrive;
 	private List<GZSRX> controllers;
+
+	// GYRO
+	private AHRS mGyro;
 
 	private double mModifyPercent = 1;
 	private boolean mIsSlow = false;
+	private double mPercentageComplete = 0;
+	private double mLeft_target = 0, mRight_target = 0;
 
-	public Drive() {
+	private static Drive mInstance = null;
+
+	public synchronized static Drive getInstance() {
+		if (mInstance == null)
+			mInstance = new Drive();
+		return mInstance;
 	}
 
-	public synchronized void construct() {
-		L1 = new GZSRX(this, kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
-		L2 = new GZSRX(this, kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
-		L3 = new GZSRX(this, kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
-		L4 = new GZSRX(this, kDrivetrain.L4, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
+	private Drive() {
+		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
+		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
+		L3 = new GZSRX(kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
+		L4 = new GZSRX(kDrivetrain.L4, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
 
-		R1 = new GZSRX(this, kDrivetrain.R1, Breaker.AMP_40, Side.RIGHT, Master.MASTER);
-		R2 = new GZSRX(this, kDrivetrain.R2, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
-		R3 = new GZSRX(this, kDrivetrain.R3, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
-		R4 = new GZSRX(this, kDrivetrain.R4, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
-
-		mDrive = new DifferentialDrive(L1, R1);
+		R1 = new GZSRX(kDrivetrain.R1, Breaker.AMP_40, Side.RIGHT, Master.MASTER);
+		R2 = new GZSRX(kDrivetrain.R2, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
+		R3 = new GZSRX(kDrivetrain.R3, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
+		R4 = new GZSRX(kDrivetrain.R4, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
 
 		controllers = Arrays.asList(L1, L2, L3, L4, R1, R2, R3, R4);
+
+		mGyro = new AHRS(SPI.Port.kMXP);
 
 		brake(NeutralMode.Coast);
 
@@ -62,10 +85,128 @@ public class Drive extends GZSubsystem {
 
 		L1.setName("L1");
 		L2.setName("L2");
+		L3.setName("L3");
+		L4.setName("L4");
 		R1.setName("R1");
-		R2.setName("R4");
+		R2.setName("R2");
+		R3.setName("R3");
+		R4.setName("R4");
+
+		mGyro.reset();
 
 		checkFirmware();
+	}
+
+	@Override
+	protected synchronized void out() {
+		switch (mState) {
+		case MOTION_MAGIC:
+
+			mIO.control_mode = ControlMode.MotionMagic;
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case MOTION_PROFILE:
+
+			mIO.control_mode = ControlMode.MotionProfile;
+			mIO.left_desired_output = mIO.right_desired_output = SetValueMotionProfile.Enable.value;
+
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case NEUTRAL:
+
+			mIO.control_mode = ControlMode.Disabled;
+			mIO.left_output = 0;
+			mIO.right_output = 0;
+
+			break;
+		case OPEN_LOOP:
+
+			mIO.control_mode = ControlMode.PercentOutput;
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case OPEN_LOOP_DRIVER:
+
+			arcade(GZOI.driverJoy);
+			mIO.control_mode = ControlMode.PercentOutput;
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case DEMO:
+
+			alternateArcade(GZOI.driverJoy);
+			mIO.control_mode = ControlMode.PercentOutput;
+			mIO.left_output = mIO.left_desired_output * kDrivetrain.DEMO_DRIVE_MODIFIER;
+			mIO.right_output = mIO.right_desired_output * kDrivetrain.DEMO_DRIVE_MODIFIER;
+
+			break;
+
+		default:
+			System.out.println("WARNING: Incorrect drive state " + mState + " reached.");
+			break;
+		}
+
+		L1.set(mIO.control_mode, mIO.left_output);
+		R1.set(mIO.control_mode, mIO.right_output);
+	}
+
+	public enum DriveState {
+		OPEN_LOOP(false), OPEN_LOOP_DRIVER(false), DEMO(false), NEUTRAL(false), MOTION_MAGIC(true),
+		MOTION_PROFILE(true);
+
+		private final boolean usesClosedLoop;
+
+		DriveState(final boolean s) {
+			usesClosedLoop = s;
+		}
+
+	}
+
+	@Override
+	public synchronized void stop() {
+		setWantedState(DriveState.NEUTRAL);
+	}
+
+	public synchronized void setWantedState(DriveState wantedState) {
+		this.mWantedState = wantedState;
+
+		// TODO figure out what in auto is switching it to open loop
+		// System.out.println(Util.trace(Util.currentThread()));
+	}
+
+	private synchronized void switchToState(DriveState state) {
+		if (mState != state) {
+			onStateExit(mState);
+			mState = state;
+			onStateStart(mState);
+		}
+	}
+
+	private synchronized void handleStates() {
+		GZOI gzOI = GZOI.getInstance();
+
+		boolean neutral = false;
+		neutral |= this.isDisabed() && !gzOI.isFMS();
+		neutral |= mWantedState == DriveState.NEUTRAL;
+		neutral |= ((mState.usesClosedLoop || mWantedState.usesClosedLoop) && !mIO.encodersValid);
+
+		if (neutral) {
+
+			switchToState(DriveState.NEUTRAL);
+
+		} else if (Auton.getInstance().isDemo() && !gzOI.isFMS()) {
+
+			switchToState(DriveState.DEMO);
+
+		} else {
+			switchToState(mWantedState);
+		}
 	}
 
 	private void talonInit() {
@@ -76,6 +217,8 @@ public class Drive extends GZSubsystem {
 					"Could not factory reset Talon " + name);
 
 			s.setInverted((s.getSide() == Side.LEFT) ? kDrivetrain.L_INVERT : kDrivetrain.R_INVERT);
+
+			// s.enableVoltageCompensation(true);
 
 			// CURRENT LIMIT
 			GZSRX.logError(s.configContinuousCurrentLimit(
@@ -107,84 +250,123 @@ public class Drive extends GZSubsystem {
 
 				GZSRX.logError(
 						s.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, GZSRX.TIMEOUT), this,
-						AlertLevel.ERROR, "Could not detect " + s.getSide() + " encoder");
+						AlertLevel.WARNING, "Could not setup " + s.getSide() + " encoder");
 
 				GZSRX.logError(s.setSelectedSensorPosition(0, 0, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
 						"Could not zero " + s.getSide() + " encoder");
 
+				if (!s.isEncoderValid())
+					Health.getInstance().addAlert(this, AlertLevel.ERROR, s.getSide() + " encoder not found");
+
 				s.setSensorPhase(true);
 
 				if (s.getSide() == Side.LEFT) {
-					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.LEFT.P, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'P' gain");
-					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.LEFT.I, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'I' gain");
-					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.LEFT.D, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
-					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
+					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.LEFT.P, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'P' gain");
+					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.LEFT.I, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'I' gain");
+					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.LEFT.D, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'D' gain");
+					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'F' gain");
+
 				} else {
-					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'P' gain");
-					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.RIGHT.I, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'I' gain");
-					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.RIGHT.D, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
-					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.RIGHT.F, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
+					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'P' gain");
+					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.RIGHT.I, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'I' gain");
+					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.RIGHT.D, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'D' gain");
+					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.RIGHT.F, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'F' gain");
 				}
 			}
 
 		}
 	}
 
-
-	private void checkFirmware()
-	{
+	private synchronized void checkFirmware() {
 		for (GZSRX s : controllers)
 			s.checkFirmware(this);
 	}
 
-	protected void initDefaultCommand() {
-		setDefaultCommand(new DriveTele(GZOI.driverJoy));
+	private synchronized void onStateStart(DriveState newState) {
+		switch (newState) {
+		case MOTION_MAGIC:
+			brake(NeutralMode.Brake);
+			break;
+		case MOTION_PROFILE:
+			brake(NeutralMode.Brake);
+			break;
+		case NEUTRAL:
+			brake(GZOI.getInstance().wasTele() ? NeutralMode.Brake : NeutralMode.Coast);
+			break;
+		case OPEN_LOOP:
+			brake(NeutralMode.Brake);
+			break;
+		case OPEN_LOOP_DRIVER:
+			brake(NeutralMode.Coast);
+			break;
+		case DEMO:
+			brake(NeutralMode.Coast);
+			break;
+		default:
+			break;
+		}
+	}
+
+	public synchronized void onStateExit(DriveState prevState) {
+		switch (prevState) {
+		case MOTION_MAGIC:
+			encoderDone();
+			break;
+		case MOTION_PROFILE:
+			encoderDone();
+			break;
+		case NEUTRAL:
+			break;
+		case OPEN_LOOP:
+			break;
+		case OPEN_LOOP_DRIVER:
+			break;
+		case DEMO:
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override
 	public synchronized void loop() {
+		outputSmartDashboard();
+		handleStates();
 		in();
-		mModifyPercent = (mIsSlow ? .65 : 1);
+		out();
 	}
 
 	public static class IO {
+		// in
 		public Double left_encoder_ticks = Double.NaN, left_encoder_vel = Double.NaN;
 
 		public Double right_encoder_ticks = Double.NaN, right_encoder_vel = Double.NaN;
 
+		public Double L1_amp = Double.NaN, L2_amp = Double.NaN, L3_amp = Double.NaN, L4_amp = Double.NaN,
+				R1_amp = Double.NaN, R2_amp = Double.NaN, R3_amp = Double.NaN, R4_amp = Double.NaN;
 
-		public Double L1_amp = Double.NaN, L2_amp = Double.NaN,
-				R1_amp = Double.NaN, R2_amp;
+		public Double L1_volt = Double.NaN, L2_volt = Double.NaN, L3_volt = Double.NaN, L4_volt = Double.NaN,
+				R1_volt = Double.NaN, R2_volt = Double.NaN, R3_volt = Double.NaN, R4_volt = Double.NaN;
 
-		public Double L1_volt = Double.NaN, L2_volt = Double.NaN,
-				R1_volt = Double.NaN, R2_volt = Double.NaN;
-	}
+		public Boolean leftEncoderValid = false;
+		public Boolean rightEncoderValid = false;
+		public Boolean encodersValid = false;
 
-	@Override
-	protected synchronized void in() {
-		mIO.left_encoder_ticks = (double) L1.getSelectedSensorPosition(0);
-		mIO.left_encoder_vel = (double) L1.getSelectedSensorVelocity(0);
+		// out
+		private double left_output = 0;
+		public double left_desired_output = 0;
 
-		mIO.right_encoder_ticks = (double) R1.getSelectedSensorPosition(0);
-		mIO.right_encoder_vel = (double) R1.getSelectedSensorVelocity(0);
-		
-		mIO.L1_amp = L1.getOutputCurrent();
-		mIO.L2_amp = L2.getOutputCurrent();
-		mIO.R1_amp = R1.getOutputCurrent();
-		mIO.R2_amp = R2.getOutputCurrent();
-
-		mIO.L1_volt = L1.getMotorOutputVoltage();
-		mIO.L2_volt = L2.getMotorOutputVoltage();
-		mIO.R1_volt = R1.getMotorOutputVoltage();
-		mIO.R2_volt = R2.getMotorOutputVoltage();
+		private double right_output = 0;
+		public double right_desired_output = 0;
+		ControlMode control_mode = ControlMode.PercentOutput;
 	}
 
 	public Double getLeftRotations() {
@@ -201,23 +383,143 @@ public class Drive extends GZSubsystem {
 
 	public Double getRightVel() {
 		return -Units.ticks_to_rotations(mIO.right_encoder_vel);
+
 	}
 
-	public synchronized void arcade(GZJoystick joy) {
-		arcade(joy.getLeftAnalogY(), (joy.getRightTrigger() - joy.getLeftTrigger()) * .8);
+	@Override
+	protected synchronized void in() {
+		this.mModifyPercent = (mIsSlow ? .5 : 1);
+
+		mIO.leftEncoderValid = L1.isEncoderValid();
+		mIO.rightEncoderValid = R1.isEncoderValid();
+
+		mIO.encodersValid = mIO.leftEncoderValid && mIO.rightEncoderValid;
+
+		if (mIO.leftEncoderValid) {
+			mIO.left_encoder_ticks = (double) L1.getSelectedSensorPosition(0);
+			mIO.left_encoder_vel = (double) L1.getSelectedSensorVelocity(0);
+		} else {
+			mIO.left_encoder_ticks = Double.NaN;
+			mIO.left_encoder_vel = Double.NaN;
+		}
+
+		if (mIO.rightEncoderValid) {
+			mIO.right_encoder_ticks = (double) R1.getSelectedSensorPosition(0);
+			mIO.right_encoder_vel = (double) R1.getSelectedSensorVelocity(0);
+		} else {
+			mIO.right_encoder_ticks = Double.NaN;
+			mIO.right_encoder_vel = Double.NaN;
+		}
+
+		mIO.L1_amp = L1.getOutputCurrent();
+		mIO.L2_amp = L2.getOutputCurrent();
+		mIO.L3_amp = L3.getOutputCurrent();
+		mIO.L4_amp = L4.getOutputCurrent();
+		mIO.R1_amp = R1.getOutputCurrent();
+		mIO.R2_amp = R2.getOutputCurrent();
+		mIO.R3_amp = R3.getOutputCurrent();
+		mIO.R4_amp = R4.getOutputCurrent();
+
+		mIO.L1_volt = L1.getMotorOutputVoltage();
+		mIO.L2_volt = L2.getMotorOutputVoltage();
+		mIO.L3_volt = L3.getMotorOutputVoltage();
+		mIO.L4_volt = L4.getMotorOutputVoltage();
+		mIO.R1_volt = R1.getMotorOutputVoltage();
+		mIO.R2_volt = R2.getMotorOutputVoltage();
+		mIO.R3_volt = R3.getMotorOutputVoltage();
+		mIO.R4_volt = R4.getMotorOutputVoltage();
+	}
+
+	@Override
+	public void outputSmartDashboard() {
+		SmartDashboard.putNumber("NavX Angle", mGyro.getAngle());
+
+		SmartDashboard.putNumber("L1", getLeftRotations());
+		SmartDashboard.putNumber("R1", getRightRotations());
+
+		SmartDashboard.putNumber("L1 Vel", mIO.left_encoder_vel);
+		SmartDashboard.putNumber("R1 Vel", mIO.right_encoder_vel);
+
+		SmartDashboard.putNumber("PercentageCompleted", getPercentageComplete());
+	}
+
+	// called in OPEN_LOOP_DRIVER state
+	private synchronized void arcade(GZJoystick joy) {
+		double turnScalar;
+		// if (Elevator.getInstance().isLimiting())
+			// turnScalar = Constants.kDrivetrain.ELEV_TURN_SCALAR;
+		// else
+			turnScalar = 1;
+
+		// double elv = Elevator.getInstance().getPercentageModify();
+		double elv = 1;
+
+		arcadeNoState(joy.getLeftAnalogY() * elv,
+				elv * turnScalar * ((joy.getRightTrigger() - joy.getLeftTrigger()) * .5));
 	}
 
 	// called in DEMO state
-	public synchronized void alternateArcade(GZJoystick joy) {
-		arcade(joy.getLeftAnalogY(), (joy.getRightAnalogX() * .85));
+	private synchronized void alternateArcade(GZJoystick joy) {
+		arcadeNoState(joy.getLeftAnalogY(), (joy.getRightAnalogX() * .85));
+	}
+
+	private synchronized void arcadeNoState(double move, double rotate) {
+		double[] temp = arcadeToLR(move * mModifyPercent, rotate * mModifyPercent);
+
+		mIO.left_desired_output = temp[0];
+		mIO.right_desired_output = temp[1];
 	}
 
 	public synchronized void arcade(double move, double rotate) {
-		mDrive.arcadeDrive(move * mModifyPercent, rotate * mModifyPercent);
+		setWantedState(DriveState.OPEN_LOOP);
+		arcadeNoState(move, rotate);
+	}
+
+	// Modified from DifferentialDrive.java to produce double array, [0] being left
+	// motor value, [1] being right motor value
+	public synchronized double[] arcadeToLR(double xSpeed, double zRotation) {
+		xSpeed = Util.limit(xSpeed);
+		xSpeed = Util.applyDeadband(xSpeed, kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
+
+		zRotation = Util.limit(zRotation);
+		zRotation = Util.applyDeadband(zRotation, kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
+
+		double leftMotorOutput;
+		double rightMotorOutput;
+
+		double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed);
+
+		if (xSpeed >= 0.0) {
+			// First quadrant, else second quadrant
+			if (zRotation >= 0.0) {
+				leftMotorOutput = maxInput;
+				rightMotorOutput = xSpeed - zRotation;
+			} else {
+				leftMotorOutput = xSpeed + zRotation;
+				rightMotorOutput = maxInput;
+			}
+		} else {
+			// Third quadrant, else fourth quadrant
+			if (zRotation >= 0.0) {
+				leftMotorOutput = xSpeed + zRotation;
+				rightMotorOutput = maxInput;
+			} else {
+				leftMotorOutput = maxInput;
+				rightMotorOutput = xSpeed - zRotation;
+			}
+		}
+
+		double retval[] = { 0, 0 };
+		retval[0] = Util.limit(leftMotorOutput);
+		retval[1] = -Util.limit(rightMotorOutput);
+
+		return retval;
 	}
 
 	public synchronized void tank(double left, double right) {
-		mDrive.tankDrive(left * mModifyPercent, right * mModifyPercent);
+		setWantedState(DriveState.OPEN_LOOP);
+		mIO.left_desired_output = left * mModifyPercent;
+		mIO.right_desired_output = right * mModifyPercent;
 	}
 
 	public synchronized void tank(GZJoystick joy) {
@@ -226,6 +528,256 @@ public class Drive extends GZSubsystem {
 
 	private synchronized void brake(NeutralMode mode) {
 		controllers.forEach((s) -> s.setNeutralMode(mode));
+	}
+
+	public synchronized void motionMagic(double leftRotations, double rightRotations, double leftAccel,
+			double rightAccel, double leftSpeed, double rightSpeed) {
+
+		setWantedState(DriveState.MOTION_MAGIC);
+
+		double topspeed = 3941;
+
+		mLeft_target = Units.rotations_to_ticks(leftRotations);
+		mRight_target = -Units.rotations_to_ticks(rightRotations);
+
+		mPercentageComplete = Math
+				.abs(((mIO.left_encoder_ticks / mLeft_target) + (mIO.right_encoder_ticks / mRight_target)) / 2);
+
+		L1.configMotionAcceleration((int) (topspeed * leftAccel), 10);
+		R1.configMotionAcceleration((int) (topspeed * rightAccel), 10);
+
+		L1.configMotionCruiseVelocity((int) (topspeed * leftSpeed), 10);
+		R1.configMotionCruiseVelocity((int) (topspeed * rightSpeed), 10);
+
+		mIO.left_desired_output = mLeft_target;
+		mIO.right_desired_output = mRight_target;
+	}
+
+	public synchronized boolean encoderSpeedIsUnder(double ticksPer100Ms) {
+		double l = Math.abs(mIO.left_encoder_vel);
+		double r = Math.abs(mIO.right_encoder_vel);
+
+		return l < ticksPer100Ms || r < ticksPer100Ms;
+	}
+
+	public synchronized void encoderDone() {
+		stop();
+
+		processMotionProfileBuffer(3452);
+
+		L1.clearMotionProfileTrajectories();
+		R1.clearMotionProfileTrajectories();
+
+		R1.configPeakOutputForward(1, 0);
+		R1.configPeakOutputReverse(-1, 0);
+		L1.configPeakOutputForward(1, 0);
+		L1.configPeakOutputReverse(-1, 0);
+
+		mLeft_target = 0;
+		mRight_target = 0;
+
+		mPercentageComplete = -3452;
+	}
+
+	public synchronized boolean encoderIsDone(double multiplier) {
+		return (mIO.left_encoder_ticks < mLeft_target + 102 * multiplier)
+				&& (mIO.left_encoder_ticks > mLeft_target - 102 * multiplier)
+				&& (mIO.right_encoder_ticks < mRight_target + 102 * multiplier)
+				&& (mIO.right_encoder_ticks > mRight_target - 102 * multiplier);
+	}
+
+	public synchronized boolean encoderIsDoneEither(double multiplier) {
+		return (mIO.left_encoder_ticks < mLeft_target + 102 * multiplier
+				&& mIO.left_encoder_ticks > mLeft_target - 102 * multiplier)
+				|| (mIO.right_encoder_ticks < mRight_target + 102 * multiplier
+						&& mIO.right_encoder_ticks > mRight_target - 102 * multiplier);
+	}
+
+	/**
+	 * notifier object for running MotionProfileBuffer
+	 */
+	private Notifier processMotionProfile = new Notifier(new Runnable() {
+
+		@Override
+		public void run() {
+			{
+				L1.processMotionProfileBuffer();
+				R1.processMotionProfileBuffer();
+			}
+		}
+	});
+
+	/**
+	 * Used to turn on/off runnable for motion profiling
+	 * 
+	 * @param time double - if 3452, stops notifier
+	 */
+	public synchronized void processMotionProfileBuffer(double time) {
+		if (time == 3452)
+			processMotionProfile.stop();
+		else
+			processMotionProfile.startPeriodic(time);
+	}
+
+	public synchronized void getMotionProfileStatus(Side side, MotionProfileStatus statusToFill) {
+		if (side == Side.LEFT)
+			L1.getMotionProfileStatus(statusToFill);
+		else if (side == Side.RIGHT)
+			R1.getMotionProfileStatus(statusToFill);
+	}
+
+	/**
+	 * push motion profiles to drive train talons
+	 * 
+	 * @since 4-22-2018
+	 */
+	public synchronized void motionProfileToTalons(double[][] mpL, double[][] mpR, Integer mpDur) {
+		if (mpL.length != mpR.length)
+			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + mpL.length + "\t\t" + mpR.length);
+
+		processMotionProfileBuffer((double) mpDur / (1000 * 2));
+
+		TrajectoryPoint rightPoint = new TrajectoryPoint();
+		TrajectoryPoint leftPoint = new TrajectoryPoint();
+
+		// set talon srx
+		L1.configMotionProfileTrajectoryPeriod(mpDur, 10);
+		R1.configMotionProfileTrajectoryPeriod(mpDur, 10);
+		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, mpDur, 10);
+		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, mpDur, 10);
+
+		L1.clearMotionProfileTrajectories();
+		R1.clearMotionProfileTrajectories();
+
+		// generate and push each mp point
+		if (mpL.length == mpR.length) {
+			for (int i = 0; i < mpL.length; i++) {
+
+				leftPoint.position = mpL[i][0] * 4096;
+				leftPoint.velocity = mpL[i][1] * 4096;
+
+				rightPoint.position = mpR[i][0] * -4096;
+				rightPoint.velocity = mpR[i][1] * -4096;
+
+				leftPoint.timeDur = GetTrajectoryDuration(mpDur);
+				rightPoint.timeDur = GetTrajectoryDuration(mpDur);
+
+				leftPoint.headingDeg = 0;
+				rightPoint.headingDeg = 0;
+
+				leftPoint.profileSlotSelect0 = 0;
+				rightPoint.profileSlotSelect0 = 0;
+
+				leftPoint.profileSlotSelect1 = 0;
+				rightPoint.profileSlotSelect1 = 0;
+
+				leftPoint.zeroPos = false;
+				rightPoint.zeroPos = false;
+
+				if (i == 0) {
+					leftPoint.zeroPos = true;
+					rightPoint.zeroPos = true;
+				}
+
+				leftPoint.isLastPoint = false;
+				rightPoint.isLastPoint = false;
+
+				if ((i + 1) == mpL.length) {
+					leftPoint.isLastPoint = true;
+					rightPoint.isLastPoint = true;
+				}
+
+				L1.pushMotionProfileTrajectory(leftPoint);
+				R1.pushMotionProfileTrajectory(rightPoint);
+			}
+			System.out.println("Motion profile pushed to Talons");
+		} else {
+			System.out.println("Motion profile lists not same size!!!");
+		}
+	}
+
+	/**
+	 * Used to process and push <b>parsed</b> motion profiles to drivetrain talons
+	 * 
+	 * @author max
+	 * @since 4-22-2018
+	 */
+	public synchronized void motionProfileToTalons() {
+		if (Files.getInstance().mpL.size() != Files.getInstance().mpR.size())
+			System.out.println("ERROR MOTION-PROFILE-SIZING ISSUE:\t\t" + Files.getInstance().mpL.size() + "\t\t"
+					+ Files.getInstance().mpR.size());
+
+		processMotionProfileBuffer((double) Files.getInstance().mpDur / (1000 * 2));
+
+		TrajectoryPoint rightPoint = new TrajectoryPoint();
+		TrajectoryPoint leftPoint = new TrajectoryPoint();
+
+		// set talon srx
+		L1.configMotionProfileTrajectoryPeriod(Files.getInstance().mpDur, 10);
+		R1.configMotionProfileTrajectoryPeriod(Files.getInstance().mpDur, 10);
+		L1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Files.getInstance().mpDur, 10);
+		R1.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, Files.getInstance().mpDur, 10);
+
+		L1.clearMotionProfileTrajectories();
+		R1.clearMotionProfileTrajectories();
+
+		// generate and push each mp point
+		if (Files.getInstance().mpL.size() != Files.getInstance().mpR.size()) {
+			System.out.println("Motion profile lists not same size!!!");
+		} else {
+			for (int i = 0; i < Files.getInstance().mpL.size(); i++) {
+
+				leftPoint.position = Files.getInstance().mpL.get(i).get(0) * 4096;
+				leftPoint.velocity = Files.getInstance().mpL.get(i).get(1) * 4096;
+
+				rightPoint.position = Files.getInstance().mpR.get(i).get(0) * -4096;
+				rightPoint.velocity = Files.getInstance().mpR.get(i).get(1) * -4096;
+
+				leftPoint.timeDur = GetTrajectoryDuration(Files.getInstance().mpDur);
+				rightPoint.timeDur = GetTrajectoryDuration(Files.getInstance().mpDur);
+
+				leftPoint.headingDeg = 0;
+				rightPoint.headingDeg = 0;
+
+				leftPoint.profileSlotSelect0 = 0;
+				rightPoint.profileSlotSelect0 = 0;
+
+				leftPoint.profileSlotSelect1 = 0;
+				rightPoint.profileSlotSelect1 = 0;
+
+				leftPoint.zeroPos = false;
+				rightPoint.zeroPos = false;
+
+				if (i == 0) {
+					leftPoint.zeroPos = true;
+					rightPoint.zeroPos = true;
+				}
+
+				leftPoint.isLastPoint = false;
+				rightPoint.isLastPoint = false;
+
+				if ((i + 1) == Files.getInstance().mpL.size()) {
+					leftPoint.isLastPoint = true;
+					rightPoint.isLastPoint = true;
+				}
+
+				L1.pushMotionProfileTrajectory(leftPoint);
+				R1.pushMotionProfileTrajectory(rightPoint);
+			}
+			System.out.println("Motion profile pushed to Talons");
+		}
+
+	}
+
+	@SuppressWarnings("static-access")
+	private synchronized TrajectoryDuration GetTrajectoryDuration(int durationMs) {
+		TrajectoryDuration retval = TrajectoryDuration.Trajectory_Duration_0ms;
+		retval = retval.valueOf(durationMs);
+
+		if (retval.value != durationMs)
+			System.out.println("ERROR Invalid trajectory duration: " + durationMs);
+
+		return retval;
 	}
 
 	public synchronized void enableFollower() {
@@ -238,9 +790,28 @@ public class Drive extends GZSubsystem {
 				c.follow(R1);
 				break;
 			case NO_INFO:
-				System.out.println("ERROR Drive talon " + c.getName() + " could not enter follower mode!");
+				System.out.println("ERROR Drive talon " + c.getSide() + " (" + c.getDeviceID()
+						+ ") could not enter follower mode!");
 			}
 		}
+	}
+
+	public synchronized void zeroEncoders() {
+		L1.setSelectedSensorPosition(0, 0, 10);
+		R1.setSelectedSensorPosition(0, 0, 10);
+	}
+
+	public synchronized void zeroSensors() {
+		zeroEncoders();
+		zeroGyro();
+	}
+
+	public synchronized Double getPercentageComplete() {
+		return mPercentageComplete;
+	}
+
+	public synchronized void zeroGyro() {
+		mGyro.reset();
 	}
 
 	public synchronized Double getPDPChannelCurrent(int channel) {
@@ -259,23 +830,30 @@ public class Drive extends GZSubsystem {
 		return pdp.getVoltage();
 	}
 
-	public synchronized void slowSpeed(boolean isSlow)
-	{
+	public synchronized void slowSpeed(boolean isSlow) {
 		mIsSlow = isSlow;
 	}
-	public Boolean isSlow()
-	{
+
+	public Boolean isSlow() {
 		return mIsSlow;
 	}
 
-	public String getStateString(){
-		return "NA";
+	public synchronized Double getGyroAngle() {
+		return mGyro.getAngle();
 	}
 
-	public void out()
-	{
+	public synchronized double getGyroFusedHeading() {
+		return mGyro.getFusedHeading();
 	}
 
-	public void stop()
-	{}
+	public String getStateString() {
+		return mState.toString();
+	}
+
+	public DriveState getState() {
+		return mState;
+	}
+
+	protected void initDefaultCommand() {
+	}
 }
