@@ -300,7 +300,7 @@ public class Drive extends GZSubsystem {
 			brake(NeutralMode.Brake);
 			break;
 		case NEUTRAL:
-			brake(GZOI.getInstance().wasTele() ? NeutralMode.Brake : NeutralMode.Coast);
+			brake(GZOI.getInstance().wasTele() || GZOI.getInstance().wasAuto() ? NeutralMode.Brake : NeutralMode.Coast);
 			break;
 		case OPEN_LOOP:
 			brake(NeutralMode.Brake);
@@ -339,6 +339,7 @@ public class Drive extends GZSubsystem {
 
 	@Override
 	public synchronized void loop() {
+		// System.out.println(getLeftRotations() + "\t" + getRightRotations());
 		outputSmartDashboard();
 		handleStates();
 		in();
@@ -535,7 +536,7 @@ public class Drive extends GZSubsystem {
 
 		setWantedState(DriveState.MOTION_MAGIC);
 
-		double topspeed = 3941;
+		double topspeed = 4350;
 
 		mLeft_target = Units.rotations_to_ticks(leftRotations);
 		mRight_target = -Units.rotations_to_ticks(rightRotations);

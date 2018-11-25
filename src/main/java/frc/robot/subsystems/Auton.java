@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.kAuton;
+import frc.robot.Constants.kFiles;
 import frc.robot.GZOI;
 import frc.robot.Robot;
 import frc.robot.commands.auton.DefaultAutonomous;
@@ -15,6 +16,8 @@ import frc.robot.commands.auton.LeftAuton;
 import frc.robot.commands.auton.MiddleAuton;
 import frc.robot.commands.auton.NoCommand;
 import frc.robot.commands.auton.RightAuton;
+import frc.robot.commands.drive.EncoderFrom;
+import frc.robot.commands.drive.RunMotionProfile;
 import frc.robot.util.GZCommand;
 import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZTimer;
@@ -176,6 +179,9 @@ public class Auton {
 		commandArray[3] = new GZCommand("Left - Scale", new LeftAuton(AO.SCALE, AV.SEASON, AV.SEASON));
 		commandArray[4] = new GZCommand("Right - Switch", new RightAuton(AO.SWITCH, AV.SEASON, AV.SEASON));
 		commandArray[5] = new GZCommand("Right - Scale", new RightAuton(AO.SCALE, AV.SEASON, AV.SEASON));
+
+		// commandArray[6] = new GZCommand("Parse Motion Profile", new RunMotionProfile(kFiles.NAME, kFiles.FOLDER, kFiles.USB));
+		commandArray[6] = new GZCommand("DRIVE FORWARD 10", new EncoderFrom(10, 10, .5, .5, 1));	
 
 		commandArray[11] = new GZCommand("Left Only - Switch Priority",
 				new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.SEASON, AV.SEASON));

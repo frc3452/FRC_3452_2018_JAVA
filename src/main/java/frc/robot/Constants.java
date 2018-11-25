@@ -83,6 +83,19 @@ public class Constants {
 	public class kDrivetrain {
 
 		public class PID {
+			public class NEW_LEFT {
+				public final static double P = .4;
+				public final static double I = 0;
+				public final static double D = 0;
+				public static final double F = .235;
+			}
+
+			public class NEW_RIGHT {
+				public final static double P = .4;
+				public final static double I = 0;
+				public final static double D = 0;
+				public static final double F = .239;
+			}
 			public class LEFT {
 				public final static double P = .425;
 				public final static double I = 0;
@@ -225,7 +238,11 @@ public class Constants {
 		public static final int YELLOW = 330;
 	}
 
-	public class kFileManagement {
+	public class kFiles {
+		public final static String NAME = "MP1";
+		public final static String FOLDER = "MotionProfiles";
+		public final static boolean USB = false;
+
 		public final static int RECORDING_MOTION_PROFILE_MS = 100; // 20
 		public final static double LOGGING_SPEED = .125;
 		public final static String DEFAULT_LOG_VALUE = "N/A";

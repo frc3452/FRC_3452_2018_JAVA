@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.motionprofiles.Path;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveState;
+import frc.robot.util.GZFiles;
 import frc.robot.util.GZSRX.Side;
 
 /**
@@ -13,6 +14,8 @@ import frc.robot.util.GZSRX.Side;
  * @since 4-22-2018
  */
 public class RunMotionProfile extends Command {
+
+	private GZFiles files = GZFiles.getInstance();
 
 	private MotionProfileStatus rStat = new MotionProfileStatus();
 	private MotionProfileStatus lStat = new MotionProfileStatus();
@@ -23,23 +26,33 @@ public class RunMotionProfile extends Command {
 
 	private boolean mParsed = false;
 
+	private String mName, mFolder;
+	private boolean mUsb;
+
 	public RunMotionProfile(Path path) {
 		requires(drive);
 
 		path_ = path;
 	}
 
-	public RunMotionProfile() {
+	public RunMotionProfile(String name, String folder, boolean usb) {
 		requires(drive);
 		mParsed = true;
+		
+		mName = name;
+		mFolder = folder;
+		mUsb = usb;
 	}
 
 	@Override
 	protected void initialize() {
+		drive.zeroEncoders();
+		
 		// check if we are parsing or running a stored motion profile
-		if (mParsed)
+		if (mParsed){
+			files.parse(mName, mFolder, mUsb);
 			drive.motionProfileToTalons();
-		else
+		}else
 			drive.motionProfileToTalons(path_.mpL(), path_.mpR(), path_.mpDur());
 	}
 
@@ -56,8 +69,10 @@ public class RunMotionProfile extends Command {
 
 	@Override
 	protected boolean isFinished() {
+		return false;
 		// return isTimedOut();
-		return (lStat.activePointValid && lStat.isLast) || (rStat.activePointValid && rStat.isLast) || isTimedOut();
+		// System.out.println(lStat.activePointValid + "\t" + lStat.isLast + "\t\t" + rStat.isLast + "\t" + rStat.activePointValid);
+		// return (lStat.activePointValid && lStat.isLast) || (rStat.activePointValid && rStat.isLast) || isTimedOut();
 	}
 
 	@Override

@@ -1,10 +1,12 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.kElevator;
+import frc.robot.Constants.kFiles;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kOI;
 import frc.robot.subsystems.Auton;
@@ -16,11 +18,13 @@ import frc.robot.subsystems.Elevator.ESO;
 import frc.robot.subsystems.Elevator.ElevatorState;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.util.GZFiles;
+import frc.robot.util.GZFiles.TASK;
 import frc.robot.util.GZJoystick;
 import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZSubsystem;
-import frc.robot.util.LatchedBoolean;
 import frc.robot.util.GZUtil;
+import frc.robot.util.LatchedBoolean;
 
 public class GZOI extends GZSubsystem {
 	public static GZJoystick driverJoy = new GZJoystick(0);
@@ -50,6 +54,13 @@ public class GZOI extends GZSubsystem {
 		opJoy = new GZJoystick(1);
 	}
 
+	boolean recording = false;
+	boolean prevRecording = recording;
+
+	boolean direction = true;
+
+	double servoValue = 0;
+
 	@Override
 	public void loop() {
 		outputSmartDashboard();
@@ -71,10 +82,16 @@ public class GZOI extends GZSubsystem {
 		// if (driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.RB,
 		// Buttons.LEFT_CLICK)))
 		// Robot.auton.crash();
-
+		
 		if (isTele()) {
 			Drive.getInstance().setWantedState(DriveState.OPEN_LOOP_DRIVER);
 
+			if (driverJoy.isLClickPressed())
+				recording = !recording;
+				
+			if (recording != prevRecording)
+				GZFiles.getInstance().csvControl(kFiles.NAME, kFiles.FOLDER, kFiles.USB, TASK.Record, recording);
+				
 			// OVERRIDES, ETC.
 			if (driverJoy.isAPressed())
 				drive.slowSpeed(!drive.isSlow());
@@ -155,6 +172,10 @@ public class GZOI extends GZSubsystem {
 			rumble(kOI.Rumble.INTAKE);
 		else
 			rumble(0);
+
+
+
+		prevRecording = recording;
 	}
 
 	public boolean isSafteyDisabled() {

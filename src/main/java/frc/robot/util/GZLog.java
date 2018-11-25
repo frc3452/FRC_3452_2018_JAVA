@@ -566,7 +566,7 @@ public class GZLog {
 
 	public abstract class LogItem {
 		private String mName = "";
-		public String mValue = Constants.kFileManagement.DEFAULT_LOG_VALUE;
+		public String mValue = Constants.kFiles.DEFAULT_LOG_VALUE;
 
 		private Boolean mIsFormula = false;
 

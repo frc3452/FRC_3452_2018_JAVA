@@ -10,7 +10,7 @@ import java.util.Scanner;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.Constants;
-import frc.robot.Constants.kFileManagement;
+import frc.robot.Constants.kFiles;
 import frc.robot.subsystems.Drive;
 
 /**
@@ -39,10 +39,10 @@ public class GZFiles {
 
 	private static GZFiles mInstance = null;
 
-	public static synchronized GZFiles getInstance(){
+	public static synchronized GZFiles getInstance() {
 		if (mInstance == null)
 			mInstance = new GZFiles();
-		
+
 		return mInstance;
 	}
 
@@ -53,8 +53,8 @@ public class GZFiles {
 	 */
 	private GZFiles() {
 	}
-	
-	public void fillLogger(){
+
+	public void fillLogger() {
 		GZLog.getInstance().fillLogger();
 	}
 
@@ -125,9 +125,9 @@ public class GZFiles {
 				// on startup, write header
 				bw.write("leftPos,leftSpeed,rightPos,rightSpeed,");
 				bw.write("\r\n");
-				bw.write(String.valueOf(Constants.kFileManagement.RECORDING_MOTION_PROFILE_MS) + ",0,0,0,");
+				bw.write(String.valueOf(Constants.kFiles.RECORDING_MOTION_PROFILE_MS) + ",0,0,0,");
 				bw.write("\r\n");
-				profileRecord.startPeriodic((double) Constants.kFileManagement.RECORDING_MOTION_PROFILE_MS / 1000);
+				profileRecord.startPeriodic((double) Constants.kFiles.RECORDING_MOTION_PROFILE_MS / 1000);
 			} else {
 				profileRecord.stop();
 			}
@@ -135,6 +135,11 @@ public class GZFiles {
 			e.printStackTrace();
 			System.out.println("Writing to profile failed!");
 		}
+	}
+
+	public void parse(String name, String folder, boolean usb) {
+		csvControl(name, folder, usb, TASK.Parse, true);
+		csvControl(name, folder, usb, TASK.Parse, false);
 	}
 
 	/**
@@ -191,7 +196,7 @@ public class GZFiles {
 				bw.write(GZLog.getInstance().getFunctions());
 				bw.write("\r\n");
 
-				logging.startPeriodic(kFileManagement.LOGGING_SPEED);
+				logging.startPeriodic(kFiles.LOGGING_SPEED);
 				isLogging = true;
 			} else {
 				logging.stop();
