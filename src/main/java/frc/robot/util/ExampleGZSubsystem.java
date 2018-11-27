@@ -1,8 +1,10 @@
 package frc.robot.util;
 
-import edu.wpi.first.wpilibj.Spark;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import frc.robot.GZOI;
 import frc.robot.subsystems.Auton;
+import frc.robot.util.GZSRX.Breaker;
 
 public class ExampleGZSubsystem extends GZSubsystem {
 	/**
@@ -12,7 +14,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 */
 
 	/** Example motor */
-	private Spark example_motor;
+	private GZSRX example_motor;
 
 	/** Current state of subsystem and wanted state of subsystem */
 	private ExampleState mState = ExampleState.NEUTRAL;
@@ -21,21 +23,29 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	// Input & output object.
 	public IO mIO = new IO();
 
-	public ExampleGZSubsystem() {
+	/**
+	 * This way of creating a subsystem is known as a 'singleton' By making the
+	 * constructor private and having the only line to construct it in the
+	 * getInstance() method, we only allow one 'instance' to ever exist. Every time
+	 * we call getInstance(), it returns a reference to the same object.
+	 */
+	private static ExampleGZSubsystem mInstance = null;
 
+	public static ExampleGZSubsystem getInstance() {
+		if (mInstance == null)
+			mInstance = new ExampleGZSubsystem();
+
+		return mInstance;
 	}
 
 	/**
-	 * Construction of each subsystem moved out of constructor, into construct().
-	 * The rationale for this was because we needed to use the List of all
-	 * subsystems to setup the map in health, so it was easiest to instantiate each
-	 * hardware subsystem object, put them in a list, construct health, then use
-	 * .construct() on all subsystems to initialize hardware. Health had to be
-	 * instantiated before each other subsystems construction because to construct,
-	 * health.addAlert() was necessary.
-	 **/
-	public synchronized void construct() {
-		example_motor = new Spark(1);
+	 * Constructor for subsystem
+	 */
+	private ExampleGZSubsystem() {
+		example_motor = new GZSRX(0, Breaker.AMP_40);
+
+		example_motor.configFactoryDefault();
+		example_motor.checkFirmware(this);
 	}
 
 	/**
@@ -43,8 +53,8 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * desired_output (what we want the motor to do), with our output (what the
 	 * motor is allowed to do). In manual, we allow the motor to run at what we
 	 * want. But, in neutral we dont allow the motor to run at what we want, we
-	 * force it to stop moving. read see {@link} handleStates() in(), and out() to
-	 * learn about those functions.
+	 * force it to stop moving. read {@link} handleStates() in(), and out() to learn
+	 * about those functions.
 	 */
 	@Override
 	public void loop() {
@@ -57,14 +67,14 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * This is the method we use to control the state of the subsystem. We do this
 	 * instead of just changing the mState variable because this is what keeps the
 	 * robot locked in a disabled state if we call .disable(true) on the subsystem.
-	 * This also calls onStateExit and onStateStart for the current and new state.
+	 * This also calls switchToState.
 	 * 
 	 * First, we check if it's disabled and not connected to the field, or wanting
-	 * to be stopped, thats our first priority. If it is, we put the system in
-	 * neutral. If it isn't, we check if its in demo. If so, set the current state
-	 * to demo. Then, if we aren't in demo or disabled, which means were safe to
-	 * switch to any state, we do that.
-	 * 
+	 * to be stopped, thats our first priority. If the wanted or current state uses
+	 * encoders and the motor controller If it is, we put the system in neutral. If
+	 * it isn't, we check if its in demo. If so, set the current state to demo.
+	 * Then, if we aren't in demo or disabled, which means were safe to switch to
+	 * any state, we do that.
 	 *
 	 * <b> Keep in mind, among the if statements (on lines with 'AAAA'), only one of
 	 * these can be true at any given time. By writing it this way, it lets us have
@@ -72,9 +82,10 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 */
 	private synchronized void handleStates() {
 		boolean neutral = false;
-		
+
 		neutral |= this.isDisabed() && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == ExampleState.NEUTRAL;
+		neutral |= (!mIO.encoders_valid && (mWantedState.usesClosedLoop || mState.usesClosedLoop));
 
 		if (neutral) { /* AAAA **/
 
@@ -93,7 +104,6 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	/**
 	 * This allows us to continually call this method and only call the onStateExit
 	 * and onStateStart methods once
-	 * 
 	 */
 	private void switchToState(ExampleState s) {
 		if (mState != s) {
@@ -141,8 +151,15 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 */
 	@Override
 	protected void in() {
-		mIO.speed = example_motor.getSpeed();
-		mIO.position = example_motor.getPosition();
+		mIO.encoders_valid = example_motor.isEncoderValid();
+
+		if (mIO.encoders_valid) {
+			mIO.ticks_position = (double) example_motor.getSelectedSensorPosition();
+			mIO.ticks_velocity = (double) example_motor.getSelectedSensorVelocity();
+		}
+
+		mIO.motor_1_amperage = example_motor.getOutputCurrent();
+		mIO.motor_1_voltage = example_motor.getMotorOutputVoltage();
 	}
 
 	/** Set our motor values to what they should be */
@@ -153,23 +170,27 @@ public class ExampleGZSubsystem extends GZSubsystem {
 		case MANUAL:
 
 			mIO.output = mIO.desired_output;
-
+			mIO.control_mode = ControlMode.PercentOutput;
 			break;
 		case NEUTRAL:
 
 			mIO.output = 0;
+			mIO.control_mode = ControlMode.PercentOutput;
 			break;
 
 		case DEMO:
 			mIO.output = mIO.desired_output;
+			mIO.control_mode = ControlMode.PercentOutput;
 			break;
-
+		case MOTION_PROFILE:
+			mIO.output = mIO.desired_output;
+			mIO.control_mode = ControlMode.MotionProfile;
 		default:
 			System.out.println("WARNING: Incorrect ExampleSubsystem state " + mState + " reached.");
 			break;
 		}
 
-		example_motor.set(mIO.output);
+		example_motor.set(mIO.control_mode, mIO.output);
 	}
 
 	/**
@@ -191,13 +212,19 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 */
 	static class IO {
 		// In
-		
-		//heres a decent amount of advantages to using a Double versus a double,
-		//like being able to use .toString(), .isInfinite(), isNaN() (not a number)
-		public Double speed = Double.NaN;
-		public Double position = Double.NaN;
+
+		// heres a decent amount of advantages to using a Double versus a double,
+		// like being able to use .toString(), .isInfinite(), isNaN() (not a number)
+		public Double ticks_velocity = Double.NaN;
+		public Double ticks_position = Double.NaN;
+
+		public Boolean encoders_valid = false;
+
+		public Double motor_1_amperage = Double.NaN;
+		public Double motor_1_voltage = Double.NaN;
 
 		// out
+		ControlMode control_mode = ControlMode.PercentOutput;
 		private double output = 0;
 		public Double desired_output = 0.0;
 	}
@@ -214,10 +241,17 @@ public class ExampleGZSubsystem extends GZSubsystem {
 
 	/**
 	 * States for the subsystem. All will have a NEUTRAL, but other states will
-	 * vary.
+	 * vary. We also store a variable with each state telling whether the state 
+	 * requires closed loop control, (uses sensors)
 	 */
 	public enum ExampleState {
-		NEUTRAL, MANUAL, DEMO
+		NEUTRAL(false), MANUAL(false), DEMO(false), MOTION_PROFILE(true);
+
+		private boolean usesClosedLoop;
+
+		private ExampleState(boolean closed) {
+			this.usesClosedLoop = closed;
+		}
 	}
 
 	/** Set the desired state of the subsystem to NEUTRAL */
@@ -255,7 +289,8 @@ public class ExampleGZSubsystem extends GZSubsystem {
 
 	/**
 	 * This is used with subsystems that use CAN bus and following. When entering
-	 * Test mode, the robot will take every motor out of follower mode; this method puts them all back in 
+	 * Test mode, the robot will take every motor out of follower mode; this method
+	 * puts them all back in
 	 */
 	public synchronized void enableFollower() {
 		// controller_2.follow(controller_1);

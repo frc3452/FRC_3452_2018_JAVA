@@ -143,12 +143,10 @@ public class GZFiles {
 	}
 
 	/**
-	 * profile recording runnable
-	 * 
-	 * @author Max
-	 * @since 5/22/2018
+	 * notifier object for running profile recorder
 	 */
-	private class profileRecordRunnable implements java.lang.Runnable {
+	private Notifier profileRecord = new Notifier(new Runnable()
+	{
 		@Override
 		public void run() {
 			try {
@@ -174,12 +172,7 @@ public class GZFiles {
 				}
 			}
 		}
-	}
-
-	/**
-	 * notifier object for running profile recorder
-	 */
-	private Notifier profileRecord = new Notifier(new profileRecordRunnable());
+	});
 
 	/**
 	 * logging system
@@ -210,12 +203,10 @@ public class GZFiles {
 	}
 
 	/**
-	 * logging runnable
-	 * 
-	 * @author Max
-	 * @since 5/22/2018
+	 * notifier object for running profile recorder
 	 */
-	private class loggingRunnable implements java.lang.Runnable {
+	private Notifier logging = new Notifier(new Runnable()
+	{
 		@Override
 		public void run() {
 			try {
@@ -230,12 +221,7 @@ public class GZFiles {
 			}
 
 		}
-	}
-
-	/**
-	 * notifier object for running profile recorder
-	 */
-	private Notifier logging = new Notifier(new loggingRunnable());
+	});
 
 	private void createCSVFile(String fileName, String folder, fileState readwrite, boolean usb) {
 		try {
