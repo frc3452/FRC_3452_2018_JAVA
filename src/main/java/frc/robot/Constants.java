@@ -120,6 +120,18 @@ public class Constants {
 		public final static String DEFAULT_LOG_VALUE = "N/A";
 	}
 
+	public class kTempSensor {
+		public final static double LOW_TEMP_C = -50;
+		public final static double HIGH_TEMP_C = 100;
+		public final static double LOW_VOLT = 0;
+		public final static double HIGH_VOLT = 1.75;
+
+		public final static int TEMP_SENSOR_1 = 5;
+		public final static int TEMP_SENSOR_2 = 5;
+		public final static int TEMP_SENSOR_3 = 5;
+		public final static int TEMP_SENSOR_4 = 5;
+	}
+
 	public class kOI {
 		public class Rumble {
 			public final static double ENDGAME = .6;

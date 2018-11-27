@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import com.ctre.phoenix.motion.MotionProfileStatus;
@@ -13,11 +14,13 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.kDrivetrain;
+import frc.robot.Constants.kTempSensor;
 import frc.robot.GZOI;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZFiles;
@@ -43,6 +46,9 @@ public class Drive extends GZSubsystem {
 	// DRIVETRAIN
 	private GZSRX L1, L2, L3, L4, R1, R2, R3, R4;
 	private List<GZSRX> controllers;
+
+	private AnalogInput mTempSensors1;
+	private HashMap<Integer, AnalogInput> mTempSensorMap = new HashMap<>();;
 
 	// GYRO
 	private AHRS mGyro;
@@ -72,6 +78,9 @@ public class Drive extends GZSubsystem {
 		R4 = new GZSRX(kDrivetrain.R4, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
 
 		controllers = Arrays.asList(L1, L2, L3, L4, R1, R2, R3, R4);
+
+		mTempSensors1 = new AnalogInput(kTempSensor.TEMP_SENSOR_1);
+		mTempSensorMap.put(kDrivetrain.L1, mTempSensors1);
 
 		mGyro = new AHRS(SPI.Port.kMXP);
 
@@ -382,12 +391,26 @@ public class Drive extends GZSubsystem {
 
 	public Double getRightVel() {
 		return -Units.ticks_to_rotations(mIO.right_encoder_vel);
+	}
 
+	public Double getTemperatureOfMotor(int id) {
+		double retval = -3452.0;
+
+		if (mTempSensorMap.containsKey(id)) {
+			retval = GZUtil.scaleBetween(mTempSensorMap.get(id).getVoltage(), kTempSensor.LOW_TEMP_C,
+					kTempSensor.HIGH_TEMP_C, kTempSensor.LOW_VOLT, kTempSensor.HIGH_VOLT);
+			retval = GZUtil.celsiusToFahrenheit(retval);
+		}
+
+		return retval;
 	}
 
 	@Override
 	protected synchronized void in() {
 		this.mModifyPercent = (mIsSlow ? .5 : 1);
+
+		// for (int i = 0; i < )
+		// mIO.temp_sensor[] = mTempSensor.getVoltage();
 
 		mIO.leftEncoderValid = L1.isEncoderValid();
 		mIO.rightEncoderValid = R1.isEncoderValid();
@@ -446,9 +469,9 @@ public class Drive extends GZSubsystem {
 	private synchronized void arcade(GZJoystick joy) {
 		double turnScalar;
 		// if (Elevator.getInstance().isLimiting())
-			// turnScalar = Constants.kDrivetrain.ELEV_TURN_SCALAR;
+		// turnScalar = Constants.kDrivetrain.ELEV_TURN_SCALAR;
 		// else
-			turnScalar = 1;
+		turnScalar = 1;
 
 		// double elv = Elevator.getInstance().getPercentageModify();
 		double elv = 1;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
+import frc.robot.Constants.kDrivetrain;
 import frc.robot.subsystems.Drive;
 
 public class GZLog {
@@ -24,6 +25,9 @@ public class GZLog {
 
 	@SuppressWarnings("unused")
 	public void fillLogger() {
+		final String avgl = "=AVERAGE($L:$L)";
+		final String avgr = "=AVERAGE($R:$R)";
+
 
 		LogItem left_speed = new LogItem("L-RPM") {
 			@Override
@@ -63,7 +67,7 @@ public class GZLog {
 		LogItem l1_amp_avg = new LogItem("L1-AMP-AVG", true) {
 			@Override
 			public void update() {
-				this.mValue = "=AVERAGE($L:$L)";
+				this.mValue = avgl;
 			}
 		};
 
@@ -75,10 +79,28 @@ public class GZLog {
 			}
 		};
 
+		LogItem l1_temperature = new LogItem("L1-TEMP")
+		{
+			@Override
+			public void update()
+			{
+				this.mValue = Drive.getInstance().getTemperatureOfMotor(kDrivetrain.L1).toString();
+			}
+		};
+
+		LogItem l1_temperature_avg = new LogItem("L1-TEMP-AVG", true)
+		{
+			@Override
+			public void update()
+			{
+				this.mValue = avgl;
+			}
+		};
+
 		LogItem l2_amp_avg = new LogItem("L2-AMP-AVG", true) {
 			@Override
 			public void update() {
-				this.mValue = "=AVERAGE($L:$L)";
+				this.mValue = avgl;
 			}
 		};
 
@@ -93,7 +115,7 @@ public class GZLog {
 		LogItem l3_amp_avg = new LogItem("L3-AMP-AVG", true) {
 			@Override
 			public void update() {
-				this.mValue = "=AVERAGE($L:$L)";
+				this.mValue = avgl;
 			}
 		};
 
@@ -108,7 +130,7 @@ public class GZLog {
 		LogItem l4_amp_avg = new LogItem("L4-AMP-AVG", true) {
 			@Override
 			public void update() {
-				this.mValue = "=AVERAGE($L:$L)";
+				this.mValue = avgl;
 			}
 		};
 
@@ -123,7 +145,7 @@ public class GZLog {
 		LogItem r1_amp_avg = new LogItem("R1-AMP-AVG", true) {
 			@Override
 			public void update() {
-				this.mValue = "=AVERAGE($L:$L)";
+				this.mValue = avgl;
 			}
 		};
 
@@ -138,7 +160,7 @@ public class GZLog {
 		LogItem r2_amp_avg = new LogItem("R2-AMP-AVG", true) {
 			@Override
 			public void update() {
-				this.mValue = "=AVERAGE($L:$L)";
+				this.mValue = avgl;
 			}
 		};
 
@@ -153,7 +175,7 @@ public class GZLog {
 		LogItem r3_amp_avg = new LogItem("R3-AMP-AVG", true) {
 			@Override
 			public void update() {
-				this.mValue = "=AVERAGE($L:$L)";
+				this.mValue = avgl;
 			}
 		};
 
@@ -168,7 +190,7 @@ public class GZLog {
 		LogItem r4_amp_avg = new LogItem("R4-AMP-AVG", true) {
 			@Override
 			public void update() {
-				this.mValue = "=AVERAGE($L:$L)";
+				this.mValue = avgl;
 			}
 		};
 
@@ -259,7 +281,7 @@ public class GZLog {
 		LogItem pdp_temp_avg = new LogItem("PDP-TEMP-AVG", true) {
 			@Override
 			public void update() {
-				this.mValue = "=AVERAGE($L:$L)";
+				this.mValue = avgl;
 			}
 		};
 
@@ -273,7 +295,7 @@ public class GZLog {
 		LogItem pdp_current_avg = new LogItem("PDP-AMP-AVG", true) {
 			@Override
 			public void update() {
-				this.mValue = "=AVERAGE($L:$L)";
+				this.mValue = avgl;
 			}
 		};
 
@@ -288,7 +310,7 @@ public class GZLog {
 		LogItem pdp_volt_avg = new LogItem("PDP-VOLT-AVG", true) {
 			@Override
 			public void update() {
-				this.mValue = "=AVERAGE($L:$L)";
+				this.mValue = avgl;
 			}
 		};
 

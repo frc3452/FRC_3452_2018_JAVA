@@ -11,6 +11,16 @@ public class GZUtil {
 	private GZUtil() {
 	}
 
+	public static double celsiusToFahrenheit(double celsius) {
+		double fahrenheit = (5.0 / 9) * celsius + 32;
+		return fahrenheit;
+	}
+
+	public static double fahrenheitToCelsius(double fahrenheit) {
+		double celsius = (9.0 / 5) * fahrenheit - 32;
+		return celsius;
+	}
+
 	public static String[] letters = { "", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
 			"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI",
 			"AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA",
@@ -23,7 +33,8 @@ public class GZUtil {
 		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 	}
 
-	public static double scaleBetween(double unscaledNum, double minAllowed, double maxAllowed, double min, double max) {
+	public static double scaleBetween(double unscaledNum, double minAllowed, double maxAllowed, double min,
+			double max) {
 		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 	}
 
@@ -80,6 +91,22 @@ public class GZUtil {
 			result &= epsilonEquals(value_in, value, epsilon);
 		}
 		return result;
+	}
+
+	public static boolean isValueIn(final ArrayList<Double> list, double value) {
+		for (Double d : list) {
+			if (list.indexOf(d) != -1)
+				return true;
+		}
+		return false;
+	}
+
+	public static boolean isValueIn(final ArrayList<Integer> list, int value) {
+		for (Integer i : list) {
+			if (list.indexOf(i) != -1)
+				return true;
+		}
+		return false;
 	}
 
 	public static double applyDeadband(double value, double deadband) {
