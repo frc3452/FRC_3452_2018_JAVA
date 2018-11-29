@@ -307,7 +307,7 @@ public class Drive extends GZSubsystem {
 			brake(NeutralMode.Brake);
 			break;
 		case NEUTRAL:
-			brake(GZOI.getInstance().wasTele() ? NeutralMode.Brake : NeutralMode.Coast);
+			brake((GZOI.getInstance().wasTele() || GZOI.getInstance().wasAuto()) ? NeutralMode.Brake : NeutralMode.Coast);
 			break;
 		case OPEN_LOOP:
 			brake(NeutralMode.Brake);
@@ -408,9 +408,6 @@ public class Drive extends GZSubsystem {
 	@Override
 	protected synchronized void in() {
 		this.mModifyPercent = (mIsSlow ? .5 : 1);
-
-		// for (int i = 0; i < )
-		// mIO.temp_sensor[] = mTempSensor.getVoltage();
 
 		mIO.leftEncoderValid = L1.isEncoderValid();
 		mIO.rightEncoderValid = R1.isEncoderValid();

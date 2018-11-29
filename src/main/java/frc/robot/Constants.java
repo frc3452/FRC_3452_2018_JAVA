@@ -126,10 +126,10 @@ public class Constants {
 		public final static double LOW_VOLT = 0;
 		public final static double HIGH_VOLT = 1.75;
 
-		public final static int TEMP_SENSOR_1 = 5;
+		public final static int TEMP_SENSOR_1 = 4;
 		public final static int TEMP_SENSOR_2 = 5;
-		public final static int TEMP_SENSOR_3 = 5;
-		public final static int TEMP_SENSOR_4 = 5;
+		public final static int TEMP_SENSOR_3 = 6;
+		public final static int TEMP_SENSOR_4 = 7;
 	}
 
 	public class kOI {

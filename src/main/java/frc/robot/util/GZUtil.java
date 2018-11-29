@@ -29,13 +29,13 @@ public class GZUtil {
 			"CL", "CM", "CN", "CO", "CP", "CQ", "CR", "CS", "CT", "CU", "CV", "CW", "CX", "CY", "CZ", "DA", "DB", "DC",
 			"DD", "DE", "DF", "DG", "DH", "DI", "DJ", "DK", "DL", "DM", "DN", };
 
-	public static int scaleBetween(int unscaledNum, int minAllowed, int maxAllowed, int min, int max) {
-		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
+	public static int scaleBetween(int unscaledNum, int minToScaleTo, int maxToScaleTo, int min, int max) {
+		return (maxToScaleTo - minToScaleTo) * (unscaledNum - min) / (max - min) + minToScaleTo;
 	}
 
-	public static double scaleBetween(double unscaledNum, double minAllowed, double maxAllowed, double min,
+	public static double scaleBetween(double unscaledNum, double minToScaleTo, double maxToScaleTo, double min,
 			double max) {
-		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
+		return (maxToScaleTo - minToScaleTo) * (unscaledNum - min) / (max - min) + minToScaleTo;
 	}
 
 	public static StackTraceElement[] currentThread() {
