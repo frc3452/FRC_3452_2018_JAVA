@@ -39,6 +39,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic() {
+		System.out.println(Drive.getInstance().getTemperatureOfMotor(Constants.kDrivetrain.L1));
+
 		if (!GZOI.getInstance().isTest())
 			allSubsystems.loop();
 	}

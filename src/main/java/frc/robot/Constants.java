@@ -22,8 +22,8 @@ public class Constants {
 
 		public static final int SAFTEY_SWITCH = 96;
 
-		public static final int AUTO_SELECTOR_1 = 2;
-		public static final int AUTO_SELECTOR_2 = 3;
+		public static final int AUTO_SELECTOR_1 = 1;
+		public static final int AUTO_SELECTOR_2 = 2;
 
 		public static final int AUTO_VARIANCE = 15;
 
@@ -126,7 +126,7 @@ public class Constants {
 		public final static double LOW_VOLT = 0;
 		public final static double HIGH_VOLT = 1.75;
 
-		public final static int TEMP_SENSOR_1 = 4;
+		public final static int TEMP_SENSOR_1 = 3;
 		public final static int TEMP_SENSOR_2 = 5;
 		public final static int TEMP_SENSOR_3 = 6;
 		public final static int TEMP_SENSOR_4 = 7;

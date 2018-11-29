@@ -71,14 +71,6 @@ public class GZLog {
 			}
 		};
 
-		LogItem l2_amp = new LogItem("L2-AMP") {
-
-			@Override
-			public void update() {
-				this.mValue = Drive.getInstance().mIO.L2_amp.toString();
-			}
-		};
-
 		LogItem l1_temperature = new LogItem("L1-TEMP")
 		{
 			@Override
@@ -96,6 +88,15 @@ public class GZLog {
 				this.mValue = avgl;
 			}
 		};
+		
+		LogItem l2_amp = new LogItem("L2-AMP") {
+
+			@Override
+			public void update() {
+				this.mValue = Drive.getInstance().mIO.L2_amp.toString();
+			}
+		};
+
 
 		LogItem l2_amp_avg = new LogItem("L2-AMP-AVG", true) {
 			@Override
