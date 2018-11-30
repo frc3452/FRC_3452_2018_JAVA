@@ -8,6 +8,7 @@ import frc.robot.subsystems.Auton;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Health;
 import frc.robot.util.GZFiles;
+import frc.robot.util.GZUtil;
 import frc.robot.util.GZFiles.TASK;
 import frc.robot.util.GZSubsystemManager;
 
@@ -25,7 +26,7 @@ public class Robot extends TimedRobot {
 
 	// LOGGING CONTROL
 	private final boolean logging = true, logToUsb = true;
-	private final String loggingLocation = "Logging/Offseason/WMRI";
+	private final String loggingLocation = "Logging/Offseason";
 
 	@Override
 	public void robotInit() {
@@ -54,7 +55,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic() {
-		auton.autonChooser();
+		// auton.autonChooser();
 	}
 
 	@Override

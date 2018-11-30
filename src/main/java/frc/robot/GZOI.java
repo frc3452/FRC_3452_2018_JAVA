@@ -36,7 +36,7 @@ public class GZOI extends GZSubsystem {
 		driverJoy = new GZJoystick(0);
 		opJoy = new GZJoystick(1);
 	}
-
+	
 	@Override
 	public void loop() {
 		outputSmartDashboard();
@@ -60,11 +60,14 @@ public class GZOI extends GZSubsystem {
 		// Robot.auton.crash();
 
 		if (isTele()) {
-			Drive.getInstance().setWantedState(DriveState.OPEN_LOOP_DRIVER);
+			drive.arcade(1,0);
+			// Drive.getInstance().setWantedState(DriveState.OPEN_LOOP_DRIVER);
 
 			// OVERRIDES, ETC.
 			if (driverJoy.isAPressed())
 				drive.slowSpeed(!drive.isSlow());
+
+
 
 			// CONTROLLER RUMBLE
 			if (GZUtil.between(getMatchTime(), 29.1, 30))
