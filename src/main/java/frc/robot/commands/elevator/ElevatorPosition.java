@@ -1,10 +1,8 @@
 package frc.robot.commands.elevator;
 
-import frc.robot.Constants.kElevator;
-import frc.robot.Robot;
-import frc.robot.subsystems.Elevator;
-
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.Constants.kElevator;
+import frc.robot.subsystems.Elevator;
 
 public class ElevatorPosition extends Command {
 

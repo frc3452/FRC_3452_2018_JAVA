@@ -1,9 +1,7 @@
 package frc.robot.commands.elevator;
 
-import frc.robot.Robot;
-import frc.robot.subsystems.Elevator;
-
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.subsystems.Elevator;
 
 public class ElevatorTime extends Command {
 

@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.kElevator;
 import frc.robot.GZOI;
-import frc.robot.Robot;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZJoystick;
 import frc.robot.util.GZSRX;

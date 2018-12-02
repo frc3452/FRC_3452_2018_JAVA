@@ -1,9 +1,7 @@
 package frc.robot.commands.pwm;
 
-import frc.robot.Robot;
-import frc.robot.subsystems.Intake;
-
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.subsystems.Intake;
 
 public class IntakeSpin extends Command {
 

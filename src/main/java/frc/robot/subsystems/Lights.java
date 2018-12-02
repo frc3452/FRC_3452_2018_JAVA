@@ -13,7 +13,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.kAuton;
 import frc.robot.Constants.kLights;
 import frc.robot.GZOI;
-import frc.robot.Robot;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZSRX;

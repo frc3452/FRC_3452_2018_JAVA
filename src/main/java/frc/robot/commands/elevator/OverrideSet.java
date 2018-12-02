@@ -1,11 +1,9 @@
 package frc.robot.commands.elevator;
 
-import frc.robot.Robot;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Elevator.ESO;
-
-import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class OverrideSet extends InstantCommand {
 
