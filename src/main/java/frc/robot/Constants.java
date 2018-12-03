@@ -200,7 +200,7 @@ public class Constants {
 		public class HeightsInches {
 			public static final double Floor = 0;
 			public static final double Switch = 25;
-			public static final double Scale = 46;//64.63 
+			public static final double Scale = 48;//64.63 
 		}
 
 		public class HeightsRotations {
