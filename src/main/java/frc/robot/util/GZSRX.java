@@ -1,11 +1,10 @@
 package frc.robot.util;
 
-import frc.robot.Robot;
-import frc.robot.subsystems.Health;
-import frc.robot.subsystems.Health.AlertLevel;
-
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import frc.robot.subsystems.Health;
+import frc.robot.subsystems.Health.AlertLevel;
 
 public class GZSRX extends WPI_TalonSRX {
 

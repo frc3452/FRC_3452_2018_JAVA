@@ -1,10 +1,8 @@
 package frc.robot.commands.elevator;
 
-import frc.robot.Robot;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.subsystems.Elevator;
 import frc.robot.util.GZJoystick;
-
-import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevatorManual extends Command {
 

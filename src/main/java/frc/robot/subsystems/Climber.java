@@ -1,11 +1,9 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Spark;
 import frc.robot.Constants.kClimber;
 import frc.robot.Constants.kPDP;
 import frc.robot.GZOI;
-import frc.robot.Robot;
 import frc.robot.util.GZSubsystem;
 
 public class Climber extends GZSubsystem {

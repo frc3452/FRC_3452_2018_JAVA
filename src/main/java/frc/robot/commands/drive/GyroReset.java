@@ -1,9 +1,7 @@
 package frc.robot.commands.drive;
 
-import frc.robot.Robot;
-import frc.robot.subsystems.Drive;
-
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.subsystems.Drive;
 
 public class GyroReset extends Command {
 

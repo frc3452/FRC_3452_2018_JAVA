@@ -2,7 +2,6 @@ package frc.robot.commands.auton;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.Constants.kElevator;
-import frc.robot.Robot;
 import frc.robot.commands.drive.DriveTime;
 import frc.robot.commands.drive.DriveToCube;
 import frc.robot.commands.drive.DriveToStop;

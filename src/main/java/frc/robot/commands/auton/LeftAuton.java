@@ -1,9 +1,9 @@
 package frc.robot.commands.auton;
 
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.Constants.kAuton;
 import frc.robot.Constants.kElevator;
 import frc.robot.Constants.kIntake;
-import frc.robot.Robot;
 import frc.robot.commands.drive.DriveTime;
 import frc.robot.commands.drive.DriveToCube;
 import frc.robot.commands.drive.DriveToStop;
@@ -20,8 +20,6 @@ import frc.robot.commands.pwm.IntakeWhileDrive;
 import frc.robot.subsystems.Auton;
 import frc.robot.subsystems.Auton.AO;
 import frc.robot.subsystems.Auton.AV;
-
-import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class LeftAuton extends CommandGroup {
 
