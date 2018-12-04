@@ -111,6 +111,8 @@ public class Constants {
 			}
 		}
 
+		public final static double WHEEL_DIAMATER_IN = 6;
+
 		public final static int L1 = 1, L2 = 2, L3 = 3, L4 = 4;
 		public final static int R1 = 5, R2 = 6, R3 = 7, R4 = 8;
 
