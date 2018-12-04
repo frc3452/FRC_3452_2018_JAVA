@@ -16,6 +16,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.kDrivetrain;
@@ -55,8 +56,8 @@ public class Drive extends GZSubsystem {
 
 	private static Drive mInstance = null;
 
-	public synchronized static Drive getInstance()
-	{
+	public synchronized static Drive getInstance() {
+
 		if (mInstance == null)
 			mInstance = new Drive();
 		return mInstance;
@@ -176,9 +177,6 @@ public class Drive extends GZSubsystem {
 
 	public synchronized void setWantedState(DriveState wantedState) {
 		this.mWantedState = wantedState;
-
-		// TODO figure out what in auto is switching it to open loop
-		// System.out.println(Util.trace(Util.currentThread()));
 	}
 
 	private synchronized void switchToState(DriveState state) {
@@ -262,24 +260,24 @@ public class Drive extends GZSubsystem {
 				s.setSensorPhase(true);
 
 				if (s.getSide() == Side.LEFT) {
-					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.LEFT.P, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'P' gain");
-					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.LEFT.I, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'I' gain");
-					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.LEFT.D, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
-					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
+					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.LEFT.P, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'P' gain");
+					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.LEFT.I, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'I' gain");
+					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.LEFT.D, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'D' gain");
+					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'F' gain");
 
 				} else {
-					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'P' gain");
-					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.RIGHT.I, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'I' gain");
-					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.RIGHT.D, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'D' gain");
-					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.RIGHT.F, GZSRX.TIMEOUT), this,
-							AlertLevel.WARNING, "Could not set " + s.getSide() + " 'F' gain");
+					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'P' gain");
+					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.RIGHT.I, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'I' gain");
+					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.RIGHT.D, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'D' gain");
+					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.RIGHT.F, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+							"Could not set " + s.getSide() + " 'F' gain");
 				}
 			}
 
@@ -455,7 +453,8 @@ public class Drive extends GZSubsystem {
 
 		double elv = Elevator.getInstance().getPercentageModify();
 
-		arcadeNoState(joy.getLeftAnalogY() * elv, elv * turnScalar * ((joy.getRightTrigger() - joy.getLeftTrigger()) * .5));
+		arcadeNoState(joy.getLeftAnalogY() * elv,
+				elv * turnScalar * ((joy.getRightTrigger() - joy.getLeftTrigger()) * .5));
 	}
 
 	// called in DEMO state
@@ -464,8 +463,7 @@ public class Drive extends GZSubsystem {
 	}
 
 	private synchronized void arcadeNoState(double move, double rotate) {
-		double[] temp = arcadeToLR(move * mModifyPercent,
-				rotate * mModifyPercent );
+		double[] temp = arcadeToLR(move * mModifyPercent, rotate * mModifyPercent);
 
 		mIO.left_desired_output = temp[0];
 		mIO.right_desired_output = temp[1];
@@ -476,9 +474,13 @@ public class Drive extends GZSubsystem {
 		arcadeNoState(move, rotate);
 	}
 
+	public synchronized double[] arcadeToLR(double xSpeed, double zRotation) {
+		return arcadeToLR(xSpeed, zRotation, false);
+	}
+
 	// Modified from DifferentialDrive.java to produce double array, [0] being left
 	// motor value, [1] being right motor value
-	public synchronized double[] arcadeToLR(double xSpeed, double zRotation) {
+	public synchronized double[] arcadeToLR(double xSpeed, double zRotation, boolean squaredInputs) {
 		xSpeed = GZUtil.limit(xSpeed);
 		xSpeed = GZUtil.applyDeadband(xSpeed, kDrivetrain.DIFFERENTIAL_DRIVE_DEADBAND);
 
@@ -487,6 +489,13 @@ public class Drive extends GZSubsystem {
 
 		double leftMotorOutput;
 		double rightMotorOutput;
+
+		// Square the inputs (while preserving the sign) to increase fine control
+		// while permitting full power.
+		if (squaredInputs) {
+			xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
+			zRotation = Math.copySign(zRotation * zRotation, zRotation);
+		}
 
 		double maxInput = Math.copySign(Math.max(Math.abs(xSpeed), Math.abs(zRotation)), xSpeed);
 
