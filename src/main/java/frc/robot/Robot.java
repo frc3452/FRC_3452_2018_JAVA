@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
 
 
 	// LOGGING CONTROL
-	private final boolean logging = true, logToUsb = true;
+	private final boolean logging = false, logToUsb = true;
 	private final String loggingLocation = "Logging/Offseason/WMRI";
 
 	@Override
@@ -37,8 +37,8 @@ public class Robot extends TimedRobot {
 		auton.fillAutonArray();
 
 		// allSubsystems.startLooping();
-
 		health.generateHealth();
+
 	}
 
 	@Override

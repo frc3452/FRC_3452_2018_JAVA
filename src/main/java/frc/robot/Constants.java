@@ -1,5 +1,7 @@
 package frc.robot;
 
+import frc.robot.util.GZPID;
+
 /**
  * Robot subsystem constants
  *
@@ -8,12 +10,12 @@ package frc.robot;
  */
 
 public class Constants {
-	public class kLoop {
+	public static class kLoop {
 		public static final double LOOP_SPEED = .02;
 		public static final double ENCODER_CHECKER_SPEED = .1;
 	}
 
-	public class kAuton {
+	public static class kAuton {
 		public static final double GYRO_TURN_SPEED = .25;
 
 		public static final int COMMAND_ARRAY_SIZE = 41;
@@ -72,43 +74,28 @@ public class Constants {
 		public static final String DEFAULT_NAME = "NO COMMAND";
 	}
 
-	public class kCamera {
+	public static class kCamera {
 	}
 
-	public class kClimber {
+	public static class kClimber {
 		public static final int CLIMBER_1 = 2;
 		public static final boolean CLIMBER_1_INVERT = false;
 	}
 
-	public class kDrivetrain {
+	public static class kDrivetrain {
 
-		public class PID {
-			public class NEW_LEFT {
-				public final static double P = .4;
-				public final static double I = 0;
-				public final static double D = 0;
-				public static final double F = .235;
-			}
+		public static class PID {
 
-			public class NEW_RIGHT {
-				public final static double P = .4;
-				public final static double I = 0;
-				public final static double D = 0;
-				public static final double F = .239;
-			}
-			public class LEFT {
-				public final static double P = .425;
-				public final static double I = 0;
-				public final static double D = 4.25;
-				public static final double F = 0;
-			}
+			static double p = .3; //.1 
+			static double d = p * 0; //40
+			public static final GZPID Left = new GZPID(0, p, 0, d, .235, 0);
+			public static final GZPID Right = new GZPID(0, p, 0, d, .239, 0);
 
-			public class RIGHT {
-				public final static double P = .8;
-				public final static double I = 0;
-				public final static double D = 4.25;
-				public static final double F = 0;
-			}
+			// public static final GZPID Left = new GZPID(0, 2.7, 0, 2.7 * 25, .235, 0);
+			// public static final GZPID Right = new GZPID(0, 2.7, 0, 2.7 * 25, .239, 0);
+			
+			public static final GZPID OldLeft = new GZPID(0, .425, 0, 4.25, 0, 0);
+			public static final GZPID OldRight = new GZPID(0, .8, 0, 4.25, 0, 0);
 		}
 
 		public final static double WHEEL_DIAMATER_IN = 6;
@@ -132,7 +119,7 @@ public class Constants {
 		public final static double ELEV_TURN_SCALAR = 1.65;
 	}
 
-	public class kPDP {
+	public static class kPDP {
 		public final static int DRIVE_L_1 = 0, DRIVE_L_2 = 1, DRIVE_L_3 = 5, DRIVE_L_4 = 4;
 		public final static int DRIVE_R_1 = 15, DRIVE_R_2 = 14, DRIVE_R_3 = 11, DRIVE_R_4 = 10;
 
@@ -146,7 +133,7 @@ public class Constants {
 		public final static int CLIMBER_2 = 2;
 	}
 
-	public class kElevator {
+	public static class kElevator {
 		public class PID {
 			public static final double F = 0;
 			public static final double P = .2;
@@ -213,7 +200,7 @@ public class Constants {
 
 	}
 
-	public class kIntake {
+	public static class kIntake {
 		public static final int INTAKE_L = 0;
 		public static final int INTAKE_R = 1;
 
@@ -230,7 +217,7 @@ public class Constants {
 
 	}
 
-	public class kLights {
+	public static class kLights {
 		public static final int CANIFIER_ID = 0;
 
 		public static final int RED = 0;
@@ -240,17 +227,17 @@ public class Constants {
 		public static final int YELLOW = 330;
 	}
 
-	public class kFiles {
+	public static class kFiles {
 		public final static String NAME = "MP1";
 		public final static String FOLDER = "MotionProfiles";
 		public final static boolean USB = false;
 
-		public final static int RECORDING_MOTION_PROFILE_MS = 100; // 20
+		public final static int RECORDING_MOTION_PROFILE_MS = 30; // 20
 		public final static double LOGGING_SPEED = .125;
 		public final static String DEFAULT_LOG_VALUE = "N/A";
 	}
 
-	public class kOI {
+	public static class kOI {
 		public class Rumble {
 
 			public final static double INTAKE = .3;

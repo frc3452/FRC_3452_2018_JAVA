@@ -16,14 +16,15 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.kDrivetrain;
+import frc.robot.Constants.kPDP;
 import frc.robot.GZOI;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZFiles;
 import frc.robot.util.GZJoystick;
+import frc.robot.util.GZPID;
 import frc.robot.util.GZSRX;
 import frc.robot.util.GZSRX.Breaker;
 import frc.robot.util.GZSRX.Master;
@@ -260,28 +261,26 @@ public class Drive extends GZSubsystem {
 				s.setSensorPhase(true);
 
 				if (s.getSide() == Side.LEFT) {
-					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.LEFT.P, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'P' gain");
-					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.LEFT.I, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'I' gain");
-					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.LEFT.D, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'D' gain");
-					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.LEFT.F, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'F' gain");
-
+					setPID(s, kDrivetrain.PID.Left);
 				} else {
-					GZSRX.logError(s.config_kP(0, kDrivetrain.PID.RIGHT.P, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'P' gain");
-					GZSRX.logError(s.config_kI(0, kDrivetrain.PID.RIGHT.I, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'I' gain");
-					GZSRX.logError(s.config_kD(0, kDrivetrain.PID.RIGHT.D, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'D' gain");
-					GZSRX.logError(s.config_kF(0, kDrivetrain.PID.RIGHT.F, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
-							"Could not set " + s.getSide() + " 'F' gain");
+					setPID(s, kDrivetrain.PID.Right);
 				}
 			}
 
 		}
+	}
+
+	public void setPID(GZSRX talon, GZPID pid) {
+		GZSRX.logError(talon.config_kF(pid.parameterSlot, pid.F, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+				"Could not set " + talon.getSide() + " 'F' gain");
+		GZSRX.logError(talon.config_kP(pid.parameterSlot, pid.P, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+				"Could not set " + talon.getSide() + " 'P' gain");
+		GZSRX.logError(talon.config_kI(pid.parameterSlot, pid.I, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+				"Could not set " + talon.getSide() + " 'I' gain");
+		GZSRX.logError(talon.config_kD(pid.parameterSlot, pid.D, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+				"Could not set " + talon.getSide() + " 'D' gain");
+		GZSRX.logError(talon.config_IntegralZone(pid.parameterSlot, pid.iZone, GZSRX.TIMEOUT), this, AlertLevel.WARNING,
+				"Could not set " + talon.getSide() + " 'iZone' gain");
 	}
 
 	private synchronized void checkFirmware() {

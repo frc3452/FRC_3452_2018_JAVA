@@ -82,14 +82,15 @@ public class GZOI extends GZSubsystem {
 		// Buttons.LEFT_CLICK)))
 		// Robot.auton.crash();
 		
-		if (isTele()) {
+		if (driverJoy.isLClickPressed())
+			recording = !recording;
+			
+		if (recording != prevRecording)
+			GZFiles.getInstance().csvControl(kFiles.NAME, kFiles.FOLDER, kFiles.USB, TASK.Record, recording);
+		
+			if (isTele()) {
 			Drive.getInstance().setWantedState(DriveState.OPEN_LOOP_DRIVER);
 
-			if (driverJoy.isLClickPressed())
-				recording = !recording;
-				
-			if (recording != prevRecording)
-				GZFiles.getInstance().csvControl(kFiles.NAME, kFiles.FOLDER, kFiles.USB, TASK.Record, recording);
 				
 			// OVERRIDES, ETC.
 			if (driverJoy.isAPressed())
