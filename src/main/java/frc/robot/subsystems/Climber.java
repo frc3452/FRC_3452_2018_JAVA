@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Spark;
 import frc.robot.Constants.kClimber;
 import frc.robot.Constants.kPDP;
 import frc.robot.GZOI;
+import frc.robot.util.GZLog.LogItem;
 import frc.robot.util.GZSubsystem;
 
 public class Climber extends GZSubsystem {
@@ -62,6 +63,47 @@ public class Climber extends GZSubsystem {
 		handleStates();
 		in();
 		out();
+	}
+
+	public void addLoggingValues()
+	{
+		new LogItem("CLIMBER-1-AMP") {
+			@Override
+			public String val() {
+				return Climber.getInstance().mIO.climber_1_amperage.toString();
+			}
+		};
+
+		new LogItem("CLIMBER-1-AMP-AVG", true) {
+			@Override
+			public String val() {
+				return "=AVERAGE($L:$L)";
+			}
+		};
+
+		new LogItem("CLIMBER-2-AMP") {
+			@Override
+			public String val() {
+				return Climber.getInstance().mIO.climber_2_amperage.toString();
+			}
+		};
+
+		new LogItem("CLIMBER-2-AMP-AVG", true) {
+			@Override
+			public String val() {
+				return "=AVERAGE($L:$L)";
+			}
+		};
+
+		new LogItem("CLIMBER-PRCNT") {
+
+			@Override
+			public String val() {
+				return Climber.getInstance().mIO.climber_desired_output.toString();
+			}
+		};
+
+
 	}
 
 	public class IO {

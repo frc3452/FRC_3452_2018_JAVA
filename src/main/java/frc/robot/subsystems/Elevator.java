@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -15,6 +15,7 @@ import frc.robot.Constants.kElevator;
 import frc.robot.GZOI;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZJoystick;
+import frc.robot.util.GZLog.LogItem;
 import frc.robot.util.GZSRX;
 import frc.robot.util.GZSRX.Breaker;
 import frc.robot.util.GZSRX.Master;
@@ -24,7 +25,7 @@ import frc.robot.util.Units;
 public class Elevator extends GZSubsystem {
 
 	private static GZSRX elevator_1, elevator_2;
-	private List<GZSRX> controllers;
+	private Map<Integer, GZSRX> mControllers = new HashMap<Integer, GZSRX>();
 
 	// Force switch state to neutral on start up
 	private ElevatorState mState = ElevatorState.MANUAL;
@@ -39,21 +40,108 @@ public class Elevator extends GZSubsystem {
 
 	private static Elevator mInstance = null;
 
-	public synchronized static Elevator getInstance()
-	{
+	public synchronized static Elevator getInstance() {
 		if (mInstance == null)
 			mInstance = new Elevator();
 
 		return mInstance;
 	}
 
+	public void addLoggingValues() {
+		new LogItem("ELEV-1-AMP") {
+			@Override
+			public String val() {
+				return Elevator.getInstance().mIO.elevator_1_amp.toString();
+			}
+		};
+
+		new LogItem("ELEV-1-AMP-AVG", true) {
+			@Override
+			public String val() {
+				return LogItem.Average_Left_Formula;
+			}
+		};
+
+		new LogItem("ELEV-2-AMP") {
+			@Override
+			public String val() {
+				return Elevator.getInstance().mIO.elevator_2_amp.toString();
+			}
+		};
+
+		new LogItem("ELEV-2-AMP-AVG", true) {
+			@Override
+			public String val() {
+				return LogItem.Average_Left_Formula;
+			}
+		};
+
+		new LogItem("ELEV-1-VOLT") {
+			@Override
+			public String val() {
+				return Elevator.getInstance().mIO.elevator_1_volt.toString();
+			}
+		};
+
+		new LogItem("ELEV-2-VOLT") {
+			@Override
+			public String val() {
+				return Elevator.getInstance().mIO.elevator_2_volt.toString();
+			}
+		};
+
+		new LogItem("ELEV-UP-LMT") {
+			@Override
+			public String val() {
+				return Elevator.getInstance().getTopLimit().toString();
+			}
+		};
+
+		new LogItem("ELEV-DOWN-LMT") {
+			@Override
+			public String val() {
+				return Elevator.getInstance().getBottomLimit().toString();
+			}
+		};
+
+		new LogItem("ELEV-ENC-PRSNT") {
+			@Override
+			public String val() {
+				return Elevator.getInstance().mIO.encoderValid.toString();
+			}
+		};
+
+		new LogItem("ELEV-ROT") {
+			@Override
+			public String val() {
+				return Elevator.getInstance().getRotations().toString();
+			}
+		};
+
+		new LogItem("ELEV-INCHES") {
+			@Override
+			public String val() {
+				return Elevator.getInstance().getHeight().toString();
+			}
+
+		};
+		new LogItem("ELEV-SPEED") {
+			@Override
+			public String val() {
+				return Elevator.getInstance().getSpeed().toString();
+			}
+		};
+
+	}
+
 	private Elevator() {
-		elevator_1 = new GZSRX(kElevator.E_1, Breaker.AMP_40, Master.MASTER);
-		elevator_2 = new GZSRX(kElevator.E_2, Breaker.AMP_40, Master.FOLLOWER);
+		elevator_1 = new GZSRX(kElevator.E_1, "E1", Breaker.AMP_40, Master.MASTER);
+		elevator_2 = new GZSRX(kElevator.E_2, "E2", Breaker.AMP_40, Master.FOLLOWER);
 
-		controllers = Arrays.asList(elevator_1, elevator_2);
+		mControllers.put(elevator_1.getID(), elevator_1);
+		mControllers.put(elevator_2.getID(), elevator_2);
 
-		talonInit(controllers);
+		talonInit();
 
 		// FOLLOWER
 		elevator_2.follow(elevator_1);
@@ -70,8 +158,8 @@ public class Elevator extends GZSubsystem {
 				"Could not set 'I' gain");
 		GZSRX.logError(elevator_1.config_kD(0, kElevator.PID.D, 10), this, AlertLevel.WARNING,
 				"Could not set 'D' gain");
-		GZSRX.logError(elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10), this,
-				AlertLevel.WARNING, "Could not set open loop ramp");
+		GZSRX.logError(elevator_1.configOpenloopRamp(Constants.kElevator.OPEN_RAMP_TIME, 10), this, AlertLevel.WARNING,
+				"Could not set open loop ramp");
 		GZSRX.logError(elevator_1.configClosedloopRamp(Constants.kElevator.CLOSED_RAMP_TIME, 10), this,
 				AlertLevel.WARNING, "Could not set closed loop ramp");
 
@@ -127,8 +215,8 @@ public class Elevator extends GZSubsystem {
 		elevator_2.checkFirmware(this);
 	}
 
-	private synchronized void talonInit(List<GZSRX> srx) {
-		for (GZSRX s : srx) {
+	private synchronized void talonInit() {
+		for (GZSRX s : mControllers.values()) {
 			GZSRX.logError(s.configFactoryDefault(), this, AlertLevel.ERROR,
 					"Could not factory reset " + s.getMaster());
 

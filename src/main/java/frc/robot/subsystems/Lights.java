@@ -43,6 +43,11 @@ public class Lights extends GZSubsystem {
 		return mInstance;
 	}
 
+	public void addLoggingValues()
+	{
+		// D:
+	}
+
 	private Lights() {
 
 		for (int i = 0; i < 10; i++)

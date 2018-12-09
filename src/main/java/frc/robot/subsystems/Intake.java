@@ -4,25 +4,69 @@ import edu.wpi.first.wpilibj.Spark;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kPDP;
 import frc.robot.GZOI;
+import frc.robot.util.GZLog.LogItem;
 import frc.robot.util.GZSubsystem;
 
 public class Intake extends GZSubsystem {
 
 	private static Spark left_intake, right_intake;
 
-	//Force switch state to neutral on start up
+	// Force switch state to neutral on start up
 	private IntakeState mState = IntakeState.MANUAL;
 	private IntakeState mWantedState = IntakeState.NEUTRAL;
 	public IO mIO = new IO();
 
 	private static Intake mInstance = null;
 
-	public synchronized static Intake getInstance()
-	{
+	public synchronized static Intake getInstance() {
 		if (mInstance == null)
 			mInstance = new Intake();
-		
+
 		return mInstance;
+	}
+
+	public void addLoggingValues() {
+		new LogItem("INTAKE-L-AMP") {
+			@Override
+			public String val() {
+				return Intake.getInstance().mIO.left_amperage.toString();
+			}
+		};
+
+		new LogItem("INTAKE-L-AMP-AVG", true) {
+			@Override
+			public String val() {
+				return LogItem.Average_Left_Formula;
+			}
+		};
+
+		new LogItem("INTAKE-R-AMP") {
+			@Override
+			public String val() {
+				return Intake.getInstance().mIO.right_amperage.toString();
+			}
+		};
+
+		new LogItem("INTAKE-R-AMP-AVG", true) {
+			@Override
+			public String val() {
+				return LogItem.Average_Left_Formula;
+			}
+		};
+
+		new LogItem("INTAKE-L-PRCNT") {
+			@Override
+			public String val() {
+				return Intake.getInstance().mIO.left_desired_output.toString();
+			}
+		};
+
+		new LogItem("INTAKE-R-PRCNT") {
+			@Override
+			public String val() {
+				return Intake.getInstance().mIO.right_desired_output.toString();
+			}
+		};
 	}
 
 	private Intake() {
@@ -69,10 +113,8 @@ public class Intake extends GZSubsystem {
 		out();
 	}
 
-	private void switchToState(IntakeState s)
-	{
-		if (mState != s)
-		{
+	private void switchToState(IntakeState s) {
+		if (mState != s) {
 			onStateExit(mState);
 			mState = s;
 			onStateStart(mState);
@@ -86,7 +128,7 @@ public class Intake extends GZSubsystem {
 		neutral |= mWantedState == IntakeState.NEUTRAL;
 
 		// we dont need to worry about isDemo() here
-		//Dont allow disable on the field
+		// Dont allow disable on the field
 		if (neutral) {
 
 			switchToState(IntakeState.NEUTRAL);
@@ -101,7 +143,7 @@ public class Intake extends GZSubsystem {
 		public Double left_amperage = Double.NaN, right_amperage = Double.NaN;
 
 		// out
-	 	private double left_output = 0;
+		private double left_output = 0;
 		public Double left_desired_output = 0.0;
 
 		private double right_output = 0;
@@ -132,22 +174,22 @@ public class Intake extends GZSubsystem {
 	@Override
 	public synchronized void out() {
 		switch (mState) {
-			case MANUAL:
-	
-				mIO.left_output = mIO.left_desired_output;
-				mIO.right_output = mIO.right_desired_output;
-	
-				break;
-			case NEUTRAL:
-	
-				mIO.left_output = 0.0;
-				mIO.right_output = 0.0;
-	
-				break;
-			default:
-				System.out.println("WARNING: Incorrect intake state " + mState + " reached.");
-				break;
-			}
+		case MANUAL:
+
+			mIO.left_output = mIO.left_desired_output;
+			mIO.right_output = mIO.right_desired_output;
+
+			break;
+		case NEUTRAL:
+
+			mIO.left_output = 0.0;
+			mIO.right_output = 0.0;
+
+			break;
+		default:
+			System.out.println("WARNING: Incorrect intake state " + mState + " reached.");
+			break;
+		}
 
 		left_intake.set(mIO.left_output);
 		right_intake.set(mIO.right_output);
