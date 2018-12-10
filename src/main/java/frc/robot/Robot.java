@@ -8,12 +8,13 @@ import frc.robot.subsystems.Auton;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
-import frc.robot.util.GZFiles;
-import frc.robot.util.GZFiles.TASK;
 import frc.robot.subsystems.Health;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
+import frc.robot.util.GZFiles;
+import frc.robot.util.GZFiles.TASK;
 import frc.robot.util.GZSubsystemManager;
+import frc.robot.util.GZTimer;
 
 public class Robot extends TimedRobot {
 	//Force construction of files first
@@ -34,10 +35,13 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
+		files.robotTurnedOn();
+
 		//Gen health file
 		health.generateHealth();
-		// allSubsystems.startLooping();
 
+		allSubsystems.addLoggingValues();
+		// allSubsystems.startLooping();
 	}
 
 	@Override
@@ -48,6 +52,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
+		files.robotDisabled();
+
 		allSubsystems.stop();
 		log(false);
 	}
@@ -57,11 +63,16 @@ public class Robot extends TimedRobot {
 		auton.autonChooser();
 	}
 
+	private void enabledInits()
+	{
+		files.robotEnabled();
+		allSubsystems.enableFollower();
+		log(true);
+	}
+
 	@Override
 	public void autonomousInit() {
-		allSubsystems.enableFollower();
-
-		log(true);
+		enabledInits();
 
 		// timer start
 		auton.matchTimer.oneTimeStartTimer();
@@ -81,11 +92,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-		allSubsystems.enableFollower();
-
-		log(true);
-
-		auton.startAuton();
+		enabledInits();
 	}
 
 	@Override
@@ -94,7 +101,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testInit() {
-		log(true);
+		enabledInits();
 	}
 
 	@Override
