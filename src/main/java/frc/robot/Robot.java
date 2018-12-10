@@ -35,10 +35,11 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		files.robotTurnedOn();
+//		files.robotTurnedOn();
 
 		//Gen health file
 		health.generateHealth();
+		// allSubsystems.startLooping();
 
 		allSubsystems.addLoggingValues();
 		// allSubsystems.startLooping();
@@ -52,8 +53,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
-		files.robotDisabled();
-
+//		files.robotDisabled();
 		allSubsystems.stop();
 		log(false);
 	}
