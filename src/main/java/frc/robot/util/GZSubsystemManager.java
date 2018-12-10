@@ -16,6 +16,11 @@ public class GZSubsystemManager {
 		mAllSystems.forEach((s) -> s.startLooping());
 	}
 
+	public void addLoggingValues()
+	{
+		mAllSystems.forEach((s) -> s.addLoggingValues());
+	}
+
 	public void loop()
 	{
 		mAllSystems.forEach((s) -> s.loop());

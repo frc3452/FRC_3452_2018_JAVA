@@ -77,7 +77,7 @@ public class Climber extends GZSubsystem {
 		new LogItem("CLIMBER-1-AMP-AVG", true) {
 			@Override
 			public String val() {
-				return "=AVERAGE($L:$L)";
+				return LogItem.Average_Left_Formula;
 			}
 		};
 
@@ -91,7 +91,7 @@ public class Climber extends GZSubsystem {
 		new LogItem("CLIMBER-2-AMP-AVG", true) {
 			@Override
 			public String val() {
-				return "=AVERAGE($L:$L)";
+				return LogItem.Average_Left_Formula;
 			}
 		};
 

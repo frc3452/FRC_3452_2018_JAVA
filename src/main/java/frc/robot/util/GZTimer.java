@@ -33,6 +33,11 @@ public class GZTimer extends Timer {
 		}
 	}
 
+	public void stopTimer()
+	{
+		super.stop();
+	}
+
 	public String getName() {
 		return mName;
 	}
