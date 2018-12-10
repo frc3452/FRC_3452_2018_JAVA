@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motion.SetValueMotionProfile;
@@ -19,11 +19,11 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.kDrivetrain;
-import frc.robot.Constants.kPDP;
 import frc.robot.GZOI;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZFiles;
 import frc.robot.util.GZJoystick;
+import frc.robot.util.GZLog.LogItem;
 import frc.robot.util.GZPID;
 import frc.robot.util.GZSRX;
 import frc.robot.util.GZSRX.Breaker;
@@ -45,7 +45,7 @@ public class Drive extends GZSubsystem {
 
 	// DRIVETRAIN
 	private GZSRX L1, L2, L3, L4, R1, R2, R3, R4;
-	private List<GZSRX> controllers;
+	private Map<Integer, GZSRX> mControllers = new HashMap<Integer, GZSRX>();
 
 	// GYRO
 	private AHRS mGyro;
@@ -65,17 +65,24 @@ public class Drive extends GZSubsystem {
 	}
 
 	private Drive() {
-		L1 = new GZSRX(kDrivetrain.L1, Breaker.AMP_40, Side.LEFT, Master.MASTER);
-		L2 = new GZSRX(kDrivetrain.L2, Breaker.AMP_40, Side.LEFT, Master.FOLLOWER);
-		L3 = new GZSRX(kDrivetrain.L3, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
-		L4 = new GZSRX(kDrivetrain.L4, Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
+		L1 = new GZSRX(kDrivetrain.L1, "L1", Breaker.AMP_30, Side.LEFT, Master.MASTER);
+		L2 = new GZSRX(kDrivetrain.L2, "L2", Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
+		L3 = new GZSRX(kDrivetrain.L3, "L3", Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
+		L4 = new GZSRX(kDrivetrain.L4, "L4", Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
 
-		R1 = new GZSRX(kDrivetrain.R1, Breaker.AMP_40, Side.RIGHT, Master.MASTER);
-		R2 = new GZSRX(kDrivetrain.R2, Breaker.AMP_40, Side.RIGHT, Master.FOLLOWER);
-		R3 = new GZSRX(kDrivetrain.R3, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
-		R4 = new GZSRX(kDrivetrain.R4, Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
+		R1 = new GZSRX(kDrivetrain.R1, "R1", Breaker.AMP_30, Side.RIGHT, Master.MASTER);
+		R2 = new GZSRX(kDrivetrain.R2, "R2", Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
+		R3 = new GZSRX(kDrivetrain.R3, "R3", Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
+		R4 = new GZSRX(kDrivetrain.R4, "R4", Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
 
-		controllers = Arrays.asList(L1, L2, L3, L4, R1, R2, R3, R4);
+		mControllers.put(L1.getID(), L1);
+		mControllers.put(L2.getID(), L2);
+		mControllers.put(L3.getID(), L3);
+		mControllers.put(L4.getID(), L4);
+		mControllers.put(R1.getID(), R1);
+		mControllers.put(R2.getID(), R2);
+		mControllers.put(R3.getID(), R3);
+		mControllers.put(R4.getID(), R4);
 
 		mGyro = new AHRS(SPI.Port.kMXP);
 
@@ -159,6 +166,60 @@ public class Drive extends GZSubsystem {
 		R1.set(mIO.control_mode, mIO.right_output);
 	}
 
+	@Override
+	public void addLoggingValues() {
+		new LogItem("L-RPM") {
+			@Override
+			public String val() {
+				return Drive.getInstance().getLeftVel().toString();
+			}
+		};
+
+		new LogItem("L-ENC-PRSNT") {
+			@Override
+			public String val() {
+				return Drive.getInstance().mIO.leftEncoderValid.toString();
+			}
+		};
+
+		new LogItem("R-RPM") {
+			@Override
+			public String val() {
+				return Drive.getInstance().getRightVel().toString();
+			}
+		};
+
+		new LogItem("R-ENC-PRSNT") {
+			@Override
+			public String val() {
+				return Drive.getInstance().mIO.rightEncoderValid.toString();
+			}
+		};
+
+		for (GZSRX c : mControllers.values()) {
+			new LogItem("DRV-" + c.getGZName() + "-AMP") {
+				public String val() {
+					return mIO.getAmperage(c.getID()).toString();
+				}
+			};
+
+			new LogItem("DRV-" + c.getGZName() + "-AMP-AVG", true) {
+				public String val() {
+					return LogItem.Average_Left_Formula;
+				}
+			};
+		}
+
+		// VOLTAGE
+		for (GZSRX c : mControllers.values()) {
+			new LogItem("DRV-" + c.getGZName() + "-VOLT") {
+				public String val() {
+					return mIO.getAmperage(c.getID()).toString();
+				}
+			};
+		}
+	}
+
 	public enum DriveState {
 		OPEN_LOOP(false), OPEN_LOOP_DRIVER(false), DEMO(false), NEUTRAL(false), MOTION_MAGIC(true),
 		MOTION_PROFILE(true);
@@ -168,7 +229,6 @@ public class Drive extends GZSubsystem {
 		DriveState(final boolean s) {
 			usesClosedLoop = s;
 		}
-
 	}
 
 	@Override
@@ -210,8 +270,8 @@ public class Drive extends GZSubsystem {
 	}
 
 	private void talonInit() {
-		for (GZSRX s : controllers) {
-			String name = s.getSide() + " (" + s.getDeviceID() + ")";
+		for (GZSRX s : mControllers.values()) {
+			String name = s.getGZName();
 
 			GZSRX.logError(s.configFactoryDefault(GZSRX.TIMEOUT), this, AlertLevel.ERROR,
 					"Could not factory reset Talon " + name);
@@ -284,7 +344,7 @@ public class Drive extends GZSubsystem {
 	}
 
 	private synchronized void checkFirmware() {
-		for (GZSRX s : controllers)
+		for (GZSRX s : mControllers.values())
 			s.checkFirmware(this);
 	}
 
@@ -345,15 +405,41 @@ public class Drive extends GZSubsystem {
 
 	public static class IO {
 		// in
+		public Map<Integer, Double> amperages = new HashMap<>();
+		public Map<Integer, Double> voltages = new HashMap<>();
+
+		public IO() {
+		}
+
+		public void updateAmperage(int id, double value) {
+			if (!amperages.containsKey(id))
+				amperages.put(id, Double.NaN);
+			amperages.replace(id, getAmperage(id), value);
+		}
+
+		public Double getAmperage(int id) {
+			if (!amperages.containsKey(id))
+				return Double.NaN;
+
+			return amperages.get(id);
+		}
+
+		public void updateVoltage(int id, double value) {
+			if (!voltages.containsKey(id))
+				voltages.put(id, Double.NaN);
+			voltages.replace(id, getAmperage(id), value);
+		}
+
+		public Double getVoltage(int id) {
+			if (!voltages.containsKey(id))
+				return Double.NaN;
+
+			return voltages.get(id);
+		}
+
 		public Double left_encoder_ticks = Double.NaN, left_encoder_vel = Double.NaN;
 
 		public Double right_encoder_ticks = Double.NaN, right_encoder_vel = Double.NaN;
-
-		public Double L1_amp = Double.NaN, L2_amp = Double.NaN, L3_amp = Double.NaN, L4_amp = Double.NaN,
-				R1_amp = Double.NaN, R2_amp = Double.NaN, R3_amp = Double.NaN, R4_amp = Double.NaN;
-
-		public Double L1_volt = Double.NaN, L2_volt = Double.NaN, L3_volt = Double.NaN, L4_volt = Double.NaN,
-				R1_volt = Double.NaN, R2_volt = Double.NaN, R3_volt = Double.NaN, R4_volt = Double.NaN;
 
 		public Boolean leftEncoderValid = false;
 		public Boolean rightEncoderValid = false;
@@ -410,23 +496,11 @@ public class Drive extends GZSubsystem {
 			mIO.right_encoder_vel = Double.NaN;
 		}
 
-		mIO.L1_amp = L1.getOutputCurrent();
-		mIO.L2_amp = L2.getOutputCurrent();
-		mIO.L3_amp = L3.getOutputCurrent();
-		mIO.L4_amp = L4.getOutputCurrent();
-		mIO.R1_amp = R1.getOutputCurrent();
-		mIO.R2_amp = R2.getOutputCurrent();
-		mIO.R3_amp = R3.getOutputCurrent();
-		mIO.R4_amp = R4.getOutputCurrent();
+		for (GZSRX c : mControllers.values())
+			mIO.updateAmperage(c.getID(), c.getOutputCurrent());
 
-		mIO.L1_volt = L1.getMotorOutputVoltage();
-		mIO.L2_volt = L2.getMotorOutputVoltage();
-		mIO.L3_volt = L3.getMotorOutputVoltage();
-		mIO.L4_volt = L4.getMotorOutputVoltage();
-		mIO.R1_volt = R1.getMotorOutputVoltage();
-		mIO.R2_volt = R2.getMotorOutputVoltage();
-		mIO.R3_volt = R3.getMotorOutputVoltage();
-		mIO.R4_volt = R4.getMotorOutputVoltage();
+		for (GZSRX c : mControllers.values())
+			mIO.updateVoltage(c.getID(), c.getMotorOutputVoltage());
 	}
 
 	@Override
@@ -536,7 +610,8 @@ public class Drive extends GZSubsystem {
 	}
 
 	private synchronized void brake(NeutralMode mode) {
-		controllers.forEach((s) -> s.setNeutralMode(mode));
+		for (GZSRX c : mControllers.values())
+			c.setNeutralMode(mode);
 	}
 
 	public synchronized void motionMagic(double leftRotations, double rightRotations, double leftAccel,
@@ -790,7 +865,7 @@ public class Drive extends GZSubsystem {
 	}
 
 	public synchronized void enableFollower() {
-		for (GZSRX c : controllers) {
+		for (GZSRX c : mControllers.values()) {
 			switch (c.getSide()) {
 			case LEFT:
 				c.follow(L1);

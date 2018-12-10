@@ -19,6 +19,7 @@ public class Robot extends TimedRobot {
 	//Force construction of files first
 	private GZFiles files = GZFiles.getInstance();
 	
+	//This order is crucial! it determines what order logging is added, what order health is generated in, etc
 	public static final GZSubsystemManager allSubsystems = new GZSubsystemManager(
 			Arrays.asList(Drive.getInstance(), Elevator.getInstance(), Intake.getInstance(), Climber.getInstance(),
 					Lights.getInstance(), GZOI.getInstance()));
@@ -28,16 +29,14 @@ public class Robot extends TimedRobot {
 
 
 	// LOGGING CONTROL
-	private final boolean logging = false, logToUsb = true;
-	private final String loggingLocation = "Logging/Offseason/WMRI";
+	private final boolean logging = true, logToUsb = true;
+	private final String loggingLocation = "Logging/Programming";
 
 	@Override
 	public void robotInit() {
-		files.fillLogger();
-		auton.fillAutonArray();
-
-		// allSubsystems.startLooping();
+		//Gen health file
 		health.generateHealth();
+		// allSubsystems.startLooping();
 
 	}
 
@@ -50,7 +49,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledInit() {
 		allSubsystems.stop();
-
 		log(false);
 	}
 
@@ -87,14 +85,11 @@ public class Robot extends TimedRobot {
 
 		log(true);
 
-		if (auton.autonomousCommand != null) {
-			auton.autonomousCommand.cancel();
-		}
+		auton.startAuton();
 	}
 
 	@Override
 	public void teleopPeriodic() {
-		allSubsystems.loop();
 	}
 
 	@Override
@@ -105,7 +100,6 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		Scheduler.getInstance().run();
-		// allSubsystems.loop();
 	}
 
 	private void log(boolean startup) {

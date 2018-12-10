@@ -13,14 +13,6 @@ public abstract class GZSubsystem extends Subsystem {
 
 	private AlertLevel mHighestAlert = AlertLevel.NONE;
 
-	// IO class
-	// enum State
-	// void setWantedState (State s)
-	// State getState
-	// void onStateStart (State s)
-	// void onStateExit (State s)
-	// void switchToState (State s)
-
 	/**
 	 * Disabling each subsystem
 	 */
@@ -31,6 +23,8 @@ public abstract class GZSubsystem extends Subsystem {
 		if (mIsDisabled)
 			stop();
 	}
+
+	public abstract void addLoggingValues();
 
 	public Boolean isDisabed() {
 		return mIsDisabled;

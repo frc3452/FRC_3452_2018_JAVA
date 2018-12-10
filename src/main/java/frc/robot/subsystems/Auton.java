@@ -36,7 +36,7 @@ public class Auton {
 	private int m_prev_as1, m_prev_as2;
 	private int m_asA, m_asB;
 
-	public GZCommand commandArray[] = new GZCommand[kAuton.COMMAND_ARRAY_SIZE];
+	public GZCommand commandArray[];
 
 	private GZCommand defaultCommand = null;
 	public Command autonomousCommand = null;
@@ -67,8 +67,8 @@ public class Auton {
 		as_A.setName("Selector A");
 		as_B.setName("Selector B");
 
-		GZCommand noCommand = new GZCommand("NO AUTO", new NoCommand());
-		Arrays.fill(commandArray, noCommand);
+		commandArray = null;
+
 		// fillAutonArray();
 	}
 
@@ -88,6 +88,9 @@ public class Auton {
 	 * commands are loaded
 	 */
 	public void autonChooser() {
+		if (commandArray == null)
+			fillAutonArray();
+
 		controllerChooser();
 
 		if (controllerOverride) {
@@ -128,11 +131,18 @@ public class Auton {
 				overrideValue = 0;
 
 			if (controllerOverride)
-				overrideString = "Controller override:\t (" + overrideValue + ")" + commandArray[overrideValue].getName();
+				overrideString = "Controller override:\t (" + overrideValue + ")"
+						+ commandArray[overrideValue].getName();
 		}
 	}
 
 	public void fillAutonArray() {
+		if (commandArray == null) {
+			commandArray = new GZCommand[kAuton.COMMAND_ARRAY_SIZE];
+			GZCommand noCommand = new GZCommand("NO AUTO", new NoCommand());
+			Arrays.fill(commandArray, noCommand);
+		}
+
 		defaultCommand = new GZCommand("DEFAULT", new DefaultAutonomous());
 
 		// commandArray[1] = new GZCommand("TEST", new EncoderFrom(3, 3, .5, .5, .6));
@@ -145,7 +155,8 @@ public class Auton {
 		// commandArray[6] = new GZCommand("Parse Motion Profile", new
 		// RunMotionProfile(kFiles.NAME, kFiles.FOLDER, kFiles.USB));
 		commandArray[6] = new GZCommand("DRIVE FORWARD 10", new EncoderFrom(10, 10, .3, .3, 1));
-		commandArray[7] = new GZCommand("Parse Motion Profile", new RunMotionProfile(kFiles.NAME, kFiles.FOLDER, kFiles.USB));
+		commandArray[7] = new GZCommand("Parse Motion Profile",
+				new RunMotionProfile(kFiles.NAME, kFiles.FOLDER, kFiles.USB));
 
 		commandArray[11] = new GZCommand("Left Only - Switch Priority",
 				new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.SEASON, AV.SEASON));

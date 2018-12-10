@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import frc.robot.GZOI;
 import frc.robot.subsystems.Auton;
+import frc.robot.util.GZLog.LogItem;
 import frc.robot.util.GZSRX.Breaker;
 
 public class ExampleGZSubsystem extends GZSubsystem {
@@ -42,10 +43,40 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * Constructor for subsystem
 	 */
 	private ExampleGZSubsystem() {
-		example_motor = new GZSRX(0, Breaker.AMP_40);
+		example_motor = new GZSRX(0, "ExampleMotor", Breaker.AMP_40);
 
 		example_motor.configFactoryDefault();
 		example_motor.checkFirmware(this);
+	}
+
+	@Override
+	public void addLoggingValues() {
+		
+		//Creating this object will add it to a list of other logging values
+		new LogItem("EMPL-AMP")
+		{
+			public String val()
+			{
+				return mIO.motor_1_amperage.toString();
+			}
+		};
+
+		//This will put a formula for Google Sheets or Excel that will average the column to the left
+		new LogItem("AVG-AMP")
+		{
+			public String val()
+			{
+				return LogItem.Average_Left_Formula;
+			}
+		};
+
+		new LogItem("EXPL-VLT")
+		{
+			public String val()
+			{
+				return mIO.motor_1_voltage.toString();
+			}
+		};
 	}
 
 	/**
@@ -241,7 +272,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 
 	/**
 	 * States for the subsystem. All will have a NEUTRAL, but other states will
-	 * vary. We also store a variable with each state telling whether the state 
+	 * vary. We also store a variable with each state telling whether the state
 	 * requires closed loop control, (uses sensors)
 	 */
 	public enum ExampleState {

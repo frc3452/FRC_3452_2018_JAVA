@@ -54,10 +54,6 @@ public class GZFiles {
 	private GZFiles() {
 	}
 
-	public void fillLogger() {
-		GZLog.getInstance().fillLogger();
-	}
-
 	private void parseMotionProfileCSV() {
 		String st;
 

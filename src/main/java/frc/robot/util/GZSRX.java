@@ -1,70 +1,75 @@
 package frc.robot.util;
 
-import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
+import frc.robot.Robot;
 import frc.robot.subsystems.Health;
 import frc.robot.subsystems.Health.AlertLevel;
+
+import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class GZSRX extends WPI_TalonSRX {
 
 	private Breaker mBreaker = Breaker.NO_INFO;
 	private Side mSide = Side.NO_INFO;
 	private Master mMaster = Master.NO_INFO;
+	private String mName = "GZ";
 
 	public final static int TIMEOUT = 10;
 	public final static int FIRMWARE = 778;
 	private final static AlertLevel mFirmwareLevel = AlertLevel.WARNING;
 
 	// Drivetrain
-	public GZSRX(int deviceNumber, Breaker breaker, Side side, Master master) {
+	public GZSRX(int deviceNumber, String name, Breaker breaker, Side side, Master master) {
 		super(deviceNumber);
 
 		mBreaker = breaker;
 		mSide = side;
 		mMaster = master;
+		mName = name;
 	}
 
 	// Other subsystem
-	public GZSRX(int deviceNumber, Breaker breaker, Master master) {
-		super(deviceNumber);
-
-		mBreaker = breaker;
-		mMaster = master;
+	public GZSRX(int deviceNumber, String name, Breaker breaker, Master master) {
+		this(deviceNumber, name, breaker, Side.NO_INFO, master);
 	}
 
 	// Basic
-	public GZSRX(int deviceNumber, Breaker breaker) {
-		super(deviceNumber);
-
-		mBreaker = breaker;
+	public GZSRX(int deviceNumber, String name, Breaker breaker) {
+		this(deviceNumber, name, breaker, Master.NO_INFO);
 	}
 
+	public String getGZName() {
+		return mName;
+	}
 
-	public boolean isEncoderValid()
-	{
+	public boolean isEncoderValid() {
 		return this.getSensorCollection().getPulseWidthRiseToRiseUs() != 0;
 	}
-	
+
+	public int getID() {
+		return this.getDeviceID();
+	}
+
 	public static void logError(ErrorCode errorCode, GZSubsystem subsystem, AlertLevel level, String message) {
 		if (errorCode != ErrorCode.OK)
 			Health.getInstance().addAlert(subsystem, level, message);
 	}
 
-	public void checkFirmware(GZSubsystem sub)
-	{
+	public void checkFirmware(GZSubsystem sub) {
 		int firm = this.getFirmwareVersion();
-	
-		if(firm != FIRMWARE)
-		{
+
+		if (firm != FIRMWARE) {
 			int id = this.getDeviceID();
 
 			if (mSide != Side.NO_INFO)
-				Health.getInstance().addAlert(sub, mFirmwareLevel, "Talon " + id + " (" + mSide + ")" + " firmware is " + firm + ", should be " + FIRMWARE);
+				Health.getInstance().addAlert(sub, mFirmwareLevel,
+						"Talon " + id + " (" + mSide + ")" + " firmware is " + firm + ", should be " + FIRMWARE);
 			else if (mMaster != Master.NO_INFO)
-				Health.getInstance().addAlert(sub, mFirmwareLevel, "Talon " + id + " (" + mMaster + ")" + " firmware is " + firm + ", should be " + FIRMWARE);
+				Health.getInstance().addAlert(sub, mFirmwareLevel,
+						"Talon " + id + " (" + mMaster + ")" + " firmware is " + firm + ", should be " + FIRMWARE);
 			else
-				Health.getInstance().addAlert(sub, mFirmwareLevel, "Talon " + id + " firmware is " + firm + ", should be " + FIRMWARE);
+				Health.getInstance().addAlert(sub, mFirmwareLevel,
+						"Talon " + id + " firmware is " + firm + ", should be " + FIRMWARE);
 		}
 	}
 
@@ -81,12 +86,11 @@ public class GZSRX extends WPI_TalonSRX {
 	}
 
 	public enum Side {
-		LEFT, RIGHT, NO_INFO
+		LEFT, RIGHT, NO_INFO;
 	}
 
-	
 	public enum Master {
-		MASTER, FOLLOWER, NO_INFO
+		MASTER, FOLLOWER, NO_INFO;
 	}
 
 	public enum Breaker {
