@@ -140,7 +140,8 @@ public class PersistentInfoManager {
         updateFile(fileName, folder, seconds, false);
     }
 
-    public void updateFile(String fileName, String folder, double seconds, boolean usb) {
+    public void updateFile(final String fileName,final String folder,final double seconds,final boolean usb) {
+
         mUpdateNotifier = new Notifier(new Runnable() {
             public void run() {
 
