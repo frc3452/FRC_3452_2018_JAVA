@@ -44,15 +44,18 @@ public class PersistentInfoManager {
         }
 
         public void readOnStartup() {
+            // if this
             GZOI.getInstance().setSafteyDisable(this.getValue() == 3452);
         }
     };
 
-    private LatchedBoolean mFailedLatchedBoolean = new LatchedBoolean();
+    // flag to trip if we cannot read the settings in.
     private Flag mFailed = new Flag();
 
+    // Map linking Name of setting to value
     private Map<String, PersistentInfo> mSettingsMap = new HashMap<String, PersistentInfo>();
 
+    // timers and prev vals
     private final GZTimer mOnTimeTimer = new GZTimer("OnTime");
     private double mPreviousOnTime = 0;
     private final GZTimer mEnabledTimer = new GZTimer("EnabledTimer");
@@ -69,6 +72,7 @@ public class PersistentInfoManager {
         return mInstance;
     }
 
+    // On startup put values in map and start timer
     private PersistentInfoManager() {
         mSettingsMap.put("EnabledTime", mEnabledTime);
         mSettingsMap.put("OnTime", mOnTime);
@@ -78,18 +82,20 @@ public class PersistentInfoManager {
         mOnTimeTimer.oneTimeStartTimer();
     }
 
+    // Read from file and folder on RIO
     public void readOnStartup(String fileName, String folder) {
         readOnStartup(fileName, folder, false);
     }
 
     /**
-     * Update map with values from file
+     * Read from file and folder on RIO or USB Store values into map Call read
+     * setting, which (if defined) could update a robot variable with setting
      */
     public void readOnStartup(String fileName, String folder, boolean usb) {
         try {
 
             // SET UP FILE READING
-            File f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
+            File f = GZFileMaker.getFile(fileName, folder, usb, false);
             Scanner scnr = new Scanner(new FileReader(f));
 
             // loop through lines
@@ -119,17 +125,20 @@ public class PersistentInfoManager {
 
     }
 
+    // If we haven't done it already, start up the printing map runnable (notify the
+    // user every
+    // 5 seconds while disabled that values not being recorded)
+    // Stop the updating notifier,
+    // trip flag
     private void fail() {
-        mFailed.tripFlag();
-
-        if (mFailedLatchedBoolean.update(mFailed.isFlagTripped())) {
+        if (!mFailed.isFlagTripped()) {
             printMapWhenDisabled();
             mUpdateNotifier.stop();
+            mFailed.tripFlag();
         }
     }
 
     private void printMapWhenDisabled() {
-
         new Notifier(new Runnable() {
             public void run() {
                 if (GZOI.getInstance().isDisabled()) {
@@ -141,35 +150,36 @@ public class PersistentInfoManager {
         }).startPeriodic(5);
     }
 
-    public void updateFile(String fileName, String folder, double seconds) {
+    // Update file every __ seconds @ file and folder on RIO
+    public void updateFile(final String fileName, final String folder, final double seconds) {
         updateFile(fileName, folder, seconds, false);
     }
 
+    // Update file every __ seconds @ file and folder on RIO or USB
     public void updateFile(final String fileName, final String folder, final double seconds, final boolean usb) {
 
+        //Define notifier and runnable
         mUpdateNotifier = new Notifier(new Runnable() {
             public void run() {
 
-                if (mFailed.isFlagTripped())
+                //If flag tripped, stop
+                if (mFailed.isFlagTripped()){
                     fail();
+                    return;
+                }
 
+                //get new values
                 for (PersistentInfo p : mSettingsMap.values())
                     p.update();
 
                 try {
                     // SETUP FILE WRITING
-                    File f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder);
-                    f.mkdirs();
-                    f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
-
-                    // if it isn't there, create it
-                    if (!f.exists())
-                        f.createNewFile();
-
+                    File f = GZFileMaker.getFile(fileName,folder, usb, true);
                     // create file writing vars
                     BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 
-                    // write values
+                    // write values 
+                    // LeftEncoderTicks,1024
                     for (String v : mSettingsMap.keySet()) {
                         bw.write(v + "," + mSettingsMap.get(v).getValue());
                         bw.write("\r\n");
@@ -180,9 +190,14 @@ public class PersistentInfoManager {
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("ERROR Could not update long term stats file!");
+                    fail();
                 }
             }
         });
+
+        //start notifier
+        if (!mFailed.isFlagTripped())
+            mUpdateNotifier.startPeriodic(seconds);
 
     }
 

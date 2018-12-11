@@ -84,7 +84,7 @@ public class GZOI extends GZSubsystem {
 			recording = !recording;
 
 		if (recording != prevRecording)
-			GZFiles.getInstance().csvControl(kFiles.NAME, kFiles.FOLDER, kFiles.USB, TASK.Record, recording);
+			GZFiles.getInstance().csvControl(kFiles.MP_NAME, kFiles.MP_FOLDER, kFiles.MP_USB, TASK.Record, recording);
 
 		if (isTele()) {
 			Drive.getInstance().setWantedState(DriveState.OPEN_LOOP_DRIVER);

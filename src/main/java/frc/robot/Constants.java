@@ -228,9 +228,9 @@ public class Constants {
 	}
 
 	public static class kFiles {
-		public final static String NAME = "MP1";
-		public final static String FOLDER = "MotionProfiles";
-		public final static boolean USB = true;
+		public final static String MP_NAME = "MP1";
+		public final static String MP_FOLDER = "MotionProfiles";
+		public final static boolean MP_USB = true;
 
 		public final static int RECORDING_MOTION_PROFILE_MS = 30; // 20
 		public final static double LOGGING_SPEED = .125;

@@ -156,7 +156,7 @@ public class Auton {
 		// RunMotionProfile(kFiles.NAME, kFiles.FOLDER, kFiles.USB));
 		commandArray[6] = new GZCommand("DRIVE FORWARD 10", new EncoderFrom(10, 10, .3, .3, 1));
 		commandArray[7] = new GZCommand("Parse Motion Profile",
-				new RunMotionProfile(kFiles.NAME, kFiles.FOLDER, kFiles.USB));
+				new RunMotionProfile(kFiles.MP_NAME, kFiles.MP_FOLDER, kFiles.MP_USB));
 
 		commandArray[11] = new GZCommand("Left Only - Switch Priority",
 				new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.SEASON, AV.SEASON));

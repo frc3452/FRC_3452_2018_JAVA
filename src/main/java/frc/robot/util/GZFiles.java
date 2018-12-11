@@ -56,7 +56,6 @@ public class GZFiles {
 	private GZFiles() {
 	}
 
-
 	private void parseMotionProfileCSV() {
 		String st;
 
@@ -225,23 +224,12 @@ public class GZFiles {
 			switch (readwrite) {
 			case READ:
 				// SET UP FILE READING
-				File f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
-
-				scnr = new Scanner(new FileReader(f));
+				scnr = new Scanner(new FileReader(GZFileMaker.getFile(fileName, folder, usb, false)));
 
 				break;
 			case WRITE:
-				// SETUP FILE WRITING
-				f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder);
-				f.mkdirs();
-				f = new File(((usb) ? "/u/" : "/home/lvuser/") + folder + "/" + fileName + ".csv");
-
-				// if it isn't there, create it
-				if (!f.exists())
-					f.createNewFile();
-
 				// create file writing vars
-				bw = new BufferedWriter(new FileWriter(f));
+				bw = new BufferedWriter(new FileWriter(GZFileMaker.getFile(fileName, folder, usb, true)));
 			}
 
 		} catch (Exception e) {
