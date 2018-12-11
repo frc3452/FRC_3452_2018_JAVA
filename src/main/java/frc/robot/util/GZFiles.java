@@ -39,10 +39,7 @@ public class GZFiles {
 
 	private static GZFiles mInstance = null;
 
-	private final GZTimer mOnTimeTimer = new GZTimer("OnTime");
-	private double mPreviousOnTimeTimer = 0;
-	private final GZTimer mEnabledTimer = new GZTimer("EnabledTimer");
-	private double mPreviousEnabledTimer = 0;
+	private PersistentInfoManager mSettings = PersistentInfoManager.getInstance();
 
 	public static synchronized GZFiles getInstance() {
 		if (mInstance == null)
@@ -57,62 +54,8 @@ public class GZFiles {
 	 * @author max
 	 */
 	private GZFiles() {
-		// new Notifier(new Runnable() {
-			// public void run() {
-				// updateStats();
-			// }
-		// }).startPeriodic(1);
 	}
 
-	public void robotTurnedOn() {
-		mOnTimeTimer.oneTimeStartTimer();
-	}
-
-	public void robotEnabled() {
-		mEnabledTimer.start();
-	}
-
-	public void robotDisabled() {
-		mEnabledTimer.stopTimer();
-	}
-
-	public void updateStats() {
-		try {
-			String folder = "StatsTesting";
-			String fileName = "Stats";
-
-			// SETUP FILE WRITING
-			File f = new File("/u/" + folder);
-			f.mkdirs();
-			f = new File("/u/" + folder + "/" + fileName + ".csv");
-
-			// if it isn't there, create it
-			if (!f.exists())
-				f.createNewFile();
-
-			// create file writing vars
-			BufferedWriter statWriter = new BufferedWriter(new FileWriter(f, true));
-			statWriter.append("\r\n");
-
-			statWriter.append(GZUtil.dateTime(false) + ",");
-
-			statWriter.append(String.valueOf(mEnabledTimer.get() - mPreviousEnabledTimer) + ",");
-
-			statWriter.append(String.valueOf(mOnTimeTimer.get() - mPreviousOnTimeTimer) + ",");
-
-			mPreviousEnabledTimer = mEnabledTimer.get();
-			mPreviousOnTimeTimer = mOnTimeTimer.get();
-
-			statWriter.close();
-
-			Scanner statScanner = new Scanner(new FileReader(f));
-
-			statScanner.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("ERROR Could not update long term stats file!");
-		}
-	}
 
 	private void parseMotionProfileCSV() {
 		String st;

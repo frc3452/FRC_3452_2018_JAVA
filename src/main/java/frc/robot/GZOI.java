@@ -57,9 +57,6 @@ public class GZOI extends GZSubsystem {
 	boolean recording = false;
 	boolean prevRecording = recording;
 
-	boolean direction = true;
-
-	double servoValue = 0;
 
 	@Override
 	public void loop() {
@@ -265,8 +262,14 @@ public class GZOI extends GZSubsystem {
 	}
 
 	public boolean isSafteyDisabled() {
-		return mSafteyDisable;
+		return this.mSafteyDisable;
 	}
+
+	public void setSafteyDisable(boolean disable)
+	{
+		this.mSafteyDisable = disable;
+	}
+
 
 	@Override
 	public void outputSmartDashboard() {
@@ -300,6 +303,11 @@ public class GZOI extends GZSubsystem {
 
 	public boolean isDisabled() {
 		return DriverStation.getInstance().isDisabled();
+	}
+
+	public boolean isEnabled()
+	{
+		return DriverStation.getInstance().isEnabled();
 	}
 
 	public boolean isTele() {

@@ -15,19 +15,22 @@ import frc.robot.util.GZFiles;
 import frc.robot.util.GZFiles.TASK;
 import frc.robot.util.GZSubsystemManager;
 import frc.robot.util.GZTimer;
+import frc.robot.util.PersistentInfoManager;
 
 public class Robot extends TimedRobot {
-	//Force construction of files first
+	// Force construction of files first
 	private GZFiles files = GZFiles.getInstance();
-	
-	//This order is crucial! it determines what order logging is added, what order health is generated in, etc
+
+	// This order is crucial! it determines what order logging is added, what order
+	// health is generated in, etc
 	public static final GZSubsystemManager allSubsystems = new GZSubsystemManager(
 			Arrays.asList(Drive.getInstance(), Elevator.getInstance(), Intake.getInstance(), Climber.getInstance(),
 					Lights.getInstance(), GZOI.getInstance()));
-	
+
 	private Health health = Health.getInstance();
 	private Auton auton = Auton.getInstance();
 
+	private PersistentInfoManager infoManager = PersistentInfoManager.getInstance();
 
 	// LOGGING CONTROL
 	private final boolean logging = true, logToUsb = true;
@@ -35,11 +38,10 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-//		files.robotTurnedOn();
+		infoManager.readOnStartup("File", "Folder", false);
 
-		//Gen health file
+		// Gen health file
 		health.generateHealth();
-		// allSubsystems.startLooping();
 
 		allSubsystems.addLoggingValues();
 		// allSubsystems.startLooping();
@@ -53,7 +55,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
-//		files.robotDisabled();
+		infoManager.robotDisabled();
 		allSubsystems.stop();
 		log(false);
 	}
@@ -63,9 +65,8 @@ public class Robot extends TimedRobot {
 		auton.autonChooser();
 	}
 
-	private void enabledInits()
-	{
-		files.robotEnabled();
+	private void enabledInits() {
+		infoManager.robotEnabled();
 		allSubsystems.enableFollower();
 		log(true);
 	}
