@@ -67,7 +67,7 @@ public class GZFileMaker {
     }
 
     public static boolean pathValid(final String name, final String folder) {
-        boolean containsBadValue = true;
+        boolean containsBadValue = false;
 
         for (String s : illegalCharacters)
             containsBadValue |= pathOrFolderContain(name, folder, s);

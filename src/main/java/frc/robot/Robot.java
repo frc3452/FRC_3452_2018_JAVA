@@ -11,6 +11,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Health;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
+import frc.robot.util.GZFileMaker;
 import frc.robot.util.GZFiles;
 import frc.robot.util.GZFiles.TASK;
 import frc.robot.util.GZSubsystemManager;
@@ -38,8 +39,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		infoManager.readOnStartup("File", "Folder", false);
-
+		// infoManager.readOnStartup("File", "Folder", false);
+		infoManager.updateFile("Stats", "TestingTuesday", 1, true);
+		
 		// Gen health file
 		health.generateHealth();
 

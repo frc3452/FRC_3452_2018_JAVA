@@ -5,7 +5,7 @@ package frc.robot.util;
  * void update() is abstract, define this to update mValue either through this.mValue, setValue(), or addToValue()
  */
 public abstract class PersistentInfo {
-    private Double mValue;
+    private Double mValue = Double.NaN;
 
     public PersistentInfo(Double defaultValue) {
         this.mValue = mValue;

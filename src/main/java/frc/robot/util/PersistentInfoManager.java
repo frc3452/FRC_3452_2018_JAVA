@@ -13,6 +13,23 @@ import frc.robot.GZOI;
 
 public class PersistentInfoManager {
 
+    // flag to trip if we cannot read the settings in.
+    private Flag mFailed = new Flag();
+
+    // Map linking Name of setting to value
+    private Map<String, PersistentInfo> mSettingsMap = new HashMap<String, PersistentInfo>();
+
+    // timers and prev vals
+    private final GZTimer mOnTimeTimer = new GZTimer("OnTime");
+    private double mPreviousOnTime = 0;
+    private final GZTimer mEnabledTimer = new GZTimer("EnabledTimer");
+    private double mPreviousEnabledTime = 0;
+
+    private Notifier mUpdateNotifier;
+
+    private static PersistentInfoManager mInstance = null;
+
+    
     private PersistentInfo mEnabledTime = new PersistentInfo() {
         public void update() {
             this.addToValue(mEnabledTimer.get() - mPreviousEnabledTime);
@@ -48,22 +65,6 @@ public class PersistentInfoManager {
             GZOI.getInstance().setSafteyDisable(this.getValue() == 3452);
         }
     };
-
-    // flag to trip if we cannot read the settings in.
-    private Flag mFailed = new Flag();
-
-    // Map linking Name of setting to value
-    private Map<String, PersistentInfo> mSettingsMap = new HashMap<String, PersistentInfo>();
-
-    // timers and prev vals
-    private final GZTimer mOnTimeTimer = new GZTimer("OnTime");
-    private double mPreviousOnTime = 0;
-    private final GZTimer mEnabledTimer = new GZTimer("EnabledTimer");
-    private double mPreviousEnabledTime = 0;
-
-    private Notifier mUpdateNotifier;
-
-    private static PersistentInfoManager mInstance = null;
 
     public static PersistentInfoManager getInstance() {
         if (mInstance == null)
@@ -161,6 +162,8 @@ public class PersistentInfoManager {
         //Define notifier and runnable
         mUpdateNotifier = new Notifier(new Runnable() {
             public void run() {
+
+                System.out.println("Notifier!");
 
                 //If flag tripped, stop
                 if (mFailed.isFlagTripped()){
