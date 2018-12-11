@@ -48,6 +48,7 @@ public class PersistentInfoManager {
         }
     };
 
+    private LatchedBoolean mFailedLatchedBoolean = new LatchedBoolean();
     private Flag mFailed = new Flag();
 
     private Map<String, PersistentInfo> mSettingsMap = new HashMap<String, PersistentInfo>();
@@ -120,11 +121,15 @@ public class PersistentInfoManager {
 
     private void fail() {
         mFailed.tripFlag();
-        mUpdateNotifier.stop();
-        printMapWhenDisabled();
+
+        if (mFailedLatchedBoolean.update(mFailed.isFlagTripped())) {
+            printMapWhenDisabled();
+            mUpdateNotifier.stop();
+        }
     }
 
     private void printMapWhenDisabled() {
+
         new Notifier(new Runnable() {
             public void run() {
                 if (GZOI.getInstance().isDisabled()) {
@@ -140,7 +145,7 @@ public class PersistentInfoManager {
         updateFile(fileName, folder, seconds, false);
     }
 
-    public void updateFile(final String fileName,final String folder,final double seconds,final boolean usb) {
+    public void updateFile(final String fileName, final String folder, final double seconds, final boolean usb) {
 
         mUpdateNotifier = new Notifier(new Runnable() {
             public void run() {
