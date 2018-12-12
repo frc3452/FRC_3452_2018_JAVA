@@ -27,18 +27,30 @@ public class GZFileMaker {
         if (write) {
             f = new File(getFileLocation(name, folder, fileExtension, usb, false));
             f.mkdirs();
-        }
-        f = new File(getFileLocation(name, folder, fileExtension, usb, true));
+            f = new File(getFileLocation(name, folder, fileExtension, usb, true));
+            
+            
+            System.out.println("Die-1");
+            try {
+            if (!f.exists())
+               f.createNewFile();
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+                System.out.println("Die");
 
-        if (!f.exists() && write)
-            f.createNewFile();
-
-        if (!f.exists() && !write) {
-            System.out
-                    .println("ERROR File cannot be found: " + getFileLocation(name, folder, fileExtension, usb, true));
-            throw new IOException();
-        }
-
+            } else {
+                f = new File(getFileLocation(name, folder, fileExtension, usb, true));
+            }
+            
+            
+            if (!f.exists() && !write) {
+                System.out
+                .println("ERROR File cannot be found: " + getFileLocation(name, folder, fileExtension, usb, true));
+                throw new IOException();
+            }
+            
         return f;
     }
 
@@ -58,9 +70,9 @@ public class GZFileMaker {
 
     public static String getFileLocation(final String name, final String folder,
             final ValidFileExtensions fileExtension, final boolean usb, boolean withFile) {
-        String retval = ((usb) ? "/u/" : "/home/lvuser/") + folder + (withFile ? "/" + name + fileExtension.val : "");
+        String retval = ((usb) ? "/u/" : "/home/lvuser/") + folder + (withFile ? "/" + name + fileExtension.val : "/");
+        // String retval = ((usb) ? "/media/sda1/" : "/home/lvuser/") + folder + (withFile ? "/" + name + fileExtension.val : "/");
 
-        System.out.println(retval);
         if (pathValid(name, folder))
             return retval;
         else {

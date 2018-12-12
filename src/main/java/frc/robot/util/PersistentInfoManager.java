@@ -56,8 +56,12 @@ public class PersistentInfoManager {
     };
 
     private PersistentInfo mDisabled = new PersistentInfo(0.0) {
+        Double c = 0.0;
         public void update() {
-            this.setValue(GZOI.getInstance().isSafteyDisabled() ? 0.0 : 3452.0);
+            System.out.println(c);
+            this.setValue(c);
+            c++;
+            // this.setValue(GZOI.getInstance().isSafteyDisabled() ? 3452.0 : 0.0);
         }
 
         public void readOnStartup() {
@@ -139,15 +143,23 @@ public class PersistentInfoManager {
         }
     }
 
+    private void updateValues()
+    {
+        for (PersistentInfo p : mSettingsMap.values())
+            p.update();
+    }
+
     private void printMapWhenDisabled() {
         new Notifier(new Runnable() {
             public void run() {
                 if (GZOI.getInstance().isDisabled()) {
+                    updateValues();
+
                     System.out.println(
                             "ERROR Will not write persistent settings! Make sure to manually update the file!");
                     for (String s : mSettingsMap.keySet())
                     {
-                        System.out.println(s + "\t" + mSettingsMap.get(s).getValue());
+                        System.out.println(s + "\t\t\t" + mSettingsMap.get(s).getValue());
                     }
                 }
             }
@@ -166,22 +178,20 @@ public class PersistentInfoManager {
         mUpdateNotifier = new Notifier(new Runnable() {
             public void run() {
 
-                System.out.println("Notifier!");
-
                 //If flag tripped, stop
                 if (mFailed.isFlagTripped()){
-                    fail();
                     return;
                 }
 
                 //get new values
-                for (PersistentInfo p : mSettingsMap.values())
-                    p.update();
-
+                updateValues();
+                
                 try {
                     // SETUP FILE WRITING
                     File f = GZFileMaker.getFile(fileName,folder, usb, true);
+                    System.out.println("he didn't die");
                     // create file writing vars
+                    
                     BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 
                     // write values 
@@ -194,7 +204,7 @@ public class PersistentInfoManager {
                     bw.close();
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    // e.printStackTrace();
                     System.out.println("ERROR Could not update long term stats file!");
                     fail();
                 }

@@ -34,7 +34,7 @@ public class GZUtil {
 	/**
 	 * currentThread();
 	 */
-	public static String trace(StackTraceElement e[]) {
+	public static void trace(StackTraceElement e[]) {
 
 		String retval = "";
 		try {
@@ -50,7 +50,7 @@ public class GZUtil {
 			// ex.printStackTrace();
 		}
 
-		return retval;
+		System.out.println(retval);
 	}
 
 	public static double limit(double value) {

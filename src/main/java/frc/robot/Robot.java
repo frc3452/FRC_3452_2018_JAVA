@@ -1,5 +1,8 @@
 package frc.robot;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -11,11 +14,9 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Health;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
-import frc.robot.util.GZFileMaker;
 import frc.robot.util.GZFiles;
 import frc.robot.util.GZFiles.TASK;
 import frc.robot.util.GZSubsystemManager;
-import frc.robot.util.GZTimer;
 import frc.robot.util.PersistentInfoManager;
 
 public class Robot extends TimedRobot {
@@ -40,7 +41,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		// infoManager.readOnStartup("File", "Folder", false);
-		infoManager.updateFile("Stats", "TestingTuesday", GZFileMaker.ValidFileExtensions.CSV, 1, true);
+		infoManager.updateFile("Stats", "TestingTuesday", 1, true);
 		
 		// Gen health file
 		health.generateHealth();
