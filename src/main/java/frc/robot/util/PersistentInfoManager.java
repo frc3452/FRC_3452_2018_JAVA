@@ -145,7 +145,10 @@ public class PersistentInfoManager {
                 if (GZOI.getInstance().isDisabled()) {
                     System.out.println(
                             "ERROR Will not write persistent settings! Make sure to manually update the file!");
-                    System.out.println(mSettingsMap);
+                    for (String s : mSettingsMap.keySet())
+                    {
+                        System.out.println(s + "\t" + mSettingsMap.get(s).getValue());
+                    }
                 }
             }
         }).startPeriodic(5);

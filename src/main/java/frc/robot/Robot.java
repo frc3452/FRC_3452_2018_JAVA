@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		// infoManager.readOnStartup("File", "Folder", false);
-		infoManager.updateFile("Stats", "TestingTuesday", 1, true);
+		infoManager.updateFile("Stats", "TestingTuesday", GZFileMaker.ValidFileExtensions.CSV, 1, true);
 		
 		// Gen health file
 		health.generateHealth();
@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
 		allSubsystems.addLoggingValues();
 		// allSubsystems.startLooping();
 	}
+	
 
 	@Override
 	public void robotPeriodic() {

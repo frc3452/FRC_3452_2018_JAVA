@@ -9,7 +9,7 @@ public class GZFileMaker {
 
     private static final String placeForInvalidFilesToGo = "/home/lvuser/InvalidFileName/";
 
-    private static enum ValidFileExtensions {
+    public static enum ValidFileExtensions {
         CSV(".csv"), HTML(".html");
 
         private String val;
@@ -29,6 +29,9 @@ public class GZFileMaker {
             f.mkdirs();
         }
         f = new File(getFileLocation(name, folder, fileExtension, usb, true));
+
+        if (!f.exists() && write)
+            f.createNewFile();
 
         if (!f.exists() && !write) {
             System.out
@@ -57,6 +60,7 @@ public class GZFileMaker {
             final ValidFileExtensions fileExtension, final boolean usb, boolean withFile) {
         String retval = ((usb) ? "/u/" : "/home/lvuser/") + folder + (withFile ? "/" + name + fileExtension.val : "");
 
+        System.out.println(retval);
         if (pathValid(name, folder))
             return retval;
         else {
