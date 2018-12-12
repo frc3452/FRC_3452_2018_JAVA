@@ -20,60 +20,56 @@ public class GZFileMaker {
     }
 
     public static File getFile(final String name, final String folder, final ValidFileExtensions fileExtension,
-            final boolean usb, boolean write) throws IOException {
+            final boolean usb, boolean write) throws Exception {
 
         File f;
 
+        String path = getFileLocation(name, folder, fileExtension, usb, true);
         if (write) {
             f = new File(getFileLocation(name, folder, fileExtension, usb, false));
             f.mkdirs();
-            f = new File(getFileLocation(name, folder, fileExtension, usb, true));
-            
-            
-            System.out.println("Die-1");
-            try {
-            if (!f.exists())
-               f.createNewFile();
-            } catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-                System.out.println("Die");
+            f = new File(path);
 
-            } else {
-                f = new File(getFileLocation(name, folder, fileExtension, usb, true));
+            try {
+                if (!f.exists())
+                    f.createNewFile();
+            } catch (SecurityException e) {
+                throw new Exception("Read access to file at path {" + path + "} denied!");
             }
-            
-            
-            if (!f.exists() && !write) {
-                System.out
-                .println("ERROR File cannot be found: " + getFileLocation(name, folder, fileExtension, usb, true));
-                throw new IOException();
-            }
-            
+
+        } else {
+            f = new File(path);
+        }
+
+        if (!f.exists() && !write) {
+            throw new IOException("ERROR File cannot be found at path {" + path + "}");
+        }
+
         return f;
     }
 
     public static File getFile(final String name, final String folder, final ValidFileExtensions fileExtension,
-            boolean write) throws IOException {
+            boolean write) throws Exception {
         return getFile(name, folder, fileExtension, false, write);
     }
 
     public static File getFile(final String name, final String folder, final boolean usb, boolean write)
-            throws IOException {
+            throws Exception {
         return getFile(name, folder, ValidFileExtensions.CSV, usb, write);
     }
 
-    public static File getFile(final String name, final String folder, boolean write) throws IOException {
+    public static File getFile(final String name, final String folder, boolean write) throws Exception {
         return getFile(name, folder, false, write);
     }
 
     public static String getFileLocation(final String name, final String folder,
             final ValidFileExtensions fileExtension, final boolean usb, boolean withFile) {
-        String retval = ((usb) ? "/u/" : "/home/lvuser/") + folder + (withFile ? "/" + name + fileExtension.val : "/");
-        // String retval = ((usb) ? "/media/sda1/" : "/home/lvuser/") + folder + (withFile ? "/" + name + fileExtension.val : "/");
+        String retval = ((usb) ? "/u/" : "/home/lvuser/") + folder;
 
-        if (pathValid(name, folder))
+        if (withFile)
+            retval += ("/" + name + fileExtension.val);
+
+        if (pathValid(retval))
             return retval;
         else {
             String newRetval = placeForInvalidFilesToGo + GZUtil.dateTime(true) + fileExtension.val;
@@ -82,18 +78,18 @@ public class GZFileMaker {
         }
     }
 
-    public static boolean pathValid(final String name, final String folder) {
+    public static boolean pathValid(final String path) {
         boolean containsBadValue = false;
 
         for (String s : illegalCharacters)
-            containsBadValue |= pathOrFolderContain(name, folder, s);
+            containsBadValue |= stringContainsChar(path, s);
 
         // Method should returning if valid, not if contains bad characters
         return !containsBadValue;
     }
 
-    private static boolean pathOrFolderContain(final String name, final String folder, final String character) {
-        return name.contains(character) || folder.contains(character);
+    private static boolean stringContainsChar(final String name, final String character) {
+        return name.contains(character);
     }
 
 }
