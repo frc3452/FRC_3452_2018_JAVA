@@ -189,7 +189,6 @@ public class PersistentInfoManager {
                 try {
                     // SETUP FILE WRITING
                     File f = GZFileMaker.getFile(fileName,folder, usb, true);
-                    System.out.println("he didn't die");
                     // create file writing vars
                     
                     BufferedWriter bw = new BufferedWriter(new FileWriter(f));
@@ -204,7 +203,7 @@ public class PersistentInfoManager {
                     bw.close();
 
                 } catch (Exception e) {
-                    // e.printStackTrace();
+                    e.printStackTrace();
                     System.out.println("ERROR Could not update long term stats file!");
                     fail();
                 }

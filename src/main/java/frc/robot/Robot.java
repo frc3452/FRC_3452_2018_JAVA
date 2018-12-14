@@ -16,6 +16,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.util.GZFiles;
 import frc.robot.util.GZFiles.TASK;
+import frc.robot.util.GZFileMaker;
 import frc.robot.util.GZSubsystemManager;
 import frc.robot.util.PersistentInfoManager;
 
@@ -43,6 +44,9 @@ public class Robot extends TimedRobot {
 		// infoManager.readOnStartup("File", "Folder", false);
 		infoManager.updateFile("Stats", "TestingTuesday", 1, true);
 		
+		BufferedWriter a = new BufferedWriter(new FileWriter(GZFileMaker.getFile("MyName", "MyNewFolder", true, true)));
+
+
 		// Gen health file
 		health.generateHealth();
 

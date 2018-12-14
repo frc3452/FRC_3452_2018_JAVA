@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class GZFileMaker {
 
-    private static final String[] illegalCharacters = { "/", "\"", "*", "?", "\"", "<", ">", "|", ":" };
+    private static final String[] illegalCharacters = { "*", "?", "<", ">", "|", ":" };
 
     private static final String placeForInvalidFilesToGo = "/home/lvuser/InvalidFileName/";
 
@@ -84,6 +84,7 @@ public class GZFileMaker {
         for (String s : illegalCharacters)
             containsBadValue |= stringContainsChar(path, s);
 
+        
         // Method should returning if valid, not if contains bad characters
         return !containsBadValue;
     }
