@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.kElevator;
+import frc.robot.Constants.kElevator.HeightsInches;
 import frc.robot.GZOI;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZJoystick;
@@ -213,6 +214,11 @@ public class Elevator extends GZSubsystem {
 
 		elevator_1.checkFirmware(this);
 		elevator_2.checkFirmware(this);
+	}
+
+	public void setAutoScaleHeight() {
+		double height = isLimiting() ? HeightsInches.Scale_High : HeightsInches.Scale_Mid;
+		setHeight(height);
 	}
 
 	private synchronized void talonInit() {
@@ -469,8 +475,10 @@ public class Elevator extends GZSubsystem {
 				driveModifier = 1 - (pos / kElevator.TOP_ROTATION) + kElevator.SPEED_LIMIT_SLOWEST_SPEED;
 
 				// Encoder value lower than limit
-			} else
+			} else {
 				driveModifier = 1;
+				mLimiting = false;
+			}
 		} else {
 			mLimiting = false;
 			driveModifier = 1;
@@ -514,6 +522,10 @@ public class Elevator extends GZSubsystem {
 		} else {
 			stop();
 		}
+	}
+
+	public double getTargetHeight() {
+		return getTarget() / kElevator.ENC_TICKS_PER_INCH;
 	}
 
 	public synchronized boolean isEncoderMovementDone() {

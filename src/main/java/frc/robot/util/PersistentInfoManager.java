@@ -58,10 +58,7 @@ public class PersistentInfoManager {
     private PersistentInfo mDisabled = new PersistentInfo(0.0) {
         Double c = 0.0;
         public void update() {
-            System.out.println(c);
-            this.setValue(c);
-            c++;
-            // this.setValue(GZOI.getInstance().isSafteyDisabled() ? 3452.0 : 0.0);
+            this.setValue(GZOI.getInstance().isSafteyDisabled() ? 3452.0 : 0.0);
         }
 
         public void readOnStartup() {

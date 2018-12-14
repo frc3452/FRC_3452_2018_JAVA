@@ -116,7 +116,7 @@ public class Constants {
 
 		public static final double DEMO_DRIVE_MODIFIER = .4;
 
-		public final static double ELEV_TURN_SCALAR = 1.65;
+		public final static double ELEV_TURN_SCALAR = 1.67; //1.67
 	}
 
 	public static class kPDP {
@@ -134,7 +134,15 @@ public class Constants {
 	}
 
 	public static class kElevator {
+
 		public class PID {
+			public static final double F = 0;
+			public static final double P = .185;
+			public static final double I = 0.000028; //0.000028
+			public static final double D = 6;
+		}
+		
+		public class OLDPID {
 			public static final double F = 0;
 			public static final double P = .2;
 			public static final double I = 0.000028; //0.000028
@@ -189,7 +197,8 @@ public class Constants {
 		public class HeightsInches {
 			public static final double Floor = 0;
 			public static final double Switch = 25;
-			public static final double Scale = 48;//64.63 
+			public static final double Scale_Mid = 52; //53
+			public static final double Scale_High = 68.75; //68.75
 		}
 
 		public class HeightsRotations {
@@ -211,8 +220,8 @@ public class Constants {
 			public static final double INTAKE = -.8;
 			public static final double SHOOT = .75;
 			public static final double SLOW = .3;
-			public static final double PLACE = .2;
-			public static final double SPIN = .35;
+			public static final double PLACE = .225;
+			public static final double SPIN = .425; //.35
 		}
 
 	}

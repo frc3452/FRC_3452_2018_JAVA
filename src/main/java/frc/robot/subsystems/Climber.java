@@ -19,8 +19,7 @@ public class Climber extends GZSubsystem {
 
 	private static Climber mInstance = null;
 
-	public synchronized static Climber getInstance()
-	{
+	public synchronized static Climber getInstance() {
 		if (mInstance == null)
 			mInstance = new Climber();
 
@@ -65,8 +64,7 @@ public class Climber extends GZSubsystem {
 		out();
 	}
 
-	public void addLoggingValues()
-	{
+	public void addLoggingValues() {
 		new LogItem("CLIMBER-1-AMP") {
 			@Override
 			public String val() {
@@ -103,7 +101,6 @@ public class Climber extends GZSubsystem {
 			}
 		};
 
-
 	}
 
 	public class IO {
@@ -117,7 +114,11 @@ public class Climber extends GZSubsystem {
 	}
 
 	public void runClimber(double percentage) {
-		if (climbCounter > 3)
+		runClimber(percentage, 3);
+	}
+
+	public void runClimber(double percentage, int greaterThan) {
+		if (climbCounter > greaterThan)
 			manual(percentage);
 		else
 			stop();

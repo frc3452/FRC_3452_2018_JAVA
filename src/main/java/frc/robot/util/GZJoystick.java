@@ -13,6 +13,13 @@ public class GZJoystick extends Joystick {
 			dUp = new LatchedBoolean(), dDown = new LatchedBoolean(), dLeft = new LatchedBoolean(),
 			dRight = new LatchedBoolean();
 
+	private double mDeadband = .04;
+
+	public GZJoystick(int port, double deadband) {
+		this(port);
+		this.mDeadband = deadband;
+	}
+
 	public GZJoystick(int port) {
 		super(port);
 
@@ -32,27 +39,27 @@ public class GZJoystick extends Joystick {
 	}
 
 	public Double getLeftAnalogY() {
-		return -this.getRawAxis(Axises.LEFT_ANALOG_Y);
+		return GZUtil.applyDeadband(-this.getRawAxis(Axises.LEFT_ANALOG_Y), mDeadband);
 	}
 
 	public Double getLeftAnalogX() {
-		return this.getRawAxis(Axises.LEFT_ANALOG_X);
+		return GZUtil.applyDeadband(this.getRawAxis(Axises.LEFT_ANALOG_X), mDeadband);
 	}
 
 	public Double getRightAnalogY() {
-		return -this.getRawAxis(Axises.RIGHT_ANALOG_Y);
+		return GZUtil.applyDeadband(-this.getRawAxis(Axises.RIGHT_ANALOG_Y), mDeadband);
 	}
 
 	public Double getRightAnalogX() {
-		return this.getRawAxis(Axises.RIGHT_ANALOG_X);
+		return GZUtil.applyDeadband(this.getRawAxis(Axises.RIGHT_ANALOG_X), mDeadband);
 	}
 
 	public Double getLeftTrigger() {
-		return this.getRawAxis(Axises.LEFT_TRIGGER);
+		return GZUtil.applyDeadband(this.getRawAxis(Axises.LEFT_TRIGGER), mDeadband);
 	}
 
 	public Double getRightTrigger() {
-		return this.getRawAxis(Axises.RIGHT_TRIGGER);
+		return GZUtil.applyDeadband(this.getRawAxis(Axises.RIGHT_TRIGGER), mDeadband);
 	}
 
 	public Boolean getDUp() {
