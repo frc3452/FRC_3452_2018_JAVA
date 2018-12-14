@@ -41,8 +41,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
-		// infoManager.readOnStartup("File", "Folder", false);
-		infoManager.updateFile("Stats", "TestingTuesday", 1, true);
+		// infoManager.readOnStartup("Stats", "Folder", false);
+		infoManager.updateFile("Stats", "TestingTuesday", true);
 		
 		// BufferedWriter a = new BufferedWriter(new FileWriter(GZFileMaker.getFile("MyName", "MyNewFolder", true, true)));
 
