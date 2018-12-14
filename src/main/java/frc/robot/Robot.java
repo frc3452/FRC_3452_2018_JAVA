@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
 		// infoManager.readOnStartup("File", "Folder", false);
 		infoManager.updateFile("Stats", "TestingTuesday", 1, true);
 		
-		BufferedWriter a = new BufferedWriter(new FileWriter(GZFileMaker.getFile("MyName", "MyNewFolder", true, true)));
+		// BufferedWriter a = new BufferedWriter(new FileWriter(GZFileMaker.getFile("MyName", "MyNewFolder", true, true)));
 
 
 		// Gen health file

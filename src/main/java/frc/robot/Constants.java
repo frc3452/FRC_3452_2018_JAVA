@@ -226,6 +226,14 @@ public class Constants {
 
 	}
 
+	public class kTempSensor {
+		public final static double LOW_TEMP_C = -50;
+		public final static double HIGH_TEMP_C = 100;
+		public final static double LOW_VOLT = 0;
+		public final static double HIGH_VOLT = 1.75;
+	}
+
+
 	public static class kLights {
 		public static final int CANIFIER_ID = 0;
 

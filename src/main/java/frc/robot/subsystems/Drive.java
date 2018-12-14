@@ -45,7 +45,6 @@ public class Drive extends GZSubsystem {
 
 	// DRIVETRAIN
 	private GZSRX L1, L2, L3, L4, R1, R2, R3, R4;
-	private Map<Integer, GZSRX> mControllers = new HashMap<Integer, GZSRX>();
 
 	// GYRO
 	private AHRS mGyro;
@@ -58,31 +57,21 @@ public class Drive extends GZSubsystem {
 	private static Drive mInstance = null;
 
 	public synchronized static Drive getInstance() {
-
 		if (mInstance == null)
 			mInstance = new Drive();
 		return mInstance;
 	}
 
 	private Drive() {
-		L1 = new GZSRX(kDrivetrain.L1, "L1", Breaker.AMP_30, Side.LEFT, Master.MASTER);
-		L2 = new GZSRX(kDrivetrain.L2, "L2", Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
-		L3 = new GZSRX(kDrivetrain.L3, "L3", Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
-		L4 = new GZSRX(kDrivetrain.L4, "L4", Breaker.AMP_30, Side.LEFT, Master.FOLLOWER);
+		L1 = new GZSRX.Builder(kDrivetrain.L1, this, "L1", Breaker.AMP_30).setMaster().setSide(Side.LEFT).build();
+		L2 = new GZSRX.Builder(kDrivetrain.L2, this, "L2", Breaker.AMP_30).setFollower().setSide(Side.LEFT).build();
+		L3 = new GZSRX.Builder(kDrivetrain.L3, this, "L3", Breaker.AMP_30).setFollower().setSide(Side.LEFT).build();
+		L4 = new GZSRX.Builder(kDrivetrain.L4, this, "L4", Breaker.AMP_30).setFollower().setSide(Side.LEFT).build();
 
-		R1 = new GZSRX(kDrivetrain.R1, "R1", Breaker.AMP_30, Side.RIGHT, Master.MASTER);
-		R2 = new GZSRX(kDrivetrain.R2, "R2", Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
-		R3 = new GZSRX(kDrivetrain.R3, "R3", Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
-		R4 = new GZSRX(kDrivetrain.R4, "R4", Breaker.AMP_30, Side.RIGHT, Master.FOLLOWER);
-
-		mControllers.put(L1.getID(), L1);
-		mControllers.put(L2.getID(), L2);
-		mControllers.put(L3.getID(), L3);
-		mControllers.put(L4.getID(), L4);
-		mControllers.put(R1.getID(), R1);
-		mControllers.put(R2.getID(), R2);
-		mControllers.put(R3.getID(), R3);
-		mControllers.put(R4.getID(), R4);
+		R1 = new GZSRX.Builder(kDrivetrain.R1, this, "R1", Breaker.AMP_30).setMaster().setSide(Side.RIGHT).build();
+		R2 = new GZSRX.Builder(kDrivetrain.R2, this, "R2", Breaker.AMP_30).setFollower().setSide(Side.RIGHT).build();
+		R3 = new GZSRX.Builder(kDrivetrain.R3, this, "R3", Breaker.AMP_30).setFollower().setSide(Side.RIGHT).build();
+		R4 = new GZSRX.Builder(kDrivetrain.R4, this, "R4", Breaker.AMP_30).setFollower().setSide(Side.RIGHT).build();
 
 		mGyro = new AHRS(SPI.Port.kMXP);
 
@@ -217,6 +206,26 @@ public class Drive extends GZSubsystem {
 					return mIO.getAmperage(c.getID()).toString();
 				}
 			};
+		}
+
+		// TEMPERATURE SENSORS
+		for (GZSRX c : mControllers.values()) {
+
+			if (c.isTemperatureSensorPresent()) {
+				new LogItem("DRV-" + c.getGZName() + "-TEMP") {
+					@Override
+					public String val() {
+						return c.getTemperatureSensor().toString();
+					}
+				};
+
+				new LogItem("DRV-" + c.getGZName() + "-TEMP-AVG") {
+					@Override
+					public String val() {
+						return c.getTemperatureSensor().toString();
+					}
+				};
+			}
 		}
 	}
 
@@ -414,7 +423,7 @@ public class Drive extends GZSubsystem {
 		public void updateAmperage(int id, double value) {
 			if (!amperages.containsKey(id))
 				amperages.put(id, Double.NaN);
-			amperages.replace(id, getAmperage(id), value);
+			amperages.replace(id, value);
 		}
 
 		public Double getAmperage(int id) {
@@ -427,7 +436,7 @@ public class Drive extends GZSubsystem {
 		public void updateVoltage(int id, double value) {
 			if (!voltages.containsKey(id))
 				voltages.put(id, Double.NaN);
-			voltages.replace(id, getAmperage(id), value);
+			voltages.replace(id, value);
 		}
 
 		public Double getVoltage(int id) {
@@ -496,11 +505,10 @@ public class Drive extends GZSubsystem {
 			mIO.right_encoder_vel = Double.NaN;
 		}
 
-		for (GZSRX c : mControllers.values())
+		for (GZSRX c : mControllers.values()) {
 			mIO.updateAmperage(c.getID(), c.getOutputCurrent());
-
-		for (GZSRX c : mControllers.values())
 			mIO.updateVoltage(c.getID(), c.getMotorOutputVoltage());
+		}
 	}
 
 	@Override

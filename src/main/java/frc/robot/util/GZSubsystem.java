@@ -1,9 +1,12 @@
 package frc.robot.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.Constants.kLoop;
 import frc.robot.subsystems.Health.AlertLevel;
-import frc.robot.Constants.*;
 
 //thx 254
 public abstract class GZSubsystem extends Subsystem {
@@ -12,6 +15,8 @@ public abstract class GZSubsystem extends Subsystem {
 	public abstract void stop();
 
 	private AlertLevel mHighestAlert = AlertLevel.NONE;
+
+	protected Map<Integer, GZSRX> mControllers = new HashMap<Integer, GZSRX>();
 
 	/**
 	 * Disabling each subsystem

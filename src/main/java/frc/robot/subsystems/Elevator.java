@@ -26,7 +26,6 @@ import frc.robot.util.Units;
 public class Elevator extends GZSubsystem {
 
 	private static GZSRX elevator_1, elevator_2;
-	private Map<Integer, GZSRX> mControllers = new HashMap<Integer, GZSRX>();
 
 	// Force switch state to neutral on start up
 	private ElevatorState mState = ElevatorState.MANUAL;
@@ -136,11 +135,8 @@ public class Elevator extends GZSubsystem {
 	}
 
 	private Elevator() {
-		elevator_1 = new GZSRX(kElevator.E_1, "E1", Breaker.AMP_40, Master.MASTER);
-		elevator_2 = new GZSRX(kElevator.E_2, "E2", Breaker.AMP_40, Master.FOLLOWER);
-
-		mControllers.put(elevator_1.getID(), elevator_1);
-		mControllers.put(elevator_2.getID(), elevator_2);
+		elevator_1 = new GZSRX.Builder(kElevator.E_1, this, "E1", Breaker.AMP_40).setMaster().build();
+		elevator_2 = new GZSRX.Builder(kElevator.E_2, this, "E2", Breaker.AMP_40).setMaster().build();
 
 		talonInit();
 

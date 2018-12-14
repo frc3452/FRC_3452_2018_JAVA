@@ -43,7 +43,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * Constructor for subsystem
 	 */
 	private ExampleGZSubsystem() {
-		example_motor = new GZSRX(0, "ExampleMotor", Breaker.AMP_40);
+		example_motor = new GZSRX.Builder(0, this, "ExampleMotor", Breaker.AMP_40).build();
 
 		example_motor.configFactoryDefault();
 		example_motor.checkFirmware(this);
@@ -51,29 +51,24 @@ public class ExampleGZSubsystem extends GZSubsystem {
 
 	@Override
 	public void addLoggingValues() {
-		
-		//Creating this object will add it to a list of other logging values
-		new LogItem("EMPL-AMP")
-		{
-			public String val()
-			{
+
+		// Creating this object will add it to a list of other logging values
+		new LogItem("EXMPL-AMP") {
+			public String val() {
 				return mIO.motor_1_amperage.toString();
 			}
 		};
 
-		//This will put a formula for Google Sheets or Excel that will average the column to the left
-		new LogItem("AVG-AMP")
-		{
-			public String val()
-			{
+		// This will put a formula for Google Sheets or Excel that will average the
+		// column to the left
+		new LogItem("AVG-AMP") {
+			public String val() {
 				return LogItem.Average_Left_Formula;
 			}
 		};
 
-		new LogItem("EXPL-VLT")
-		{
-			public String val()
-			{
+		new LogItem("EMXPL-VLT") {
+			public String val() {
 				return mIO.motor_1_voltage.toString();
 			}
 		};
