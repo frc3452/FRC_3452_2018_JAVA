@@ -8,7 +8,7 @@ public abstract class PersistentInfo {
     private Double mValue = Double.NaN;
 
     public PersistentInfo(Double defaultValue) {
-        this.mValue = mValue;
+        this.mValue = defaultValue;
     }
 
     public PersistentInfo() {

@@ -220,7 +220,7 @@ public class Constants {
 			public static final double INTAKE = -.8;
 			public static final double SHOOT = .75;
 			public static final double SLOW = .3;
-			public static final double PLACE = .225;
+			public static final double PLACE = .325; //.225
 			public static final double SPIN = .425; //.35
 		}
 
@@ -248,6 +248,11 @@ public class Constants {
 		public final static String MP_NAME = "MP1";
 		public final static String MP_FOLDER = "MotionProfiles";
 		public final static boolean MP_USB = true;
+
+		public final static String STATS_FILE_FOLDER = "GZStats";
+		public final static String STATS_FILE_NAME = "Stats";
+		public final static boolean STATS_FILE_ON_USB = false;
+		public static final double DEFAULT_STATS_RECORD_TIME = 1;
 
 		public final static int RECORDING_MOTION_PROFILE_MS = 30; // 20
 		public final static double LOGGING_SPEED = .125;

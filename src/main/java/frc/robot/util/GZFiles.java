@@ -229,7 +229,13 @@ public class GZFiles {
 				break;
 			case WRITE:
 				// create file writing vars
-				bw = new BufferedWriter(new FileWriter(GZFileMaker.getFile(fileName, folder, usb, true)));
+				try {
+					bw = new BufferedWriter(new FileWriter(GZFileMaker.getFile(fileName, folder, usb, true)));
+				} catch (Exception e) {
+					//If fails, try again on rio
+					System.out.println("Writing log to USB failed... trying RIO");
+					bw = new BufferedWriter(new FileWriter(GZFileMaker.getFile(fileName, folder, false, true)));
+				}
 			}
 
 		} catch (Exception e) {

@@ -4,19 +4,20 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 import edu.wpi.first.wpilibj.Notifier;
+import frc.robot.Constants;
 import frc.robot.GZOI;
+import frc.robot.Constants.kFiles;
 
 public class PersistentInfoManager {
 
     // Map linking Name of setting to value
     private Map<String, PersistentInfo> mSettingsMap = new HashMap<String, PersistentInfo>();
-
-    private static final double PRINT_TIME = 5;
 
     // timers and prev vals
     private final GZTimer mOnTimeTimer = new GZTimer("OnTime");
@@ -25,20 +26,19 @@ public class PersistentInfoManager {
     private double mPreviousEnabledTime = 0;
 
     private GZNotifier mUpdateNotifier;
-    private GZNotifier mFailedNotifier;
 
     private Flag mReadFailed = new Flag();
 
     private static PersistentInfoManager mInstance = null;
 
-    private PersistentInfo mEnabledTime = new PersistentInfo() {
+    private PersistentInfo mEnabledTime = new PersistentInfo(0.0) {
         public void update() {
             this.addToValue(mEnabledTimer.get() - mPreviousEnabledTime);
             mPreviousEnabledTime = mEnabledTimer.get();
         }
     };
 
-    private PersistentInfo mOnTime = new PersistentInfo() {
+    private PersistentInfo mOnTime = new PersistentInfo(0.0) {
         public void update() {
             this.addToValue(mOnTimeTimer.get() - mPreviousOnTime);
             mPreviousOnTime = mOnTimeTimer.get();
@@ -57,15 +57,12 @@ public class PersistentInfoManager {
     };
 
     private PersistentInfo mDisabled = new PersistentInfo(0.0) {
-        Double c = 0.0;
-
         public void update() {
             this.setValue(GZOI.getInstance().isSafteyDisabled() ? 3452.0 : 0.0);
         }
 
-        public void readOnStartup() {
-            // if this
-            GZOI.getInstance().setSafteyDisable(this.getValue() == 3452);
+        public void readSetting() {
+            GZOI.getInstance().setSafteyDisable(this.getValue() == 3452.0);
         }
     };
 
@@ -85,24 +82,42 @@ public class PersistentInfoManager {
         mSettingsMap.put("Disabled", mDisabled);
 
         mOnTimeTimer.oneTimeStartTimer();
-
-        mFailedNotifier = new GZNotifier(new Runnable() {
-            public void run() {
-                if (GZOI.getInstance().isDisabled()) {
-                    updateValues();
-                    System.out.println(
-                            "ERROR Will not write persistent settings! Make sure to manually update the file!");
-                    for (String s : mSettingsMap.keySet()) {
-                        System.out.println(s + "\t\t\t" + mSettingsMap.get(s).getValue());
-                    }
-                }
-            }
-        });
     }
 
     // Read from file and folder on RIO
     public void readOnStartup(String fileName, String folder) {
         readOnStartup(fileName, folder, false);
+    }
+
+    public void initialize(String fileName, String folder, boolean usb) {
+        readOnStartup(fileName, folder, usb);
+        updateFile(fileName, folder, usb);
+    }
+
+    private void backupFile() {
+        boolean fail = false;
+        
+        try {
+            File source = GZFileMaker.getFile(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER,
+                    kFiles.STATS_FILE_ON_USB, false);
+
+            File dest = GZFileMaker.getFile("StatsBackup-" + GZUtil.dateTime(true), "GZStatsBackup", true, true);
+
+            //GZFileMaker will create the file, delete and then copy it
+            Files.deleteIfExists(dest.toPath());
+            
+            Files.copy(source.toPath(), dest.toPath());
+        } catch (Exception e) {
+            fail = true;
+            // e.printStackTrace();
+        }
+        System.out.println("Stats file backed up " + (fail ? "unsuccsessfully" : "succsessfully"));
+    }
+
+    public void initialize() {
+        backupFile();
+        readOnStartup(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER, kFiles.STATS_FILE_ON_USB);
+        updateFile(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER, kFiles.STATS_FILE_ON_USB);
     }
 
     /**
@@ -134,7 +149,8 @@ public class PersistentInfoManager {
             // Close scanner
             scnr.close();
 
-            // If any PersistentInfos do anything on startup like refresh variables in other files, have
+            // If any PersistentInfos do anything on startup like refresh variables in other
+            // files, have
             // them do it now
             if (!mReadFailed.isFlagTripped())
                 readSettings();
@@ -145,12 +161,11 @@ public class PersistentInfoManager {
             System.out.println("ERROR Could not read persistent settings!");
         }
 
-        if (mReadFailed.isFlagTripped())
-            startPrintMap();
+        if (!mReadFailed.isFlagTripped())
+            System.out.println("Persistent settings read correctly.");
     }
 
-    private void readSettings()
-    {
+    private void readSettings() {
         for (PersistentInfo p : mSettingsMap.values())
             p.readSetting();
     }
@@ -160,13 +175,10 @@ public class PersistentInfoManager {
             p.update();
     }
 
-    private void startPrintMap() {
-        if (!mFailedNotifier.isRunning())
-            mFailedNotifier.startPeriodic(PRINT_TIME);
-    }
-
-    private void stopPrintMap() {
-        mFailedNotifier.stop();
+    public void printPersistentSettings() {
+        System.out.println("~~~Persistent settings" + (mReadFailed.isFlagTripped() ? " in temp folder" : "") + "~~~");
+        for (String s : mSettingsMap.keySet())
+            System.out.println(s + "\t\t\t" + mSettingsMap.get(s).getValue());
     }
 
     // Update file every __ seconds @ file and folder on RIO
@@ -174,8 +186,24 @@ public class PersistentInfoManager {
         updateFile(fileName, folder, false);
     }
 
-    // Update file every __ seconds @ file and folder on RIO or USB
-    public void updateFile(final String fileName, final String folder, final boolean usb) {
+    public void updateFile(String fileName, String folder, final boolean usb) {
+
+        final String mFileName;
+        final String mFolder;
+        final boolean mUsb;
+
+        if (mReadFailed.isFlagTripped()) {
+            mFileName = GZUtil.dateTime(false);
+            mFolder = Constants.kFiles.STATS_FILE_FOLDER;
+            mUsb = Constants.kFiles.STATS_FILE_ON_USB;
+            System.out.println("ERROR Could not read startup file! Writing new file to " + mFolder + "/" + mFileName
+                    + ".csv" + " on RIO");
+
+        } else {
+            mFileName = fileName;
+            mFolder = folder;
+            mUsb = usb;
+        }
 
         // Define notifier and runnable
         mUpdateNotifier = new GZNotifier(new Runnable() {
@@ -186,13 +214,15 @@ public class PersistentInfoManager {
 
                 try {
                     // SETUP FILE WRITING
-                    File f = GZFileMaker.getFile(fileName, folder, usb, true);
-                    // create file writing vars
 
+                    File f = GZFileMaker.getFile(mFileName, mFolder, mUsb, true);
+
+                    // create file writing vars
                     BufferedWriter bw = new BufferedWriter(new FileWriter(f));
 
                     // write values
                     // LeftEncoderTicks,1024
+                    // Disabled,0
                     for (String v : mSettingsMap.keySet()) {
                         bw.write(v + "," + mSettingsMap.get(v).getValue());
                         bw.write("\r\n");
@@ -200,21 +230,16 @@ public class PersistentInfoManager {
 
                     bw.close();
 
-                    // Don't print map
-                    stopPrintMap();
-
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    // e.printStackTrace();
                     System.out.println("ERROR Could not update long term stats file!");
-
-                    startPrintMap();
                 }
             }
         });
 
         // only start once and if read didn't work
-        if (!mUpdateNotifier.hasStarted() && !mReadFailed.isFlagTripped())
-            mUpdateNotifier.startPeriodic(PRINT_TIME);
+        if (!mUpdateNotifier.hasStarted())
+            mUpdateNotifier.startPeriodic(kFiles.DEFAULT_STATS_RECORD_TIME);
     }
 
     public void robotEnabled() {

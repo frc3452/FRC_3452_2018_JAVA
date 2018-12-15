@@ -37,15 +37,15 @@ public class Robot extends TimedRobot {
 
 	// LOGGING CONTROL
 	private final boolean logging = true, logToUsb = true;
-	private final String loggingLocation = "Logging/Programming";
+	private final String loggingLocation = "Logging/December18";
 
 	@Override
 	public void robotInit() {
-		// infoManager.readOnStartup("Stats", "Folder", false);
-		infoManager.updateFile("Stats", "TestingTuesday", true);
-		
-		// BufferedWriter a = new BufferedWriter(new FileWriter(GZFileMaker.getFile("MyName", "MyNewFolder", true, true)));
+		health.assignSubsystems(allSubsystems.getSubsystems());
 
+		infoManager.initialize();
+		// BufferedWriter a = new BufferedWriter(new
+		// FileWriter(GZFileMaker.getFile("MyName", "MyNewFolder", true, true)));
 
 		// Gen health file
 		health.generateHealth();
@@ -53,7 +53,6 @@ public class Robot extends TimedRobot {
 		allSubsystems.addLoggingValues();
 		// allSubsystems.startLooping();
 	}
-	
 
 	@Override
 	public void robotPeriodic() {
@@ -63,6 +62,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
+		infoManager.printPersistentSettings();
 		infoManager.robotDisabled();
 		allSubsystems.stop();
 		log(false);

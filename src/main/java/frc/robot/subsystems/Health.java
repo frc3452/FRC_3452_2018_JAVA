@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import frc.robot.Robot;
@@ -16,9 +17,15 @@ public class Health {
 	private Map<GZSubsystem, ArrayList<ArrayList<String>>> map = new HashMap<>();
 
 	private static Health mInstance = null;
+	
+	private List<GZSubsystem> mSubsystems;
+
+	public void assignSubsystems(List<GZSubsystem> list)
+	{
+		this.mSubsystems = list;
+	}
 
 	private Health() {
-		
 	}
 
 	public synchronized static Health getInstance() {
@@ -51,12 +58,12 @@ public class Health {
 			String body = "", table = "";
 
 			//Make sure map has every subsystem in it
-			for (GZSubsystem s : Robot.allSubsystems.getSubsystems())
+			for (GZSubsystem s : mSubsystems)
 				this.addAlert(s, AlertLevel.NONE, "NA");
 
 			// Find highest alert level per subsystem
 			// Loop through each subsystem
-			for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
+			for (GZSubsystem s : mSubsystems) {
 				// Loop through all errors
 
 				for (int i = 0; i < map.get(s).size(); i++) {
@@ -80,7 +87,7 @@ public class Health {
 			table += tableRow(tableHeader("Subsystem") + tableHeader("Check"));
 
 			// Write table
-			for (GZSubsystem s : Robot.allSubsystems.getSubsystems())
+			for (GZSubsystem s : mSubsystems)
 				table += tableRow(
 						tableCell(s.getClass().getSimpleName()) + tableCell("", s.getHighestAlert().stringValue, true));
 
@@ -93,7 +100,7 @@ public class Health {
 			body += header("Alerts:");
 
 			// Print alerts
-			for (GZSubsystem s : Robot.allSubsystems.getSubsystems()) {
+			for (GZSubsystem s : mSubsystems) {
 
 				// If errors are present
 				if (s.getHighestAlert() != AlertLevel.NONE) {

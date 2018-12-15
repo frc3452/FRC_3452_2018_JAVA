@@ -62,6 +62,7 @@ public class GZOI extends GZSubsystem {
 	public void loop() {
 		outputSmartDashboard();
 
+		// FLAGS
 		if (isTele())
 			mWasTele = true;
 		if (isAuto())
@@ -69,6 +70,7 @@ public class GZOI extends GZSubsystem {
 		if (isTest())
 			mWasTest = true;
 
+		// SAFTEY DISABLE WITH USERBUTTON
 		if (isFMS())
 			mSafteyDisable = false;
 		else if (mUserButton.update(RobotController.getUserButton()))
@@ -80,11 +82,8 @@ public class GZOI extends GZSubsystem {
 		// Buttons.LEFT_CLICK)))
 		// Robot.auton.crash();
 
-		if (driverJoy.isLClickPressed())
-			recording = !recording;
-
-		if (recording != prevRecording)
-			GZFiles.getInstance().csvControl(kFiles.MP_NAME, kFiles.MP_FOLDER, kFiles.MP_USB, TASK.Record, recording);
+		// RECORDING
+		// recordingUpdates();
 
 		if (isTele()) {
 			Drive.getInstance().setWantedState(DriveState.OPEN_LOOP_DRIVER);
@@ -108,7 +107,7 @@ public class GZOI extends GZSubsystem {
 			// ELEVATOR OPERATOR
 			if (opJoy.getRawButton(Buttons.LB))
 				elev.manualJoystick(opJoy);
-			else if (driverJoy.getRawButton(Buttons.RB))
+			else if (driverJoy.getRawButton(Buttons.LB))
 				elev.manualJoystick(driverJoy);
 			else if (opJoy.isDDownPressed())
 				elev.setHeight(kElevator.HeightsInches.Floor);
@@ -117,9 +116,9 @@ public class GZOI extends GZSubsystem {
 			// ELEVATOR DRIVER
 			else if (driverJoy.isDDownPressed())
 				elev.setHeight(kElevator.HeightsInches.Floor);
-			else if (driverJoy.isDLeftPressed()){
+			else if (driverJoy.isRBPressed()) {
 				elev.setAutoScaleHeight();
-			}else if (driverJoy.isDRightPressed())
+			} else if (driverJoy.isDRightPressed())
 				elev.setHeight(kElevator.HeightsInches.Switch);
 			else if (elev.getState() != ElevatorState.POSITION)
 				elev.stop();
@@ -171,6 +170,13 @@ public class GZOI extends GZSubsystem {
 			rumble(0);
 
 		prevRecording = recording;
+	}
+
+	private void recordingUpdates() {
+		if (driverJoy.isLClickPressed())
+			recording = !recording;
+		if (recording != prevRecording)
+			GZFiles.getInstance().csvControl(kFiles.MP_NAME, kFiles.MP_FOLDER, kFiles.MP_USB, TASK.Record, recording);
 	}
 
 	public void addLoggingValues() {
