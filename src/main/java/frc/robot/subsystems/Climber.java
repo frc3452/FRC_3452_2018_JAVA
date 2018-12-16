@@ -1,19 +1,23 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.Spark;
 import frc.robot.Constants.kClimber;
 import frc.robot.Constants.kPDP;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import frc.robot.GZOI;
 import frc.robot.util.GZLog.LogItem;
+import frc.robot.util.GZPDP;
+import frc.robot.util.GZSpark;
 import frc.robot.util.GZSubsystem;
 
 public class Climber extends GZSubsystem {
 
-	private Spark climber_1;
+	private GZSpark climber_1;
 
 	private ClimberState mState = ClimberState.MANUAL;
 	private ClimberState mWantedState = ClimberState.NEUTRAL;
 	public IO mIO = new IO();
+
+	private PowerDistributionPanel pdp = GZPDP.getInstance().getPDP();
 
 	private int climbCounter = 0;
 
@@ -28,7 +32,7 @@ public class Climber extends GZSubsystem {
 
 	// Construction
 	private Climber() {
-		climber_1 = new Spark(kClimber.CLIMBER_1);
+		climber_1 = new GZSpark.Builder(kClimber.CLIMBER_1, this, kPDP.CLIMBER_1, "C1").build();
 		climber_1.setInverted(kClimber.CLIMBER_1_INVERT);
 
 		climber_1.setSubsystem(Climber.class.getName());
@@ -131,8 +135,8 @@ public class Climber extends GZSubsystem {
 
 	@Override
 	protected synchronized void in() {
-		mIO.climber_1_amperage = Drive.getInstance().getPDPChannelCurrent(kPDP.CLIMBER_1);
-		mIO.climber_2_amperage = Drive.getInstance().getPDPChannelCurrent(kPDP.CLIMBER_2);
+		mIO.climber_1_amperage = climber_1.getAmperage();
+		mIO.climber_2_amperage = pdp.getCurrent(kPDP.CLIMBER_2);
 	}
 
 	@Override

@@ -8,11 +8,13 @@ import frc.robot.Constants.kTempSensor;
 import frc.robot.subsystems.Health;
 import frc.robot.subsystems.Health.AlertLevel;
 
-public class GZSRX extends WPI_TalonSRX {
+public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 
+	// BUILDER
 	public static class Builder {
 		private int mDeviceNumber;
 		private Breaker mBreaker = Breaker.NO_INFO;
+		private int mPDPChannel;
 		private String mName = "GZ";
 
 		private GZSubsystem mSub;
@@ -21,11 +23,12 @@ public class GZSRX extends WPI_TalonSRX {
 		private Master mMaster = Master.NO_INFO;
 		private int mTempSensorPort = -1;
 
-		public Builder(int deviceNumber, GZSubsystem subsystem, String name, Breaker b) {
+		public Builder(int deviceNumber, GZSubsystem subsystem, String name, int PDPChannel, Breaker b) {
 			this.mDeviceNumber = deviceNumber;
 			this.mName = name;
 			this.mBreaker = b;
 			this.mSub = subsystem;
+			this.mPDPChannel = PDPChannel;
 		}
 
 		public Builder setTempSensorPort(int port) {
@@ -52,8 +55,8 @@ public class GZSRX extends WPI_TalonSRX {
 		}
 
 		public GZSRX build() {
-			GZSRX g = new GZSRX(this.mDeviceNumber, this.mSub, this.mName, this.mBreaker, this.mSide, this.mMaster,
-					this.mTempSensorPort);
+			GZSRX g = new GZSRX(this.mDeviceNumber, this.mSub, this.mName, this.mPDPChannel, this.mBreaker, this.mSide,
+					this.mMaster, this.mTempSensorPort);
 			return g;
 		}
 
@@ -63,6 +66,7 @@ public class GZSRX extends WPI_TalonSRX {
 	private Side mSide;
 	private Master mMaster;
 	private String mName;
+	private int mPDPChannel;
 
 	public final static int TIMEOUT = 10;
 	public final static int FIRMWARE = 778;
@@ -70,39 +74,45 @@ public class GZSRX extends WPI_TalonSRX {
 
 	private AnalogInput mTemperatureSensor = null;
 
-	private GZSRX(int deviceNumber, GZSubsystem subsystem, String name, Breaker breaker, Side side, Master master,
-			int temperatureSensorPort) {
+	// Constructor for builder
+	private GZSRX(int deviceNumber, GZSubsystem subsystem, String name, int PDPChannel, Breaker breaker, Side side,
+			Master master, int temperatureSensorPort) {
 		super(deviceNumber);
 
-		mBreaker = breaker;
-		mSide = side;
-		mMaster = master;
-		mName = name;
+		this.mPDPChannel = PDPChannel;
+		this.mBreaker = breaker;
+		this.mSide = side;
+		this.mMaster = master;
+		this.mName = name;
 
 		if (temperatureSensorPort != -1)
-			mTemperatureSensor = new AnalogInput(temperatureSensorPort);
+			this.mTemperatureSensor = new AnalogInput(temperatureSensorPort);
 
-		subsystem.mControllers.put(deviceNumber, this);
+		subsystem.mTalons.put(this.mPDPChannel, this);
 	}
 
-	public boolean isTemperatureSensorPresent() {
+	public boolean hasTemperatureSensor() {
 		return this.mTemperatureSensor != null;
 	}
 
 	public Double getTemperatureSensor() {
-		double retval = -3452;
-
-		if (mTemperatureSensor != null) {
-			retval = GZUtil.scaleBetween(this.mTemperatureSensor.getVoltage(), kTempSensor.LOW_TEMP_C,
-					kTempSensor.HIGH_TEMP_C, kTempSensor.LOW_VOLT, kTempSensor.HIGH_VOLT);
-			retval = GZUtil.celsiusToFahrenheit(retval);
-		}
-
-		return retval;
+		return GZUtil.readTemperatureFromAnalogInput(this.mTemperatureSensor);
 	}
 
 	public String getGZName() {
 		return mName;
+	}
+
+	public Breaker getBreakerSize() {
+		return mBreaker;
+	}
+
+	public Double getAmperage() {
+		return this.getOutputCurrent();
+	}
+
+	public double getVoltage() {
+		return this.getMotorOutputVoltage();
 	}
 
 	public boolean isEncoderValid() {
@@ -134,10 +144,6 @@ public class GZSRX extends WPI_TalonSRX {
 				Health.getInstance().addAlert(sub, mFirmwareLevel,
 						"Talon " + id + " firmware is " + firm + ", should be " + FIRMWARE);
 		}
-	}
-
-	public Breaker getBreakerSize() {
-		return mBreaker;
 	}
 
 	public Side getSide() {

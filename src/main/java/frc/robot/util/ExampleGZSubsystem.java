@@ -43,7 +43,9 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 * Constructor for subsystem
 	 */
 	private ExampleGZSubsystem() {
-		example_motor = new GZSRX.Builder(0, this, "ExampleMotor", Breaker.AMP_40).build();
+
+		int pdpChannel = 4;
+		example_motor = new GZSRX.Builder(0, this, "ExampleMotor", pdpChannel, Breaker.AMP_40).build();
 
 		example_motor.configFactoryDefault();
 		example_motor.checkFirmware(this);

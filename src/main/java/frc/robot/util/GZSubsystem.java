@@ -3,9 +3,12 @@ package frc.robot.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.Constants.kLoop;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Health.AlertLevel;
 
 //thx 254
@@ -16,7 +19,8 @@ public abstract class GZSubsystem extends Subsystem {
 
 	private AlertLevel mHighestAlert = AlertLevel.NONE;
 
-	protected Map<Integer, GZSRX> mControllers = new HashMap<Integer, GZSRX>();
+	protected Map<Integer, GZSRX> mTalons = new HashMap<Integer, GZSRX>();
+	protected Map<Integer, GZSpark> mSparks = new HashMap<Integer, GZSpark>();
 
 	/**
 	 * Disabling each subsystem

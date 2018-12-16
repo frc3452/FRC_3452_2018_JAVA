@@ -1,10 +1,10 @@
 package frc.robot;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.util.Arrays;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.subsystems.Auton;
@@ -16,7 +16,6 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.util.GZFiles;
 import frc.robot.util.GZFiles.TASK;
-import frc.robot.util.GZFileMaker;
 import frc.robot.util.GZSubsystemManager;
 import frc.robot.util.PersistentInfoManager;
 

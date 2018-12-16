@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.kElevator;
+import frc.robot.Constants.kPDP;
 import frc.robot.Constants.kElevator.HeightsInches;
 import frc.robot.GZOI;
 import frc.robot.subsystems.Health.AlertLevel;
@@ -135,8 +136,8 @@ public class Elevator extends GZSubsystem {
 	}
 
 	private Elevator() {
-		elevator_1 = new GZSRX.Builder(kElevator.E_1, this, "E1", Breaker.AMP_40).setMaster().build();
-		elevator_2 = new GZSRX.Builder(kElevator.E_2, this, "E2", Breaker.AMP_40).setMaster().build();
+		elevator_1 = new GZSRX.Builder(kElevator.E_1, this, "E1", kPDP.ELEVATOR_1, Breaker.AMP_40).setMaster().build();
+		elevator_2 = new GZSRX.Builder(kElevator.E_2, this, "E2", kPDP.ELEVATOR_2, Breaker.AMP_40).setMaster().build();
 
 		talonInit();
 
@@ -218,7 +219,7 @@ public class Elevator extends GZSubsystem {
 	}
 
 	private synchronized void talonInit() {
-		for (GZSRX s : mControllers.values()) {
+		for (GZSRX s : mTalons.values()) {
 			GZSRX.logError(s.configFactoryDefault(), this, AlertLevel.ERROR,
 					"Could not factory reset " + s.getMaster());
 

@@ -19,10 +19,12 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.kDrivetrain;
+import frc.robot.Constants.kPDP;
 import frc.robot.GZOI;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZFiles;
 import frc.robot.util.GZJoystick;
+import frc.robot.util.GZPDP;
 import frc.robot.util.GZLog.LogItem;
 import frc.robot.util.GZPID;
 import frc.robot.util.GZSRX;
@@ -41,7 +43,7 @@ public class Drive extends GZSubsystem {
 	public IO mIO = new IO();
 
 	// PDP
-	private PowerDistributionPanel pdp = new PowerDistributionPanel(0);
+	private PowerDistributionPanel pdp = GZPDP.getInstance().getPDP();
 
 	// DRIVETRAIN
 	private GZSRX L1, L2, L3, L4, R1, R2, R3, R4;
@@ -63,15 +65,23 @@ public class Drive extends GZSubsystem {
 	}
 
 	private Drive() {
-		L1 = new GZSRX.Builder(kDrivetrain.L1, this, "L1", Breaker.AMP_30).setMaster().setSide(Side.LEFT).build();
-		L2 = new GZSRX.Builder(kDrivetrain.L2, this, "L2", Breaker.AMP_30).setFollower().setSide(Side.LEFT).build();
-		L3 = new GZSRX.Builder(kDrivetrain.L3, this, "L3", Breaker.AMP_30).setFollower().setSide(Side.LEFT).build();
-		L4 = new GZSRX.Builder(kDrivetrain.L4, this, "L4", Breaker.AMP_30).setFollower().setSide(Side.LEFT).build();
+		L1 = new GZSRX.Builder(kDrivetrain.L1, this, "L1", kPDP.DRIVE_L_1, Breaker.AMP_30).setMaster()
+				.setSide(Side.LEFT).build();
+		L2 = new GZSRX.Builder(kDrivetrain.L2, this, "L2", kPDP.DRIVE_L_2, Breaker.AMP_30).setFollower()
+				.setSide(Side.LEFT).build();
+		L3 = new GZSRX.Builder(kDrivetrain.L3, this, "L3", kPDP.DRIVE_L_3, Breaker.AMP_30).setFollower()
+				.setSide(Side.LEFT).build();
+		L4 = new GZSRX.Builder(kDrivetrain.L4, this, "L4", kPDP.DRIVE_L_4, Breaker.AMP_30).setFollower()
+				.setSide(Side.LEFT).build();
 
-		R1 = new GZSRX.Builder(kDrivetrain.R1, this, "R1", Breaker.AMP_30).setMaster().setSide(Side.RIGHT).build();
-		R2 = new GZSRX.Builder(kDrivetrain.R2, this, "R2", Breaker.AMP_30).setFollower().setSide(Side.RIGHT).build();
-		R3 = new GZSRX.Builder(kDrivetrain.R3, this, "R3", Breaker.AMP_30).setFollower().setSide(Side.RIGHT).build();
-		R4 = new GZSRX.Builder(kDrivetrain.R4, this, "R4", Breaker.AMP_30).setFollower().setSide(Side.RIGHT).build();
+		R1 = new GZSRX.Builder(kDrivetrain.R1, this, "R1", kPDP.DRIVE_R_1, Breaker.AMP_30).setMaster()
+				.setSide(Side.RIGHT).build();
+		R2 = new GZSRX.Builder(kDrivetrain.R2, this, "R2", kPDP.DRIVE_R_2, Breaker.AMP_30).setFollower()
+				.setSide(Side.RIGHT).build();
+		R3 = new GZSRX.Builder(kDrivetrain.R3, this, "R3", kPDP.DRIVE_R_3, Breaker.AMP_30).setFollower()
+				.setSide(Side.RIGHT).build();
+		R4 = new GZSRX.Builder(kDrivetrain.R4, this, "R4", kPDP.DRIVE_R_4, Breaker.AMP_30).setFollower()
+				.setSide(Side.RIGHT).build();
 
 		mGyro = new AHRS(SPI.Port.kMXP);
 
@@ -185,7 +195,7 @@ public class Drive extends GZSubsystem {
 			}
 		};
 
-		for (GZSRX c : mControllers.values()) {
+		for (GZSRX c : mTalons.values()) {
 			new LogItem("DRV-" + c.getGZName() + "-AMP") {
 				public String val() {
 					return mIO.getAmperage(c.getID()).toString();
@@ -197,10 +207,28 @@ public class Drive extends GZSubsystem {
 					return LogItem.Average_Left_Formula;
 				}
 			};
+
+			//Temperature sensors
+			if (c.hasTemperatureSensor()) {
+				new LogItem("DRV-" + c.getGZName() + "-TEMP") {
+					@Override
+					public String val() {
+						return String.valueOf(c.getTemperatureSensor());
+					}
+				};
+
+				new LogItem("DRV-" + c.getGZName() + "-TEMP-AVG") {
+					@Override
+					public String val() {
+						return String.valueOf(c.getTemperatureSensor());
+					}
+				};
+			}
+
 		}
 
 		// VOLTAGE
-		for (GZSRX c : mControllers.values()) {
+		for (GZSRX c : mTalons.values()) {
 			new LogItem("DRV-" + c.getGZName() + "-VOLT") {
 				public String val() {
 					return mIO.getAmperage(c.getID()).toString();
@@ -208,25 +236,6 @@ public class Drive extends GZSubsystem {
 			};
 		}
 
-		// TEMPERATURE SENSORS
-		for (GZSRX c : mControllers.values()) {
-
-			if (c.isTemperatureSensorPresent()) {
-				new LogItem("DRV-" + c.getGZName() + "-TEMP") {
-					@Override
-					public String val() {
-						return c.getTemperatureSensor().toString();
-					}
-				};
-
-				new LogItem("DRV-" + c.getGZName() + "-TEMP-AVG") {
-					@Override
-					public String val() {
-						return c.getTemperatureSensor().toString();
-					}
-				};
-			}
-		}
 	}
 
 	public enum DriveState {
@@ -279,7 +288,7 @@ public class Drive extends GZSubsystem {
 	}
 
 	private void talonInit() {
-		for (GZSRX s : mControllers.values()) {
+		for (GZSRX s : mTalons.values()) {
 			String name = s.getGZName();
 
 			GZSRX.logError(s.configFactoryDefault(GZSRX.TIMEOUT), this, AlertLevel.ERROR,
@@ -353,7 +362,7 @@ public class Drive extends GZSubsystem {
 	}
 
 	private synchronized void checkFirmware() {
-		for (GZSRX s : mControllers.values())
+		for (GZSRX s : mTalons.values())
 			s.checkFirmware(this);
 	}
 
@@ -505,7 +514,7 @@ public class Drive extends GZSubsystem {
 			mIO.right_encoder_vel = Double.NaN;
 		}
 
-		for (GZSRX c : mControllers.values()) {
+		for (GZSRX c : mTalons.values()) {
 			mIO.updateAmperage(c.getID(), c.getOutputCurrent());
 			mIO.updateVoltage(c.getID(), c.getMotorOutputVoltage());
 		}
@@ -618,7 +627,7 @@ public class Drive extends GZSubsystem {
 	}
 
 	private synchronized void brake(NeutralMode mode) {
-		for (GZSRX c : mControllers.values())
+		for (GZSRX c : mTalons.values())
 			c.setNeutralMode(mode);
 	}
 
@@ -873,7 +882,7 @@ public class Drive extends GZSubsystem {
 	}
 
 	public synchronized void enableFollower() {
-		for (GZSRX c : mControllers.values()) {
+		for (GZSRX c : mTalons.values()) {
 			switch (c.getSide()) {
 			case LEFT:
 				c.follow(L1);
@@ -906,21 +915,6 @@ public class Drive extends GZSubsystem {
 		mGyro.reset();
 	}
 
-	public synchronized Double getPDPChannelCurrent(int channel) {
-		return pdp.getCurrent(channel);
-	}
-
-	public synchronized Double getPDPTemperature() {
-		return pdp.getTemperature();
-	}
-
-	public synchronized Double getPDPTotalCurrent() {
-		return pdp.getTotalCurrent();
-	}
-
-	public synchronized Double getPDPVoltage() {
-		return pdp.getVoltage();
-	}
 
 	public synchronized void slowSpeed(boolean isSlow) {
 		mIsSlow = isSlow;

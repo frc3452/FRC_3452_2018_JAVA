@@ -2,13 +2,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.kElevator;
 import frc.robot.Constants.kFiles;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kOI;
-import frc.robot.Constants.kElevator.HeightsInches;
 import frc.robot.subsystems.Auton;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
@@ -23,6 +23,7 @@ import frc.robot.util.GZFiles.TASK;
 import frc.robot.util.GZJoystick;
 import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZLog.LogItem;
+import frc.robot.util.GZPDP;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.GZUtil;
 import frc.robot.util.LatchedBoolean;
@@ -40,6 +41,8 @@ public class GZOI extends GZSubsystem {
 	private Elevator elev = Elevator.getInstance();
 	private Intake intake = Intake.getInstance();
 	private Climber climber = Climber.getInstance();
+
+	private PowerDistributionPanel pdp = GZPDP.getInstance().getPDP();
 
 	private static GZOI mInstance = null;
 
@@ -197,7 +200,7 @@ public class GZOI extends GZSubsystem {
 		new LogItem("PDP-TEMP") {
 			@Override
 			public String val() {
-				return Drive.getInstance().getPDPTemperature().toString();
+				return String.valueOf(pdp.getTemperature());
 			}
 		};
 
@@ -211,7 +214,7 @@ public class GZOI extends GZSubsystem {
 		new LogItem("PDP-AMP") {
 			@Override
 			public String val() {
-				return Drive.getInstance().getPDPTotalCurrent().toString();
+				return String.valueOf(pdp.getTotalCurrent());
 			}
 		};
 
@@ -226,7 +229,7 @@ public class GZOI extends GZSubsystem {
 
 			@Override
 			public String val() {
-				return Drive.getInstance().getPDPVoltage().toString();
+				return String.valueOf(pdp.getVoltage());
 			}
 		};
 

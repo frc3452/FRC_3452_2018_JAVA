@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import edu.wpi.first.wpilibj.AnalogInput;
+import frc.robot.Constants.kTempSensor;
 import frc.robot.motionprofiles.Path;
 
 public class GZUtil {
@@ -21,6 +23,19 @@ public class GZUtil {
 
 	public static int scaleBetween(int unscaledNum, int minAllowed, int maxAllowed, int min, int max) {
 		return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
+	}
+
+	public static Double readTemperatureFromAnalogInput(AnalogInput a)
+	{
+		double retval = -3452;
+
+		if (a != null) {
+			retval = GZUtil.scaleBetween(a.getVoltage(), kTempSensor.LOW_TEMP_C,
+					kTempSensor.HIGH_TEMP_C, kTempSensor.LOW_VOLT, kTempSensor.HIGH_VOLT);
+			retval = GZUtil.celsiusToFahrenheit(retval);
+		}
+
+		return retval;
 	}
 
 	public static double scaleBetween(double unscaledNum, double minAllowed, double maxAllowed, double min, double max) {

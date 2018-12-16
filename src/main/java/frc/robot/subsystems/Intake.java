@@ -1,19 +1,23 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Spark;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kPDP;
 import frc.robot.GZOI;
 import frc.robot.util.GZLog.LogItem;
+import frc.robot.util.GZPDP;
+import frc.robot.util.GZSpark;
 import frc.robot.util.GZSubsystem;
 
 public class Intake extends GZSubsystem {
 
-	private static Spark left_intake, right_intake;
+	private static GZSpark left_intake, right_intake;
 
 	// Force switch state to neutral on start up
 	private IntakeState mState = IntakeState.MANUAL;
 	private IntakeState mWantedState = IntakeState.NEUTRAL;
+
 	public IO mIO = new IO();
 
 	private static Intake mInstance = null;
@@ -70,8 +74,8 @@ public class Intake extends GZSubsystem {
 	}
 
 	private Intake() {
-		left_intake = new Spark(kIntake.INTAKE_L);
-		right_intake = new Spark(kIntake.INTAKE_R);
+		left_intake = new GZSpark.Builder(kIntake.INTAKE_L, this, kPDP.INTAKE_L, "L").build();
+		right_intake = new GZSpark.Builder(kIntake.INTAKE_R, this, kPDP.INTAKE_R, "R").build();
 
 		left_intake.setInverted(kIntake.INTAKE_L_INVERT);
 		right_intake.setInverted(kIntake.INTAKE_R_INVERT);
@@ -152,8 +156,8 @@ public class Intake extends GZSubsystem {
 
 	@Override
 	public synchronized void in() {
-		mIO.left_amperage = Drive.getInstance().getPDPChannelCurrent(kPDP.INTAKE_L);
-		mIO.right_amperage = Drive.getInstance().getPDPChannelCurrent(kPDP.INTAKE_R);
+		mIO.left_amperage = left_intake.getAmperage();
+		mIO.right_amperage = right_intake.getAmperage();
 	}
 
 	public void manual(double percentage) {

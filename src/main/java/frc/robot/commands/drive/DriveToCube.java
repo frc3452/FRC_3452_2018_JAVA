@@ -14,6 +14,7 @@ public class DriveToCube extends Command {
 	private Timer timer = new Timer();
 
 	private Drive drive = Drive.getInstance();
+	private Intake intake = Intake.getInstance();
 
 	/**
 	 * @author macco
@@ -52,22 +53,21 @@ public class DriveToCube extends Command {
 	protected void execute() {
 		drive.arcade(m_speed, 0);
 
-		Intake.getInstance().manual(kIntake.Speeds.INTAKE);
+		intake.manual(kIntake.Speeds.INTAKE);
 
 		if (drive.getLeftRotations() - i_lpos > m_rotation
 				|| drive.getRightRotations() - i_rpos > m_rotation)
 			m_complete = true;
 
-		if (drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_L) > 12
-				|| drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_R) > 12)
+		if (intake.mIO.left_amperage > 12
+				|| intake.mIO.right_amperage > 12)
 			flag_1 = true;
 
-		if (flag_1 && (drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_L) < 7
-				|| drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_R) < 7))
+		if (flag_1 && (intake.mIO.left_amperage < 7 || intake.mIO.right_amperage < 7))
 			flag_2 = true;
 
-		if (flag_2 && (drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_L) > 12
-				|| drive.getPDPChannelCurrent(Constants.kPDP.INTAKE_R) > 12)) {
+		if (flag_2 && (intake.mIO.left_amperage > 12
+				|| intake.mIO.right_amperage > 12)) {
 
 			if (!timeoutSet) {
 				setTimeout(timer.get() + .4);
@@ -84,7 +84,7 @@ public class DriveToCube extends Command {
 	@Override
 	protected void end() {
 		drive.stop();
-		Intake.getInstance().stop();
+		intake.stop();
 	}
 
 	@Override
