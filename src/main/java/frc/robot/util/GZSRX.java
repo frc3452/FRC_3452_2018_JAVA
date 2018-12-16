@@ -72,6 +72,9 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 	public final static int FIRMWARE = 778;
 	private final static AlertLevel mFirmwareLevel = AlertLevel.WARNING;
 
+	private double mTotalEncoderRotations = 0;
+	private double mPrevEncoderRotations = 0;
+
 	private AnalogInput mTemperatureSensor = null;
 
 	// Constructor for builder
@@ -89,6 +92,13 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 			this.mTemperatureSensor = new AnalogInput(temperatureSensorPort);
 
 		subsystem.mTalons.put(this.mPDPChannel, this);
+	}
+
+	public double getTotalEncoderRotations(double currentRotationValue)
+	{
+		mTotalEncoderRotations += Math.abs(currentRotationValue - mPrevEncoderRotations);
+		mPrevEncoderRotations = mTotalEncoderRotations;
+		return mTotalEncoderRotations;
 	}
 
 	public boolean hasTemperatureSensor() {

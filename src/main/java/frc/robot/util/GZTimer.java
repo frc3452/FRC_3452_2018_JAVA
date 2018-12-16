@@ -7,6 +7,8 @@ public class GZTimer extends Timer {
 	private boolean mHasOneTimeStarted = false;
 	private String mName = "";
 
+	private boolean mTiming = false;
+
 	public GZTimer(String name) {
 		super();
 		mName = name;
@@ -19,11 +21,12 @@ public class GZTimer extends Timer {
 
 	public void startTimer()
 	{
-		if (!mHasOneTimeStarted)
+		if (!this.mHasOneTimeStarted)
 		{
 			super.stop();
 			super.reset();
 			super.start();
+			this.mTiming = true;
 		}
 	}
 
@@ -32,7 +35,8 @@ public class GZTimer extends Timer {
 			super.stop();
 			super.reset();
 			super.start();
-			mHasOneTimeStarted = true;
+			this.mHasOneTimeStarted = true;
+			this.mTiming = true;
 		} else {
 			System.out.println(this.getClass().getSimpleName() + " [" + getName() + "] cannot be started.");
 		}
@@ -41,10 +45,16 @@ public class GZTimer extends Timer {
 	public void stopTimer()
 	{
 		super.stop();
+		this.mTiming = false;
+	}
+
+	public boolean isTiming()
+	{
+		return this.mTiming;
 	}
 
 	public String getName() {
-		return mName;
+		return this.mName;
 	}
 
 }

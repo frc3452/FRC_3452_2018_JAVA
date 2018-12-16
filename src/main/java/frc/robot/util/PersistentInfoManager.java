@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.Constants;
 import frc.robot.GZOI;
 import frc.robot.Constants.kFiles;
+import frc.robot.subsystems.Drive;
 
 public class PersistentInfoManager {
 
@@ -25,6 +26,11 @@ public class PersistentInfoManager {
     private final GZTimer mEnabledTimer = new GZTimer("EnabledTimer");
     private double mPreviousEnabledTime = 0;
 
+    private double mPrevLeftEncoderDelta = 0;
+    private double mPrevRightEncoderDelta = 0;
+
+    private Drive drive = Drive.getInstance();
+
     private GZNotifier mUpdateNotifier;
 
     private Flag mReadFailed = new Flag();
@@ -33,6 +39,9 @@ public class PersistentInfoManager {
 
     private PersistentInfo mEnabledTime = new PersistentInfo(0.0) {
         public void update() {
+            if (mPreviousEnabledTime != 0 && !mEnabledTimer.isTiming())
+                mPreviousEnabledTime = 0;
+
             this.addToValue(mEnabledTimer.get() - mPreviousEnabledTime);
             mPreviousEnabledTime = mEnabledTimer.get();
         }
@@ -45,14 +54,26 @@ public class PersistentInfoManager {
         }
     };
 
-    private PersistentInfo mLeftEncoderRotations = new PersistentInfo() {
+    private PersistentInfo mLeftEncoderRotations = new PersistentInfo(0.0) {
         public void update() {
-            // TODO
+            double delta = drive.mIO.left_encoder_total_delta_rotations;
+            this.addToValue(delta - mPrevLeftEncoderDelta);
+            mPrevLeftEncoderDelta = delta;
         }
     };
-    private PersistentInfo mRightEncoderRotations = new PersistentInfo() {
+    private PersistentInfo mRightEncoderRotations = new PersistentInfo(0.0) {
         public void update() {
-            // TODO
+            double delta = drive.mIO.right_encoder_total_delta_rotations;
+            this.addToValue(delta - mPrevRightEncoderDelta);
+            mPrevRightEncoderDelta = delta;
+        }
+    };
+
+    private PersistentInfo mElevatorEncoderRotations = new PersistentInfo(0.0){
+    
+        @Override
+        public void update() {
+            
         }
     };
 
@@ -96,16 +117,16 @@ public class PersistentInfoManager {
 
     private void backupFile() {
         boolean fail = false;
-        
+
         try {
             File source = GZFileMaker.getFile(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER,
                     kFiles.STATS_FILE_ON_USB, false);
 
             File dest = GZFileMaker.getFile("StatsBackup-" + GZUtil.dateTime(true), "3452/GZStatsBackup", true, true);
 
-            //GZFileMaker will create the file, delete and then copy it
+            // GZFileMaker will create the file, delete and then copy it
             Files.deleteIfExists(dest.toPath());
-            
+
             Files.copy(source.toPath(), dest.toPath());
         } catch (Exception e) {
             fail = true;
