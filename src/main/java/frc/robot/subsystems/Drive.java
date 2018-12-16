@@ -66,7 +66,7 @@ public class Drive extends GZSubsystem {
 
 	private Drive() {
 		L1 = new GZSRX.Builder(kDrivetrain.L1, this, "L1", kPDP.DRIVE_L_1, Breaker.AMP_30).setMaster()
-				.setSide(Side.LEFT).build();
+				.setSide(Side.LEFT).setTempSensorPort(3).build();
 		L2 = new GZSRX.Builder(kDrivetrain.L2, this, "L2", kPDP.DRIVE_L_2, Breaker.AMP_30).setFollower()
 				.setSide(Side.LEFT).build();
 		L3 = new GZSRX.Builder(kDrivetrain.L3, this, "L3", kPDP.DRIVE_L_3, Breaker.AMP_30).setFollower()

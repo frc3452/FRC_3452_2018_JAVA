@@ -34,7 +34,7 @@ public class GZOI extends GZSubsystem {
 
 	private PowerDistributionPanel pdp = GZPDP.getInstance().getPDP();
 
-	private ArrayList<String> mDriveModes = (ArrayList<String>) Arrays.asList("Standard (FWD on Left Thumb Stick, Turning on triggers)", "Alternate (FWD on Left Thumb Stick, Turning on Right Thumb Stick)");
+	private ArrayList<String> mDriveModes = new ArrayList<String>();
 	private int mDriveMode = 0;
 	private int mPrevDriveMode = -1;
 
@@ -50,6 +50,9 @@ public class GZOI extends GZSubsystem {
 	private GZOI() {
 		driverJoy = new GZJoystick(0);
 		opJoy = new GZJoystick(1);
+
+		mDriveModes.add("Standard (FWD on Left Thumb Stick, Turning on triggers)");
+		mDriveModes.add("Alternate (FWD on Left Thumb Stick, Turning on Right Thumb Stick)");
 	}
 
 	boolean recording = false;

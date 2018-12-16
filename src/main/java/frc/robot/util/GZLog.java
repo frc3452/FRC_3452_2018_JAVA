@@ -4,10 +4,6 @@ import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Intake;
 
 public class GZLog {
 

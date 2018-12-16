@@ -3,7 +3,6 @@ package frc.robot.util;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import frc.robot.GZOI;
-import frc.robot.subsystems.Auton;
 import frc.robot.util.GZLog.LogItem;
 import frc.robot.util.GZSRX.Breaker;
 
@@ -119,9 +118,9 @@ public class ExampleGZSubsystem extends GZSubsystem {
 
 			switchToState(ExampleState.NEUTRAL);
 
-		} else if (Auton.getInstance().isDemo()) { /* AAAA **/
+		// } else if (Auton.getInstance().isDemo()) { /* AAAA **/
 
-			switchToState(ExampleState.DEMO);
+			// switchToState(ExampleState.DEMO);
 
 		} else if (mWantedState != mState) { /* AAAA **/
 

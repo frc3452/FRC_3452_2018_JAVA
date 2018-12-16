@@ -45,7 +45,7 @@ public class Constants {
 
 		public final static int AMP_30_TRIGGER = 30, AMP_30_LIMIT = 30, AMP_30_TIME = 100; //hard limit to 30 amps
 
-		public final static double OPEN_LOOP_RAMP_TIME = 1; //.5
+		public final static double OPEN_LOOP_RAMP_TIME = .3; //.5
 
 		public static final double DEMO_DRIVE_MODIFIER = .4;
 

@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
 
 	// LOGGING CONTROL
 	private final boolean logging = true, logToUsb = true;
-	private final String loggingLocation = "Logging/December18";
+	private final String loggingLocation = "GreengineerZLogging/DrivePractice121618";
 
 	@Override
 	public void robotInit() {

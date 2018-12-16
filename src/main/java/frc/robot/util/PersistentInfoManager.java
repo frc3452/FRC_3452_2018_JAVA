@@ -114,7 +114,7 @@ public class PersistentInfoManager {
             File source = GZFileMaker.getFile(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER,
                     kFiles.STATS_FILE_ON_USB, false);
 
-            File dest = GZFileMaker.getFile("StatsBackup-" + GZUtil.dateTime(true), "GZStatsBackup", true, true);
+            File dest = GZFileMaker.getFile("StatsBackup-" + GZUtil.dateTime(true), "3452/GZStatsBackup", true, true);
 
             // GZFileMaker will create the file, delete and then copy it
             Files.deleteIfExists(dest.toPath());
