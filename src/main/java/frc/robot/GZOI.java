@@ -108,15 +108,20 @@ public class GZOI extends GZSubsystem {
 				climber.stop();
 
 			// ELEVATOR OPERATOR
+			//ELEV MANUAL CONTROL
 			if (opJoy.getRawButton(Buttons.LB))
 				elev.manualJoystick(opJoy);
 			else if (driverJoy.getRawButton(Buttons.LB))
 				elev.manualJoystick(driverJoy);
+
+			else if (opJoy.isRBPressed())
+				elev.setAutoScaleHeight();
 			else if (opJoy.isDDownPressed())
 				elev.setHeight(kElevator.HeightsInches.Floor);
 			else if (opJoy.isDRightPressed())
 				elev.setHeight(kElevator.HeightsInches.Switch);
-			// ELEVATOR DRIVER
+			
+				// ELEVATOR DRIVER
 			else if (driverJoy.isDDownPressed())
 				elev.setHeight(kElevator.HeightsInches.Floor);
 			else if (driverJoy.isRBPressed()) {

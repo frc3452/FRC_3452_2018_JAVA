@@ -544,7 +544,7 @@ public class Drive extends GZSubsystem {
 		double elv = Elevator.getInstance().getPercentageModify();
 
 		arcadeNoState(joy.getLeftAnalogY() * elv,
-				elv * turnScalar * ((joy.getRightTrigger() - joy.getLeftTrigger()) * .5));
+				elv * turnScalar * ((joy.getRightTrigger() - joy.getLeftTrigger()) * .65));
 	}
 
 	// called in DEMO state
