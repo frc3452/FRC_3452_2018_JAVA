@@ -8,9 +8,15 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.kAuton;
+import frc.robot.Constants.kFiles;
 import frc.robot.GZOI;
 import frc.robot.commands.auton.DefaultAutonomous;
+import frc.robot.commands.auton.LeftAuton;
+import frc.robot.commands.auton.MiddleAuton;
 import frc.robot.commands.auton.NoCommand;
+import frc.robot.commands.auton.RightAuton;
+import frc.robot.commands.drive.EncoderFrom;
+import frc.robot.commands.drive.RunMotionProfile;
 import frc.robot.util.GZCommand;
 import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZTimer;
@@ -30,7 +36,7 @@ public class Auton {
 	private int m_prev_as1, m_prev_as2;
 	private int m_asA, m_asB;
 
-	public GZCommand commandArray[] = new GZCommand[kAuton.COMMAND_ARRAY_SIZE];
+	public GZCommand commandArray[];
 
 	private GZCommand defaultCommand = null;
 	public Command autonomousCommand = null;
@@ -42,12 +48,11 @@ public class Auton {
 	private String overrideString = "", autonString = "";
 	private String gameMsg = "NOT";
 
-	public GZTimer matchTimer = new GZTimer("matchTimer");
+	public GZTimer matchTimer = new GZTimer("AutonTimer");
 
 	private static Auton mInstance = null;
 
-	public synchronized static Auton getInstance()
-	{
+	public synchronized static Auton getInstance() {
 		if (mInstance == null)
 			mInstance = new Auton();
 		return mInstance;
@@ -62,15 +67,14 @@ public class Auton {
 		as_A.setName("Selector A");
 		as_B.setName("Selector B");
 
-		GZCommand noCommand = new GZCommand("NO AUTO", new NoCommand());
-		Arrays.fill(commandArray, noCommand);
+		commandArray = null;
+
 		// fillAutonArray();
 	}
 
-	public String getAutonString()
-	{
+	public String getAutonString() {
 		return autonString;
-	} 
+	}
 
 	public void crash() {
 		if (GZOI.getInstance().isDisabled()) {
@@ -84,6 +88,9 @@ public class Auton {
 	 * commands are loaded
 	 */
 	public void autonChooser() {
+		if (commandArray == null)
+			fillAutonArray();
+
 		controllerChooser();
 
 		if (controllerOverride) {
@@ -107,67 +114,69 @@ public class Auton {
 	private void controllerChooser() {
 		if (GZOI.driverJoy.getRawButton(Buttons.LB) && GZOI.driverJoy.getRawButton(Buttons.RB)) {
 
-			if (GZOI.driverJoy.getRawButton(Buttons.A)) {
-				overrideValue = 2;
-				overrideString = "Controller override 1:\t" + commandArray[overrideValue].getName();
+			if (GZOI.driverJoy.isAPressed()) {
+				overrideValue++;
 				controllerOverride = true;
-			}
-
-			else if (GZOI.driverJoy.getRawButton(Buttons.B)) {
-				overrideValue = 3;
-				overrideString = "Controller override 2:\t" + commandArray[overrideValue].getName();
+			} else if (GZOI.driverJoy.isBPressed()) {
+				overrideValue--;
 				controllerOverride = true;
-			}
-
-			// X BUTTON
-			else if (GZOI.driverJoy.getRawButton(Buttons.X)) {
-				overrideValue = 4;
-				overrideString = "Controller override 3:\t" + commandArray[overrideValue].getName();
-				controllerOverride = true;
-			}
-
-			// Y BUTTON
-			else if (GZOI.driverJoy.getRawButton(Buttons.Y)) {
-				overrideValue = 5;
-				overrideString = "Controller override 4:\t" + commandArray[overrideValue].getName();
-				controllerOverride = true;
-			}
-
-			// BACK BUTTON
-			else if (GZOI.driverJoy.getRawButton(Buttons.BACK)) {
-				overrideValue = 13;
-				overrideString = "Controller override 5:\t" + commandArray[overrideValue].getName();
-				controllerOverride = true;
-			}
-
-			// START BUTTON
-			else if (GZOI.driverJoy.getRawButton(Buttons.START)) {
-				overrideValue = 17;
-				overrideString = "Controller override 6:\t" + commandArray[overrideValue].getName();
-				controllerOverride = true;
-			}
-
-			// LEFT CLICK
-			else if (GZOI.driverJoy.getRawButton(Buttons.LEFT_CLICK)) {
-				autonomousCommand = defaultCommand.getCommand();
-				overrideString = "Controller override: DEFAULT AUTO SELECTED";
-				controllerOverride = true;
-			}
-
-			// RIGHT CLICK
-			else if (GZOI.driverJoy.getRawButton(Buttons.RIGHT_CLICK)) {
+			} else if (GZOI.driverJoy.getRawButton(Buttons.RIGHT_CLICK)) {
 				controllerOverride = false;
 				System.out.println(autonString);
 			}
-		}
 
+			if (overrideValue < 0)
+				overrideValue = commandArray.length - 1;
+			if (overrideValue > commandArray.length - 1)
+				overrideValue = 0;
+
+			if (controllerOverride)
+				overrideString = "Controller override:\t (" + overrideValue + ")"
+						+ commandArray[overrideValue].getName();
+		}
 	}
 
 	public void fillAutonArray() {
+		if (commandArray == null) {
+			commandArray = new GZCommand[kAuton.COMMAND_ARRAY_SIZE];
+			GZCommand noCommand = new GZCommand("NO AUTO", new NoCommand());
+			Arrays.fill(commandArray, noCommand);
+		}
+
 		defaultCommand = new GZCommand("DEFAULT", new DefaultAutonomous());
 
 		// commandArray[1] = new GZCommand("TEST", new EncoderFrom(3, 3, .5, .5, .6));
-		commandArray[1] = new GZCommand("Default", new DefaultAutonomous());
+		commandArray[1] = new GZCommand("Middle - Switch", new MiddleAuton(AO.SWITCH, AV.SEASON));
+		commandArray[2] = new GZCommand("Left - Switch", new LeftAuton(AO.SWITCH, AV.SEASON, AV.SEASON));
+		commandArray[3] = new GZCommand("Left - Scale", new LeftAuton(AO.SCALE, AV.SEASON, AV.SEASON));
+		commandArray[4] = new GZCommand("Right - Switch", new RightAuton(AO.SWITCH, AV.SEASON, AV.SEASON));
+		commandArray[5] = new GZCommand("Right - Scale", new RightAuton(AO.SCALE, AV.SEASON, AV.SEASON));
+
+		// commandArray[6] = new GZCommand("Parse Motion Profile", new
+		// RunMotionProfile(kFiles.NAME, kFiles.FOLDER, kFiles.USB));
+		commandArray[6] = new GZCommand("DRIVE FORWARD 10", new EncoderFrom(10, 10, .3, .3, 1));
+		// commandArray[7] = new GZCommand("Parse Motion Profile",
+		// 		new RunMotionProfile(kFiles.MP_NAME, kFiles.MP_FOLDER, kFiles.MP_USB));
+
+		commandArray[11] = new GZCommand("Left Only - Switch Priority",
+				new LeftAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.SEASON, AV.SEASON));
+		commandArray[12] = new GZCommand("Left Only - Scale Priority",
+				new LeftAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.SEASON, AV.SEASON));
+		commandArray[13] = new GZCommand("Left Only - Switch Only",
+				new LeftAuton(AO.SWITCH_ONLY, AV.SEASON, AV.SEASON));
+		commandArray[14] = new GZCommand("Left Only - Scale Only", new LeftAuton(AO.SCALE_ONLY, AV.SEASON, AV.SEASON));
+
+		commandArray[15] = new GZCommand("Right Only - Switch Priority",
+				new RightAuton(AO.SWITCH_PRIORITY_NO_CROSS, AV.SEASON, AV.SEASON));
+		commandArray[16] = new GZCommand("Right Only - Scale Priority",
+				new RightAuton(AO.SCALE_PRIORITY_NO_CROSS, AV.SEASON, AV.SEASON));
+		commandArray[17] = new GZCommand("Right Only - Switch Only",
+				new RightAuton(AO.SWITCH_ONLY, AV.SEASON, AV.SEASON));
+		commandArray[18] = new GZCommand("Right Only - Scale Only",
+				new RightAuton(AO.SCALE_ONLY, AV.SEASON, AV.SEASON));
+
+		commandArray[19] = new GZCommand("Left - Default", new LeftAuton(AO.DEFAULT, AV.SEASON, AV.SEASON));
+		commandArray[20] = new GZCommand("Right - Default", new RightAuton(AO.DEFAULT, AV.SEASON, AV.SEASON));
 
 		autonChooser();
 	}

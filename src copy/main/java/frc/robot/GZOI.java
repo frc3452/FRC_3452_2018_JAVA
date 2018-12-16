@@ -1,16 +1,23 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.kElevator;
 import frc.robot.Constants.kFiles;
+import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kOI;
+import frc.robot.subsystems.Auton;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveState;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Elevator.ESO;
+import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.util.GZFiles;
 import frc.robot.util.GZFiles.TASK;
 import frc.robot.util.GZJoystick;
@@ -31,12 +38,11 @@ public class GZOI extends GZSubsystem {
 	private boolean mSafteyDisable = false;
 
 	private Drive drive = Drive.getInstance();
+	private Elevator elev = Elevator.getInstance();
+	private Intake intake = Intake.getInstance();
+	private Climber climber = Climber.getInstance();
 
 	private PowerDistributionPanel pdp = GZPDP.getInstance().getPDP();
-
-	private ArrayList<String> mDriveModes = (ArrayList<String>) Arrays.asList("Standard (FWD on Left Thumb Stick, Turning on triggers)", "Alternate (FWD on Left Thumb Stick, Turning on Right Thumb Stick)");
-	private int mDriveMode = 0;
-	private int mPrevDriveMode = -1;
 
 	private static GZOI mInstance = null;
 
@@ -55,39 +61,9 @@ public class GZOI extends GZSubsystem {
 	boolean recording = false;
 	boolean prevRecording = recording;
 
-	public int getDriverMode() {
-		return this.mDriveMode;
-	}
-
-	public void setDriverMode(int drivemode) {
-		this.mDriveMode = drivemode;
-		driveModeSanityCheck();
-	}
-
-	public void driveModeSanityCheck() {
-		if (mDriveMode < 0)
-			mDriveMode = mDriveModes.size() - 1;
-		else if (mDriveMode > mDriveModes.size() - 1)
-			mDriveMode = 0;
-	}
-
 	@Override
 	public void loop() {
 		outputSmartDashboard();
-
-		if (driverJoy.areButtonsHeld(Arrays.asList(Buttons.LB, Buttons.RB))) {
-			if (driverJoy.isAPressed())
-				mDriveMode++;
-
-			if (driverJoy.isBPressed())
-				mDriveMode--;
-		}
-
-		driveModeSanityCheck();
-
-		if (mDriveMode != mPrevDriveMode)
-			System.out.println("Selected drive mode: " + mDriveModes.get(mDriveMode));
-		mPrevDriveMode = mDriveMode;
 
 		// FLAGS
 		if (isTele())
@@ -105,12 +81,75 @@ public class GZOI extends GZSubsystem {
 
 		Robot.allSubsystems.disable(mSafteyDisable);
 
+		// if (driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.RB,
+		// Buttons.LEFT_CLICK)))
+		// Robot.auton.crash();
+
+		// RECORDING
+		// recordingUpdates();
+
 		if (isTele()) {
 			Drive.getInstance().setWantedState(DriveState.OPEN_LOOP_DRIVER);
 
 			// OVERRIDES, ETC.
 			if (driverJoy.isAPressed())
 				drive.slowSpeed(!drive.isSlow());
+			if (driverJoy.isBackPressed())
+				elev.setSpeedLimitingOverride(ESO.TOGGLE);
+			if (opJoy.isRClickPressed())
+				elev.overrideLimit(!elev.isLimitOverriden());
+
+			// CLIMBER
+			if (driverJoy.isDUpPressed())
+				climber.addClimberCounter();
+			if (driverJoy.getDUp())
+				climber.runClimber(1, 5);
+			else
+				climber.stop();
+
+			// ELEVATOR OPERATOR
+			if (opJoy.getRawButton(Buttons.LB))
+				elev.manualJoystick(opJoy);
+			else if (driverJoy.getRawButton(Buttons.LB))
+				elev.manualJoystick(driverJoy);
+			else if (opJoy.isDDownPressed())
+				elev.setHeight(kElevator.HeightsInches.Floor);
+			else if (opJoy.isDRightPressed())
+				elev.setHeight(kElevator.HeightsInches.Switch);
+			// ELEVATOR DRIVER
+			else if (driverJoy.isDDownPressed())
+				elev.setHeight(kElevator.HeightsInches.Floor);
+			else if (driverJoy.isRBPressed()) {
+				elev.setAutoScaleHeight();
+			} else if (driverJoy.isDRightPressed())
+				elev.setHeight(kElevator.HeightsInches.Switch);
+			else if (elev.getState() != ElevatorState.POSITION)
+				elev.stop();
+
+			// INTAKE OPERATOR
+			if (opJoy.getRawButton(Buttons.X))
+				intake.manual(kIntake.Speeds.INTAKE);
+			else if (opJoy.getRawButton(Buttons.Y))
+				intake.manual(kIntake.Speeds.SLOW);
+			else if (opJoy.getRawButton(Buttons.B))
+				intake.manual(kIntake.Speeds.SHOOT);
+			else if (opJoy.getRawButton(Buttons.A))
+				intake.manual(kIntake.Speeds.PLACE);
+			else if (opJoy.getRawButton(Buttons.BACK))
+				intake.spin(false);
+			else if (opJoy.getRawButton(Buttons.START))
+				intake.spin(true);
+			// INTAKE DRIVER
+			else if (driverJoy.getRawButton(Buttons.X))
+				intake.manual(kIntake.Speeds.INTAKE);
+			else if (driverJoy.getRawButton(Buttons.Y))
+				intake.manual(kIntake.Speeds.PLACE);
+			else if (driverJoy.getRawButton(Buttons.B))
+				intake.manual(kIntake.Speeds.SHOOT);
+			else if (driverJoy.getRawButton(Buttons.RIGHT_CLICK))
+				intake.spin(true);
+			else
+				intake.stop();
 		}
 
 		// CONTROLLER RUMBLE
@@ -118,6 +157,18 @@ public class GZOI extends GZSubsystem {
 		if (GZUtil.between(getMatchTime(), 29.1, 30))
 			// ENDGAME
 			rumble(kOI.Rumble.ENDGAME);
+
+		// LIMITING
+		else if (elev.isSpeedOverriden() || elev.isLimitOverriden()) {
+
+			if (elev.isSpeedOverriden()) {
+				driverJoy.rumble(kOI.Rumble.ELEVATOR_SPEED_OVERRIDE_DRIVE);
+			} else if (elev.isLimitOverriden())
+				opJoy.rumble(kOI.Rumble.ELEVATOR_LIMIT_OVERRIDE);
+
+			// INTAKE
+		} else if (intake.stateNot(IntakeState.NEUTRAL) && !isAuto())
+			rumble(kOI.Rumble.INTAKE);
 		else
 			rumble(0);
 
@@ -196,6 +247,27 @@ public class GZOI extends GZSubsystem {
 				return Drive.getInstance().getStateString() + "-" + Drive.getInstance().isDisabed();
 			}
 		};
+
+		new LogItem("ELEV-STATE") {
+			@Override
+			public String val() {
+				return Elevator.getInstance().getStateString() + "-" + Elevator.getInstance().isDisabed();
+			}
+		};
+
+		new LogItem("INTAKE-STATE") {
+			@Override
+			public String val() {
+				return Intake.getInstance().getStateString() + "-" + Intake.getInstance().isDisabed();
+			}
+		};
+
+		new LogItem("CLIMB-STATE") {
+			@Override
+			public String val() {
+				return Climber.getInstance().getStateString() + "-" + Climber.getInstance().isDisabed();
+			}
+		};
 	}
 
 	public boolean isSafteyDisabled() {
@@ -208,9 +280,8 @@ public class GZOI extends GZSubsystem {
 
 	@Override
 	public void outputSmartDashboard() {
-		// SmartDashboard.putString("Selected Auton",
-		// Auton.getInstance().getAutonString());
-		// SmartDashboard.putString("FIELD DATA", Auton.getInstance().gsm());
+		SmartDashboard.putString("Selected Auton", Auton.getInstance().getAutonString());
+		SmartDashboard.putString("FIELD DATA", Auton.getInstance().gsm());
 	}
 
 	private static void rumble(double intensity) {

@@ -147,6 +147,15 @@ public class Drive extends GZSubsystem {
 			mIO.right_output = mIO.right_desired_output;
 
 			break;
+		case DEMO:
+
+			alternateArcade(GZOI.driverJoy);
+			mIO.control_mode = ControlMode.PercentOutput;
+			mIO.left_output = mIO.left_desired_output * kDrivetrain.DEMO_DRIVE_MODIFIER;
+			mIO.right_output = mIO.right_desired_output * kDrivetrain.DEMO_DRIVE_MODIFIER;
+
+			break;
+
 		default:
 			System.out.println("WARNING: Incorrect drive state " + mState + " reached.");
 			break;
@@ -199,7 +208,7 @@ public class Drive extends GZSubsystem {
 				}
 			};
 
-			// Temperature sensors
+			//Temperature sensors
 			if (c.hasTemperatureSensor()) {
 				new LogItem("DRV-" + c.getGZName() + "-TEMP") {
 					@Override
@@ -230,7 +239,8 @@ public class Drive extends GZSubsystem {
 	}
 
 	public enum DriveState {
-		OPEN_LOOP(false), OPEN_LOOP_DRIVER(false), NEUTRAL(false), MOTION_MAGIC(true), MOTION_PROFILE(true);
+		OPEN_LOOP(false), OPEN_LOOP_DRIVER(false), DEMO(false), NEUTRAL(false), MOTION_MAGIC(true),
+		MOTION_PROFILE(true);
 
 		private final boolean usesClosedLoop;
 
@@ -267,6 +277,10 @@ public class Drive extends GZSubsystem {
 		if (neutral) {
 
 			switchToState(DriveState.NEUTRAL);
+
+		} else if (Auton.getInstance().isDemo() && !gzOI.isFMS()) {
+
+			switchToState(DriveState.DEMO);
 
 		} else {
 			switchToState(mWantedState);
@@ -369,6 +383,9 @@ public class Drive extends GZSubsystem {
 		case OPEN_LOOP_DRIVER:
 			brake(NeutralMode.Coast);
 			break;
+		case DEMO:
+			brake(NeutralMode.Coast);
+			break;
 		default:
 			break;
 		}
@@ -387,6 +404,8 @@ public class Drive extends GZSubsystem {
 		case OPEN_LOOP:
 			break;
 		case OPEN_LOOP_DRIVER:
+			break;
+		case DEMO:
 			break;
 		default:
 			break;
@@ -516,18 +535,16 @@ public class Drive extends GZSubsystem {
 
 	// called in OPEN_LOOP_DRIVER state
 	private synchronized void arcade(GZJoystick joy) {
+		double turnScalar;
+		if (Elevator.getInstance().isLimiting())
+			turnScalar = Constants.kDrivetrain.ELEV_TURN_SCALAR;
+		else
+			turnScalar = 1;
 
-		switch (GZOI.getInstance().getDriverMode()) {
-		case 0:
-			arcadeNoState(joy.getLeftAnalogY(), ((joy.getRightTrigger() - joy.getLeftTrigger()) * .5));
-			break;
-		case 1:
-			alternateArcade(joy);
-			break;
-		default:
-			
-			break;
-		}
+		double elv = Elevator.getInstance().getPercentageModify();
+
+		arcadeNoState(joy.getLeftAnalogY() * elv,
+				elv * turnScalar * ((joy.getRightTrigger() - joy.getLeftTrigger()) * .5));
 	}
 
 	// called in DEMO state
@@ -601,8 +618,8 @@ public class Drive extends GZSubsystem {
 
 	public synchronized void tank(double left, double right) {
 		setWantedState(DriveState.OPEN_LOOP);
-		mIO.left_desired_output = left * mModifyPercent;
-		mIO.right_desired_output = right * mModifyPercent;
+		mIO.left_desired_output = left * Elevator.getInstance().getPercentageModify() * mModifyPercent;
+		mIO.right_desired_output = right * Elevator.getInstance().getPercentageModify() * mModifyPercent;
 	}
 
 	public synchronized void tank(GZJoystick joy) {
@@ -897,6 +914,7 @@ public class Drive extends GZSubsystem {
 	public synchronized void zeroGyro() {
 		mGyro.reset();
 	}
+
 
 	public synchronized void slowSpeed(boolean isSlow) {
 		mIsSlow = isSlow;

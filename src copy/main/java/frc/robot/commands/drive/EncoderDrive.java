@@ -1,9 +1,7 @@
 package frc.robot.commands.drive;
 
-import frc.robot.Robot;
-import frc.robot.subsystems.Drive;
-
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.subsystems.Drive;
 
 public class EncoderDrive extends Command {
 	private double m_left, m_right, m_laccel, m_raccel, m_topspeed;
@@ -39,9 +37,9 @@ public class EncoderDrive extends Command {
 	}
 
 	protected boolean isFinished() {
-//		return false;
+		return false;
 //		return isTimedOut();
-		return drive.encoderIsDone(2) || isTimedOut();
+		// return drive.encoderIsDone(2) || isTimedOut();
 	}
 
 	protected void end() {
