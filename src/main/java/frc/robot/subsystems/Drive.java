@@ -532,7 +532,7 @@ public class Drive extends GZSubsystem {
 
 	// called in DEMO state
 	private synchronized void alternateArcade(GZJoystick joy) {
-		arcadeNoState(joy.getLeftAnalogY(), (joy.getRightAnalogX() * .75));
+		arcadeNoState(joy.getLeftAnalogY(), (joy.getRightAnalogX() * .65));
 	}
 
 	private synchronized void arcadeNoState(double move, double rotate) {
