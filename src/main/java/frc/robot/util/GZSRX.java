@@ -96,8 +96,9 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 
 	public double getTotalEncoderRotations(double currentRotationValue)
 	{
-		mTotalEncoderRotations += Math.abs(currentRotationValue - mPrevEncoderRotations);
-		mPrevEncoderRotations = mTotalEncoderRotations;
+		double change = Math.abs(currentRotationValue - mPrevEncoderRotations);
+		mTotalEncoderRotations += change;
+		mPrevEncoderRotations = currentRotationValue;
 		return mTotalEncoderRotations;
 	}
 

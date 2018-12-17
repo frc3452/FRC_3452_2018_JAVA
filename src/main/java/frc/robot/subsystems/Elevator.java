@@ -294,6 +294,8 @@ public class Elevator extends GZSubsystem {
 
 		public Double elevator_1_amp = Double.NaN, elevator_2_amp = Double.NaN;
 
+		public Double elevator_total_rotations = 0.0;
+
 		public Double elevator_1_volt = Double.NaN, elevator_2_volt = Double.NaN;
 
 		public Boolean elevator_fwd_lmt = false, elevator_rev_lmt = false;
@@ -340,6 +342,8 @@ public class Elevator extends GZSubsystem {
 			mIO.encoder_ticks = Double.NaN;
 			mIO.encoder_vel = Double.NaN;
 		}
+
+		mIO.elevator_total_rotations = elevator_1.getTotalEncoderRotations(getRotations());
 
 		mIO.elevator_1_amp = elevator_1.getOutputCurrent();
 		mIO.elevator_2_amp = elevator_2.getOutputCurrent();
@@ -488,6 +492,19 @@ public class Elevator extends GZSubsystem {
 
 	public synchronized void enableFollower() {
 		elevator_2.follow(elevator_1);
+	}
+
+	public synchronized void joystickJog(GZJoystick j, double inches)
+	{
+		double height;
+		if (j.getRightAnalogY() > .5)
+			height = getHeight() + inches;
+		else if (j.getRightAnalogY() < -.5)
+			height = getHeight() - inches - kElevator.ENC_HOME_INCHES;
+		else
+			height = getHeight();
+
+		setHeight(height);
 	}
 
 	private synchronized void softLimits(boolean enableSoftLimit) {

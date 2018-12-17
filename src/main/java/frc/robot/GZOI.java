@@ -124,9 +124,11 @@ public class GZOI extends GZSubsystem {
 				// ELEVATOR DRIVER
 			else if (driverJoy.isDDownPressed())
 				elev.setHeight(kElevator.HeightsInches.Floor);
-			else if (driverJoy.isRBPressed()) {
+			else if (driverJoy.isRBPressed())
 				elev.setAutoScaleHeight();
-			} else if (driverJoy.isDRightPressed())
+			// else if (driverJoy.isLBPressed())
+				// elev.joystickJog(driverJoy, 3);
+			else if (driverJoy.isDRightPressed())
 				elev.setHeight(kElevator.HeightsInches.Switch);
 			else if (elev.getState() != ElevatorState.POSITION)
 				elev.stop();

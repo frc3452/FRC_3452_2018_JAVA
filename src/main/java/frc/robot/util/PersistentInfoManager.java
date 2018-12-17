@@ -14,6 +14,7 @@ import frc.robot.Constants;
 import frc.robot.GZOI;
 import frc.robot.Constants.kFiles;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Elevator;
 
 public class PersistentInfoManager {
 
@@ -22,12 +23,8 @@ public class PersistentInfoManager {
 
     // timers and prev vals
     private final GZTimer mOnTimeTimer = new GZTimer("OnTime");
-    private double mPreviousOnTime = 0;
     private final GZTimer mEnabledTimer = new GZTimer("EnabledTimer");
-    private double mPreviousEnabledTime = 0;
-
-    private double mPrevLeftEncoderDelta = 0;
-    private double mPrevRightEncoderDelta = 0;
+    private double mEnabledTimerPrevious = 0;
 
     private Drive drive = Drive.getInstance();
 
@@ -39,41 +36,32 @@ public class PersistentInfoManager {
 
     private PersistentInfo mEnabledTime = new PersistentInfo(0.0) {
         public void update() {
-            if (mPreviousEnabledTime != 0 && !mEnabledTimer.isTiming())
-                mPreviousEnabledTime = 0;
-
-            this.addToValue(mEnabledTimer.get() - mPreviousEnabledTime);
-            mPreviousEnabledTime = mEnabledTimer.get();
+            this.addDifference(mEnabledTimer.get(), true);;
         }
     };
 
     private PersistentInfo mOnTime = new PersistentInfo(0.0) {
         public void update() {
-            this.addToValue(mOnTimeTimer.get() - mPreviousOnTime);
-            mPreviousOnTime = mOnTimeTimer.get();
+            this.addDifference(mOnTimeTimer.get());
         }
     };
 
     private PersistentInfo mLeftEncoderRotations = new PersistentInfo(0.0) {
         public void update() {
-            double delta = drive.mIO.left_encoder_total_delta_rotations;
-            this.addToValue(delta - mPrevLeftEncoderDelta);
-            mPrevLeftEncoderDelta = delta;
+            this.addDifference(drive.mIO.left_encoder_total_delta_rotations, true);
         }
     };
     private PersistentInfo mRightEncoderRotations = new PersistentInfo(0.0) {
         public void update() {
-            double delta = drive.mIO.right_encoder_total_delta_rotations;
-            this.addToValue(delta - mPrevRightEncoderDelta);
-            mPrevRightEncoderDelta = delta;
+            this.addDifference(drive.mIO.right_encoder_total_delta_rotations, true);
         }
     };
 
-    private PersistentInfo mElevatorEncoderRotations = new PersistentInfo(0.0){
-    
+    private PersistentInfo mElevatorEncoderRotations = new PersistentInfo(0.0) {
+
         @Override
         public void update() {
-            
+            this.addDifference(Elevator.getInstance().mIO.elevator_total_rotations);
         }
     };
 
@@ -96,10 +84,11 @@ public class PersistentInfoManager {
 
     // On startup put values in map and start timer
     private PersistentInfoManager() {
-        mSettingsMap.put("EnabledTime", mEnabledTime);
         mSettingsMap.put("OnTime", mOnTime);
+        mSettingsMap.put("EnabledTime", mEnabledTime);
         mSettingsMap.put("LeftEncoderRot", mLeftEncoderRotations);
         mSettingsMap.put("RightEncoderRot", mRightEncoderRotations);
+        mSettingsMap.put("ElevatorEncoderRot", mElevatorEncoderRotations);
         mSettingsMap.put("Disabled", mDisabled);
 
         mOnTimeTimer.oneTimeStartTimer();
@@ -137,7 +126,8 @@ public class PersistentInfoManager {
 
     public void initialize() {
         backupFile();
-        readOnStartup(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER, kFiles.STATS_FILE_ON_USB);
+        readOnStartup(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER,
+        kFiles.STATS_FILE_ON_USB);
         updateFile(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER, kFiles.STATS_FILE_ON_USB);
     }
 
@@ -163,7 +153,7 @@ public class PersistentInfoManager {
                 } else {
                     // Map doesn't have setting
                     System.out.println("ERROR Could not read setting " + split[0] + ".");
-                    mReadFailed.tripFlag();
+                    // mReadFailed.tripFlag();
                 }
             }
 
