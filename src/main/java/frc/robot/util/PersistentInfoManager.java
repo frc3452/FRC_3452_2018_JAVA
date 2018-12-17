@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import edu.wpi.first.wpilibj.Notifier;
 import frc.robot.Constants;
-import frc.robot.GZOI;
 import frc.robot.Constants.kFiles;
+import frc.robot.GZOI;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
+import frc.robot.util.GZFileMaker.ValidFileExtensions;
 
 public class PersistentInfoManager {
 
@@ -24,48 +24,49 @@ public class PersistentInfoManager {
     // timers and prev vals
     private final GZTimer mOnTimeTimer = new GZTimer("OnTime");
     private final GZTimer mEnabledTimer = new GZTimer("EnabledTimer");
-    private double mEnabledTimerPrevious = 0;
 
     private Drive drive = Drive.getInstance();
 
+    
     private GZNotifier mUpdateNotifier;
-
     private Flag mReadFailed = new Flag();
 
-    private static PersistentInfoManager mInstance = null;
-
-    private PersistentInfo mEnabledTime = new PersistentInfo(0.0) {
+    private PersistentInfo mEnabledTime = new PersistentInfo() {
         public void update() {
-            this.addDifference(mEnabledTimer.get(), true);;
+            this.addDifference(mEnabledTimer.getTotalTimeRunning());
         }
+
+        public void readSetting(){}
     };
 
-    private PersistentInfo mOnTime = new PersistentInfo(0.0) {
+    private PersistentInfo mOnTime = new PersistentInfo() {
         public void update() {
             this.addDifference(mOnTimeTimer.get());
         }
+        public void readSetting(){}
     };
 
-    private PersistentInfo mLeftEncoderRotations = new PersistentInfo(0.0) {
+    private PersistentInfo mLeftEncoderRotations = new PersistentInfo() {
         public void update() {
-            this.addDifference(drive.mIO.left_encoder_total_delta_rotations, true);
+            this.addDifference(drive.mIO.left_encoder_total_delta_rotations);
         }
+        public void readSetting(){}
     };
-    private PersistentInfo mRightEncoderRotations = new PersistentInfo(0.0) {
+    private PersistentInfo mRightEncoderRotations = new PersistentInfo() {
         public void update() {
-            this.addDifference(drive.mIO.right_encoder_total_delta_rotations, true);
+            this.addDifference(drive.mIO.right_encoder_total_delta_rotations);
         }
+        public void readSetting(){}
     };
 
-    private PersistentInfo mElevatorEncoderRotations = new PersistentInfo(0.0) {
-
-        @Override
+    private PersistentInfo mElevatorRotations = new PersistentInfo() {
         public void update() {
             this.addDifference(Elevator.getInstance().mIO.elevator_total_rotations);
         }
+        public void readSetting(){}
     };
 
-    private PersistentInfo mDisabled = new PersistentInfo(0.0) {
+    private PersistentInfo mDisabled = new PersistentInfo() {
         public void update() {
             this.setValue(GZOI.getInstance().isSafteyDisabled() ? 3452.0 : 0.0);
         }
@@ -75,6 +76,7 @@ public class PersistentInfoManager {
         }
     };
 
+    private static PersistentInfoManager mInstance = null;
     public static PersistentInfoManager getInstance() {
         if (mInstance == null)
             mInstance = new PersistentInfoManager();
@@ -84,11 +86,11 @@ public class PersistentInfoManager {
 
     // On startup put values in map and start timer
     private PersistentInfoManager() {
-        mSettingsMap.put("OnTime", mOnTime);
         mSettingsMap.put("EnabledTime", mEnabledTime);
+        mSettingsMap.put("OnTime", mOnTime);
         mSettingsMap.put("LeftEncoderRot", mLeftEncoderRotations);
         mSettingsMap.put("RightEncoderRot", mRightEncoderRotations);
-        mSettingsMap.put("ElevatorEncoderRot", mElevatorEncoderRotations);
+        mSettingsMap.put("ElevatorEncoderRot", mElevatorRotations);
         mSettingsMap.put("Disabled", mDisabled);
 
         mOnTimeTimer.oneTimeStartTimer();
@@ -100,6 +102,7 @@ public class PersistentInfoManager {
     }
 
     public void initialize(String fileName, String folder, boolean usb) {
+        backupFile();
         readOnStartup(fileName, folder, usb);
         updateFile(fileName, folder, usb);
     }
@@ -111,23 +114,23 @@ public class PersistentInfoManager {
             File source = GZFileMaker.getFile(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER,
                     kFiles.STATS_FILE_ON_USB, false);
 
-            File dest = GZFileMaker.getFile("StatsBackup-" + GZUtil.dateTime(true), "3452/GZStatsBackup", true, true);
+            File dest = GZFileMaker.getFile("StatsBackup-" + GZUtil.dateTime(true), kFiles.STATS_FILE_FOLDER, true,
+                    true);
 
-            // GZFileMaker will create the file, delete and then copy it
-            Files.deleteIfExists(dest.toPath());
-
+            // GZFileMaker will create the file, we need to delete and then copy it
             Files.copy(source.toPath(), dest.toPath());
+
+            Files.deleteIfExists(dest.toPath());
         } catch (Exception e) {
             fail = true;
             // e.printStackTrace();
         }
-        System.out.println("Stats file backed up " + (fail ? "unsuccsessfully" : "succsessfully"));
+        System.out.println("Stats file backed up " + (fail ? "unsuccessfully" : "successfully"));
     }
 
     public void initialize() {
         backupFile();
-        readOnStartup(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER,
-        kFiles.STATS_FILE_ON_USB);
+        readOnStartup(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER, kFiles.STATS_FILE_ON_USB);
         updateFile(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER, kFiles.STATS_FILE_ON_USB);
     }
 
@@ -153,7 +156,9 @@ public class PersistentInfoManager {
                 } else {
                     // Map doesn't have setting
                     System.out.println("ERROR Could not read setting " + split[0] + ".");
-                    // mReadFailed.tripFlag();
+                    //For some reason a value is in the file and not in the map, so something isn't right in the first place
+                    //Trip the flag incase so we don't accidentally overwrite any data
+                    mReadFailed.tripFlag();
                 }
             }
 
@@ -169,7 +174,8 @@ public class PersistentInfoManager {
         } catch (Exception e) {
             // Couldn't read persistent settings
             mReadFailed.tripFlag();
-            System.out.println("ERROR Could not read persistent settings!");
+            System.out.println("ERROR Could not read persistent settings at file location "
+                    + GZFileMaker.getFileLocation(fileName, folder, ValidFileExtensions.CSV, usb, true));
         }
 
         if (!mReadFailed.isFlagTripped())
@@ -187,7 +193,7 @@ public class PersistentInfoManager {
     }
 
     public void printPersistentSettings() {
-        System.out.println("~~~Persistent settings" + (mReadFailed.isFlagTripped() ? " in temp folder" : "") + "~~~");
+        System.out.println("~~~Persistent settings" + (mReadFailed.isFlagTripped() ? " on temp file" : "") + "~~~");
         for (String s : mSettingsMap.keySet())
             System.out.println(s + "\t\t\t" + mSettingsMap.get(s).getValue());
     }

@@ -13,28 +13,48 @@ public abstract class PersistentInfo {
         this.mValue = defaultValue;
     }
 
+    /**
+     * 
+     */
     public PersistentInfo() {
-        this(Double.NaN);
+        this(0.0);
     }
 
-    public void readSetting() {
-    };
+    /**
+     * 
+     */
+    public abstract void readSetting();
 
     public abstract void update();
 
+    /**
+     * Set value to
+     */
     public void setValue(Double value) {
         this.mValue = value;
     }
 
+    /***
+     *  Adds (+=) to value 
+     */
     public void addToValue(Double value) {
         this.mValue += value;
     }
 
-    public void addDifference(Double newValue, boolean absoluteValue) {
-        this.mValue += (absoluteValue ? Math.abs(newValue - mPreviousAddedValue) : newValue - mPreviousAddedValue);
+    /**
+     * Add difference from last value added 
+     * @param newValue
+     * @param notAbsoluteValue choose to not use absolute value (for whatever reason)
+     */
+    public void addDifference(Double newValue, boolean notAbsoluteValue) {
+        this.mValue += (notAbsoluteValue ? (newValue - mPreviousAddedValue) : Math.abs(newValue - mPreviousAddedValue));
         this.mPreviousAddedValue = newValue;
     }
 
+    /**
+     * Add difference from last value added (using absolute value)
+     * @param newValue
+     */
     public void addDifference(Double newValue) {
         addDifference(newValue, false);
     }

@@ -8,21 +8,28 @@ public class GZTimer extends Timer {
 	private String mName = "";
 
 	private boolean mTiming = false;
+	private double mAccumulatedTimeRunning = 0.0;
 
+	/**
+	 * Constructor
+	 */
 	public GZTimer(String name) {
 		super();
 		mName = name;
 	}
 
-	public GZTimer()
-	{
+	/**
+	 * Constructs timer with name "Unspecified"
+	 */
+	public GZTimer() {
 		this("Unspecified");
 	}
 
-	public void startTimer()
-	{
-		if (!this.mHasOneTimeStarted)
-		{
+	/**
+	 * Starts timer
+	 */
+	public void startTimer() {
+		if (!this.mHasOneTimeStarted) {
 			super.stop();
 			super.reset();
 			super.start();
@@ -30,6 +37,9 @@ public class GZTimer extends Timer {
 		}
 	}
 
+	/**
+	 * Only allows timer to be started once, never restarted
+	 */
 	public void oneTimeStartTimer() {
 		if (!mHasOneTimeStarted) {
 			super.stop();
@@ -42,17 +52,35 @@ public class GZTimer extends Timer {
 		}
 	}
 
-	public void stopTimer()
-	{
+	/**
+	 * Stops timer, accumulates total runtime
+	 */
+	public void stopTimer() {
 		super.stop();
-		this.mTiming = false;
+		if (!this.isTiming()){
+			this.mAccumulatedTimeRunning = this.get();
+			this.mTiming = false;
+		}
 	}
 
-	public boolean isTiming()
+	/**
+	 * @return total running time, only valid accumulation when timer is stopped 
+	 */
+	public double getTotalTimeRunning()
 	{
+		return this.mAccumulatedTimeRunning;
+	}
+
+	/**
+	 * @return if timer is currently running
+	 */
+	public boolean isTiming() {
 		return this.mTiming;
 	}
 
+	/**
+	 * @return timer name
+	 */
 	public String getName() {
 		return this.mName;
 	}
