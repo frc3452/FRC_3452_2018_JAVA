@@ -4,7 +4,6 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import frc.robot.Constants.kTempSensor;
 import frc.robot.subsystems.Health;
 import frc.robot.subsystems.Health.AlertLevel;
 
@@ -72,6 +71,9 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 	public final static int FIRMWARE = 778;
 	private final static AlertLevel mFirmwareLevel = AlertLevel.WARNING;
 
+	private double mTotalEncoderRotations = 0;
+	private double mPrevEncoderRotations = 0;
+
 	private AnalogInput mTemperatureSensor = null;
 
 	// Constructor for builder
@@ -89,6 +91,18 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 			this.mTemperatureSensor = new AnalogInput(temperatureSensorPort);
 
 		subsystem.mTalons.put(this.mPDPChannel, this);
+	}
+
+	//Must be called constantly to be accurate
+	public double getTotalEncoderRotations(double currentRotationValue) {
+		if (!Double.isNaN(currentRotationValue)) {
+			double change = Math.abs(currentRotationValue - mPrevEncoderRotations);
+			mTotalEncoderRotations += change;
+			mPrevEncoderRotations = currentRotationValue;
+			return mTotalEncoderRotations;
+		} 
+
+		return Double.NaN;
 	}
 
 	public boolean hasTemperatureSensor() {

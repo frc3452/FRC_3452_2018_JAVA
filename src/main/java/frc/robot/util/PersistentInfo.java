@@ -1,31 +1,62 @@
 package frc.robot.util;
 
 /**
- * Stores and continually update settings
- * void update() is abstract, define this to update mValue either through this.mValue, setValue(), or addToValue()
+ * Stores and continually update settings void update() is abstract, define this
+ * to update mValue either through this.mValue, setValue(), or addToValue()
  */
 public abstract class PersistentInfo {
     private Double mValue = Double.NaN;
+
+    private Double mPreviousAddedValue = 0.0;
 
     public PersistentInfo(Double defaultValue) {
         this.mValue = defaultValue;
     }
 
+    /**
+     * 
+     */
     public PersistentInfo() {
-        this(Double.NaN);
+        this(0.0);
     }
 
-    public void readSetting() {
-    };
+    /**
+     * 
+     */
+    public abstract void readSetting();
 
     public abstract void update();
 
+    /**
+     * Set value to
+     */
     public void setValue(Double value) {
         this.mValue = value;
     }
 
+    /***
+     *  Adds (+=) to value 
+     */
     public void addToValue(Double value) {
         this.mValue += value;
+    }
+
+    /**
+     * Add difference from last value added 
+     * @param newValue
+     * @param notAbsoluteValue choose to not use absolute value (for whatever reason)
+     */
+    public void addDifference(Double newValue, boolean notAbsoluteValue) {
+        this.mValue += (notAbsoluteValue ? (newValue - mPreviousAddedValue) : Math.abs(newValue - mPreviousAddedValue));
+        this.mPreviousAddedValue = newValue;
+    }
+
+    /**
+     * Add difference from last value added (using absolute value)
+     * @param newValue
+     */
+    public void addDifference(Double newValue) {
+        addDifference(newValue, false);
     }
 
     public Double getValue() {

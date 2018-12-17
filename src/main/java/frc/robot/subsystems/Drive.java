@@ -440,6 +440,8 @@ public class Drive extends GZSubsystem {
 
 		public Double right_encoder_ticks = Double.NaN, right_encoder_vel = Double.NaN;
 
+		public double left_encoder_total_delta_rotations = 0, right_encoder_total_delta_rotations = 0;
+
 		public Boolean leftEncoderValid = false;
 		public Boolean rightEncoderValid = false;
 		public Boolean encodersValid = false;
@@ -499,6 +501,9 @@ public class Drive extends GZSubsystem {
 			mIO.updateAmperage(c.getID(), c.getOutputCurrent());
 			mIO.updateVoltage(c.getID(), c.getMotorOutputVoltage());
 		}
+
+		mIO.left_encoder_total_delta_rotations = L1.getTotalEncoderRotations(getLeftRotations());
+		mIO.right_encoder_total_delta_rotations = R1.getTotalEncoderRotations(getRightRotations());
 	}
 
 	@Override
