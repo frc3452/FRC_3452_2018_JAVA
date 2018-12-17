@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.Notifier;
 public class GZNotifier extends Notifier {
 
     private boolean isRunning = false;
-    private Flag hasStarted = new Flag();
+    private GZFlag hasStarted = new GZFlag();
 
     public GZNotifier(Runnable b)
     {

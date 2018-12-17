@@ -58,7 +58,7 @@ public class GZTimer extends Timer {
 	public void stopTimer() {
 		super.stop();
 		if (!this.isTiming()){
-			this.mAccumulatedTimeRunning = this.get();
+			this.mAccumulatedTimeRunning += this.get();
 			this.mTiming = false;
 		}
 	}
