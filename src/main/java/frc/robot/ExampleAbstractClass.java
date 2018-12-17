@@ -7,7 +7,7 @@ public abstract class ExampleAbstractClass {
     //Constructor
     public ExampleAbstractClass(double startingNumber)
     {
-        setNumberTo(startingNumber);
+        this.setNumberTo(startingNumber);
     }
 
     //Abstract method, when we create this variable we will have to define it there

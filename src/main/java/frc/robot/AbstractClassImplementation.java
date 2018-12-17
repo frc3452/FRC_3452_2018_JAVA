@@ -9,7 +9,7 @@ public class AbstractClassImplementation {
         // we have to define what doSomethingWithNumber does for each variable
         @Override
         public void doSomethingWithNumber() {
-            setNumberTo(getNumber() + 1);
+            this.setNumberTo(getNumber() + 1);
         }
     };
 
@@ -17,7 +17,7 @@ public class AbstractClassImplementation {
 
         @Override
         public void doSomethingWithNumber() {
-            setNumberTo(getNumber() * getNumber());
+            this.setNumberTo(getNumber() * getNumber());
         }
     };
 
@@ -25,7 +25,7 @@ public class AbstractClassImplementation {
     
         @Override
         public void doSomethingWithNumber() {
-            setNumberTo( Math.sqrt(getNumber()) );
+            this.setNumberTo( Math.sqrt(getNumber()) );
         }
     };
     
