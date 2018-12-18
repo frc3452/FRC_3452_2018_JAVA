@@ -23,12 +23,17 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 		private Master mMaster = Master.NO_INFO;
 		private int mTempSensorPort = -1;
 
-		public Builder(int deviceNumber, GZSubsystem subsystem, String name, int PDPChannel, Breaker b) {
+		public Builder(int deviceNumber, GZSubsystem subsystem, String name, int PDPChannel) {
 			this.mDeviceNumber = deviceNumber;
 			this.mName = name;
-			this.mBreaker = b;
 			this.mSub = subsystem;
 			this.mPDPChannel = PDPChannel;
+		}
+
+		public Builder overrideBreaker(Breaker b )
+		{
+			this.mBreaker = b;
+			return this;
 		}
 
 		public Builder setTempSensorPort(int port) {
@@ -88,6 +93,11 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 		this.mMaster = master;
 		this.mName = name;
 
+		if (breaker == Breaker.NO_INFO)
+			this.setBreaker(this.mPDPChannel);
+		else
+			this.mBreaker = breaker;
+
 		if (temperatureSensorPort != -1)
 			this.mTemperatureSensor = new AnalogInput(temperatureSensorPort);
 
@@ -97,8 +107,7 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 	/**
 	 * Only valid if called as fast as possible
 	 */
-	public double getTotalEncoderRotations(double currentRotationValue)
-	{
+	public double getTotalEncoderRotations(double currentRotationValue) {
 		double change = Math.abs(currentRotationValue - mPrevEncoderRotations);
 		mTotalEncoderRotations += change;
 		mPrevEncoderRotations = currentRotationValue;
@@ -115,6 +124,20 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 
 	public String getGZName() {
 		return mName;
+	}
+
+	private void setBreaker(int pdpchannel) {
+		if (pdpchannel > 15 || pdpchannel < 0) {
+			this.mBreaker = Breaker.NO_INFO;
+			System.out.println("PDP CHANNEL " + pdpchannel + " on Talon " + this.getGZName() + " invalid!");
+			return;
+		}
+
+		if (pdpchannel >= 4 && pdpchannel <= 11)
+			this.mBreaker = Breaker.AMP_30;
+		else
+			this.mBreaker = Breaker.AMP_40;
+
 	}
 
 	public Breaker getBreakerSize() {

@@ -132,8 +132,8 @@ public class Elevator extends GZSubsystem {
 	}
 
 	private Elevator() {
-		elevator_1 = new GZSRX.Builder(kElevator.E_1, this, "E1", kPDP.ELEVATOR_1, Breaker.AMP_40).setMaster().build();
-		elevator_2 = new GZSRX.Builder(kElevator.E_2, this, "E2", kPDP.ELEVATOR_2, Breaker.AMP_40).setMaster().build();
+		elevator_1 = new GZSRX.Builder(kElevator.E_1, this, "E1", kPDP.ELEVATOR_1).overrideBreaker(Breaker.AMP_40).setMaster().build();
+		elevator_2 = new GZSRX.Builder(kElevator.E_2, this, "E2", kPDP.ELEVATOR_2).overrideBreaker(Breaker.AMP_40).setFollower().build();
 
 		talonInit();
 

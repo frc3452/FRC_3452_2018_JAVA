@@ -65,23 +65,23 @@ public class Drive extends GZSubsystem {
 	}
 
 	private Drive() {
-		L1 = new GZSRX.Builder(kDrivetrain.L1, this, "L1", kPDP.DRIVE_L_1, Breaker.AMP_30).setMaster()
-				.setSide(Side.LEFT).build();
-		L2 = new GZSRX.Builder(kDrivetrain.L2, this, "L2", kPDP.DRIVE_L_2, Breaker.AMP_30).setFollower()
-				.setSide(Side.LEFT).build();
-		L3 = new GZSRX.Builder(kDrivetrain.L3, this, "L3", kPDP.DRIVE_L_3, Breaker.AMP_30).setFollower()
-				.setSide(Side.LEFT).build();
-		L4 = new GZSRX.Builder(kDrivetrain.L4, this, "L4", kPDP.DRIVE_L_4, Breaker.AMP_30).setFollower()
-				.setSide(Side.LEFT).build();
+		L1 = new GZSRX.Builder(kDrivetrain.L1, this, "L1", kPDP.DRIVE_L_1).setMaster().setSide(Side.LEFT)
+				.overrideBreaker(Breaker.AMP_30).build();
+		L2 = new GZSRX.Builder(kDrivetrain.L2, this, "L2", kPDP.DRIVE_L_2).setFollower().setSide(Side.LEFT)
+				.overrideBreaker(Breaker.AMP_30).build();
+		L3 = new GZSRX.Builder(kDrivetrain.L3, this, "L3", kPDP.DRIVE_L_3).setFollower().setSide(Side.LEFT)
+				.overrideBreaker(Breaker.AMP_30).build();
+		L4 = new GZSRX.Builder(kDrivetrain.L4, this, "L4", kPDP.DRIVE_L_4).setFollower().setSide(Side.LEFT)
+				.overrideBreaker(Breaker.AMP_30).build();
 
-		R1 = new GZSRX.Builder(kDrivetrain.R1, this, "R1", kPDP.DRIVE_R_1, Breaker.AMP_30).setMaster()
-				.setSide(Side.RIGHT).build();
-		R2 = new GZSRX.Builder(kDrivetrain.R2, this, "R2", kPDP.DRIVE_R_2, Breaker.AMP_30).setFollower()
-				.setSide(Side.RIGHT).build();
-		R3 = new GZSRX.Builder(kDrivetrain.R3, this, "R3", kPDP.DRIVE_R_3, Breaker.AMP_30).setFollower()
-				.setSide(Side.RIGHT).build();
-		R4 = new GZSRX.Builder(kDrivetrain.R4, this, "R4", kPDP.DRIVE_R_4, Breaker.AMP_30).setFollower()
-				.setSide(Side.RIGHT).build();
+		R1 = new GZSRX.Builder(kDrivetrain.R1, this, "R1", kPDP.DRIVE_R_1).setMaster().setSide(Side.RIGHT)
+				.overrideBreaker(Breaker.AMP_30).build();
+		R2 = new GZSRX.Builder(kDrivetrain.R2, this, "R2", kPDP.DRIVE_R_2).setFollower().setSide(Side.RIGHT)
+				.overrideBreaker(Breaker.AMP_30).build();
+		R3 = new GZSRX.Builder(kDrivetrain.R3, this, "R3", kPDP.DRIVE_R_3).setFollower().setSide(Side.RIGHT)
+				.overrideBreaker(Breaker.AMP_30).build();
+		R4 = new GZSRX.Builder(kDrivetrain.R4, this, "R4", kPDP.DRIVE_R_4).setFollower().setSide(Side.RIGHT)
+				.overrideBreaker(Breaker.AMP_30).build();
 
 		mGyro = new AHRS(SPI.Port.kMXP);
 

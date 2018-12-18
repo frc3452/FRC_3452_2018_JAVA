@@ -14,10 +14,8 @@ public class GZFlagMultiple {
      * Trip a specific flag (starting at 1, not 0!!!!!)
      */
     public void tripFlag(int flagToTrip) {
-        if (flagToTrip > mFlags.size() - 1 || flagToTrip < 1) {
-            System.out.println("Invalid flag: " + flagToTrip);
+        if (isFlagInvalid(flagToTrip))
             return;
-        }
 
         boolean prevFlagsTripped = true;
         // Remember, here we are using i as array index but flagToTrip starts at 1
@@ -26,6 +24,22 @@ public class GZFlagMultiple {
 
         if (prevFlagsTripped)
             mFlags.get(flagToTrip - 1).tripFlag();
+    }
+
+    public boolean isFlagTripped(int flag) {
+        if (isFlagInvalid(flag))
+            return false;
+
+        return mFlags.get(flag - 1).isFlagTripped();
+    }
+
+    private boolean isFlagInvalid(int flag) {
+        if (flag > mFlags.size() - 1 || flag < 1) {
+            System.out.println("Invalid flag: " + flag);
+            return false;
+        }
+
+        return true;
     }
 
     public boolean allFlagsTripped() {

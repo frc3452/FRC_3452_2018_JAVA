@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -34,6 +35,29 @@ public class GZJoystick extends Joystick {
 
 		for (Integer b : buttons)
 			retval &= this.getRawButton(b);
+
+		return retval;
+	}
+
+	public boolean isAnyButtonPressedThatIsnt(List <Integer> buttons)
+	{
+		List<Integer> temp = new ArrayList<Integer>();
+
+		for (int i = Buttons.LOWEST_BUTTON; i <= Buttons.HIGHEST_BUTTON; i++)
+			if (!buttons.contains(i))
+				temp.add(i);
+
+		return isAnyButtonPressed(temp);
+	}
+
+	public boolean isAnyButtonPressed(List<Integer> buttons) {
+		boolean retval = false;
+
+		for (Integer b : buttons) {
+			retval |= this.getRawButton(b);
+			if (retval)
+				return retval;
+		}
 
 		return retval;
 	}
@@ -154,6 +178,9 @@ public class GZJoystick extends Joystick {
 		public static int START = 8;
 		public static int LEFT_CLICK = 9;
 		public static int RIGHT_CLICK = 10;
+
+		private static int LOWEST_BUTTON = A;
+		private static int HIGHEST_BUTTON = RIGHT_CLICK;
 	}
 
 	public void rumble(Double intensity) {

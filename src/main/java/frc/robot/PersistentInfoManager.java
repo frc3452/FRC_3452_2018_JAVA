@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -15,9 +16,12 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.util.GZFileMaker;
 import frc.robot.util.GZFileMaker.ValidFileExtensions;
 import frc.robot.util.GZFlag;
+import frc.robot.util.GZFlagMultiple;
+import frc.robot.util.GZJoystick.Buttons;
 import frc.robot.util.GZNotifier;
 import frc.robot.util.GZTimer;
 import frc.robot.util.GZUtil;
+import frc.robot.util.LatchedBoolean;
 import frc.robot.util.PersistentInfo;
 
 public class PersistentInfoManager {
@@ -31,56 +35,68 @@ public class PersistentInfoManager {
 
     private Drive drive = Drive.getInstance();
 
-    
     private GZNotifier mUpdateNotifier;
     private GZFlag mReadFailed = new GZFlag();
+    private GZFlagMultiple mResetFlag;
+
+    private LatchedBoolean mResetFlagLatchedBoolean = new LatchedBoolean();
 
     private PersistentInfo mEnabledTime = new PersistentInfo() {
         public void update() {
             this.addDifference(mEnabledTimer.getTotalTimeRunning());
         }
 
-        public void readSetting(){}
+        public void readSetting() {
+        }
     };
 
     private PersistentInfo mOnTime = new PersistentInfo() {
         public void update() {
             this.addDifference(mOnTimeTimer.get());
         }
-        public void readSetting(){}
+
+        public void readSetting() {
+        }
     };
 
     private PersistentInfo mLeftEncoderRotations = new PersistentInfo() {
         public void update() {
             this.addDifference(drive.mIO.left_encoder_total_delta_rotations);
         }
-        public void readSetting(){}
+
+        public void readSetting() {
+        }
     };
     private PersistentInfo mRightEncoderRotations = new PersistentInfo() {
         public void update() {
             this.addDifference(drive.mIO.right_encoder_total_delta_rotations);
         }
-        public void readSetting(){}
+
+        public void readSetting() {
+        }
     };
 
     private PersistentInfo mElevatorRotations = new PersistentInfo() {
         public void update() {
             this.addDifference(Elevator.getInstance().mIO.elevator_total_rotations);
         }
-        public void readSetting(){}
+
+        public void readSetting() {
+        }
     };
 
     private PersistentInfo mDisabled = new PersistentInfo() {
         public void update() {
-            this.setValue(GZOI.getInstance().isSafteyDisabled() ? 3452.0 : 0.0);
+            this.setValue(GZOI.getInstance().isSafteyDisabled() ? 1.0 : 0.0);
         }
 
         public void readSetting() {
-            GZOI.getInstance().setSafteyDisable(this.getValue() == 3452.0);
+            GZOI.getInstance().setSafteyDisable(this.getValue() == 1.0);
         }
     };
 
     private static PersistentInfoManager mInstance = null;
+
     public static PersistentInfoManager getInstance() {
         if (mInstance == null)
             mInstance = new PersistentInfoManager();
@@ -90,6 +106,8 @@ public class PersistentInfoManager {
 
     // On startup put values in map and start timer
     private PersistentInfoManager() {
+        resetCheckForResetVariable();
+
         mSettingsMap.put("EnabledTime", mEnabledTime);
         mSettingsMap.put("OnTime", mOnTime);
         mSettingsMap.put("LeftEncoderRot", mLeftEncoderRotations);
@@ -111,7 +129,7 @@ public class PersistentInfoManager {
         updateFile(fileName, folder, usb);
     }
 
-    private void backupFile() {
+    private boolean backupFile() {
         boolean fail = false;
 
         try {
@@ -129,7 +147,9 @@ public class PersistentInfoManager {
             fail = true;
             // e.printStackTrace();
         }
+
         System.out.println("Stats file backed up " + (fail ? "unsuccessfully" : "successfully"));
+        return !fail;
     }
 
     public void initialize() {
@@ -160,8 +180,10 @@ public class PersistentInfoManager {
                 } else {
                     // Map doesn't have setting
                     System.out.println("ERROR Could not read setting " + split[0] + ".");
-                    //For some reason a value is in the file and not in the map, so something isn't right in the first place
-                    //Trip the flag incase so we don't accidentally overwrite any data
+                    
+                    // For some reason a value is in the file and not in the map, so something isn't
+                    // right in the first place
+                    // Trip the flag incase so we don't accidentally overwrite any data
                     mReadFailed.tripFlag();
                 }
             }
@@ -207,12 +229,64 @@ public class PersistentInfoManager {
         updateFile(fileName, folder, false);
     }
 
+    private void resetCheckForResetVariable() {
+        mResetFlag = new GZFlagMultiple(2);
+    }
+
+    public void checkForReset() {
+        // Only try to do this while disabled
+        if (GZOI.getInstance().isEnabled())
+            return;
+
+        // First time that back and start are pressed together
+        if (!mResetFlag.isFlagTripped(1) && mResetFlagLatchedBoolean
+                .update(GZOI.driverJoy.areButtonsHeld(Arrays.asList(Buttons.BACK, Buttons.START)))) {
+            mResetFlag.tripFlag(1);
+            System.out.println(
+                    "WARNING Are you sure you want to reset the stats file? Press LClick and then A to confirm, any other button to cancel");
+        }
+
+        // Cancel if any button pressed besides left click and a
+        if (mResetFlag.isFlagTripped(1)
+                && GZOI.driverJoy.isAnyButtonPressedThatIsnt(Arrays.asList(Buttons.LEFT_CLICK, Buttons.A))) {
+            System.out.println("WARNING Stats file reset cancelled");
+            resetCheckForResetVariable();
+        }
+
+        // L Click pressed
+        if (!mResetFlag.isFlagTripped(2) && mResetFlag.isFlagTripped(1) && GZOI.driverJoy.isLClickPressed()) {
+            System.out.println("WARNING Click A to confirm reset of GZStats");
+            mResetFlag.tripFlag(2);
+        }
+
+        // If A pressed
+        if (mResetFlag.isFlagTripped(2) && GZOI.driverJoy.isAPressed()) {
+
+            // If backup worked
+            if (backupFile()) {
+                // reset values
+                for (PersistentInfo p : mSettingsMap.values())
+                    p.setValueToDefault();
+
+                System.out.println("GZStats reset");
+            } else {
+                System.out.println("GZStats could not be reset because the backup failed");
+            }
+
+            // Reset flag; even if it didn't work, we want to reset the reset procedure
+            resetCheckForResetVariable();
+            // printPersistentSettings();
+        }
+
+    }
+
     public void updateFile(String fileName, String folder, final boolean usb) {
 
         final String mFileName;
         final String mFolder;
         final boolean mUsb;
 
+        //If flag we failed while reading, write to a temporary file so that we don't accidentally overrwrite the old one
         if (mReadFailed.isFlagTripped()) {
             mFileName = GZUtil.dateTime(false);
             mFolder = Constants.kFiles.STATS_FILE_FOLDER;
@@ -229,6 +303,8 @@ public class PersistentInfoManager {
         // Define notifier and runnable
         mUpdateNotifier = new GZNotifier(new Runnable() {
             public void run() {
+
+                checkForReset();
 
                 // get new values
                 updateValues();
@@ -258,7 +334,7 @@ public class PersistentInfoManager {
             }
         });
 
-        // only start once and if read didn't work
+        // only start once
         if (!mUpdateNotifier.hasStarted())
             mUpdateNotifier.startPeriodic(kFiles.DEFAULT_STATS_RECORD_TIME);
     }

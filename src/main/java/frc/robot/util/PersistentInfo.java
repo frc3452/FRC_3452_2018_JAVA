@@ -5,12 +5,22 @@ package frc.robot.util;
  * to update mValue either through this.mValue, setValue(),addToValue(), addDifference()
  */
 public abstract class PersistentInfo {
+
+    private Double mDefaultValue;
+
     private Double mValue = Double.NaN;
 
     private Double mPreviousAddedValue = 0.0;
 
     public PersistentInfo(Double defaultValue) {
+        this.mDefaultValue = defaultValue;
         this.mValue = defaultValue;
+    }
+
+    public void setValueToDefault()
+    {
+        this.mValue = this.mDefaultValue;
+        this.mPreviousAddedValue = this.mDefaultValue;
     }
 
     /**
