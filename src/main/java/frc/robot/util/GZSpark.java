@@ -49,7 +49,7 @@ public class GZSpark extends Spark implements GZSpeedController {
         if (tempSensorPort != -1)
             mTemperatureSensor = new AnalogInput(tempSensorPort);
 
-        subsystem.mSparks.put(this.mPDPChannel, this);
+        subsystem.mSparks.put(this.mPWMPort, this);
     }
 
     public Double getAmperage() {
@@ -61,7 +61,7 @@ public class GZSpark extends Spark implements GZSpeedController {
     }
 
     public String getGZName() {
-        return "";
+        return this.mName;
     }
 
     public boolean hasTemperatureSensor() {

@@ -91,9 +91,12 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 		if (temperatureSensorPort != -1)
 			this.mTemperatureSensor = new AnalogInput(temperatureSensorPort);
 
-		subsystem.mTalons.put(this.mPDPChannel, this);
+		subsystem.mTalons.put(deviceNumber, this);
 	}
 
+	/**
+	 * Only valid if called as fast as possible
+	 */
 	public double getTotalEncoderRotations(double currentRotationValue)
 	{
 		double change = Math.abs(currentRotationValue - mPrevEncoderRotations);

@@ -1,8 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
@@ -12,15 +9,14 @@ import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.kElevator;
-import frc.robot.Constants.kPDP;
 import frc.robot.Constants.kElevator.HeightsInches;
+import frc.robot.Constants.kPDP;
 import frc.robot.GZOI;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZJoystick;
 import frc.robot.util.GZLog.LogItem;
 import frc.robot.util.GZSRX;
 import frc.robot.util.GZSRX.Breaker;
-import frc.robot.util.GZSRX.Master;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.Units;
 
