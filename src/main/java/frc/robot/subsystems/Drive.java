@@ -198,7 +198,7 @@ public class Drive extends GZSubsystem {
 		for (GZSRX c : mTalons.values()) {
 			new LogItem("DRV-" + c.getGZName() + "-AMP") {
 				public String val() {
-					return mIO.getAmperage(c.getID()).toString();
+					return mIO.getMapValue(mIO.amperages, c.getID()).toString();
 				}
 			};
 
@@ -231,7 +231,7 @@ public class Drive extends GZSubsystem {
 		for (GZSRX c : mTalons.values()) {
 			new LogItem("DRV-" + c.getGZName() + "-VOLT") {
 				public String val() {
-					return mIO.getAmperage(c.getID()).toString();
+					return mIO.getMapValue(mIO.voltages, c.getID()).toString();
 				}
 			};
 		}
@@ -431,30 +431,17 @@ public class Drive extends GZSubsystem {
 			right_encoder_total_delta_rotations = 0;
 		}
 
-		public void updateAmperage(int id, double value) {
-			if (!amperages.containsKey(id))
-				amperages.put(id, Double.NaN);
-			amperages.replace(id, value);
+		public void updateMapValue(Map<Integer, Double> map, int id, double value) {
+			if (!map.containsKey(id))
+				map.put(id, Double.NaN);
+			map.replace(id, value);
 		}
 
-		public Double getAmperage(int id) {
-			if (!amperages.containsKey(id))
+		public Double getMapValue(Map<Integer, Double> map, int id) {
+			if (!map.containsKey(id))
 				return Double.NaN;
 
-			return amperages.get(id);
-		}
-
-		public void updateVoltage(int id, double value) {
-			if (!voltages.containsKey(id))
-				voltages.put(id, Double.NaN);
-			voltages.replace(id, value);
-		}
-
-		public Double getVoltage(int id) {
-			if (!voltages.containsKey(id))
-				return Double.NaN;
-
-			return voltages.get(id);
+			return map.get(id);
 		}
 
 		public Double left_encoder_ticks = Double.NaN, left_encoder_vel = Double.NaN;
@@ -519,8 +506,8 @@ public class Drive extends GZSubsystem {
 		}
 
 		for (GZSRX c : mTalons.values()) {
-			mIO.updateAmperage(c.getID(), c.getOutputCurrent());
-			mIO.updateVoltage(c.getID(), c.getMotorOutputVoltage());
+			mIO.updateMapValue(mIO.amperages, c.getID(), c.getOutputCurrent());
+			mIO.updateMapValue(mIO.voltages, c.getID(), c.getMotorOutputVoltage());
 		}
 
 		mIO.left_encoder_total_delta_rotations = L1.getTotalEncoderRotations(getLeftRotations());
