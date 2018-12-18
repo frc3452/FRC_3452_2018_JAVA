@@ -40,7 +40,7 @@ public class GZSubsystemManager {
 	}
 
 	public void disable(boolean toDisable) {
-		mAllSystems.forEach((s) -> s.disable(toDisable));
+		mAllSystems.forEach((s) -> s.safteyDisable(toDisable));
 	}
 
 	public void enableFollower() {
@@ -52,7 +52,7 @@ public class GZSubsystemManager {
 			System.out.println("~~~SUBSYSTEMS DISABLED~~~");
 
 		for (int i = 0; i < mAllSystems.size() - 1; i++)
-			System.out.println(mAllSystems.get(i).getName() + ": " + mAllSystems.get(i).isDisabed());
+			System.out.println(mAllSystems.get(i).getName() + ": " + mAllSystems.get(i).isSafteyDisabled());
 	}
 
 	public void printStates(boolean printHeader) {

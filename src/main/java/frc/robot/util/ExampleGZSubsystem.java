@@ -111,7 +111,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	private synchronized void handleStates() {
 		boolean neutral = false;
 
-		neutral |= this.isDisabed() && !GZOI.getInstance().isFMS();
+		neutral |= this.isSafteyDisabled() && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == ExampleState.NEUTRAL;
 		neutral |= (!mIO.encoders_valid && (mWantedState.usesClosedLoop || mState.usesClosedLoop));
 

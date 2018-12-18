@@ -144,17 +144,25 @@ public class PersistentInfoManager {
 
             Files.deleteIfExists(dest.toPath());
         } catch (Exception e) {
+            e.printStackTrace();
             fail = true;
             // e.printStackTrace();
         }
 
-        System.out.println("Stats file backed up " + (fail ? "unsuccessfully" : "successfully"));
+        System.out.println((fail ? "WARNING " : "") + "Stats file backed up " + (fail ? "unsuccessfully" : "successfully"));
         return !fail;
     }
 
-    public void initialize() {
-        backupFile();
-        readOnStartup(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER, kFiles.STATS_FILE_ON_USB);
+    public void initialize()
+    {
+        initialize(false);
+    }
+
+    public void initialize(boolean createNewFile) {
+        if (!createNewFile) {
+            backupFile();
+            readOnStartup(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER, kFiles.STATS_FILE_ON_USB);
+        }
         updateFile(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER, kFiles.STATS_FILE_ON_USB);
     }
 
@@ -180,7 +188,7 @@ public class PersistentInfoManager {
                 } else {
                     // Map doesn't have setting
                     System.out.println("ERROR Could not read setting " + split[0] + ".");
-                    
+
                     // For some reason a value is in the file and not in the map, so something isn't
                     // right in the first place
                     // Trip the flag incase so we don't accidentally overwrite any data
@@ -200,12 +208,12 @@ public class PersistentInfoManager {
         } catch (Exception e) {
             // Couldn't read persistent settings
             mReadFailed.tripFlag();
-            System.out.println("ERROR Could not read persistent settings at file location "
+            System.out.println("WARNING ERROR Could not read persistent settings at file location "
                     + GZFileMaker.getFileLocation(fileName, folder, ValidFileExtensions.CSV, usb, true));
         }
 
         if (!mReadFailed.isFlagTripped())
-            System.out.println("Persistent settings read correctly.");
+            System.out.println("WARNING Persistent settings read correctly.");
     }
 
     private void readSettings() {
@@ -248,7 +256,7 @@ public class PersistentInfoManager {
 
         // Cancel if any button pressed besides left click and a
         if (mResetFlag.isFlagTripped(1)
-                && GZOI.driverJoy.isAnyButtonPressedThatIsnt(Arrays.asList(Buttons.LEFT_CLICK, Buttons.A))) {
+                && GZOI.driverJoy.isAnyButtonPressedThatIsnt(Arrays.asList(Buttons.LEFT_CLICK, Buttons.A, Buttons.BACK, Buttons.START))) {
             System.out.println("WARNING Stats file reset cancelled");
             resetCheckForResetVariable();
         }
@@ -267,10 +275,10 @@ public class PersistentInfoManager {
                 // reset values
                 for (PersistentInfo p : mSettingsMap.values())
                     p.setValueToDefault();
-
+ 
                 System.out.println("GZStats reset");
             } else {
-                System.out.println("GZStats could not be reset because the backup failed");
+                System.out.println("WARNING GZStats could not be reset because the backup failed");
             }
 
             // Reset flag; even if it didn't work, we want to reset the reset procedure
@@ -286,7 +294,8 @@ public class PersistentInfoManager {
         final String mFolder;
         final boolean mUsb;
 
-        //If flag we failed while reading, write to a temporary file so that we don't accidentally overrwrite the old one
+        // If flag we failed while reading, write to a temporary file so that we don't
+        // accidentally overrwrite the old one
         if (mReadFailed.isFlagTripped()) {
             mFileName = GZUtil.dateTime(false);
             mFolder = Constants.kFiles.STATS_FILE_FOLDER;

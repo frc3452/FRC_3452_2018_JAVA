@@ -251,34 +251,30 @@ public class GZOI extends GZSubsystem {
 
 			@Override
 			public String val() {
-				return Drive.getInstance().getStateString() + "-" + Drive.getInstance().isDisabed();
+				return Drive.getInstance().getStateString() + "-" + Drive.getInstance().isSafteyDisabled();
 			}
 		};
 
 		new LogItem("ELEV-STATE") {
 			@Override
 			public String val() {
-				return Elevator.getInstance().getStateString() + "-" + Elevator.getInstance().isDisabed();
+				return Elevator.getInstance().getStateString() + "-" + Elevator.getInstance().isSafteyDisabled();
 			}
 		};
 
 		new LogItem("INTAKE-STATE") {
 			@Override
 			public String val() {
-				return Intake.getInstance().getStateString() + "-" + Intake.getInstance().isDisabed();
+				return Intake.getInstance().getStateString() + "-" + Intake.getInstance().isSafteyDisabled();
 			}
 		};
 
 		new LogItem("CLIMB-STATE") {
 			@Override
 			public String val() {
-				return Climber.getInstance().getStateString() + "-" + Climber.getInstance().isDisabed();
+				return Climber.getInstance().getStateString() + "-" + Climber.getInstance().isSafteyDisabled();
 			}
 		};
-	}
-
-	public boolean isSafteyDisabled() {
-		return this.mSafteyDisable;
 	}
 
 	public void setSafteyDisable(boolean disable) {

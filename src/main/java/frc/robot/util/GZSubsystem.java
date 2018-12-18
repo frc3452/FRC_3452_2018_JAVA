@@ -27,7 +27,7 @@ public abstract class GZSubsystem extends Subsystem {
 	 */
 	private boolean mIsDisabled = false;
 
-	public void disable(boolean toDisable) {
+	public void safteyDisable(boolean toDisable) {
 		mIsDisabled = toDisable;
 		if (mIsDisabled)
 			stop();
@@ -35,7 +35,7 @@ public abstract class GZSubsystem extends Subsystem {
 
 	public abstract void addLoggingValues();
 
-	public Boolean isDisabed() {
+	public Boolean isSafteyDisabled() {
 		return mIsDisabled;
 	}
 

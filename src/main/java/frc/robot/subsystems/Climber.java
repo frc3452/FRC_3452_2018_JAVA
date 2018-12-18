@@ -182,7 +182,7 @@ public class Climber extends GZSubsystem {
 
 	private synchronized void handleStates() {
 		boolean neutral = false;
-		neutral |= (this.isDisabed() || Auton.getInstance().isDemo()) && !GZOI.getInstance().isFMS();
+		neutral |= (this.isSafteyDisabled() || Auton.getInstance().isDemo()) && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == ClimberState.NEUTRAL;
 
 		// if trying to disable or run demo mode while not connected to field

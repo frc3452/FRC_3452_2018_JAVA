@@ -57,7 +57,10 @@ public abstract class PersistentInfo {
      * @param notAbsoluteValue choose to not use absolute value (for whatever reason)
      */
     public void addDifference(Double newValue, boolean notAbsoluteValue) {
-        this.mValue += (notAbsoluteValue ? (newValue - mPreviousAddedValue) : Math.abs(newValue - mPreviousAddedValue));
+        double change = (notAbsoluteValue ? (newValue - mPreviousAddedValue) : Math.abs(newValue - mPreviousAddedValue)); 
+        if (change < 0.01)
+            change = 0;
+        this.mValue += change;
         this.mPreviousAddedValue = newValue;
     }
 
