@@ -1,7 +1,6 @@
 package frc.robot.util;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -38,8 +37,6 @@ public class GZFiles {
 	private boolean isLogging = false;
 
 	private static GZFiles mInstance = null;
-
-	private PersistentInfoManager mSettings = PersistentInfoManager.getInstance();
 
 	public static synchronized GZFiles getInstance() {
 		if (mInstance == null)

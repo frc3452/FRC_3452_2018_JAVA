@@ -146,6 +146,8 @@ public class GZOI extends GZSubsystem {
 				intake.spin(false);
 			else if (opJoy.getRawButton(Buttons.START))
 				intake.spin(true);
+			// else if (opJoy.getDDown())
+				// intake.setCurrent(2);
 			// INTAKE DRIVER
 			else if (driverJoy.getRawButton(Buttons.X))
 				intake.manual(kIntake.Speeds.INTAKE);

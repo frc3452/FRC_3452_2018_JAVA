@@ -1,12 +1,9 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Spark;
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kPDP;
 import frc.robot.GZOI;
 import frc.robot.util.GZLog.LogItem;
-import frc.robot.util.GZPDP;
 import frc.robot.util.GZSpark;
 import frc.robot.util.GZSubsystem;
 
@@ -184,6 +181,7 @@ public class Intake extends GZSubsystem {
 			mIO.right_output = mIO.right_desired_output;
 
 			break;
+
 		case NEUTRAL:
 
 			mIO.left_output = 0.0;
@@ -200,7 +198,7 @@ public class Intake extends GZSubsystem {
 	}
 
 	public enum IntakeState {
-		NEUTRAL, MANUAL
+		NEUTRAL, MANUAL,
 	}
 
 	@Override

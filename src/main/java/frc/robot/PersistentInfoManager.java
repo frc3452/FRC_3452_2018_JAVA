@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.robot;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,12 +9,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import frc.robot.Constants;
 import frc.robot.Constants.kFiles;
-import frc.robot.GZOI;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
+import frc.robot.util.GZFileMaker;
 import frc.robot.util.GZFileMaker.ValidFileExtensions;
+import frc.robot.util.GZFlag;
+import frc.robot.util.GZNotifier;
+import frc.robot.util.GZTimer;
+import frc.robot.util.GZUtil;
+import frc.robot.util.PersistentInfo;
 
 public class PersistentInfoManager {
 
@@ -29,7 +33,7 @@ public class PersistentInfoManager {
 
     
     private GZNotifier mUpdateNotifier;
-    private Flag mReadFailed = new Flag();
+    private GZFlag mReadFailed = new GZFlag();
 
     private PersistentInfo mEnabledTime = new PersistentInfo() {
         public void update() {

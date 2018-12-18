@@ -1,15 +1,16 @@
 package frc.robot.util;
 
-public class Flag {
+public class GZFlag {
 
     private boolean mInitValue;
     private boolean mTripped = false;
 
-    public Flag(boolean initialValue) {
+    public GZFlag(boolean initialValue) {
         this.mInitValue = initialValue;
     }
 
-    public Flag(){}
+    public GZFlag() {
+    }
 
     public void update(boolean newVal) {
         if (newVal != mInitValue)
