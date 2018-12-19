@@ -59,7 +59,7 @@ public class PersistentInfoManager {
         }
     };
 
-    private PersistentInfo mLeftEncoderRotations = new PersistentInfo() {
+    private PersistentInfo mLeftEncoderRotations = new PersistentInfo(0.0, .01) {
         public void update() {
             this.addDifference(drive.mIO.left_encoder_total_delta_rotations);
         }
@@ -67,7 +67,7 @@ public class PersistentInfoManager {
         public void readSetting() {
         }
     };
-    private PersistentInfo mRightEncoderRotations = new PersistentInfo() {
+    private PersistentInfo mRightEncoderRotations = new PersistentInfo(0.0, .01) {
         public void update() {
             this.addDifference(drive.mIO.right_encoder_total_delta_rotations);
         }
@@ -138,11 +138,11 @@ public class PersistentInfoManager {
 
             File dest = GZFileMaker.getFile("StatsBackup-" + GZUtil.dateTime(true), kFiles.STATS_FILE_FOLDER, true,
                     true);
+                    Files.deleteIfExists(dest.toPath());
 
             // GZFileMaker will create the file, we need to delete and then copy it
             Files.copy(source.toPath(), dest.toPath());
 
-            Files.deleteIfExists(dest.toPath());
         } catch (Exception e) {
             e.printStackTrace();
             fail = true;
@@ -275,6 +275,9 @@ public class PersistentInfoManager {
                 // reset values
                 for (PersistentInfo p : mSettingsMap.values())
                     p.setValueToDefault();
+
+                mOnTimeTimer.startTimer();
+                mEnabledTimer.clearTotalTimeRunning();
  
                 System.out.println("GZStats reset");
             } else {

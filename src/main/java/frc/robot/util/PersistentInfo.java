@@ -6,15 +6,23 @@ package frc.robot.util;
  */
 public abstract class PersistentInfo {
 
+    private double mChangeDeadband;
+
     private Double mDefaultValue;
 
     private Double mValue = Double.NaN;
 
     private Double mPreviousAddedValue = 0.0;
 
-    public PersistentInfo(Double defaultValue) {
+    public PersistentInfo(Double defaultValue, Double deadband) {
         this.mDefaultValue = defaultValue;
         this.mValue = defaultValue;
+        this.mChangeDeadband = deadband;
+    }
+
+    public PersistentInfo(Double defaultValue)
+    {
+        this(defaultValue, -3452.0);   
     }
 
     public void setValueToDefault()
@@ -58,8 +66,11 @@ public abstract class PersistentInfo {
      */
     public void addDifference(Double newValue, boolean notAbsoluteValue) {
         double change = (notAbsoluteValue ? (newValue - mPreviousAddedValue) : Math.abs(newValue - mPreviousAddedValue)); 
-        if (change < 0.01)
-            change = 0;
+        if (this.mChangeDeadband != -3452)
+        {
+            if (change < this.mChangeDeadband)
+                change = 0;
+        }
         this.mValue += change;
         this.mPreviousAddedValue = newValue;
     }
@@ -71,6 +82,7 @@ public abstract class PersistentInfo {
     public void addDifference(Double newValue) {
         addDifference(newValue, false);
     }
+
 
     public Double getValue() {
         return this.mValue;

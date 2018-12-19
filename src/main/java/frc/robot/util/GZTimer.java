@@ -71,6 +71,11 @@ public class GZTimer extends Timer {
 		return this.mAccumulatedTimeRunning;
 	}
 
+	public void clearTotalTimeRunning()
+	{
+		this.mAccumulatedTimeRunning = 0;
+	}
+
 	/**
 	 * @return if timer is currently running
 	 */
