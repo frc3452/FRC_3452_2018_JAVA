@@ -14,6 +14,7 @@ import frc.robot.Constants.kFiles;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Elevator;
 import frc.robot.util.GZFileMaker;
+import frc.robot.util.GZFiles;
 import frc.robot.util.GZFileMaker.ValidFileExtensions;
 import frc.robot.util.GZFlag;
 import frc.robot.util.GZFlagMultiple;
@@ -133,15 +134,11 @@ public class PersistentInfoManager {
         boolean fail = false;
 
         try {
-            File source = GZFileMaker.getFile(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER,
-                    kFiles.STATS_FILE_ON_USB, false);
-
-            File dest = GZFileMaker.getFile("StatsBackup-" + GZUtil.dateTime(true), kFiles.STATS_FILE_FOLDER, true,
-                    true);
-                    Files.deleteIfExists(dest.toPath());
-
-            // GZFileMaker will create the file, we need to delete and then copy it
-            Files.copy(source.toPath(), dest.toPath());
+            GZFiles.copyFile(
+                    GZFileMaker.getFile(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER, kFiles.STATS_FILE_ON_USB,
+                            false),
+                    GZFileMaker.getFile("StatsBackup-" + GZUtil.dateTime(true), "3452/" + kFiles.STATS_FILE_FOLDER,
+                            true, true));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -149,12 +146,12 @@ public class PersistentInfoManager {
             // e.printStackTrace();
         }
 
-        System.out.println((fail ? "WARNING " : "") + "Stats file backed up " + (fail ? "unsuccessfully" : "successfully"));
+        System.out.println(
+                (fail ? "WARNING " : "") + "Stats file backed up " + (fail ? "unsuccessfully" : "successfully"));
         return !fail;
     }
 
-    public void initialize()
-    {
+    public void initialize() {
         initialize(false);
     }
 
@@ -255,8 +252,8 @@ public class PersistentInfoManager {
         }
 
         // Cancel if any button pressed besides left click and a
-        if (mResetFlag.isFlagTripped(1)
-                && GZOI.driverJoy.isAnyButtonPressedThatIsnt(Arrays.asList(Buttons.LEFT_CLICK, Buttons.A, Buttons.BACK, Buttons.START))) {
+        if (mResetFlag.isFlagTripped(1) && GZOI.driverJoy.isAnyButtonPressedThatIsnt(
+                Arrays.asList(Buttons.LEFT_CLICK, Buttons.A, Buttons.BACK, Buttons.START))) {
             System.out.println("WARNING Stats file reset cancelled");
             resetCheckForResetVariable();
         }
@@ -278,7 +275,7 @@ public class PersistentInfoManager {
 
                 mOnTimeTimer.startTimer();
                 mEnabledTimer.clearTotalTimeRunning();
- 
+
                 System.out.println("GZStats reset");
             } else {
                 System.out.println("WARNING GZStats could not be reset because the backup failed");

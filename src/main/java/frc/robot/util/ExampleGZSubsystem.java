@@ -48,7 +48,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 		example_motor = new GZSRX.Builder(0, this, "ExampleMotor", pdpChannel).build();
 
 		example_motor.configFactoryDefault();
-		example_motor.checkFirmware(this);
+		example_motor.checkFirmware();
 	}
 
 	@Override

@@ -86,7 +86,7 @@ public class Drive extends GZSubsystem {
 		R4 = new GZSRX.Builder(kDrivetrain.R4, this, "R4", kPDP.DRIVE_R_4).setFollower().setSide(Side.RIGHT)
 				.overrideBreaker(Breaker.AMP_30).build();
 
-		TalonSRXChecker.CheckerConfig checkerConfig = new TalonSRXChecker.CheckerConfig(0, 1, 3, 2, .5);
+		TalonSRXChecker.CheckerConfig checkerConfig = new TalonSRXChecker.CheckerConfig(0, 1, 3, 2, .5, true);
 		TalonSRXChecker.getInstance()
 				.addTalonGroup(new TalonGroup(this, "Left", Arrays.asList(L1, L2, L3, L4), checkerConfig));
 
@@ -370,7 +370,7 @@ public class Drive extends GZSubsystem {
 
 	private synchronized void checkFirmware() {
 		for (GZSRX s : mTalons.values())
-			s.checkFirmware(this);
+			s.checkFirmware();
 	}
 
 	private synchronized void onStateStart(DriveState newState) {

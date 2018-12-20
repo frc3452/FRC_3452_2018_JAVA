@@ -205,8 +205,8 @@ public class Elevator extends GZSubsystem {
 		elevator_1.setName("Elev 1");
 		elevator_2.setName("Elev 2");
 
-		elevator_1.checkFirmware(this);
-		elevator_2.checkFirmware(this);
+		elevator_1.checkFirmware();
+		elevator_2.checkFirmware();
 	}
 
 	public void setAutoScaleHeight() {

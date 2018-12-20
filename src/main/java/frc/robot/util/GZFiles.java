@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -318,6 +320,12 @@ public class GZFiles {
 		}
 	}
 
+	public static void copyFile(File source, File dest) throws IOException
+	{
+		Files.deleteIfExists(dest.toPath());
+		Files.copy(source.toPath(), dest.toPath());
+	}
+
 	private String loggingName(boolean returnCurrent) {
 		if (returnCurrent) {
 			String retval = (DriverStation.getInstance().isFMSAttached() ? "FIELD_" : "") + GZUtil.dateTime(false);
@@ -328,66 +336,97 @@ public class GZFiles {
 		}
 	}
 
-	public static String header(String f, int headernumber, String color) {
-		return newLine("<h" + headernumber + " style=\"color:" + color + "\"" + ">" + f + "</h" + headernumber + ">");
-	}
+	public static class HTML {
 
-	public static String header(String f) {
-		return header(f, 1, "black");
-	}
-
-	public static String table(String f) {
-		return newLine("<table>" + f + "</table>");
-	}
-
-	public static String paragraph(String f) {
-		return newLine("<p>" + f + "</p>");
-	}
-
-	public static String tableHeader(String f) {
-		return newLine("<th>" + f + "</th>");
-	}
-
-	public static String newLine(String f) {
-		return f + "\n";
-	}
-
-	public static String tableRow(String f) {
-		return newLine("<tr>" + f + "</tr>");
-	}
-
-	public static String tableCell(String f, String color, boolean cell_is_color) {
-		String temp;
-		if (cell_is_color)
-			temp = "<td style=\"background-color:" + color + "; color: " + color + "\">" + f + "</td>";
-		else
-			temp = "<td style=\"background-color:" + color + ";\">" + f + "</td>";
-		return temp;
-	}
-
-	public static String tableCell(String f) {
-		return "<td>" + f + "</td>";
-	}
-
-	public static String bold(String f, String color) {
-		return "<b style=\"color:" + color + "\">" + f + "</b>";
-	}
-
-	public static final String BASE_HTML_FILE = "<html>\r\n" + "<head>\r\n" + "<style>\r\n" + "table {\r\n"
-			+ "    border: 1px solid black;\r\n" + "    border-collapse: collapse;\r\n" + "  	width:50%;\r\n"
-			+ "}\r\n" + "  body { \r\n" + "  }\r\n" + "th, td {\r\n" + "  	border: 5px solid black;\r\n"
-			+ "    padding: 5px;\r\n" + "    text-align: center;\r\n" + "}\r\n" + "  \r\n" + "</style>\r\n"
-			+ "</head>\r\n" + "<body>\r\n" + "\r\n" + "$BODY\r\n" + "\r\n" + "</body>\r\n" + "</html>";
-
-	public static void createHTMLFile(File f, String body) {
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-			String html = BASE_HTML_FILE.replace("$BODY", body);
-			bw.write(html);
-			bw.close();
-		} catch (Exception e) {
-			System.out.println("Could not make HTML File at " + f.getPath());
+		public static String header(String f, int headernumber, String color) {
+			return newLine(
+					"<h" + headernumber + " style=\"color:" + color + "\"" + ">" + f + "</h" + headernumber + ">");
 		}
+
+		public static String button(String buttonTitle, String content) {
+			return newLine("<button class=\"collapsible\">" + buttonTitle + "</button> <div class=\"content\">"
+					+ content + "</div>");
+		}
+
+		public static String header(String f) {
+			return header(f, 1, "black");
+		}
+
+		public static String table(String f) {
+			return newLine("<table>" + f + "</table>");
+		}
+
+		public static String paragraph(String f) {
+			return newLine("<p>" + f + "</p>");
+		}
+
+		public static String tableHeader(String f) {
+			return newLine("<th>" + f + "</th>");
+		}
+
+		public static String newLine(String f) {
+			return f + "\n";
+		}
+
+		public static String tableRow(String f) {
+			return newLine("<tr>" + f + "</tr>");
+		}
+
+		public static String tableCell(String f, String color, boolean cell_is_color) {
+			String temp;
+			if (cell_is_color)
+				temp = "<td style=\"background-color:" + color + "; color: " + color + "\">" + f + "</td>";
+			else
+				temp = "<td style=\"background-color:" + color + ";\">" + f + "</td>";
+			return temp;
+		}
+
+		public static String tableCell(String f) {
+			return "<td>" + f + "</td>";
+		}
+
+		public static String bold(String f, String color) {
+			return "<b style=\"color:" + color + "\">" + f + "</b>";
+		}
+
+		public static final String BASE_HTML_FILE = "<html>" + "<head>" + "<style>"
+				+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" + ".collapsible {"
+				+ "background-color: #777;" + "color: white;" + "cursor: pointer;" + "padding: 18px;" + "width: 100%;"
+				+ "border: none;" + "text-align: left;" + "outline: none;" + "font-size: 15px;" + "}"
+				+ ".active, .collapsible:hover {" + "background-color: #555;" + "}" +
+
+				".content {" + "padding: 0 18px;" + "max-height: 0;" + "overflow: hidden;"
+				+ "transition: max-height 0.2s ease-out;" + "background-color: #f1f1f1;" + "}" +
+
+				"table {" + "border: 1px solid black;" + "border-collapse: collapse;" + "width: \"device-width\";" + "}"
+				+ "body {} th, td {" + "border: 5px solid black;" + "padding: 5px;" + "text-align: center;" + "}"
+				+ "</style>" + "</head>" + "<body>" + "$BODY\r\n" + "\r\n" + "<script>"
+				+ "var coll = document.getElementsByClassName(\"collapsible\");" + "var i;" +
+
+				"for (i = 0; i < coll.length; i++) {" + "coll[i].addEventListener(\"click\", function() {"
+				+ "this.classList.toggle(\"active\");" + "var content = this.nextElementSibling;"
+				+ "if (content.style.maxHeight){" + "content.style.maxHeight = null;" + "} else {"
+				+ "content.style.maxHeight = content.scrollHeight + \"px\";" + "}" + "});" + "}" + "</script>" +
+
+				"</body>" + "</html>";
+
+		public static final String OLD_BASE_HTML_FILE = "<html>\r\n" + "<head>\r\n" + "<style>\r\n" + "table {\r\n"
+				+ "    border: 1px solid black;\r\n" + "    border-collapse: collapse;\r\n" + "  	width:50%;\r\n"
+				+ "}\r\n" + "  body { \r\n" + "  }\r\n" + "th, td {\r\n" + "  	border: 5px solid black;\r\n"
+				+ "    padding: 5px;\r\n" + "    text-align: center;\r\n" + "}\r\n" + "  \r\n" + "</style>\r\n"
+				+ "</head>\r\n" + "<body>\r\n" + "\r\n" + "$BODY\r\n" + "\r\n" + "</body>\r\n" + "</html>";
+
+		public static void createHTMLFile(File f, String body) {
+			try {
+				BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+				String html = BASE_HTML_FILE.replace("$BODY", body);
+				bw.write(html);
+				bw.close();
+			} catch (Exception e) {
+				System.out.println("Could not make HTML File at " + f.getPath());
+			}
+		}
+
 	}
 
 	/**

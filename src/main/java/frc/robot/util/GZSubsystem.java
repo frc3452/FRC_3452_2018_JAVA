@@ -24,12 +24,12 @@ public abstract class GZSubsystem extends Subsystem {
 	protected Map<Integer, GZSRX> mTalons = new HashMap<Integer, GZSRX>();
 	protected Map<Integer, GZSpark> mSparks = new HashMap<Integer, GZSpark>();
 
-	public void setSubsystemHasTalonTestingFail()
+	public void setTalonTestingFail()
 	{
 		mTalonTestingHasFail.tripFlag();
 	}
 
-	public boolean doesSubsystemHaveTalonTestingFail()
+	public boolean hasTalonTestingFail()
 	{
 		return mTalonTestingHasFail.isFlagTripped();
 	}

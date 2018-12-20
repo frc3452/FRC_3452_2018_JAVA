@@ -73,6 +73,8 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 	private String mName;
 	private int mPDPChannel;
 
+	private GZSubsystem mSubsystem;
+
 	public final static int TIMEOUT = 10;
 	public final static int FIRMWARE = 778;
 	private final static AlertLevel mFirmwareLevel = AlertLevel.WARNING;
@@ -95,6 +97,7 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 		this.mBreaker = breaker;
 		this.mSide = side;
 		this.mMaster = master;
+		this.mSubsystem = subsystem;
 		this.mName = name;
 
 		if (breaker == Breaker.NO_INFO)
@@ -106,7 +109,7 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 			this.mTemperatureSensor = new AnalogInput(temperatureSensorPort);
 
 		if (this.mBreaker != this.mActualBreaker)
-			Health.getInstance().addAlert(subsystem, AlertLevel.WARNING, "Talon " + this.getGZName()
+			Health.getInstance().addAlert(this.mSubsystem, AlertLevel.WARNING, "Talon " + this.getGZName()
 					+ " overridden to breaker " + this.mBreaker.print + ", plugged into " + this.mActualBreaker.print);
 
 		subsystem.mTalons.put(deviceNumber, this);
@@ -115,9 +118,9 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 	/**
 	 * TO ONLY BE USED FOR TESTING
 	 */
-	public void set(ControlMode mode, double value, boolean overrideCheck) {
+	public void set(ControlMode mode, double value, boolean overrideLockout) {
 		// if being checked, only allow if overriden
-		if (!mBeingChecked || (mBeingChecked && overrideCheck)) {
+		if (!mBeingChecked || (mBeingChecked && overrideLockout)) {
 			if (value != mLastSet || mode != mLastControlMode) {
 				mLastSet = value;
 				mLastControlMode = mode;
@@ -125,19 +128,23 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 			}
 		}
 	}
-
 	@Override
 	public void set(ControlMode mode, double value) {
 		set(mode, value, false);
 	}
 
-	public void setBeingChecked(boolean beingChecked) {
+	public void lockOutTalon(boolean beingChecked) {
 		mBeingChecked = beingChecked;
 	}
 
 	public double getLastSetValue() {
 		return mLastSet;
 	}
+
+	public ControlMode getLastControlMode() {
+		return mLastControlMode;
+	}
+
 
 	/**
 	 * Only valid if called as fast as possible
@@ -205,21 +212,23 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 			Health.getInstance().addAlert(subsystem, level, message);
 	}
 
-	public void checkFirmware(GZSubsystem sub) {
+	public void checkFirmware() {
 		int firm = this.getFirmwareVersion();
 
 		if (firm != FIRMWARE) {
-			int id = this.getDeviceID();
-
-			if (mSide != Side.NO_INFO)
-				Health.getInstance().addAlert(sub, mFirmwareLevel,
-						"Talon " + id + " (" + mSide + ")" + " firmware is " + firm + ", should be " + FIRMWARE);
-			else if (mMaster != Master.NO_INFO)
-				Health.getInstance().addAlert(sub, mFirmwareLevel,
-						"Talon " + id + " (" + mMaster + ")" + " firmware is " + firm + ", should be " + FIRMWARE);
-			else
-				Health.getInstance().addAlert(sub, mFirmwareLevel,
-						"Talon " + id + " firmware is " + firm + ", should be " + FIRMWARE);
+			Health.getInstance().addAlert(this.mSubsystem, mFirmwareLevel,
+					"Talon " + this.getGZName() + " firmware is " + firm + ", should be " + FIRMWARE);
+			// if (mSide != Side.NO_INFO)
+			// Health.getInstance().addAlert(sub, mFirmwareLevel,
+			// "Talon " + id + " (" + mSide + ")" + " firmware is " + firm + ", should be "
+			// + FIRMWARE);
+			// else if (mMaster != Master.NO_INFO)
+			// Health.getInstance().addAlert(sub, mFirmwareLevel,
+			// "Talon " + id + " (" + mMaster + ")" + " firmware is " + firm + ", should be
+			// " + FIRMWARE);
+			// else
+			// Health.getInstance().addAlert(sub, mFirmwareLevel,
+			// "Talon " + id + " firmware is " + firm + ", should be " + FIRMWARE);
 		}
 	}
 

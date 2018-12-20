@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.GZFileMaker.ValidFileExtensions;
+import frc.robot.util.GZFiles.HTML;
 
 public class TalonSRXChecker {
 
@@ -41,23 +42,22 @@ public class TalonSRXChecker {
 
         private GZSubsystem mSubsystem;
 
-        private ArrayList<GZSRX> talons = null;
+        private List<GZSRX> talons = null;
         private ArrayList<Current> forwardCurrents = null;
         private ArrayList<Current> reverseCurrents = null;
 
         private CheckerConfig mCheckerConfig;
 
         public TalonGroup(GZSubsystem subsystem, String name, List<GZSRX> talons, CheckerConfig config) {
-            this.talons = (ArrayList) talons;
+            this.talons = talons;
             this.mName = name;
             this.mSubsystem = subsystem;
             this.mCheckerConfig = config;
         }
 
-        public boolean hasFail()
-        {
+        public boolean hasFail() {
             boolean hasFail = false;
-            
+
             for (Current c : forwardCurrents)
                 hasFail |= c.getFail();
 
@@ -99,7 +99,7 @@ public class TalonSRXChecker {
             return getSubsystem().getClass().getSimpleName();
         }
 
-        public ArrayList<GZSRX> getTalons() {
+        public List<GZSRX> getTalons() {
             return talons;
         }
 
@@ -120,13 +120,16 @@ public class TalonSRXChecker {
         public double mWaitTimeSec = 0;
         public double mRunOutputPercentage = 0.0;
 
+        public boolean mReverseAfterGroup = true;
+
         public CheckerConfig(double currentFloor, double currentEpsilon, double runTimeSec, double waitTimeSec,
-                double outputPercentage) {
+                double outputPercentage, boolean reverseAfterGroup) {
             this.mCurrentFloor = currentFloor;
             this.mCurrentEpsilon = currentEpsilon;
             this.mRunTimeSec = runTimeSec;
             this.mWaitTimeSec = waitTimeSec;
             this.mRunOutputPercentage = outputPercentage;
+            this.mReverseAfterGroup = reverseAfterGroup;
         }
 
         public String configAsString() {
@@ -164,6 +167,8 @@ public class TalonSRXChecker {
 
     private Map<GZSubsystem, ArrayList<TalonGroup>> subsystemMap = new HashMap<GZSubsystem, ArrayList<TalonGroup>>();
 
+    private double mTimeNeeded = 0;
+
     public void addTalonGroup(TalonGroup group) {
         if (!subsystemMap.containsKey(group.getSubsystem()))
             subsystemMap.put(group.getSubsystem(), new ArrayList<TalonGroup>());
@@ -174,93 +179,107 @@ public class TalonSRXChecker {
     public void checkTalons() {
         boolean failure = false;
 
+        mTimeNeeded = 0;
+        for (ArrayList<TalonGroup> allGroups : subsystemMap.values()) {
+            for (TalonGroup group : allGroups) {
+                mTimeNeeded += group.getConfig().mRunTimeSec * 2 * group.talons.size();
+                mTimeNeeded += group.getConfig().mWaitTimeSec * 2 * group.talons.size();
+            }
+        }
+
+        System.out.println("Starting talon checker... estimated time needed: " + mTimeNeeded + " seconds");
+
+        // will store the current talon groups
         ArrayList<TalonGroup> talonGroups;
+
+        // loop through every subsystem
         for (GZSubsystem s : subsystemMap.keySet()) {
+            // get current groups
             talonGroups = subsystemMap.get(s);
 
-            for (TalonGroup g : talonGroups) {
-                ArrayList<GZSRX> talonsToCheck = g.getTalons();
+            // loop through each group in this subsystem
+            for (TalonGroup group : talonGroups) {
 
-                System.out.println(
-                        "Checking subsystem " + g.getSubsystemName() + " for " + talonsToCheck.size() + " talons.");
+                // Talons
+                List<GZSRX> talonsToCheck = group.getTalons();
+
+                System.out.println("Checking subsystem " + group.getSubsystemName() + " group " + group.getName()
+                        + " for " + talonsToCheck.size() + " talons. Estimated total time left: " + mTimeNeeded + " seconds");
+
+                // Store previous set values
                 ArrayList<StoredTalonSRXConfiguration> storedConfigurations = new ArrayList<>();
 
                 // Dont allow other methods to control these talons
                 for (GZSRX t : talonsToCheck)
-                    t.setBeingChecked(true);
+                    t.lockOutTalon(true);
 
                 // Record previous configuration for all talons.
                 for (GZSRX t : talonsToCheck) {
                     StoredTalonSRXConfiguration configuration = new StoredTalonSRXConfiguration();
-                    configuration.mMode = t.getControlMode();
+                    configuration.mMode = t.getLastControlMode();
                     configuration.mSetValue = t.getLastSetValue();
                     storedConfigurations.add(configuration);
                     // Now set to disabled.
                     t.set(ControlMode.PercentOutput, 0.0, true);
                 }
 
-                boolean forward = true;
-                for (int i = 0; i < 2; i++) {
-                    ArrayList<Current> currents;
+                // Loop through talons (running all talons in group forwards, then all
+                // backwards)
+                if (group.getConfig().mReverseAfterGroup) {
+                    // start forward
+                    boolean forward = true;
 
-                    for (GZSRX individualTalonToCheck : talonsToCheck) {
-                        System.out.println("Checking: " + individualTalonToCheck.getGZName()
-                                + (forward ? " forwards" : " reverse"));
+                    // do this twice
+                    for (int i = 0; i < 2; i++) {
 
-                        currents = (forward ? g.getForwardCurrents() : g.getForwardCurrents());
-
-                        individualTalonToCheck.set(ControlMode.PercentOutput,
-                                g.getConfig().mRunOutputPercentage * (forward ? 1 : -1), true);
-                        Timer.delay(g.getConfig().mRunTimeSec);
-
-                        // Now poll the interesting information.
-                        double current = individualTalonToCheck.getOutputCurrent();
-                        currents.add(new Current(current));
-
-                        individualTalonToCheck.set(ControlMode.PercentOutput, 0.0, true);
-
-                        // Perform individual check if current too low
-                        if (current < g.getConfig().mCurrentFloor) {
-                            currents.get(currents.size() - 1).setFail();
-                            System.out.println(individualTalonToCheck.getGZName()
-                                    + " has failed current floor check vs " + g.getConfig().mCurrentFloor + "!!");
-                            failure = true;
-                            g.getSubsystem().setSubsystemHasTalonTestingFail();
+                        // Check each talon
+                        for (GZSRX individualTalonToCheck : talonsToCheck) {
+                            failure |= checkTalon(individualTalonToCheck, group, forward);
                         }
-                        Timer.delay(g.getConfig().mWaitTimeSec);
-
+                        // once we've checked them all, do it again but the other way
                         forward = !forward;
+                    }
+                } else { // test each talon forwards, then test it backwards, then move onto the next
+                         // talon
+                    for (GZSRX individualTalonToCheck : talonsToCheck) {
+                        // Test twice
+                        for (int i = 0; i < 2; i++)
+                            failure |= checkTalon(individualTalonToCheck, group, (i == 0));
+                        // on the first loop when i == 0, go forwards, then go backwards
                     }
                 }
 
-                // Checked every current and recorded, run average checks
+
+                // We've now checked every current and recorded, run average checks
 
                 // Now run aggregate checks.
                 Double average = 0.0;
                 for (int i = 0; i < 2; i++) {
                     ArrayList<Current> currents;
 
+                    // First loop, test forward currents
                     if (i == 0)
-                        currents = g.getForwardCurrents();
+                        currents = group.getForwardCurrents();
                     else
-                        currents = g.getReverseCurrents();
+                        currents = group.getReverseCurrents();
 
+                    // Accumulate average
                     for (Current c : currents)
                         average += c.getCurrent();
-
                     average /= currents.size();
 
+                    // Set average for groups
                     if (i == 0)
-                        g.setAverageForwardAmperage(average);
+                        group.setAverageForwardAmperage(average);
                     else
-                        g.setAverageReverseAmperage(average);
+                        group.setAverageReverseAmperage(average);
 
                     // Current is too far away from average
                     for (Current c : currents) {
-                        if (!GZUtil.epsilonEquals(c.getCurrent(), average, g.getConfig().mCurrentEpsilon)) {
-                            c.setFail();
+                        if (!GZUtil.epsilonEquals(c.getCurrent(), average, group.getConfig().mCurrentEpsilon)) {
                             failure = true;
-                            g.getSubsystem().setSubsystemHasTalonTestingFail();
+                            c.setFail();
+                            group.getSubsystem().setTalonTestingFail();
                         }
                     }
                 }
@@ -270,33 +289,76 @@ public class TalonSRXChecker {
                     talonsToCheck.get(i).set(storedConfigurations.get(i).mMode, storedConfigurations.get(i).mSetValue,
                             true);
                 }
+
+                //Unlock talons so another method can control them
                 for (GZSRX t : talonsToCheck)
-                    t.setBeingChecked(false);
+                    t.lockOutTalon(false);
             }
+
         }
 
         System.out.println("Talon check " + (failure ? " failed" : " passed"));
         createHTMLFile();
     }
 
+    private boolean checkTalon(GZSRX individualTalonToCheck, TalonGroup group, boolean forward) {
+        boolean failure = false;
+        System.out.println("Checking: " + individualTalonToCheck.getGZName() + (forward ? " forwards" : " reverse"));
+
+        ArrayList<Current> currents = (forward ? group.getForwardCurrents() : group.getReverseCurrents());
+
+        individualTalonToCheck.set(ControlMode.PercentOutput,
+                group.getConfig().mRunOutputPercentage * (forward ? 1 : -1), true);
+        Timer.delay(group.getConfig().mRunTimeSec);
+        mTimeNeeded -= group.getConfig().mRunTimeSec;
+
+        // Now poll the interesting information.
+        double current = individualTalonToCheck.getOutputCurrent();
+        currents.add(new Current(current));
+
+        individualTalonToCheck.set(ControlMode.PercentOutput, 0.0, true);
+
+        // Perform individual check if current too low
+        if (current < group.getConfig().mCurrentFloor) {
+            currents.get(currents.size() - 1).setFail();
+            // System.out.println(individualTalonToCheck.getGZName() + " has failed current floor check vs "
+            //         + group.getConfig().mCurrentFloor + "!!");
+            failure = true;
+            group.getSubsystem().setTalonTestingFail();
+        }
+        Timer.delay(group.getConfig().mWaitTimeSec);
+        mTimeNeeded -= group.getConfig().mWaitTimeSec;
+
+        return failure;
+    }
+
     private void createHTMLFile() {
         String body = "";
-        body += GZFiles.paragraph("Created on " + GZUtil.dateTime(false));
 
-        for (GZSubsystem s : subsystemMap.keySet()) {
-            ArrayList<TalonGroup> talonGroups = subsystemMap.get(s);
+        //Time at top of file
+        body += HTML.paragraph("Created on " + GZUtil.dateTime(false));
 
-            // header
-            String subsystemColor = s.doesSubsystemHaveTalonTestingFail() ? "red" : "black";
-            body += GZFiles.header(s.getClass().getSimpleName(), 1, subsystemColor);
+        //Loop through every subsystem
+        for (GZSubsystem subsystem : subsystemMap.keySet()) {
 
-            for (TalonGroup g : talonGroups) {
+            //groups for subsystem
+            ArrayList<TalonGroup> talonGroups = subsystemMap.get(subsystem);
 
-                // values for this group
-                ArrayList<GZSRX> tln = g.getTalons();
-                ArrayList<Current> fwd = g.getForwardCurrents();
-                ArrayList<Current> rev = g.getReverseCurrents();
+            // header (write subsystem color in red if has error)
+            String subsystemColor = subsystem.hasTalonTestingFail() ? "red" : "black";
+            body += HTML.header(subsystem.getClass().getSimpleName(), 1, subsystemColor);
 
+            //Content of entire subsystem
+            String subsystemContent = "";
+
+            for (TalonGroup talonGroup : talonGroups) {
+
+                // values for the group we are currently creating
+                List<GZSRX> tln = talonGroup.getTalons();
+                ArrayList<Current> fwd = talonGroup.getForwardCurrents();
+                ArrayList<Current> rev = talonGroup.getReverseCurrents();
+
+                //Sizes
                 int talonSize = tln.size() - 1;
                 int fwdSize = fwd.size() - 1;
                 int revSize = rev.size() - 1;
@@ -308,86 +370,98 @@ public class TalonSRXChecker {
                     return;
                 }
 
-                String color = (g.hasFail() ? "red" : "black");
-                body += GZFiles.header(g.getName(), 2, color);
+                // Write each group in red or black if it has a fail
+                String color = (talonGroup.hasFail() ? "red" : "black");
+                subsystemContent += HTML.header(talonGroup.getName(), 2, color);
 
-                String[] config = g.getConfig().configAsString().split("\n");
                 // Write config as individual lines
+                String[] config = talonGroup.getConfig().configAsString().split("\n");
                 for (String configLine : config)
-                    body += GZFiles.paragraph(configLine);
-
+                    subsystemContent += HTML.paragraph(configLine);
 
                 String table = "";
 
-                // Average to table
-                table += GZFiles.tableRow(
-                        GZFiles.tableCell("Average") + GZFiles.tableCell(g.getAverageForwardAmperage().toString())
-                                + GZFiles.tableCell(g.getAverageForwardAmperage().toString()));
+                // Write Average to table
+                table += HTML.tableRow(
+                        HTML.tableCell("Average") + HTML.tableCell(talonGroup.getAverageForwardAmperage().toString())
+                                + HTML.tableCell(talonGroup.getAverageForwardAmperage().toString()));
 
                 // Headers
-                table += GZFiles.tableHeader(GZFiles.tableCell("Talon") + GZFiles.tableCell("Forward Amperage")
-                        + GZFiles.tableCell("Reverse Amperage"));
+                table += HTML.tableHeader(HTML.tableCell("Talon") + HTML.tableCell("Forward Amperage")
+                        + HTML.tableCell("Reverse Amperage"));
 
                 // Loop through every talon
-                for (int i = 0; i < talonSize; i++) {
+                for (int talon = 0; talon < talonSize; talon++) {
                     String row = "";
 
-                    boolean fwdFail = fwd.get(i).getFail();
-                    boolean revFail = rev.get(i).getFail();
+                    boolean fwdFail = fwd.get(talon).getFail();
+                    boolean revFail = rev.get(talon).getFail();
 
+                    //Put talon cell
                     String talonCell;
                     if (fwdFail || revFail)
-                        talonCell = GZFiles.tableCell(tln.get(i).getGZName(), "yellow", false);
+                        talonCell = HTML.tableCell(tln.get(talon).getGZName(), "yellow", false);
                     else
-                        talonCell = GZFiles.tableCell(tln.get(i).getGZName());
+                        talonCell = HTML.tableCell(tln.get(talon).getGZName());
 
                     row += talonCell;
 
                     // Populate forward cell
                     String fwdCell;
                     if (fwdFail)
-                        fwdCell = GZFiles.tableCell(fwd.get(i).getCurrent().toString(), "red", false);
+                        fwdCell = HTML.tableCell(fwd.get(talon).getCurrent().toString(), "red", false);
                     else
-                        fwdCell = GZFiles.table(fwd.get(i).getCurrent().toString());
-
+                        fwdCell = HTML.table(fwd.get(talon).getCurrent().toString());
                     row += fwdCell;
 
                     // Populate reverse cell
                     String revCell;
                     if (revFail)
-                        revCell = GZFiles.tableCell(rev.get(i).getCurrent().toString(), "red", false);
+                        revCell = HTML.tableCell(rev.get(talon).getCurrent().toString(), "red", false);
                     else
-                        revCell = GZFiles.table(rev.get(i).getCurrent().toString());
-
+                        revCell = HTML.table(rev.get(talon).getCurrent().toString());
                     row += revCell;
 
-                    row = GZFiles.tableRow(row);
+                    //Format as row
+                    row = HTML.tableRow(row);
 
+                    //add to table
                     table += row;
-                }
 
-                // Finish table
-                table = GZFiles.table(table);
+                } // end of Loop through every talon
 
-                body += table;
+                // group has all talons written to table
+                // format as table and add to subsystem
+                table = HTML.table(table);
+                subsystemContent += table;
 
-                File f;
-                try {
-                    f = GZFileMaker.getFile("SRXReport-" + GZUtil.dateTime(false), "3452/SRXReports",
-                            ValidFileExtensions.HTML, true, true);
-                    GZFiles.createHTMLFile(f, body);
-                } catch (Exception e) {
-                    System.out.println("Could not write SRXReport to USB, writing to RIO...");
-                    try {
-                        f = GZFileMaker.getFile("SRXReport-" + GZUtil.dateTime(false), "3452/SRXReports",
-                                ValidFileExtensions.HTML, false, true);
-                        GZFiles.createHTMLFile(f, body);
-                    } catch (Exception cannotWriteSRXReport) {
-                        System.out.println("Could not write SRX report!");
-                    }
-                }
+            } // end of all groups in subsystem loop
+
+            //if the subsystem doesn't have any fails, wrap in a button so we can hide it easily
+            if (!subsystem.hasTalonTestingFail())
+                subsystemContent = HTML.button(subsystem.getClass().getSimpleName(), subsystemContent);
+
+            body += subsystemContent;
+        } // end of all subsystems
+
+        File f;
+        try {
+            //Ideally write to RIO and then USB as well
+            f = GZFileMaker.getFile("SRXReport-" + GZUtil.dateTime(false), "3452/SRXReports", ValidFileExtensions.HTML,
+                    true, true);
+            HTML.createHTMLFile(f, body);
+
+            //TODO BACKUP TO USB, MAKE FOLDER CLASS FOR IF ON USB OR IF ON RIO
+        } catch (Exception e) {
+            System.out.println("Could not write SRXReport to USB, writing to RIO...");
+            try {
+                f = GZFileMaker.getFile("SRXReport-" + GZUtil.dateTime(false), "3452/SRXReports",
+                        ValidFileExtensions.HTML, false, true);
+                HTML.createHTMLFile(f, body);
+            } catch (Exception cannotWriteSRXReport) {
+                System.out.println("Could not write SRX report!");
             }
-
         }
+
     }
 }
