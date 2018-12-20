@@ -159,6 +159,17 @@ public class Lights extends GZSubsystem {
 		hsv(0, 0, 0);
 	}
 
+	public boolean hasMotors()
+	{
+		return false;
+	}
+
+	public void addMotorTestingGroups() {
+		// MotorChecker.CheckerConfig checkerConfig = new MotorChecker.CheckerConfig(0, 1, 3, 2, .5, true);
+		// MotorChecker.getInstance()
+				// .addTalonGroup(new MotorTestingGroup(this, "Left", Arrays.asList(L1, L2, L3, L4), checkerConfig));
+	}
+
 	public void hsv(double hDegrees, double saturation, double value) {
 		double R, G, B;
 		double H = hDegrees;

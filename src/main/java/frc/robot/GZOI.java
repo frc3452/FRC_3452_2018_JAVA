@@ -157,6 +157,9 @@ public class GZOI extends GZSubsystem {
 				intake.spin(true);
 			else
 				intake.stop();
+		} else if (isTest())
+		{
+			
 		}
 
 		// CONTROLLER RUMBLE
@@ -276,6 +279,13 @@ public class GZOI extends GZSubsystem {
 			}
 		};
 	}
+
+	public boolean hasMotors()
+	{
+		return true;
+	}
+
+	public void addMotorTestingGroups(){}
 
 	public void setSafteyDisable(boolean disable) {
 		this.mSafteyDisable = disable;

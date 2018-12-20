@@ -209,6 +209,18 @@ public class Elevator extends GZSubsystem {
 		elevator_2.checkFirmware();
 	}
 
+	public void addMotorTestingGroups() {
+		// MotorChecker.CheckerConfig checkerConfig = new MotorChecker.CheckerConfig(0, 1, 3, 2, .5, true);
+		// MotorChecker.getInstance()
+		// 		.addTalonGroup(new MotorTestingGroup(this, "Left", Arrays.asList(L1, L2, L3, L4), checkerConfig));
+
+	}
+
+	public boolean hasMotors()
+	{
+		return true;
+	}
+
 	public void setAutoScaleHeight() {
 		double height = isLimiting() ? HeightsInches.Scale_High : HeightsInches.Scale_Mid;
 		setHeight(height);

@@ -13,7 +13,7 @@ import frc.robot.util.GZFileMaker.ValidFileExtensions;
 import frc.robot.util.GZFiles.Folder;
 import frc.robot.util.GZFiles.HTML;
 
-public class TalonSRXChecker {
+public class MotorChecker {
 
     public static class Current {
         private final double mCurrent;
@@ -36,21 +36,22 @@ public class TalonSRXChecker {
         }
     }
 
-    public static class TalonGroup {
+    public static class MotorTestingGroup {
         private String mName;
         private double averageForwardAmperage;
         private double averageReverseAmperage;
 
         private GZSubsystem mSubsystem;
 
-        private List<GZSRX> talons = null;
+        private List<GZSpeedController> controllers = null;
         private ArrayList<Current> forwardCurrents = null;
         private ArrayList<Current> reverseCurrents = null;
 
         private CheckerConfig mCheckerConfig;
 
-        public TalonGroup(GZSubsystem subsystem, String name, List<GZSRX> talons, CheckerConfig config) {
-            this.talons = talons;
+        public MotorTestingGroup(GZSubsystem subsystem, String name, List<GZSpeedController> talons,
+                CheckerConfig config) {
+            this.controllers = talons;
             this.mName = name;
             this.mSubsystem = subsystem;
             this.mCheckerConfig = config;
@@ -100,8 +101,8 @@ public class TalonSRXChecker {
             return getSubsystem().getClass().getSimpleName();
         }
 
-        public List<GZSRX> getTalons() {
-            return talons;
+        public List<GZSpeedController> getControllers() {
+            return controllers;
         }
 
         public ArrayList<Current> getForwardCurrents() {
@@ -141,6 +142,7 @@ public class TalonSRXChecker {
             retval += "Run time (seconds): " + mRunTimeSec + "\n";
             retval += "Wait time (seconds): " + mWaitTimeSec + "\n";
             retval += "Output percentage: " + mRunOutputPercentage + "\n";
+            retval += "Reverse after group: " + mReverseAfterGroup + "\n";
 
             return retval;
         }
@@ -150,29 +152,24 @@ public class TalonSRXChecker {
         }
     }
 
-    private static class StoredTalonSRXConfiguration {
-        public ControlMode mMode;
-        public double mSetValue;
-    }
+    private static MotorChecker mInstance = null;
 
-    private static TalonSRXChecker mInstance = null;
-
-    public static TalonSRXChecker getInstance() {
+    public static MotorChecker getInstance() {
         if (mInstance == null)
-            mInstance = new TalonSRXChecker();
+            mInstance = new MotorChecker();
         return mInstance;
     }
 
-    private TalonSRXChecker() {
+    private MotorChecker() {
     }
 
-    private Map<GZSubsystem, ArrayList<TalonGroup>> subsystemMap = new HashMap<GZSubsystem, ArrayList<TalonGroup>>();
+    private Map<GZSubsystem, ArrayList<MotorTestingGroup>> subsystemMap = new HashMap<GZSubsystem, ArrayList<MotorTestingGroup>>();
 
     private double mTimeNeeded = 0;
 
-    public void addTalonGroup(TalonGroup group) {
+    public void addTalonGroup(MotorTestingGroup group) {
         if (!subsystemMap.containsKey(group.getSubsystem()))
-            subsystemMap.put(group.getSubsystem(), new ArrayList<TalonGroup>());
+            subsystemMap.put(group.getSubsystem(), new ArrayList<MotorTestingGroup>());
 
         subsystemMap.get(group.getSubsystem()).add(group);
     }
@@ -180,18 +177,22 @@ public class TalonSRXChecker {
     public void checkTalons() {
         boolean failure = false;
 
+        //Clear all fails
+        for (GZSubsystem s : subsystemMap.keySet())
+            s.clearMotorTestingFails();
+
         mTimeNeeded = 0;
-        for (ArrayList<TalonGroup> allGroups : subsystemMap.values()) {
-            for (TalonGroup group : allGroups) {
-                mTimeNeeded += group.getConfig().mRunTimeSec * 2 * group.talons.size();
-                mTimeNeeded += group.getConfig().mWaitTimeSec * 2 * group.talons.size();
+        for (ArrayList<MotorTestingGroup> allGroups : subsystemMap.values()) {
+            for (MotorTestingGroup group : allGroups) {
+                mTimeNeeded += group.getConfig().mRunTimeSec * 2 * group.controllers.size();
+                mTimeNeeded += group.getConfig().mWaitTimeSec * 2 * group.controllers.size();
             }
         }
 
-        System.out.println("Starting talon checker... estimated time needed: " + mTimeNeeded + " seconds");
+        System.out.println("Starting motor checker... estimated time needed: " + mTimeNeeded + " seconds");
 
-        // will store the current talon groups
-        ArrayList<TalonGroup> talonGroups;
+        // will store the current motor groups
+        ArrayList<MotorTestingGroup> talonGroups;
 
         // loop through every subsystem
         for (GZSubsystem s : subsystemMap.keySet()) {
@@ -199,33 +200,20 @@ public class TalonSRXChecker {
             talonGroups = subsystemMap.get(s);
 
             // loop through each group in this subsystem
-            for (TalonGroup group : talonGroups) {
+            for (MotorTestingGroup group : talonGroups) {
 
-                // Talons
-                List<GZSRX> talonsToCheck = group.getTalons();
+                // Controllers
+                List<GZSpeedController> controllersToCheck = group.getControllers();
 
                 System.out.println("Checking subsystem " + group.getSubsystemName() + " group " + group.getName()
-                        + " for " + talonsToCheck.size() + " talons. Estimated total time left: " + mTimeNeeded
+                        + " for " + controllersToCheck.size() + " talons. Estimated total time left: " + mTimeNeeded
                         + " seconds");
 
-                // Store previous set values
-                ArrayList<StoredTalonSRXConfiguration> storedConfigurations = new ArrayList<>();
+                // Dont allow other methods to control these controllers
+                for (GZSpeedController t : controllersToCheck)
+                    t.lockOutController(true);
 
-                // Dont allow other methods to control these talons
-                for (GZSRX t : talonsToCheck)
-                    t.lockOutTalon(true);
-
-                // Record previous configuration for all talons.
-                for (GZSRX t : talonsToCheck) {
-                    StoredTalonSRXConfiguration configuration = new StoredTalonSRXConfiguration();
-                    configuration.mMode = t.getLastControlMode();
-                    configuration.mSetValue = t.getLastSetValue();
-                    storedConfigurations.add(configuration);
-                    // Now set to disabled.
-                    t.set(ControlMode.PercentOutput, 0.0, true);
-                }
-
-                // Loop through talons (running all talons in group forwards, then all
+                // Loop through controllers (running all controllers in group forwards, then all
                 // backwards)
                 if (group.getConfig().mReverseAfterGroup) {
                     // start forward
@@ -235,18 +223,18 @@ public class TalonSRXChecker {
                     for (int i = 0; i < 2; i++) {
 
                         // Check each talon
-                        for (GZSRX individualTalonToCheck : talonsToCheck) {
-                            failure |= checkTalon(individualTalonToCheck, group, forward);
+                        for (GZSpeedController individualTalonToCheck : controllersToCheck) {
+                            failure |= checkController(individualTalonToCheck, group, forward);
                         }
                         // once we've checked them all, do it again but the other way
                         forward = !forward;
                     }
                 } else { // test each talon forwards, then test it backwards, then move onto the next
                          // talon
-                    for (GZSRX individualTalonToCheck : talonsToCheck) {
+                    for (GZSpeedController individualControllerToCheck : controllersToCheck) {
                         // Test twice
                         for (int i = 0; i < 2; i++)
-                            failure |= checkTalon(individualTalonToCheck, group, (i == 0));
+                            failure |= checkController(individualControllerToCheck, group, (i == 0));
                         // on the first loop when i == 0, go forwards, then go backwards
                     }
                 }
@@ -280,44 +268,38 @@ public class TalonSRXChecker {
                         if (!GZUtil.epsilonEquals(c.getCurrent(), average, group.getConfig().mCurrentEpsilon)) {
                             failure = true;
                             c.setFail();
-                            group.getSubsystem().setTalonTestingFail();
+                            group.getSubsystem().setMotorTestingFail();
                         }
                     }
                 }
 
-                // Restore Talon configurations
-                for (int i = 0; i < talonsToCheck.size(); ++i) {
-                    talonsToCheck.get(i).set(storedConfigurations.get(i).mMode, storedConfigurations.get(i).mSetValue,
-                            true);
-                }
-
                 // Unlock talons so another method can control them
-                for (GZSRX t : talonsToCheck)
-                    t.lockOutTalon(false);
+                for (GZSpeedController t : controllersToCheck)
+                    t.lockOutController(false);
             }
 
         }
 
-        System.out.println("Talon check " + (failure ? " failed" : " passed"));
+        System.out.println("Motor check " + (failure ? " failed" : " passed"));
         createHTMLFile();
     }
 
-    private boolean checkTalon(GZSRX individualTalonToCheck, TalonGroup group, boolean forward) {
+    private boolean checkController(GZSpeedController individualTalonToCheck, MotorTestingGroup group,
+            boolean forward) {
         boolean failure = false;
         System.out.println("Checking: " + individualTalonToCheck.getGZName() + (forward ? " forwards" : " reverse"));
 
         ArrayList<Current> currents = (forward ? group.getForwardCurrents() : group.getReverseCurrents());
 
-        individualTalonToCheck.set(ControlMode.PercentOutput,
-                group.getConfig().mRunOutputPercentage * (forward ? 1 : -1), true);
+        individualTalonToCheck.set(group.getConfig().mRunOutputPercentage * (forward ? 1 : -1), true);
         Timer.delay(group.getConfig().mRunTimeSec);
         mTimeNeeded -= group.getConfig().mRunTimeSec;
 
         // Now poll the interesting information.
-        double current = individualTalonToCheck.getOutputCurrent();
+        double current = individualTalonToCheck.getAmperage();
         currents.add(new Current(current));
 
-        individualTalonToCheck.set(ControlMode.PercentOutput, 0.0, true);
+        individualTalonToCheck.set(0.0, true);
 
         // Perform individual check if current too low
         if (current < group.getConfig().mCurrentFloor) {
@@ -326,7 +308,7 @@ public class TalonSRXChecker {
             // floor check vs "
             // + group.getConfig().mCurrentFloor + "!!");
             failure = true;
-            group.getSubsystem().setTalonTestingFail();
+            group.getSubsystem().setMotorTestingFail();
         }
         Timer.delay(group.getConfig().mWaitTimeSec);
         mTimeNeeded -= group.getConfig().mWaitTimeSec;
@@ -344,30 +326,30 @@ public class TalonSRXChecker {
         for (GZSubsystem subsystem : subsystemMap.keySet()) {
 
             // groups for subsystem
-            ArrayList<TalonGroup> talonGroups = subsystemMap.get(subsystem);
+            ArrayList<MotorTestingGroup> talonGroups = subsystemMap.get(subsystem);
 
             // header (write subsystem color in red if has error)
-            String subsystemColor = subsystem.hasTalonTestingFail() ? "red" : "black";
+            String subsystemColor = subsystem.hasMotorTestingFail() ? "red" : "black";
             body += HTML.header(subsystem.getClass().getSimpleName(), 1, subsystemColor);
 
             // Content of entire subsystem
             String subsystemContent = "";
 
-            for (TalonGroup talonGroup : talonGroups) {
+            for (MotorTestingGroup talonGroup : talonGroups) {
 
                 // values for the group we are currently creating
-                List<GZSRX> tln = talonGroup.getTalons();
+                List<GZSpeedController> mtr = talonGroup.getControllers();
                 ArrayList<Current> fwd = talonGroup.getForwardCurrents();
                 ArrayList<Current> rev = talonGroup.getReverseCurrents();
 
                 // Sizes
-                int talonSize = tln.size() - 1;
+                int talonSize = mtr.size() - 1;
                 int fwdSize = fwd.size() - 1;
                 int revSize = rev.size() - 1;
 
                 // check size
                 if (!((talonSize == fwdSize) && (fwdSize == revSize))) {
-                    System.out.println("Talon size (" + talonSize + ") and forward currents size (" + fwdSize
+                    System.out.println("Motor size (" + talonSize + ") and forward currents size (" + fwdSize
                             + ") and reverse currents size (" + revSize + ") not equal!");
                     return;
                 }
@@ -402,9 +384,9 @@ public class TalonSRXChecker {
                     // Put talon cell
                     String talonCell;
                     if (fwdFail || revFail)
-                        talonCell = HTML.tableCell(tln.get(talon).getGZName(), "yellow", false);
+                        talonCell = HTML.tableCell(mtr.get(talon).getGZName(), "yellow", false);
                     else
-                        talonCell = HTML.tableCell(tln.get(talon).getGZName());
+                        talonCell = HTML.tableCell(mtr.get(talon).getGZName());
 
                     row += talonCell;
 
@@ -441,7 +423,7 @@ public class TalonSRXChecker {
 
             // if the subsystem doesn't have any fails, wrap in a button so we can hide it
             // easily
-            if (!subsystem.hasTalonTestingFail())
+            if (!subsystem.hasMotorTestingFail())
                 subsystemContent = HTML.button("Open " + subsystem.getClass().getSimpleName(), subsystemContent);
 
             body += subsystemContent;

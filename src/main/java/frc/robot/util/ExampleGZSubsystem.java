@@ -333,4 +333,11 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	@Override
 	protected void initDefaultCommand() {
 	}
+
+	@Override
+	public boolean hasMotors() {
+		return false;
+	}
+
+	public void addMotorTestingGroups(){}
 }

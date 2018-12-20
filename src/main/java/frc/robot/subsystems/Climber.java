@@ -159,6 +159,17 @@ public class Climber extends GZSubsystem {
 		climber_1.set(Math.abs(mIO.climber_output));
 	}
 
+	public void addMotorTestingGroups() {
+		// MotorChecker.CheckerConfig checkerConfig = new MotorChecker.CheckerConfig(0, 1, 3, 2, .5, true);
+		// MotorChecker.getInstance()
+		// 		.addTalonGroup(new MotorTestingGroup(this, "Left", Arrays.asList(L1, L2, L3, L4), checkerConfig));
+	}
+
+	public boolean hasMotors()
+	{
+		return true;
+	}
+
 	public enum ClimberState {
 		NEUTRAL, MANUAL;
 	}

@@ -34,8 +34,8 @@ import frc.robot.util.GZSRX.Master;
 import frc.robot.util.GZSRX.Side;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.GZUtil;
-import frc.robot.util.TalonSRXChecker;
-import frc.robot.util.TalonSRXChecker.TalonGroup;
+import frc.robot.util.MotorChecker;
+import frc.robot.util.MotorChecker.MotorTestingGroup;
 import frc.robot.util.Units;
 
 public class Drive extends GZSubsystem {
@@ -86,10 +86,6 @@ public class Drive extends GZSubsystem {
 		R4 = new GZSRX.Builder(kDrivetrain.R4, this, "R4", kPDP.DRIVE_R_4).setFollower().setSide(Side.RIGHT)
 				.overrideBreaker(Breaker.AMP_30).build();
 
-		TalonSRXChecker.CheckerConfig checkerConfig = new TalonSRXChecker.CheckerConfig(0, 1, 3, 2, .5, true);
-		TalonSRXChecker.getInstance()
-				.addTalonGroup(new TalonGroup(this, "Left", Arrays.asList(L1, L2, L3, L4), checkerConfig));
-
 		mGyro = new AHRS(SPI.Port.kMXP);
 
 		brake(NeutralMode.Coast);
@@ -111,6 +107,17 @@ public class Drive extends GZSubsystem {
 		mGyro.reset();
 
 		checkFirmware();
+	}
+
+	public void addMotorTestingGroups() {
+		MotorChecker.CheckerConfig checkerConfig = new MotorChecker.CheckerConfig(0, 1, 3, 2, .5, true);
+		MotorChecker.getInstance()
+				.addTalonGroup(new MotorTestingGroup(this, "Left", Arrays.asList(L1, L2, L3, L4), checkerConfig));
+
+	}
+
+	public boolean hasMotors() {
+		return true;
 	}
 
 	@Override

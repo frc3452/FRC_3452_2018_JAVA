@@ -86,7 +86,7 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 
 	private double mLastSet = Double.NaN;
 	private ControlMode mLastControlMode = null;
-	private boolean mBeingChecked = false;
+	private boolean mLockedOut = false;
 
 	// Constructor for builder
 	private GZSRX(int deviceNumber, GZSubsystem subsystem, String name, int PDPChannel, Breaker breaker, Side side,
@@ -120,7 +120,7 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 	 */
 	public void set(ControlMode mode, double value, boolean overrideLockout) {
 		// if being checked, only allow if overriden
-		if (!mBeingChecked || (mBeingChecked && overrideLockout)) {
+		if (!mLockedOut || (mLockedOut && overrideLockout)) {
 			if (value != mLastSet || mode != mLastControlMode) {
 				mLastSet = value;
 				mLastControlMode = mode;
@@ -128,13 +128,23 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 			}
 		}
 	}
+
 	@Override
 	public void set(ControlMode mode, double value) {
 		set(mode, value, false);
 	}
+	
+	public void set(double speed, boolean overrideLockout) {
+		set(ControlMode.PercentOutput, speed, overrideLockout);
+	}
 
-	public void lockOutTalon(boolean beingChecked) {
-		mBeingChecked = beingChecked;
+	public void set(double speed) {
+		set(ControlMode.PercentOutput, speed);
+	}
+	
+
+	public void lockOutController(boolean lockedOut) {
+		mLockedOut = lockedOut;
 	}
 
 	public double getLastSetValue() {
@@ -144,7 +154,6 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 	public ControlMode getLastControlMode() {
 		return mLastControlMode;
 	}
-
 
 	/**
 	 * Only valid if called as fast as possible
@@ -183,7 +192,7 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 		this.mActualBreaker = this.mBreaker;
 	}
 
-	public Breaker getActualBreakerSize() {
+	public Breaker getBreakerFromPDPChannelSize() {
 		return mActualBreaker;
 	}
 

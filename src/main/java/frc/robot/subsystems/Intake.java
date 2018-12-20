@@ -26,6 +26,17 @@ public class Intake extends GZSubsystem {
 		return mInstance;
 	}
 
+	public boolean hasMotors()
+	{
+		return true;
+	}
+
+	public void addMotorTestingGroups() {
+	// 	MotorChecker.CheckerConfig checkerConfig = new MotorChecker.CheckerConfig(0, 1, 3, 2, .5, true);
+	// 	MotorChecker.getInstance()
+	// 			.addTalonGroup(new MotorTestingGroup(this, "Left", Arrays.asList(L1, L2, L3, L4), checkerConfig));
+	}
+
 	public void addLoggingValues() {
 		new LogItem("INTAKE-L-AMP") {
 			@Override

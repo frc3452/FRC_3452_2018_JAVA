@@ -19,20 +19,30 @@ public abstract class GZSubsystem extends Subsystem {
 
 	private AlertLevel mHighestAlert = AlertLevel.NONE;
 
-	private GZFlag mTalonTestingHasFail = new GZFlag();
+	private boolean mTalonTestingHasFail = false;
 
 	protected Map<Integer, GZSRX> mTalons = new HashMap<Integer, GZSRX>();
 	protected Map<Integer, GZSpark> mSparks = new HashMap<Integer, GZSpark>();
 
-	public void setTalonTestingFail()
+	public abstract boolean hasMotors();
+
+	public void clearMotorTestingFails()
 	{
-		mTalonTestingHasFail.tripFlag();
+		mTalonTestingHasFail = false;
 	}
 
-	public boolean hasTalonTestingFail()
+	public void setMotorTestingFail()
 	{
-		return mTalonTestingHasFail.isFlagTripped();
+		mTalonTestingHasFail = true;
 	}
+
+	public boolean hasMotorTestingFail()
+	{
+		return mTalonTestingHasFail;
+	}
+
+	public abstract void addMotorTestingGroups();
+	
 
 	/**
 	 * Disabling each subsystem
