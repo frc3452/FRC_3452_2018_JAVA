@@ -16,6 +16,7 @@ import frc.robot.util.GZFiles;
 import frc.robot.util.GZFiles.Folder;
 import frc.robot.util.GZFiles.TASK;
 import frc.robot.util.GZSubsystemManager;
+import frc.robot.util.MotorChecker;
 
 public class Robot extends TimedRobot {
 	// Force construction of files first
@@ -108,6 +109,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testInit() {
 		enabledInits();
+		
+		Drive.getInstance().addMotorTestingGroups();
+		MotorChecker.getInstance().checkTalons();
 	}
 
 	@Override

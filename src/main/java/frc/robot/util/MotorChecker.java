@@ -161,11 +161,17 @@ public class MotorChecker {
     }
 
     private MotorChecker() {
+        clearGroups();
     }
 
-    private Map<GZSubsystem, ArrayList<MotorTestingGroup>> subsystemMap = new HashMap<GZSubsystem, ArrayList<MotorTestingGroup>>();
+    private Map<GZSubsystem, ArrayList<MotorTestingGroup>> subsystemMap;
 
     private double mTimeNeeded = 0;
+
+    public void clearGroups()
+    {
+        subsystemMap = new HashMap<GZSubsystem, ArrayList<MotorTestingGroup>>();
+    }
 
     public void addTalonGroup(MotorTestingGroup group) {
         if (!subsystemMap.containsKey(group.getSubsystem()))
