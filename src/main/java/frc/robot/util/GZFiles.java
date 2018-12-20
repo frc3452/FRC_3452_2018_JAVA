@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -229,8 +230,8 @@ public class GZFiles {
 				try {
 					bw = new BufferedWriter(new FileWriter(GZFileMaker.getFile(fileName, folder, usb, true)));
 				} catch (Exception e) {
-					//If fails, try again on rio
-					System.out.println("Writing log to USB failed... trying RIO");
+					// If fails, try again on rio
+					System.out.println("Writing file to USB failed... trying RIO");
 					bw = new BufferedWriter(new FileWriter(GZFileMaker.getFile(fileName, folder, false, true)));
 				}
 			}
@@ -324,6 +325,68 @@ public class GZFiles {
 			return retval;
 		} else {
 			return prevLog;
+		}
+	}
+
+	public static String header(String f, int headernumber, String color) {
+		return newLine("<h" + headernumber + " style=\"color:" + color + "\"" + ">" + f + "</h" + headernumber + ">");
+	}
+
+	public static String header(String f) {
+		return header(f, 1, "black");
+	}
+
+	public static String table(String f) {
+		return newLine("<table>" + f + "</table>");
+	}
+
+	public static String paragraph(String f) {
+		return newLine("<p>" + f + "</p>");
+	}
+
+	public static String tableHeader(String f) {
+		return newLine("<th>" + f + "</th>");
+	}
+
+	public static String newLine(String f) {
+		return f + "\n";
+	}
+
+	public static String tableRow(String f) {
+		return newLine("<tr>" + f + "</tr>");
+	}
+
+	public static String tableCell(String f, String color, boolean cell_is_color) {
+		String temp;
+		if (cell_is_color)
+			temp = "<td style=\"background-color:" + color + "; color: " + color + "\">" + f + "</td>";
+		else
+			temp = "<td style=\"background-color:" + color + ";\">" + f + "</td>";
+		return temp;
+	}
+
+	public static String tableCell(String f) {
+		return "<td>" + f + "</td>";
+	}
+
+	public static String bold(String f, String color) {
+		return "<b style=\"color:" + color + "\">" + f + "</b>";
+	}
+
+	public static final String BASE_HTML_FILE = "<html>\r\n" + "<head>\r\n" + "<style>\r\n" + "table {\r\n"
+			+ "    border: 1px solid black;\r\n" + "    border-collapse: collapse;\r\n" + "  	width:50%;\r\n"
+			+ "}\r\n" + "  body { \r\n" + "  }\r\n" + "th, td {\r\n" + "  	border: 5px solid black;\r\n"
+			+ "    padding: 5px;\r\n" + "    text-align: center;\r\n" + "}\r\n" + "  \r\n" + "</style>\r\n"
+			+ "</head>\r\n" + "<body>\r\n" + "\r\n" + "$BODY\r\n" + "\r\n" + "</body>\r\n" + "</html>";
+
+	public static void createHTMLFile(File f, String body) {
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+			String html = BASE_HTML_FILE.replace("$BODY", body);
+			bw.write(html);
+			bw.close();
+		} catch (Exception e) {
+			System.out.println("Could not make HTML File at " + f.getPath());
 		}
 	}
 

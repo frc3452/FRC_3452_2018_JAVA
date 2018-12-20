@@ -8,19 +8,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import frc.robot.util.GZFileMaker;
+import frc.robot.util.GZFiles;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.GZUtil;
+import frc.robot.util.GZFileMaker.ValidFileExtensions;
 
 public class Health {
 
 	private Map<GZSubsystem, ArrayList<ArrayList<String>>> map = new HashMap<>();
 
 	private static Health mInstance = null;
-	
+
 	private List<GZSubsystem> mSubsystems;
 
-	public void assignSubsystems(List<GZSubsystem> list)
-	{
+	public void assignSubsystems(List<GZSubsystem> list) {
 		this.mSubsystems = list;
 	}
 
@@ -53,10 +55,9 @@ public class Health {
 
 	public void generateHealth() {
 		try {
-			String htmlString = base_file;
 			String body = "", table = "";
 
-			//Make sure map has every subsystem in it
+			// Make sure map has every subsystem in it
 			for (GZSubsystem s : mSubsystems)
 				this.addAlert(s, AlertLevel.NONE, "NA");
 
@@ -79,24 +80,24 @@ public class Health {
 			}
 
 			// Populate body
-			body += header("Health Checker");
-			body += paragraph("(File generated on " + GZUtil.dateTime(false) + ")");
+			body += GZFiles.header("Health Checker");
+			body += GZFiles.paragraph("(File generated on " + GZUtil.dateTime(false) + ")");
 
 			// Print header
-			table += tableRow(tableHeader("Subsystem") + tableHeader("Check"));
+			table += GZFiles.tableRow(GZFiles.tableHeader("Subsystem") + GZFiles.tableHeader("Check"));
 
 			// Write table
 			for (GZSubsystem s : mSubsystems)
-				table += tableRow(
-						tableCell(s.getClass().getSimpleName()) + tableCell("", s.getHighestAlert().stringValue, true));
+				table += GZFiles.tableRow(GZFiles.tableCell(s.getClass().getSimpleName())
+						+ GZFiles.tableCell("", s.getHighestAlert().stringValue, true));
 
 			// Put table tags around values
-			table = table(table);
+			table = GZFiles.table(table);
 
 			// Add table to body.
 			body += table;
 
-			body += header("Alerts:");
+			body += GZFiles.header("Alerts:");
 
 			// Print alerts
 			for (GZSubsystem s : mSubsystems) {
@@ -105,7 +106,7 @@ public class Health {
 				if (s.getHighestAlert() != AlertLevel.NONE) {
 
 					// Print subsystem name
-					body += header(s.getClass().getSimpleName(), 3);
+					body += GZFiles.header(s.getClass().getSimpleName(), 3);
 
 					// Loop through errors twice, once for errors and once for warnings
 					// This prints errors first, then warnings
@@ -119,27 +120,23 @@ public class Health {
 							switch (errrorLoop) {
 							case 0:
 								if (error.get(0).equals(AlertLevel.ERROR.stringValue))
-									body += paragraph(bold(error.get(1), "red"));
+									body += GZFiles.paragraph(GZFiles.bold(error.get(1), "red"));
 								break;
 							case 1:
 								if (error.get(0).equals(AlertLevel.WARNING.stringValue))
-									body += paragraph(error.get(1));
+									body += GZFiles.paragraph(error.get(1));
 								break;
 							}
 						}
 				}
 			}
 
-			htmlString = htmlString.replace("$BODY", body);
-
 			try {
-				File newHtmlFile = new File("/home/lvuser/Health.html");
-				BufferedWriter bw = new BufferedWriter(new FileWriter(newHtmlFile));
-				bw.write(htmlString);
-				bw.close();
+				File htmlFile = GZFileMaker.getFile("Health", "", ValidFileExtensions.HTML, false, true);
+				GZFiles.createHTMLFile(htmlFile, body);
 			} catch (Exception e) {
 				System.out.println("Could not write health file!");
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
 
 		} catch (Exception e) {
@@ -147,57 +144,6 @@ public class Health {
 			e.printStackTrace();
 		}
 	}
-
-	public String header(String f, int headernumber) {
-		return newLine("<h" + headernumber + ">" + f + "</h" + headernumber + ">");
-	}
-
-	public String header(String f) {
-		return header(f, 1);
-	}
-
-	public String table(String f) {
-		return newLine("<table>" + f + "</table>");
-	}
-
-	public String paragraph(String f) {
-		return newLine("<p>" + f + "</p>");
-	}
-
-	public String tableHeader(String f) {
-		return newLine("<th>" + f + "</th>");
-	}
-
-	public String newLine(String f) {
-		return f + "\n";
-	}
-
-	public String tableRow(String f) {
-		return newLine("<tr>" + f + "</tr>");
-	}
-
-	public String tableCell(String f, String color, boolean celll_is_color) {
-		String temp;
-		if (celll_is_color)
-			temp = "<td style=\"background-color:" + color + "; color: " + color + "\">" + f + "</td>";
-		else
-			temp = "<td style=\"background-color:" + color + ";\">" + f + "</td>";
-		return temp;
-	}
-
-	public String tableCell(String f) {
-		return "<td>" + f + "</td>";
-	}
-
-	public String bold(String f, String color) {
-		return "<b style=\"color:" + color + "\">" + f + "</b>";
-	}
-
-	private String base_file = "<html>\r\n" + "<head>\r\n" + "<style>\r\n" + "table {\r\n"
-			+ "    border: 1px solid black;\r\n" + "    border-collapse: collapse;\r\n" + "  	width:50%;\r\n"
-			+ "}\r\n" + "  body { \r\n" + "  }\r\n" + "th, td {\r\n" + "  	border: 5px solid black;\r\n"
-			+ "    padding: 5px;\r\n" + "    text-align: center;\r\n" + "}\r\n" + "  \r\n" + "</style>\r\n"
-			+ "</head>\r\n" + "<body>\r\n" + "\r\n" + "$BODY\r\n" + "\r\n" + "</body>\r\n" + "</html>";
 
 	public enum AlertLevel {
 		WARNING("yellow"), ERROR("red"), NONE("green");

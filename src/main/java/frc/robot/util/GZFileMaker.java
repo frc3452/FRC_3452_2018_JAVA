@@ -68,7 +68,7 @@ public class GZFileMaker {
         // "/media/sda1/"
 
         if (withFile)
-            retval += ("/" + name + fileExtension.val);
+            retval += ((folder == "" ? "" : "/") + name + fileExtension.val);
 
         if (pathValid(retval))
             return retval;

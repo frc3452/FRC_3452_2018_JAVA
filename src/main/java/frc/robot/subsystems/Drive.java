@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,8 +25,8 @@ import frc.robot.GZOI;
 import frc.robot.subsystems.Health.AlertLevel;
 import frc.robot.util.GZFiles;
 import frc.robot.util.GZJoystick;
-import frc.robot.util.GZPDP;
 import frc.robot.util.GZLog.LogItem;
+import frc.robot.util.GZPDP;
 import frc.robot.util.GZPID;
 import frc.robot.util.GZSRX;
 import frc.robot.util.GZSRX.Breaker;
@@ -33,6 +34,8 @@ import frc.robot.util.GZSRX.Master;
 import frc.robot.util.GZSRX.Side;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.GZUtil;
+import frc.robot.util.TalonSRXChecker;
+import frc.robot.util.TalonSRXChecker.TalonGroup;
 import frc.robot.util.Units;
 
 public class Drive extends GZSubsystem {
@@ -82,6 +85,10 @@ public class Drive extends GZSubsystem {
 				.overrideBreaker(Breaker.AMP_30).build();
 		R4 = new GZSRX.Builder(kDrivetrain.R4, this, "R4", kPDP.DRIVE_R_4).setFollower().setSide(Side.RIGHT)
 				.overrideBreaker(Breaker.AMP_30).build();
+
+		TalonSRXChecker.CheckerConfig checkerConfig = new TalonSRXChecker.CheckerConfig(0, 1, 3, 2, .5);
+		TalonSRXChecker.getInstance()
+				.addTalonGroup(new TalonGroup(this, "Left", Arrays.asList(L1, L2, L3, L4), checkerConfig));
 
 		mGyro = new AHRS(SPI.Port.kMXP);
 

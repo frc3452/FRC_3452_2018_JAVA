@@ -1,10 +1,10 @@
 package frc.robot.util;
 
 import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import frc.robot.Constants.kTempSensor;
 import frc.robot.subsystems.Health;
 import frc.robot.subsystems.Health.AlertLevel;
 
@@ -30,8 +30,7 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 			this.mPDPChannel = PDPChannel;
 		}
 
-		public Builder overrideBreaker(Breaker b )
-		{
+		public Builder overrideBreaker(Breaker b) {
 			this.mBreaker = b;
 			return this;
 		}
@@ -68,6 +67,7 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 	}
 
 	private Breaker mBreaker;
+	private Breaker mActualBreaker;
 	private Side mSide;
 	private Master mMaster;
 	private String mName;
@@ -81,6 +81,10 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 	private double mPrevEncoderRotations = 0;
 
 	private AnalogInput mTemperatureSensor = null;
+
+	private double mLastSet = Double.NaN;
+	private ControlMode mLastControlMode = null;
+	private boolean mBeingChecked = false;
 
 	// Constructor for builder
 	private GZSRX(int deviceNumber, GZSubsystem subsystem, String name, int PDPChannel, Breaker breaker, Side side,
@@ -101,7 +105,38 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 		if (temperatureSensorPort != -1)
 			this.mTemperatureSensor = new AnalogInput(temperatureSensorPort);
 
+		if (this.mBreaker != this.mActualBreaker)
+			Health.getInstance().addAlert(subsystem, AlertLevel.WARNING, "Talon " + this.getGZName()
+					+ " overridden to breaker " + this.mBreaker.print + ", plugged into " + this.mActualBreaker.print);
+
 		subsystem.mTalons.put(deviceNumber, this);
+	}
+
+	/**
+	 * TO ONLY BE USED FOR TESTING
+	 */
+	public void set(ControlMode mode, double value, boolean overrideCheck) {
+		// if being checked, only allow if overriden
+		if (!mBeingChecked || (mBeingChecked && overrideCheck)) {
+			if (value != mLastSet || mode != mLastControlMode) {
+				mLastSet = value;
+				mLastControlMode = mode;
+				super.set(mode, value);
+			}
+		}
+	}
+
+	@Override
+	public void set(ControlMode mode, double value) {
+		set(mode, value, false);
+	}
+
+	public void setBeingChecked(boolean beingChecked) {
+		mBeingChecked = beingChecked;
+	}
+
+	public double getLastSetValue() {
+		return mLastSet;
 	}
 
 	/**
@@ -138,6 +173,11 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 		else
 			this.mBreaker = Breaker.AMP_40;
 
+		this.mActualBreaker = this.mBreaker;
+	}
+
+	public Breaker getActualBreakerSize() {
+		return mActualBreaker;
 	}
 
 	public Breaker getBreakerSize() {
@@ -200,7 +240,13 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 	}
 
 	public enum Breaker {
-		AMP_20, AMP_30, AMP_40, NO_INFO
+		AMP_20("20 AMP Breaker"), AMP_30("30 AMP Breaker"), AMP_40("40 AMP Breaker"), NO_INFO("NO INFO");
+
+		private String print;
+
+		private Breaker(String print) {
+			this.print = print;
+		}
 	}
 
 }

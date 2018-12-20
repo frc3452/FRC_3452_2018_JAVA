@@ -19,8 +19,20 @@ public abstract class GZSubsystem extends Subsystem {
 
 	private AlertLevel mHighestAlert = AlertLevel.NONE;
 
+	private GZFlag mTalonTestingHasFail = new GZFlag();
+
 	protected Map<Integer, GZSRX> mTalons = new HashMap<Integer, GZSRX>();
 	protected Map<Integer, GZSpark> mSparks = new HashMap<Integer, GZSpark>();
+
+	public void setSubsystemHasTalonTestingFail()
+	{
+		mTalonTestingHasFail.tripFlag();
+	}
+
+	public boolean doesSubsystemHaveTalonTestingFail()
+	{
+		return mTalonTestingHasFail.isFlagTripped();
+	}
 
 	/**
 	 * Disabling each subsystem
