@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.util.GZFileMaker.ValidFileExtensions;
+import frc.robot.util.GZFiles.Folder;
 import frc.robot.util.GZFiles.HTML;
 
 public class TalonSRXChecker {
@@ -204,7 +205,8 @@ public class TalonSRXChecker {
                 List<GZSRX> talonsToCheck = group.getTalons();
 
                 System.out.println("Checking subsystem " + group.getSubsystemName() + " group " + group.getName()
-                        + " for " + talonsToCheck.size() + " talons. Estimated total time left: " + mTimeNeeded + " seconds");
+                        + " for " + talonsToCheck.size() + " talons. Estimated total time left: " + mTimeNeeded
+                        + " seconds");
 
                 // Store previous set values
                 ArrayList<StoredTalonSRXConfiguration> storedConfigurations = new ArrayList<>();
@@ -249,7 +251,6 @@ public class TalonSRXChecker {
                     }
                 }
 
-
                 // We've now checked every current and recorded, run average checks
 
                 // Now run aggregate checks.
@@ -290,7 +291,7 @@ public class TalonSRXChecker {
                             true);
                 }
 
-                //Unlock talons so another method can control them
+                // Unlock talons so another method can control them
                 for (GZSRX t : talonsToCheck)
                     t.lockOutTalon(false);
             }
@@ -321,8 +322,9 @@ public class TalonSRXChecker {
         // Perform individual check if current too low
         if (current < group.getConfig().mCurrentFloor) {
             currents.get(currents.size() - 1).setFail();
-            // System.out.println(individualTalonToCheck.getGZName() + " has failed current floor check vs "
-            //         + group.getConfig().mCurrentFloor + "!!");
+            // System.out.println(individualTalonToCheck.getGZName() + " has failed current
+            // floor check vs "
+            // + group.getConfig().mCurrentFloor + "!!");
             failure = true;
             group.getSubsystem().setTalonTestingFail();
         }
@@ -335,20 +337,20 @@ public class TalonSRXChecker {
     private void createHTMLFile() {
         String body = "";
 
-        //Time at top of file
+        // Time at top of file
         body += HTML.paragraph("Created on " + GZUtil.dateTime(false));
 
-        //Loop through every subsystem
+        // Loop through every subsystem
         for (GZSubsystem subsystem : subsystemMap.keySet()) {
 
-            //groups for subsystem
+            // groups for subsystem
             ArrayList<TalonGroup> talonGroups = subsystemMap.get(subsystem);
 
             // header (write subsystem color in red if has error)
             String subsystemColor = subsystem.hasTalonTestingFail() ? "red" : "black";
             body += HTML.header(subsystem.getClass().getSimpleName(), 1, subsystemColor);
 
-            //Content of entire subsystem
+            // Content of entire subsystem
             String subsystemContent = "";
 
             for (TalonGroup talonGroup : talonGroups) {
@@ -358,7 +360,7 @@ public class TalonSRXChecker {
                 ArrayList<Current> fwd = talonGroup.getForwardCurrents();
                 ArrayList<Current> rev = talonGroup.getReverseCurrents();
 
-                //Sizes
+                // Sizes
                 int talonSize = tln.size() - 1;
                 int fwdSize = fwd.size() - 1;
                 int revSize = rev.size() - 1;
@@ -397,7 +399,7 @@ public class TalonSRXChecker {
                     boolean fwdFail = fwd.get(talon).getFail();
                     boolean revFail = rev.get(talon).getFail();
 
-                    //Put talon cell
+                    // Put talon cell
                     String talonCell;
                     if (fwdFail || revFail)
                         talonCell = HTML.tableCell(tln.get(talon).getGZName(), "yellow", false);
@@ -422,10 +424,10 @@ public class TalonSRXChecker {
                         revCell = HTML.table(rev.get(talon).getCurrent().toString());
                     row += revCell;
 
-                    //Format as row
+                    // Format as row
                     row = HTML.tableRow(row);
 
-                    //add to table
+                    // add to table
                     table += row;
 
                 } // end of Loop through every talon
@@ -437,30 +439,32 @@ public class TalonSRXChecker {
 
             } // end of all groups in subsystem loop
 
-            //if the subsystem doesn't have any fails, wrap in a button so we can hide it easily
+            // if the subsystem doesn't have any fails, wrap in a button so we can hide it
+            // easily
             if (!subsystem.hasTalonTestingFail())
-                subsystemContent = HTML.button(subsystem.getClass().getSimpleName(), subsystemContent);
+                subsystemContent = HTML.button("Open " + subsystem.getClass().getSimpleName(), subsystemContent);
 
             body += subsystemContent;
         } // end of all subsystems
 
-        File f;
         try {
-            //Ideally write to RIO and then USB as well
-            f = GZFileMaker.getFile("SRXReport-" + GZUtil.dateTime(false), "3452/SRXReports", ValidFileExtensions.HTML,
-                    true, true);
-            HTML.createHTMLFile(f, body);
+            // if on rio, folder will be SRXReports/SRXReport-2018.12.20.09.06
+            // if on usb, folder will be 3452/SRXReports/SRXReport-2018.12.20.09.06
+            Folder srxReportFolder = new Folder("SRXReports");
 
-            //TODO BACKUP TO USB, MAKE FOLDER CLASS FOR IF ON USB OR IF ON RIO
-        } catch (Exception e) {
-            System.out.println("Could not write SRXReport to USB, writing to RIO...");
+            // write to rio
+            GZFile file = GZFileMaker.getFile("SRXReport-" + GZUtil.dateTime(false), srxReportFolder,
+                    ValidFileExtensions.HTML, true, true);
+
+            HTML.createHTMLFile(file, body);
+
             try {
-                f = GZFileMaker.getFile("SRXReport-" + GZUtil.dateTime(false), "3452/SRXReports",
-                        ValidFileExtensions.HTML, false, true);
-                HTML.createHTMLFile(f, body);
-            } catch (Exception cannotWriteSRXReport) {
-                System.out.println("Could not write SRX report!");
+                GZFiles.copyFile(file.getFile(), GZFileMaker.getFile(file, true).getFile());
+            } catch (Exception copyFile) {
+                System.out.println("Could not copy SRXReport to USB!");
             }
+        } catch (Exception writingSRXReport) {
+            System.out.println("Could not write SRXReport!");
         }
 
     }

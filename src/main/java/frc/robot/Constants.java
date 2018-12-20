@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.util.GZPID;
+import frc.robot.util.GZFiles.Folder;
 
 /**
  * Robot subsystem constants
@@ -245,11 +246,14 @@ public class Constants {
 	}
 
 	public static class kFiles {
-		public final static String MP_NAME = "MP1";
-		public final static String MP_FOLDER = "MotionProfiles";
-		public final static boolean MP_USB = true;
+		private kFiles(){}
 
-		public final static String STATS_FILE_FOLDER = "GZStats";
+		public final static String MP_NAME = "MP1";
+		public final static Folder MP_FOLDER = new Folder("MotionProfiles"); // if on rio, folder is MotionProfiles/MP1.csv
+		public final static boolean MP_USB = true;								// if on usb, folder is 3452/MotionProfiles/MP1.csv
+
+		
+		public final static Folder STATS_FILE_FOLDER = new Folder("GZStats");
 		public final static String STATS_FILE_NAME = "Stats";
 		public final static boolean STATS_FILE_ON_USB = false;
 		public static final double DEFAULT_STATS_RECORD_TIME = .5;

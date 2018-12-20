@@ -13,6 +13,7 @@ import frc.robot.subsystems.Health;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.util.GZFiles;
+import frc.robot.util.GZFiles.Folder;
 import frc.robot.util.GZFiles.TASK;
 import frc.robot.util.GZSubsystemManager;
 
@@ -33,7 +34,7 @@ public class Robot extends TimedRobot {
 
 	// LOGGING CONTROL
 	private final boolean logging = true, logToUsb = true;
-	private final String loggingLocation = "3452/Logging/DrivePractice121618";
+	private final Folder loggingLocation = new Folder("Logging/DrivePractice121618");
 
 	@Override
 	public void robotInit() {

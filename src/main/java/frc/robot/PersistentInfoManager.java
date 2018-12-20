@@ -16,6 +16,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.util.GZFileMaker;
 import frc.robot.util.GZFiles;
 import frc.robot.util.GZFileMaker.ValidFileExtensions;
+import frc.robot.util.GZFiles.Folder;
 import frc.robot.util.GZFlag;
 import frc.robot.util.GZFlagMultiple;
 import frc.robot.util.GZJoystick.Buttons;
@@ -120,11 +121,11 @@ public class PersistentInfoManager {
     }
 
     // Read from file and folder on RIO
-    public void readOnStartup(String fileName, String folder) {
+    public void readOnStartup(String fileName, Folder folder) {
         readOnStartup(fileName, folder, false);
     }
 
-    public void initialize(String fileName, String folder, boolean usb) {
+    public void initialize(String fileName, Folder folder, boolean usb) {
         backupFile();
         readOnStartup(fileName, folder, usb);
         updateFile(fileName, folder, usb);
@@ -136,9 +137,9 @@ public class PersistentInfoManager {
         try {
             GZFiles.copyFile(
                     GZFileMaker.getFile(kFiles.STATS_FILE_NAME, kFiles.STATS_FILE_FOLDER, kFiles.STATS_FILE_ON_USB,
-                            false),
-                    GZFileMaker.getFile("StatsBackup-" + GZUtil.dateTime(true), "3452/" + kFiles.STATS_FILE_FOLDER,
-                            true, true));
+                            false).getFile(),
+                    GZFileMaker.getFile("StatsBackup-" + GZUtil.dateTime(true), kFiles.STATS_FILE_FOLDER,
+                            true, true).getFile());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,10 +168,10 @@ public class PersistentInfoManager {
      * Read from file and folder on RIO or USB Store values into map Call read
      * setting, which (if defined) could update a robot variable with setting
      */
-    public void readOnStartup(String fileName, String folder, boolean usb) {
+    public void readOnStartup(String fileName, Folder folder, boolean usb) {
         try {
             // Set up fille reading
-            File f = GZFileMaker.getFile(fileName, folder, usb, false);
+            File f = GZFileMaker.getFile(fileName, folder, usb, false).getFile();
             Scanner scnr = new Scanner(new FileReader(f));
 
             // loop through lines but drop out if it fails
@@ -230,7 +231,7 @@ public class PersistentInfoManager {
     }
 
     // Update file every __ seconds @ file and folder on RIO
-    public void updateFile(final String fileName, final String folder) {
+    public void updateFile(final String fileName, final Folder folder) {
         updateFile(fileName, folder, false);
     }
 
@@ -288,10 +289,10 @@ public class PersistentInfoManager {
 
     }
 
-    public void updateFile(String fileName, String folder, final boolean usb) {
+    public void updateFile(String fileName, Folder folder, final boolean usb) {
 
         final String mFileName;
-        final String mFolder;
+        final Folder mFolder;
         final boolean mUsb;
 
         // If flag we failed while reading, write to a temporary file so that we don't
@@ -300,7 +301,7 @@ public class PersistentInfoManager {
             mFileName = GZUtil.dateTime(false);
             mFolder = Constants.kFiles.STATS_FILE_FOLDER;
             mUsb = Constants.kFiles.STATS_FILE_ON_USB;
-            System.out.println("ERROR Could not read startup file! Writing new file to " + mFolder + "/" + mFileName
+            System.out.println("ERROR Could not read startup file! Writing new file to " + mFolder.get(mUsb) + "/" + mFileName
                     + ".csv" + " on RIO");
 
         } else {
@@ -321,7 +322,7 @@ public class PersistentInfoManager {
                 try {
                     // SETUP FILE WRITING
 
-                    File f = GZFileMaker.getFile(mFileName, mFolder, mUsb, true);
+                    File f = GZFileMaker.getFile(mFileName, mFolder, mUsb, true).getFile();
 
                     // create file writing vars
                     BufferedWriter bw = new BufferedWriter(new FileWriter(f));

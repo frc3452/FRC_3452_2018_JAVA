@@ -7,6 +7,7 @@ import frc.robot.motionprofiles.Path;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Drive.DriveState;
 import frc.robot.util.GZFiles;
+import frc.robot.util.GZFiles.Folder;
 import frc.robot.util.GZSRX.Side;
 
 /**
@@ -26,7 +27,8 @@ public class RunMotionProfile extends Command {
 
 	private boolean mParsed = false;
 
-	private String mName, mFolder;
+	private String mName;
+	private Folder mFolder;
 	private boolean mUsb;
 
 	public RunMotionProfile(Path path) {
@@ -35,7 +37,7 @@ public class RunMotionProfile extends Command {
 		path_ = path;
 	}
 
-	public RunMotionProfile(String name, String folder, boolean usb) {
+	public RunMotionProfile(String name, Folder folder, boolean usb) {
 		requires(drive);
 		mParsed = true;
 		

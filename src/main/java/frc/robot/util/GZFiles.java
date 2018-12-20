@@ -135,7 +135,7 @@ public class GZFiles {
 		}
 	}
 
-	public void parse(String name, String folder, boolean usb) {
+	public void parse(String name, Folder folder, boolean usb) {
 		csvControl(name, folder, usb, TASK.Parse, true);
 		csvControl(name, folder, usb, TASK.Parse, false);
 	}
@@ -219,29 +219,46 @@ public class GZFiles {
 		}
 	});
 
-	private void createCSVFile(String fileName, String folder, fileState readwrite, boolean usb) {
-		try {
-			switch (readwrite) {
-			case READ:
-				// SET UP FILE READING
-				scnr = new Scanner(new FileReader(GZFileMaker.getFile(fileName, folder, usb, false)));
+	private void createCSVFile(String fileName, Folder folder, fileState readwrite, boolean usb) {
+		createCSVFile(fileName, folder, readwrite, usb, false);
+	}
 
-				break;
-			case WRITE:
-				// create file writing vars
-				try {
-					bw = new BufferedWriter(new FileWriter(GZFileMaker.getFile(fileName, folder, usb, true)));
-				} catch (Exception e) {
-					// If fails, try again on rio
-					System.out.println("Writing file to USB failed... trying RIO");
-					bw = new BufferedWriter(new FileWriter(GZFileMaker.getFile(fileName, folder, false, true)));
+	private void createCSVFile(String fileName, Folder folder, fileState readwrite, boolean usb, boolean logging) {
+		boolean fileCreateFail = false;
+
+		switch (readwrite) {
+		case READ:
+			// SET UP FILE READING
+			try {
+				scnr = new Scanner(new FileReader(GZFileMaker.getFile(fileName, folder, usb, false).getFile()));
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("File reading failed!");
+			}
+			break;
+		case WRITE:
+			// create file writing vars
+			try {
+				bw = new BufferedWriter(new FileWriter(GZFileMaker.getFile(fileName, folder, usb, true).getFile()));
+			} catch (Exception e) {
+
+				// If logging, try again on rio
+				if (logging) {
+					System.out.println("Writing log to USB failed... trying RIO");
+					try {
+						bw = new BufferedWriter(
+								new FileWriter(GZFileMaker.getFile(fileName, folder, false, true).getFile()));
+					} catch (Exception g) {
+						fileCreateFail = true;
+					}
+				} else { // we're not logging and we couldn't make a file
+					fileCreateFail = true;
 				}
 			}
-
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			System.out.println("File " + readwrite + " from " + (usb ? "USB" : "RIO") + "failed!");
 		}
+
+		if (fileCreateFail)
+			System.out.println("File creation failed!");
 	}
 
 	private void closeCSVFile(fileState readwrite) {
@@ -271,7 +288,7 @@ public class GZFiles {
 	 * @see TASK
 	 * @see STATE
 	 */
-	public void csvControl(String name, String folder, boolean usb, TASK task, boolean startup) {
+	public void csvControl(String name, Folder folder, boolean usb, TASK task, boolean startup) {
 		if (startup) {
 			switch (task) {
 			case Record:
@@ -320,8 +337,38 @@ public class GZFiles {
 		}
 	}
 
-	public static void copyFile(File source, File dest) throws IOException
-	{
+	public static class Folder {
+		private String mFolderOnRIO;
+		private String mFolderOnUSB;
+
+		public Folder(String rio, String usb) {
+			this.mFolderOnRIO = rio;
+			this.mFolderOnUSB = usb;
+		}
+
+		public Folder(String rio) {
+			this(rio, "");
+			this.usbIsRIOInFolder("3452");
+		}
+
+		private void usbIsRIOInFolder(String folder) {
+			this.mFolderOnUSB = folder + "/" + this.mFolderOnRIO;
+		}
+
+		private String getRIOFolder() {
+			return mFolderOnRIO;
+		}
+
+		private String getUSBFolder() {
+			return mFolderOnUSB;
+		}
+
+		public String get(boolean usb) {
+			return (usb ? getUSBFolder() : getRIOFolder());
+		}
+	}
+
+	public static void copyFile(File source, File dest) throws IOException {
 		Files.deleteIfExists(dest.toPath());
 		Files.copy(source.toPath(), dest.toPath());
 	}
@@ -415,6 +462,10 @@ public class GZFiles {
 				+ "}\r\n" + "  body { \r\n" + "  }\r\n" + "th, td {\r\n" + "  	border: 5px solid black;\r\n"
 				+ "    padding: 5px;\r\n" + "    text-align: center;\r\n" + "}\r\n" + "  \r\n" + "</style>\r\n"
 				+ "</head>\r\n" + "<body>\r\n" + "\r\n" + "$BODY\r\n" + "\r\n" + "</body>\r\n" + "</html>";
+
+		public static void createHTMLFile(GZFile g, String body) {
+			createHTMLFile(g.getFile(), body);
+		}
 
 		public static void createHTMLFile(File f, String body) {
 			try {

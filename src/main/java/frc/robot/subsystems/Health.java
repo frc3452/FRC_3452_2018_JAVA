@@ -1,18 +1,17 @@
 package frc.robot.subsystems;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import frc.robot.util.GZFileMaker;
-import frc.robot.util.GZFiles;
+import frc.robot.util.GZFileMaker.ValidFileExtensions;
+import frc.robot.util.GZFiles.Folder;
+import frc.robot.util.GZFiles.HTML;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.GZUtil;
-import frc.robot.util.GZFileMaker.ValidFileExtensions;
 
 public class Health {
 
@@ -80,24 +79,24 @@ public class Health {
 			}
 
 			// Populate body
-			body += GZFiles.header("Health Checker");
-			body += GZFiles.paragraph("(File generated on " + GZUtil.dateTime(false) + ")");
+			body += HTML.header("Health Checker");
+			body += HTML.paragraph("(File generated on " + GZUtil.dateTime(false) + ")");
 
 			// Print header
-			table += GZFiles.tableRow(GZFiles.tableHeader("Subsystem") + GZFiles.tableHeader("Check"));
+			table += HTML.tableRow(HTML.tableHeader("Subsystem") + HTML.tableHeader("Check"));
 
 			// Write table
 			for (GZSubsystem s : mSubsystems)
-				table += GZFiles.tableRow(GZFiles.tableCell(s.getClass().getSimpleName())
-						+ GZFiles.tableCell("", s.getHighestAlert().stringValue, true));
+				table += HTML.tableRow(HTML.tableCell(s.getClass().getSimpleName())
+						+ HTML.tableCell("", s.getHighestAlert().stringValue, true));
 
 			// Put table tags around values
-			table = GZFiles.table(table);
+			table = HTML.table(table);
 
 			// Add table to body.
 			body += table;
 
-			body += GZFiles.header("Alerts:");
+			body += HTML.header("Alerts:");
 
 			// Print alerts
 			for (GZSubsystem s : mSubsystems) {
@@ -106,7 +105,7 @@ public class Health {
 				if (s.getHighestAlert() != AlertLevel.NONE) {
 
 					// Print subsystem name
-					body += GZFiles.header(s.getClass().getSimpleName(), 3);
+					body += HTML.header(s.getClass().getSimpleName(), 3, "black");
 
 					// Loop through errors twice, once for errors and once for warnings
 					// This prints errors first, then warnings
@@ -120,11 +119,11 @@ public class Health {
 							switch (errrorLoop) {
 							case 0:
 								if (error.get(0).equals(AlertLevel.ERROR.stringValue))
-									body += GZFiles.paragraph(GZFiles.bold(error.get(1), "red"));
+									body += HTML.paragraph(HTML.bold(error.get(1), "red"));
 								break;
 							case 1:
 								if (error.get(0).equals(AlertLevel.WARNING.stringValue))
-									body += GZFiles.paragraph(error.get(1));
+									body += HTML.paragraph(error.get(1));
 								break;
 							}
 						}
@@ -132,8 +131,8 @@ public class Health {
 			}
 
 			try {
-				File htmlFile = GZFileMaker.getFile("Health", "", ValidFileExtensions.HTML, false, true);
-				GZFiles.createHTMLFile(htmlFile, body);
+				File htmlFile = GZFileMaker.getFile("Health", new Folder("",""), ValidFileExtensions.HTML, false, true).getFile();
+				HTML.createHTMLFile(htmlFile, body);
 			} catch (Exception e) {
 				System.out.println("Could not write health file!");
 				// e.printStackTrace();

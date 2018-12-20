@@ -3,6 +3,8 @@ package frc.robot.util;
 import java.io.File;
 import java.io.IOException;
 
+import frc.robot.util.GZFiles.Folder;
+
 public class GZFileMaker {
 
     private static String[] illegalCharacters = { "*", "?", "<", ">", "|", ":" };
@@ -19,56 +21,61 @@ public class GZFileMaker {
         }
     }
 
-    public static File getFile(String name, String folder, ValidFileExtensions fileExtension, boolean usb,
+    public static GZFile getFile(GZFile g, boolean usb) throws Exception {
+        GZFile f;
+        f = getFile(g.getName(), g.getFolder(), g.getFileExtension(), usb);
+        return f;
+    }
+
+    public static GZFile getFile(String name, Folder folder, ValidFileExtensions fileExtension, boolean usb,
             boolean write) throws Exception {
 
-        File f;
-
+        GZFile ret;
         String path = getFileLocation(name, folder, fileExtension, usb, true);
+        ret = new GZFile(name, folder, fileExtension, usb, new File(path));
         if (write) {
-            f = new File(path);
 
-            if (!f.getParentFile().exists())
-                f.getParentFile().mkdirs();
+            if (!ret.getFile().getParentFile().exists())
+                ret.getFile().getParentFile().mkdirs();
 
             try {
-                if (!f.exists())
-                    f.createNewFile();
+                if (!ret.getFile().exists())
+                    ret.getFile().createNewFile();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
         } else {
-            f = new File(path);
         }
 
-        if (!f.exists() && !write) {
+        if (!ret.getFile().exists() && !write) {
             throw new IOException("ERROR File cannot be found at path {" + path + "}");
         }
 
-        return f;
+        return ret;
     }
 
-    public static File getFile(String name, String folder, ValidFileExtensions fileExtension, boolean write)
+    public static GZFile getFile(String name, Folder folder, ValidFileExtensions fileExtension, boolean write)
             throws Exception {
         return getFile(name, folder, fileExtension, false, write);
     }
 
-    public static File getFile(String name, String folder, boolean usb, boolean write) throws Exception {
+    public static GZFile getFile(String name, Folder folder, boolean usb, boolean write) throws Exception {
         return getFile(name, folder, ValidFileExtensions.CSV, usb, write);
     }
 
-    public static File getFile(String name, String folder, boolean write) throws Exception {
+    public static GZFile getFile(String name, Folder folder, boolean write) throws Exception {
         return getFile(name, folder, false, write);
     }
 
-    public static String getFileLocation(String name, String folder, ValidFileExtensions fileExtension, boolean usb,
+    public static String getFileLocation(String name, Folder folder, ValidFileExtensions fileExtension, boolean usb,
             boolean withFile) {
-        String retval = ((usb) ? "/u/" : "/home/lvuser/") + folder;
+        String folderText = folder.get(usb);
+        String retval = ((usb) ? "/u/" : "/home/lvuser/") + folderText;
         // "/media/sda1/"
 
         if (withFile)
-            retval += ((folder == "" ? "" : "/") + name + fileExtension.val);
+            retval += ((folderText == "" ? "" : "/") + name + fileExtension.val);
 
         if (pathValid(retval))
             return retval;
