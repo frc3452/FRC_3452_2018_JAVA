@@ -191,7 +191,8 @@ public class Auton {
 		return uglyAnalog() == kAuton.SAFTEY_SWITCH;
 	}
 
-	private void printSelected() {
+	private void printSelected(){}
+	private void printSelected2() {
 		m_asA = as_A.getValue();
 		m_asB = as_B.getValue();
 

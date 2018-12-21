@@ -10,6 +10,17 @@ import frc.robot.subsystems.Health.AlertLevel;
 
 public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 
+	public enum Side {
+		LEFT, RIGHT, NO_INFO;
+	}
+
+	public enum Master {
+		MASTER, FOLLOWER, NO_INFO;
+	}
+	public enum Breaker {
+		AMP_20, AMP_30, AMP_40, NO_INFO
+	}
+
 	// BUILDER
 	public static class Builder {
 		private int mDeviceNumber;
@@ -110,7 +121,7 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 
 		if (this.mBreaker != this.mActualBreaker)
 			Health.getInstance().addAlert(this.mSubsystem, AlertLevel.WARNING, "Talon " + this.getGZName()
-					+ " overridden to breaker " + this.mBreaker.print + ", plugged into " + this.mActualBreaker.print);
+					+ " overridden to breaker " + this.mBreaker + ", plugged into " + this.mActualBreaker);
 
 		subsystem.mTalons.put(deviceNumber, this);
 	}
@@ -248,23 +259,4 @@ public class GZSRX extends WPI_TalonSRX implements GZSpeedController {
 	public Master getMaster() {
 		return mMaster;
 	}
-
-	public enum Side {
-		LEFT, RIGHT, NO_INFO;
-	}
-
-	public enum Master {
-		MASTER, FOLLOWER, NO_INFO;
-	}
-
-	public enum Breaker {
-		AMP_20("20 AMP Breaker"), AMP_30("30 AMP Breaker"), AMP_40("40 AMP Breaker"), NO_INFO("NO INFO");
-
-		private String print;
-
-		private Breaker(String print) {
-			this.print = print;
-		}
-	}
-
 }
