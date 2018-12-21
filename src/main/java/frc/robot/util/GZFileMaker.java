@@ -30,31 +30,33 @@ public class GZFileMaker {
     public static GZFile getFile(String name, Folder folder, ValidFileExtensions fileExtension, boolean usb,
             boolean write) throws Exception {
 
-        GZFile ret;
-        String path = getFileLocation(name, folder, fileExtension, usb, true);
-        ret = new GZFile(name, folder, fileExtension, usb, new File(path));
-        if (write) {
-
-            if (!ret.getFile().getParentFile().exists())
-                ret.getFile().getParentFile().mkdirs();
-
-            try {
-                if (!ret.getFile().exists())
-                    ret.getFile().createNewFile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        } else {
-        }
-
-        if (!ret.getFile().exists() && !write) {
-            throw new IOException("ERROR File cannot be found at path {" + path + "}");
-        }
-
-        return ret;
+                String path = getFileLocation(name, folder, fileExtension, usb, true);
+                File f = new File(path);
+        
+                if (write) {
+            
+                    if (!fgetParentFile().exists())
+                    f.getParentFile().mkdirs();
+                    
+                    try {
+                        if (!ret.getFile().exists())
+                        f.createNewFile();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    
+                } else {
+                }
+                
+                if (!f.exists() && !write) {
+                    throw new IOException("ERROR File cannot be found at path {" + path + "}");
+                }
+                
+                
+            GZFile ret = new GZFile(name, folder, fileExtension, usb, f);
+            return ret;
     }
-
+    
     public static GZFile getFile(String name, Folder folder, ValidFileExtensions fileExtension, boolean write)
             throws Exception {
         return getFile(name, folder, fileExtension, false, write);
