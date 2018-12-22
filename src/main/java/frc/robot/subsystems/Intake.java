@@ -1,9 +1,12 @@
 package frc.robot.subsystems;
 
+import java.util.Arrays;
+
 import frc.robot.Constants.kIntake;
 import frc.robot.Constants.kPDP;
 import frc.robot.GZOI;
 import frc.robot.util.GZLog.LogItem;
+import frc.robot.util.MotorChecker.AmperageChecker;
 import frc.robot.util.GZSpark;
 import frc.robot.util.GZSubsystem;
 
@@ -26,15 +29,17 @@ public class Intake extends GZSubsystem {
 		return mInstance;
 	}
 
-	public boolean hasMotors()
-	{
+	public boolean hasMotors() {
 		return true;
 	}
 
+	public void addPDPTestingMotors() {
+	}
+
 	public void addMotorTestingGroups() {
-	// 	MotorChecker.CheckerConfig checkerConfig = new MotorChecker.CheckerConfig(0, 1, 3, 2, .5, true);
-	// 	MotorChecker.getInstance()
-	// 			.addTalonGroup(new MotorTestingGroup(this, "Left", Arrays.asList(L1, L2, L3, L4), checkerConfig));
+		AmperageChecker.CheckerConfig checkerConfig = new AmperageChecker.CheckerConfig(0, .5, 5, 2, 1, true);
+		AmperageChecker.getInstance().addTalonGroup(new AmperageChecker.MotorTestingGroup(this, "Intake Wheels",
+				Arrays.asList(left_intake, right_intake), checkerConfig));
 	}
 
 	public void addLoggingValues() {
@@ -82,8 +87,8 @@ public class Intake extends GZSubsystem {
 	}
 
 	private Intake() {
-		left_intake = new GZSpark.Builder(kIntake.INTAKE_L, this, kPDP.INTAKE_L, "L").build();
-		right_intake = new GZSpark.Builder(kIntake.INTAKE_R, this, kPDP.INTAKE_R, "R").build();
+		left_intake = new GZSpark.Builder(kIntake.INTAKE_L, this, kPDP.INTAKE_L, "Left").build();
+		right_intake = new GZSpark.Builder(kIntake.INTAKE_R, this, kPDP.INTAKE_R, "Right").build();
 
 		left_intake.setInverted(kIntake.INTAKE_L_INVERT);
 		right_intake.setInverted(kIntake.INTAKE_R_INVERT);
@@ -136,7 +141,7 @@ public class Intake extends GZSubsystem {
 	private void handleStates() {
 		boolean neutral = false;
 
-		neutral |= this.isSafteyDisabled() && !GZOI.getInstance().isFMS();
+		neutral |= this.isSafetyDisabled() && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == IntakeState.NEUTRAL;
 
 		// we dont need to worry about isDemo() here

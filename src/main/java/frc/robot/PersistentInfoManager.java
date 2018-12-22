@@ -89,11 +89,11 @@ public class PersistentInfoManager {
 
     private PersistentInfo mDisabled = new PersistentInfo() {
         public void update() {
-            this.setValue(GZOI.getInstance().isSafteyDisabled() ? 1.0 : 0.0);
+            this.setValue(GZOI.getInstance().isSafetyDisabled() ? 1.0 : 0.0);
         }
 
         public void readSetting() {
-            GZOI.getInstance().setSafteyDisable(this.getValue() == 1.0);
+            GZOI.getInstance().setSafetyDisable(this.getValue() == 1.0);
         }
     };
 
@@ -142,7 +142,7 @@ public class PersistentInfoManager {
                             true, true).getFile());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             fail = true;
             // e.printStackTrace();
         }
@@ -211,7 +211,7 @@ public class PersistentInfoManager {
         }
 
         if (!mReadFailed.isFlagTripped())
-            System.out.println("WARNING Persistent settings read correctly.");
+            System.out.println("Persistent settings read correctly.");
     }
 
     private void readSettings() {

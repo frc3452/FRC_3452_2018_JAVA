@@ -232,7 +232,7 @@ public class GZFiles {
 			try {
 				scnr = new Scanner(new FileReader(GZFileMaker.getFile(fileName, folder, usb, false).getFile()));
 			} catch (Exception e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 				System.out.println("File reading failed!");
 			}
 			break;
@@ -309,7 +309,7 @@ public class GZFiles {
 
 				if (isLogging == false) {
 					System.out.println("Opening Log: " + loggingName(true) + ".csv");
-					createCSVFile(loggingName(false), folder, fileState.WRITE, usb);
+					createCSVFile(loggingName(false), folder, fileState.WRITE, usb, true);
 					writeToLog(true);
 				}
 
@@ -400,7 +400,7 @@ public class GZFiles {
 		}
 
 		public static String table(String f) {
-			return newLine("<table>" + f + "</table>");
+			return newLine("<table>" + "<tbody>" + f + "</tbody>"+  "</table>");
 		}
 
 		public static String paragraph(String f) {

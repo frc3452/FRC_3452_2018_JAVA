@@ -216,6 +216,8 @@ public class Elevator extends GZSubsystem {
 
 	}
 
+	public void addPDPTestingMotors(){}
+
 	public boolean hasMotors()
 	{
 		return true;
@@ -425,7 +427,7 @@ public class Elevator extends GZSubsystem {
 	private synchronized void handleStates() {
 		// Dont allow Disabled or Demo while on the field
 		boolean neutral = false;
-		neutral |= this.isSafteyDisabled() && !GZOI.getInstance().isFMS();
+		neutral |= this.isSafetyDisabled() && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == ElevatorState.NEUTRAL;
 		neutral |= (mState.usesClosedLoop || mWantedState.usesClosedLoop) && !mIO.encoderValid;
 

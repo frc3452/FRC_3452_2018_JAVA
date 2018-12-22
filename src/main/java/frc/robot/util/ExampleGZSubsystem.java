@@ -111,7 +111,7 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	private synchronized void handleStates() {
 		boolean neutral = false;
 
-		neutral |= this.isSafteyDisabled() && !GZOI.getInstance().isFMS();
+		neutral |= this.isSafetyDisabled() && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == ExampleState.NEUTRAL;
 		neutral |= (!mIO.encoders_valid && (mWantedState.usesClosedLoop || mState.usesClosedLoop));
 
@@ -334,10 +334,18 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	protected void initDefaultCommand() {
 	}
 
+	/**
+	 * Some subsystems don't have motors, like an LED subsystem
+	 */
 	@Override
 	public boolean hasMotors() {
 		return false;
 	}
 
+	public void addPDPTestingMotors(){}
+
+	/**
+	 * Add testing groups to MotorCheckers
+	 */
 	public void addMotorTestingGroups(){}
 }

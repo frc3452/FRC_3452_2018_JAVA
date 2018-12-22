@@ -72,7 +72,7 @@ public class Lights extends GZSubsystem {
 
 		outputSmartDashboard();
 
-		if (!gzOI.isSafteyDisabled()) {
+		if (!gzOI.isSafetyDisabled()) {
 
 			if (GZOI.driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
 				readyForMatch = true;
@@ -163,11 +163,9 @@ public class Lights extends GZSubsystem {
 	{
 		return false;
 	}
+	public void addPDPTestingMotors(){}
 
 	public void addMotorTestingGroups() {
-		// MotorChecker.CheckerConfig checkerConfig = new MotorChecker.CheckerConfig(0, 1, 3, 2, .5, true);
-		// MotorChecker.getInstance()
-				// .addTalonGroup(new MotorTestingGroup(this, "Left", Arrays.asList(L1, L2, L3, L4), checkerConfig));
 	}
 
 	public void hsv(double hDegrees, double saturation, double value) {

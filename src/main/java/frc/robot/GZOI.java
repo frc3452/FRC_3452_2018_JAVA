@@ -35,7 +35,7 @@ public class GZOI extends GZSubsystem {
 	private boolean mWasTele = false, mWasAuto = false, mWasTest = false;
 
 	private LatchedBoolean mUserButton = new LatchedBoolean();
-	private boolean mSafteyDisable = false;
+	private boolean mSafetyDisable = false;
 
 	private Drive drive = Drive.getInstance();
 	private Elevator elev = Elevator.getInstance();
@@ -73,13 +73,13 @@ public class GZOI extends GZSubsystem {
 		if (isTest())
 			mWasTest = true;
 
-		// SAFTEY DISABLE WITH USERBUTTON
+		// SAFETY DISABLE WITH USERBUTTON
 		if (isFMS())
-			mSafteyDisable = false;
+			mSafetyDisable = false;
 		else if (mUserButton.update(RobotController.getUserButton()))
-			mSafteyDisable = !mSafteyDisable;
+			mSafetyDisable = !mSafetyDisable;
 
-		Robot.allSubsystems.disable(mSafteyDisable);
+		Robot.allSubsystems.disable(mSafetyDisable);
 
 		// if (driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.RB,
 		// Buttons.LEFT_CLICK)))
@@ -254,28 +254,28 @@ public class GZOI extends GZSubsystem {
 
 			@Override
 			public String val() {
-				return Drive.getInstance().getStateString() + "-" + Drive.getInstance().isSafteyDisabled();
+				return Drive.getInstance().getStateString() + "-" + Drive.getInstance().isSafetyDisabled();
 			}
 		};
 
 		new LogItem("ELEV-STATE") {
 			@Override
 			public String val() {
-				return Elevator.getInstance().getStateString() + "-" + Elevator.getInstance().isSafteyDisabled();
+				return Elevator.getInstance().getStateString() + "-" + Elevator.getInstance().isSafetyDisabled();
 			}
 		};
 
 		new LogItem("INTAKE-STATE") {
 			@Override
 			public String val() {
-				return Intake.getInstance().getStateString() + "-" + Intake.getInstance().isSafteyDisabled();
+				return Intake.getInstance().getStateString() + "-" + Intake.getInstance().isSafetyDisabled();
 			}
 		};
 
 		new LogItem("CLIMB-STATE") {
 			@Override
 			public String val() {
-				return Climber.getInstance().getStateString() + "-" + Climber.getInstance().isSafteyDisabled();
+				return Climber.getInstance().getStateString() + "-" + Climber.getInstance().isSafetyDisabled();
 			}
 		};
 	}
@@ -284,11 +284,11 @@ public class GZOI extends GZSubsystem {
 	{
 		return true;
 	}
-
+	public void addPDPTestingMotors(){}
 	public void addMotorTestingGroups(){}
 
-	public void setSafteyDisable(boolean disable) {
-		this.mSafteyDisable = disable;
+	public void setSafetyDisable(boolean disable) {
+		this.mSafetyDisable = disable;
 	}
 
 	@Override

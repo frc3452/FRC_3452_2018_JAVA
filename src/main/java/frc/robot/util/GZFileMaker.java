@@ -35,14 +35,14 @@ public class GZFileMaker {
         
                 if (write) {
             
-                    if (!fgetParentFile().exists())
+                    if (!f.getParentFile().exists())
                     f.getParentFile().mkdirs();
                     
                     try {
-                        if (!ret.getFile().exists())
+                        if (!f.exists())
                         f.createNewFile();
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        // e.printStackTrace();
                     }
                     
                 } else {

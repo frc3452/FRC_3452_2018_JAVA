@@ -29,13 +29,17 @@ import frc.robot.util.GZLog.LogItem;
 import frc.robot.util.GZPDP;
 import frc.robot.util.GZPID;
 import frc.robot.util.GZSRX;
+import frc.robot.util.GZSpeedController;
 import frc.robot.util.GZSRX.Breaker;
 import frc.robot.util.GZSRX.Master;
 import frc.robot.util.GZSRX.Side;
 import frc.robot.util.GZSubsystem;
 import frc.robot.util.GZUtil;
 import frc.robot.util.MotorChecker;
-import frc.robot.util.MotorChecker.MotorTestingGroup;
+import frc.robot.util.MotorChecker.AmperageChecker;
+import frc.robot.util.MotorChecker.PDPChannelChecker;
+import frc.robot.util.MotorChecker.AmperageChecker.MotorTestingGroup;
+import frc.robot.util.MotorChecker.PDPChannelChecker.CheckerMotor;
 import frc.robot.util.Units;
 
 public class Drive extends GZSubsystem {
@@ -110,14 +114,22 @@ public class Drive extends GZSubsystem {
 	}
 
 	public void addMotorTestingGroups() {
-		MotorChecker.CheckerConfig checkerConfig = new MotorChecker.CheckerConfig(0, 1, 3, 2, .5, true);
-		MotorChecker.getInstance()
+		AmperageChecker.CheckerConfig checkerConfig = new AmperageChecker.CheckerConfig(0, 5, 1, 1, .25, true);
+		AmperageChecker.getInstance()
 				.addTalonGroup(new MotorTestingGroup(this, "Left", Arrays.asList(L1, L2, L3, L4), checkerConfig));
+		AmperageChecker.getInstance()
+				.addTalonGroup(new MotorTestingGroup(this, "Right", Arrays.asList(R1, R2, R3, R4), checkerConfig));
 
 	}
 
 	public boolean hasMotors() {
 		return true;
+	}
+
+	public void addPDPTestingMotors() {
+		PDPChannelChecker.CheckerConfig config = new PDPChannelChecker.CheckerConfig(.5, .125);
+		for (GZSpeedController s : mTalons.values())
+			PDPChannelChecker.getInstance().addController(new CheckerMotor(s, this, config));
 	}
 
 	@Override
@@ -284,7 +296,7 @@ public class Drive extends GZSubsystem {
 		GZOI gzOI = GZOI.getInstance();
 
 		boolean neutral = false;
-		neutral |= this.isSafteyDisabled() && !gzOI.isFMS();
+		neutral |= this.isSafetyDisabled() && !gzOI.isFMS();
 		neutral |= mWantedState == DriveState.NEUTRAL;
 		neutral |= ((mState.usesClosedLoop || mWantedState.usesClosedLoop) && !mIO.encodersValid);
 
@@ -899,8 +911,7 @@ public class Drive extends GZSubsystem {
 				c.follow(R1);
 				break;
 			case NO_INFO:
-				System.out.println("ERROR Drive talon " + c.getSide() + " (" + c.getDeviceID()
-						+ ") could not enter follower mode!");
+				System.out.println("ERROR Drive talon " + c.getGZName() + " could not enter follower mode!");
 			}
 		}
 	}

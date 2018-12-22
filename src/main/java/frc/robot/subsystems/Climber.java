@@ -39,6 +39,8 @@ public class Climber extends GZSubsystem {
 		climber_1.setName("climber_1");
 	}
 
+	public void addPDPTestingMotors(){}
+
 	private synchronized void onStateStart(ClimberState wantedState) {
 		switch (wantedState) {
 		case MANUAL:
@@ -193,7 +195,7 @@ public class Climber extends GZSubsystem {
 
 	private synchronized void handleStates() {
 		boolean neutral = false;
-		neutral |= (this.isSafteyDisabled() || Auton.getInstance().isDemo()) && !GZOI.getInstance().isFMS();
+		neutral |= (this.isSafetyDisabled() || Auton.getInstance().isDemo()) && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == ClimberState.NEUTRAL;
 
 		// if trying to disable or run demo mode while not connected to field

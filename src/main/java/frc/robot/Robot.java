@@ -111,12 +111,13 @@ public class Robot extends TimedRobot {
 		enabledInits();
 		
 		Drive.getInstance().addMotorTestingGroups();
-		MotorChecker.getInstance().checkTalons();
+		Intake.getInstance().addMotorTestingGroups();
+		MotorChecker.AmperageChecker.getInstance().checkMotors();
 	}
 
 	@Override
 	public void testPeriodic() {
-		Scheduler.getInstance().run();
+		// Scheduler.getInstance().run();
 	}
 
 	private void log(boolean startup) {
