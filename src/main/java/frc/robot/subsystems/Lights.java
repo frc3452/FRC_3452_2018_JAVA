@@ -72,7 +72,7 @@ public class Lights extends GZSubsystem {
 
 		outputSmartDashboard();
 
-		if (!gzOI.isSafteyDisabled()) {
+		if (!gzOI.isSafetyDisabled()) {
 
 			if (GZOI.driverJoy.areButtonsHeld(Arrays.asList(Buttons.A, Buttons.B, Buttons.BACK)))
 				readyForMatch = true;
@@ -98,7 +98,7 @@ public class Lights extends GZSubsystem {
 
 					break;
 
-				case kAuton.SAFTEY_SWITCH:
+				case kAuton.SAFETY_SWITCH:
 
 					// FADE
 					hsv(m_hue, 1, .25);

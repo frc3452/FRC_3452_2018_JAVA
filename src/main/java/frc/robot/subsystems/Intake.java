@@ -125,7 +125,7 @@ public class Intake extends GZSubsystem {
 	private void handleStates() {
 		boolean neutral = false;
 
-		neutral |= this.isSafteyDisabled() && !GZOI.getInstance().isFMS();
+		neutral |= this.isSafetyDisabled() && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == IntakeState.NEUTRAL;
 
 		// we dont need to worry about isDemo() here

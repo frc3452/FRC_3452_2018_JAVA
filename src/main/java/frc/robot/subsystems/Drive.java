@@ -270,7 +270,7 @@ public class Drive extends GZSubsystem {
 		GZOI gzOI = GZOI.getInstance();
 
 		boolean neutral = false;
-		neutral |= this.isSafteyDisabled() && !gzOI.isFMS();
+		neutral |= this.isSafetyDisabled() && !gzOI.isFMS();
 		neutral |= mWantedState == DriveState.NEUTRAL;
 		neutral |= ((mState.usesClosedLoop || mWantedState.usesClosedLoop) && !mIO.encodersValid);
 

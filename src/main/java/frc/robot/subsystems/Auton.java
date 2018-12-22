@@ -188,7 +188,7 @@ public class Auton {
 	}
 
 	public boolean isDemo() {
-		return uglyAnalog() == kAuton.SAFTEY_SWITCH;
+		return uglyAnalog() == kAuton.SAFETY_SWITCH;
 	}
 
 	private void printSelected() {

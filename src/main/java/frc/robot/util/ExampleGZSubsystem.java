@@ -106,12 +106,12 @@ public class ExampleGZSubsystem extends GZSubsystem {
 	 *
 	 * <b> Keep in mind, among the if statements (on lines with 'AAAA'), only one of
 	 * these can be true at any given time. By writing it this way, it lets us have
-	 * a hierarchy of what we need the subsystem to be controlled by. (Saftey first)
+	 * a hierarchy of what we need the subsystem to be controlled by. (Safety first)
 	 */
 	private synchronized void handleStates() {
 		boolean neutral = false;
 
-		neutral |= this.isSafteyDisabled() && !GZOI.getInstance().isFMS();
+		neutral |= this.isSafetyDisabled() && !GZOI.getInstance().isFMS();
 		neutral |= mWantedState == ExampleState.NEUTRAL;
 		neutral |= (!mIO.encoders_valid && (mWantedState.usesClosedLoop || mState.usesClosedLoop));
 
